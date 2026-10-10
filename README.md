@@ -1,36 +1,7 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Orionkids – Cognitive Skills Prototype
+ 
+Orionkids is a web-based cognitive assessment tool designed for children in Classes 1–4 (ages 5–10). Children play six short, game-based activities on a tablet at school — covering attention, memory, reasoning, and critical thinking — and the system automatically scores their performance using first-attempt accuracy. The entire session takes about 20 minutes.
+ 
+Once a child finishes, the backend sends anonymized scores to an AI model that drafts a warm, strength-based report for parents. A psychologist reviews and approves every report before it is emailed to the family as a PDF. No child's name, school, or personal information is ever shared with the AI — only anonymous scoring codes.
+ 
+The project is currently at Stage 0 (prototype, pre-pilot) and is built on Next.js, Express/TypeScript, Neon Postgres, and the OpenAI API. It is designed to be fully compliant with India's DPDP Act 2023, with verifiable parental consent required before any child participates.
