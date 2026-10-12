@@ -12,26 +12,22 @@ import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { CtaBannerSection } from "@/components/sections/cta-banner-section";
 import { FooterSection } from "@/components/sections/footer-section";
 
-
-
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col selection:bg-[#FFD600] selection:text-[#1E293B]">
       <AnnouncementBar />
       <Navbar />
-       <HeroSection />
+      <HeroSection />
       <ConstellationSection />
-       <GameAssessmentSection />
+      <GameAssessmentSection />
       <ChildJourneySection />
-      
       <InsightReportSection />
       <EverydaySupportSection />
-       <SharedUnderstandingSection />
+      <SharedUnderstandingSection />
       <FaqSection />
       <TestimonialsSection />
-          <CtaBannerSection />
+      <CtaBannerSection />
       <FooterSection />
-      
     </main>
   );
 }
