@@ -9,6 +9,8 @@ import { EverydaySupportSection } from "@/components/sections/everyday-support-s
 import { SharedUnderstandingSection } from "@/components/sections/shared-understanding-section";
 import { FaqSection } from "@/components/sections/faq-section";
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
+import { CtaBannerSection } from "@/components/sections/cta-banner-section";
+import { FooterSection } from "@/components/sections/footer-section";
 
 
 
@@ -27,6 +29,8 @@ export default function Home() {
        <SharedUnderstandingSection />
       <FaqSection />
       <TestimonialsSection />
+          <CtaBannerSection />
+      <FooterSection />
       
     </main>
   );
