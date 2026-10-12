@@ -3,14 +3,47 @@
 import React from "react";
 import Image from "next/image";
 
+/**
+ * Measured from the Figma prototype screenshot (frame 1440 x ~735, shown at 1.25x).
+ * All numbers below are in Figma px, i.e. what you'd see in Dev Mode.
+ *
+ * Desktop (>= lg) layout:
+ *   section padding      top 38  / bottom 72
+ *   content padding      left 88 / right 108  (centred in a 1440 max-width frame)
+ *   left column          446 wide, pinned to the left
+ *   collage              610 wide, pinned to the right, starts 18px lower than left column
+ *   left column rhythm   badge(24) -30- headline -44- subtitle -34- callout -86- pill(24) -14- chips(23)
+ */
+
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const INTER = "var(--font-inter), 'Inter', sans-serif";
 
 // Collage metrics (cqw = 1% of the collage width, so they scale with it)
-const BORDER = "max(1.5px, 0.26cqw)";            // 2px at Figma size
-const SHADOW = "clamp(3px, 0.78cqw, 6px)";       // 6px hard yellow shadow at Figma size
+const BORDER = "max(1.5px, 0.3cqw)"; // ~2px at 610px wide
+const SHADOW = "clamp(3px, 0.95cqw, 8px)"; // ~6px hard yellow shadow at 610px wide
 const RADIUS_MAIN = "clamp(14px, 4.16cqw, 32px)";
 const RADIUS_SECOND = "clamp(12px, 3.8cqw, 28px)";
+
+// Tiny background dots, positioned in % of the section (taken from the Figma frame)
+const DOTS: { left: string; top: string; size: number; opacity: number }[] = [
+  { left: "3.2%", top: "1.6%", size: 2, opacity: 0.5 },
+  { left: "36.2%", top: "0.8%", size: 2, opacity: 0.4 },
+  { left: "55.7%", top: "5.1%", size: 2, opacity: 0.4 },
+  { left: "89%", top: "3.3%", size: 2, opacity: 0.45 },
+  { left: "98.6%", top: "49.2%", size: 2, opacity: 0.35 },
+  { left: "9.2%", top: "51.9%", size: 2, opacity: 0.3 },
+  { left: "4.9%", top: "95.4%", size: 2, opacity: 0.4 },
+  { left: "95.2%", top: "92.7%", size: 2, opacity: 0.4 },
+  { left: "82.1%", top: "97.5%", size: 2, opacity: 0.35 },
+  { left: "62.6%", top: "97%", size: 2, opacity: 0.3 },
+];
+
+const CHIPS = [
+  { emoji: "✨", text: "Curiosity sparks", bg: "#FFFFFF", color: "#0A1D3D" },
+  { emoji: "🔭", text: "First discoveries", bg: "#FF8CC7", color: "#FFFFFF" },
+  { emoji: "🌟", text: "Patterns emerge", bg: "#7DD3FC", color: "#FFFFFF" },
+  { emoji: "🚀", text: "Confident learner", bg: "#EAF7EF", color: "#0A1D3D" },
+];
 
 /** Light-blue sticker pill with navy border + hard shadow; centred on (left, top) and tilted. */
 function StickerPill({
@@ -57,51 +90,59 @@ export function InsightReportSection() {
   return (
     <section
       id="insight-report-section"
-      className="relative w-full bg-[#6739B7] text-white py-12 lg:py-16 overflow-hidden select-none scroll-mt-16"
+      className="relative w-full bg-[#6739B7] text-white overflow-hidden select-none scroll-mt-16 py-12 lg:pt-[38px] lg:pb-[72px]"
     >
-      {/* Decorative Constellation Stars & Sparkles in the Background */}
-      <div className="absolute inset-0 pointer-events-none select-none">
-        <span className="absolute top-12 left-[5%] text-white/40 text-xs">✦</span>
-        <span className="absolute top-28 left-[22%] text-white/30 text-[10px]">★</span>
-        <span className="absolute top-14 right-[38%] text-white/35 text-xs">✦</span>
-        <span className="absolute top-20 right-[10%] text-white/45 text-[12px]">★</span>
-        <span className="absolute bottom-28 left-[10%] text-white/30 text-xs">★</span>
-        <span className="absolute bottom-16 left-[44%] text-white/35 text-[10px]">✦</span>
-        <span className="absolute bottom-24 right-[16%] text-white/30 text-xs">✦</span>
-        <span className="absolute top-[48%] left-[2%] text-white/20 text-[8px]">●</span>
-        <span className="absolute bottom-[6%] right-[38%] text-white/20 text-[8px]">●</span>
+      {/* Background dots */}
+      <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
+        {DOTS.map((d, i) => (
+          <span
+            key={i}
+            className="absolute rounded-full bg-white"
+            style={{
+              left: d.left,
+              top: d.top,
+              width: d.size,
+              height: d.size,
+              opacity: d.opacity,
+            }}
+          />
+        ))}
       </div>
-      <div className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 xl:gap-14 items-center w-full">
 
+      {/* Content frame: max 1440 (the Figma frame), 88px left / 108px right on desktop */}
+      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10 xl:pl-[88px] xl:pr-[108px]">
+        {/*
+          Desktop: two fixed-width columns (446 + 610) pushed to opposite edges.
+          Below lg: stacked, left column first.
+        */}
+        <div className="flex flex-col gap-12 lg:grid lg:grid-cols-[minmax(0,446px)_minmax(0,610px)] lg:justify-between lg:items-start lg:gap-x-10">
           {/* ================= LEFT COLUMN ================= */}
-          <div className="lg:col-span-6 flex flex-col items-start text-left">
-
-            {/* Top Pill Badge (Width: 208px, Height: 24px, Radius: 9999px, Border: 2px #FFD54F, Rotate: 1deg, Bg: #65DCAA, Text: #0A1D3D) */}
+          <div className="flex w-full flex-col items-start text-left">
+            {/* Top pill badge: 208 x 24, Figma rotation +1deg (counter-clockwise) = CSS -1deg */}
             <div
-              className="inline-flex items-center justify-center gap-1.5 w-[208px] h-[24px] rounded-full bg-[#65DCAA] text-[#0A1D3D] border-2 border-[#FFD54F] px-2.5 py-[3px] rotate-[1deg] origin-left select-none mb-4 whitespace-nowrap"
+              className="mb-6 lg:mb-[30px] inline-flex h-[24px] w-[208px] origin-left -rotate-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border-[1.5px] border-[#0A1D3D] bg-[#65DCAA] px-2.5 text-[#0A1D3D]"
               style={{
-                fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+                fontFamily: JAKARTA,
                 fontSize: "10px",
                 fontWeight: 800,
                 lineHeight: "100%",
                 textTransform: "uppercase",
+                boxShadow: "2px 2px 0 #FFD54F",
               }}
             >
               <span className="text-[11px] leading-none">🔍</span>
-              <span className="tracking-wider leading-none">UNDERSTAND → SUPPORT</span>
+              <span className="leading-none tracking-wider">UNDERSTAND → SUPPORT</span>
               <span className="text-[11px] leading-none">✨</span>
             </div>
 
-            {/* Main Headline (Plus Jakarta Sans, ExtraBold 800, 44px, Line height: 112%, Letter spacing: -1.6px, Max-w: 340px) */}
+            {/* Headline: 44px / 112% / -1.6px */}
             <h2
-              className="text-white max-w-[340px] mb-4"
+              className="mb-6 lg:mb-[44px] max-w-[340px] text-[34px] sm:text-[40px] lg:text-[44px] text-white"
               style={{
-                fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+                fontFamily: JAKARTA,
                 fontWeight: 800,
-                fontSize: "44px",
                 lineHeight: "112%",
-                letterSpacing: "-1.6px",
+                letterSpacing: "-0.0364em",
               }}
             >
               Every child is a<br />
@@ -109,30 +150,30 @@ export function InsightReportSection() {
               of potential. 🌟
             </h2>
 
-            {/* Subtitle Content (Inter, Regular 400, 18px, Line height: 160%, Letter spacing: 0%, Text: #E2E2E2, Max-w: 446px) */}
+            {/* Subtitle: 18px / 160% / #E2E2E2 / 446 wide */}
             <p
-              className="text-[#E2E2E2] max-w-[446px] mb-5"
+              className="mb-6 lg:mb-[34px] max-w-[446px] text-[16px] sm:text-[18px] text-[#E2E2E2]"
               style={{
-                fontFamily: "var(--font-inter), 'Inter', sans-serif",
+                fontFamily: INTER,
                 fontWeight: 400,
-                fontSize: "16px",
                 lineHeight: "160%",
                 letterSpacing: "0%",
               }}
             >
-              The OrionKids Insight Report maps strengths, areas that need support,
-              and progress into one readable learning profile — no rankings, no labels.
+              The OrionKids Insight Report maps strengths, areas
+              <br className="hidden sm:block" /> that need support, and progress into one readable
+              <br className="hidden sm:block" /> learning profile — no rankings, no labels.
             </p>
 
-            {/* Left Div / Callout Box (Width: 446px, Radius: 16px, Border: 2px #FFD54F, Padding: 16px, Gap: 8px, Bg: #FFFFFF) */}
-            <div className="w-full max-w-[446px] bg-white rounded-[16px] border-2 border-[#FFD54F] p-[16px] sm:p-[18px] flex flex-col gap-[8px] text-left shadow-md mb-5">
+            {/* Callout: 446 wide, radius 16, 2px #FFD54F border, padding 16, gap 8 */}
+            <div className="mb-8 lg:mb-[86px] flex w-full max-w-[446px] flex-col gap-[8px] rounded-[16px] border-2 border-[#FFD54F] bg-white p-[16px] text-left">
               <h3
-                className="text-black flex items-center gap-1.5"
+                className="flex items-center gap-1.5 text-black"
                 style={{
-                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+                  fontFamily: JAKARTA,
                   fontWeight: 800,
                   fontSize: "14px",
-                  lineHeight: "100%",
+                  lineHeight: "130%",
                   letterSpacing: "0%",
                 }}
               >
@@ -142,113 +183,75 @@ export function InsightReportSection() {
               <p
                 className="text-[#526176]"
                 style={{
-                  fontFamily: "var(--font-inter), 'Inter', sans-serif",
+                  fontFamily: INTER,
                   fontWeight: 400,
-                  fontSize: "13.5px",
-                  lineHeight: "160%",
+                  fontSize: "14px",
+                  lineHeight: "120%",
                   letterSpacing: "0%",
                 }}
               >
-                AI observes patterns in game performance over time. Teachers and parents connect those insights to everyday learning — not a fixed label.
+                AI observes patterns in game performance over time.
+                <br className="hidden sm:block" /> Teachers and parents connect those insights to everyday
+                <br className="hidden sm:block" /> learning — not a fixed label.
               </p>
             </div>
 
-            {/* Left Big Pill (Width: 258px, Height: 24px, Radius: 99px, Border: 1px, Padding: 5px 12px, Gap: 6px, Bg: #132847, Text: #00B4C6) */}
+            {/* Big pill: 258 x 24, radius 99, 1px border */}
             <div
-              className="inline-flex items-center gap-[6px] w-[258px] h-[24px] rounded-[99px] bg-[#132847] border border-[#1E3A5F] px-[12px] py-[5px] mb-2.5 select-none"
+              className="mb-[14px] inline-flex h-[24px] w-[258px] max-w-full items-center gap-[6px] rounded-[99px] border border-[#4FA9C9] bg-[#132847] px-[12px]"
               style={{
-                fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+                fontFamily: JAKARTA,
                 fontWeight: 700,
                 fontSize: "11px",
                 lineHeight: "100%",
-                letterSpacing: "0%",
                 color: "#00B4C6",
               }}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00B4C6] shrink-0" />
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#00B4C6]" />
               <span className="whitespace-nowrap">Orion Constellation · Growth journey map</span>
             </div>
 
-            {/* Small Four Divs (Width: 102px, Height: 23px, Radius: 10px, Padding: 6px 10px, Gap: 2px) */}
-            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 select-none">
-              {/* 1. Curiosity sparks (Bg: #FFFFFF) */}
-              <div
-                className="w-[102px] h-[23px] rounded-[10px] bg-[#FFFFFF] text-[#0A1D3D] border border-[#0A1D3D] flex items-center justify-center gap-1 px-1.5 py-[3px] shadow-sm hover:scale-105 transition-transform cursor-default whitespace-nowrap"
-                style={{
-                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: "9px",
-                  lineHeight: "100%",
-                }}
-              >
-                <span className="text-[10px] leading-none shrink-0">✨</span>
-                <span className="leading-none">Curiosity sparks</span>
-              </div>
-
-              {/* 2. First discoveries (Bg: #FF8CC7) */}
-              <div
-                className="w-[102px] h-[23px] rounded-[10px] bg-[#FF8CC7] text-[#0A1D3D] border border-[#0A1D3D] flex items-center justify-center gap-1 px-1.5 py-[3px] shadow-sm hover:scale-105 transition-transform cursor-default whitespace-nowrap"
-                style={{
-                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: "9px",
-                  lineHeight: "100%",
-                }}
-              >
-                <span className="text-[10px] leading-none shrink-0">🌸</span>
-                <span className="leading-none">First discoveries</span>
-              </div>
-
-              {/* 3. Patterns emerge (Bg: #7DD3FC) */}
-              <div
-                className="w-[102px] h-[23px] rounded-[10px] bg-[#7DD3FC] text-[#0A1D3D] border border-[#0A1D3D] flex items-center justify-center gap-1 px-1.5 py-[3px] shadow-sm hover:scale-105 transition-transform cursor-default whitespace-nowrap"
-                style={{
-                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: "9px",
-                  lineHeight: "100%",
-                }}
-              >
-                <span className="text-[10px] leading-none shrink-0">⭐</span>
-                <span className="leading-none">Patterns emerge</span>
-              </div>
-
-              {/* 4. Confident learner (Bg: #EAF7EF) */}
-              <div
-                className="w-[102px] h-[23px] rounded-[10px] bg-[#EAF7EF] text-[#0A1D3D] border border-[#0A1D3D] flex items-center justify-center gap-1 px-1.5 py-[3px] shadow-sm hover:scale-105 transition-transform cursor-default whitespace-nowrap"
-                style={{
-                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
-                  fontWeight: 800,
-                  fontSize: "9px",
-                  lineHeight: "100%",
-                }}
-              >
-                <span className="text-[10px] leading-none shrink-0">🚀</span>
-                <span className="leading-none">Confident learner</span>
-              </div>
+            {/* Four chips: 102 x 23, radius 10, gap 8, hard navy shadow */}
+            <div className="flex flex-wrap items-center gap-2">
+              {CHIPS.map((c) => (
+                <div
+                  key={c.text}
+                  className="flex h-[23px] w-[102px] items-center justify-center gap-[3px] whitespace-nowrap rounded-[10px]"
+                  style={{
+                    background: c.bg,
+                    color: c.color,
+                    fontFamily: JAKARTA,
+                    fontWeight: 800,
+                    fontSize: "8.5px",
+                    lineHeight: "100%",
+                    boxShadow: "2px 2px 0 #0A1D3D",
+                  }}
+                >
+                  <span className="shrink-0 text-[9px] leading-none">{c.emoji}</span>
+                  <span className="leading-none">{c.text}</span>
+                </div>
+              ))}
             </div>
-
           </div>
 
-          {/* ================= RIGHT COLUMN: Visual Collage & Caption ================= */}
+          {/* ================= RIGHT COLUMN: collage ================= */}
           {/*
-            The collage lives on a fixed design canvas measured from Figma (546 x 544 units).
-            Every child is positioned and sized in % of that canvas, and borders / shadows /
-            radii use `cqw` (container-query width), so the whole composition scales as ONE
-            piece and looks identical at every viewport width.
+            Collage canvas is 610 wide max. Everything inside is positioned in % of the canvas and
+            borders / shadows / radii / caption use `cqw`, so the composition scales as ONE piece.
+            lg:mt-[18px] reproduces the Figma offset between the two columns.
           */}
-          <div className="lg:col-span-6 flex justify-center lg:justify-end w-full mt-6 lg:mt-0">
+          <div className="flex w-full justify-center lg:mt-[18px] lg:justify-end">
             <div
-              className="relative w-full max-w-[620px] select-none"
+              className="relative w-full max-w-[610px] select-none"
               style={{ containerType: "inline-size", aspectRatio: "546 / 544" }}
             >
-              {/* Photo 1: main image (Figma: 430 x 400, 2px yellow border + hard 6px yellow shadow) */}
+              {/* Photo 1 */}
               <div
                 className="absolute z-10"
                 style={{ left: "0%", top: "8.456%", width: "78.75%", aspectRatio: "430 / 400" }}
               >
                 <div
-                  className="relative w-full h-full overflow-hidden bg-[#0A1D3D]/30"
+                  className="relative h-full w-full overflow-hidden bg-[#0A1D3D]/30"
                   style={{
                     borderRadius: RADIUS_MAIN,
                     border: `${BORDER} solid #FFD54F`,
@@ -261,21 +264,18 @@ export function InsightReportSection() {
                     fill
                     unoptimized
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 620px"
+                    sizes="(max-width: 768px) 100vw, 610px"
                     priority
                   />
                 </div>
               </div>
 
-              {/* Floating Badge 1: BLAST OFF! (top right of main image, tilted +5deg) */}
               <StickerPill emoji="👾" text="BLAST OFF!" left="67.22%" top="16.82%" rotate={5} />
-
-              {/* Floating Badge 2: SUPERSTAR APPROVED! (bottom left of main image, tilted -4deg) */}
               <StickerPill emoji="✨" text="SUPERSTAR APPROVED!" left="18.04%" top="75.37%" rotate={-4} />
 
-              {/* 3D Floating Cartoon Letter "A" (top right corner of main image, rotated -41.5deg) */}
+              {/* 3D letter "A" */}
               <div
-                className="absolute z-30 pointer-events-none"
+                className="pointer-events-none absolute z-30"
                 style={{
                   left: "81.68%",
                   top: "5.24%",
@@ -290,17 +290,17 @@ export function InsightReportSection() {
                   width={150}
                   height={150}
                   unoptimized
-                  className="w-full h-full object-contain drop-shadow-[2px_6px_10px_rgba(0,0,0,0.35)]"
+                  className="h-full w-full object-contain drop-shadow-[2px_6px_10px_rgba(0,0,0,0.35)]"
                 />
               </div>
 
-              {/* Photo 2: secondary image, offset right of the main image (Figma: 230 x 214) */}
+              {/* Photo 2 */}
               <div
                 className="absolute z-20"
                 style={{ left: "49.08%", top: "59.93%", width: "42.12%", aspectRatio: "230 / 214" }}
               >
                 <div
-                  className="relative w-full h-full overflow-hidden bg-[#0A1D3D]/30"
+                  className="relative h-full w-full overflow-hidden bg-[#0A1D3D]/30"
                   style={{
                     borderRadius: RADIUS_SECOND,
                     border: `${BORDER} solid #FFD54F`,
@@ -318,9 +318,9 @@ export function InsightReportSection() {
                 </div>
               </div>
 
-              {/* 3D Bullseye Target Sticker with Dart: sits on the top-right corner of Photo 2 */}
+              {/* Bullseye sticker on Photo 2's top-right corner */}
               <div
-                className="absolute z-30 pointer-events-none"
+                className="pointer-events-none absolute z-30"
                 style={{
                   left: "90.93%",
                   top: "60.39%",
@@ -335,31 +335,32 @@ export function InsightReportSection() {
                   width={100}
                   height={112}
                   unoptimized
-                  className="w-full h-full object-contain drop-shadow-[2px_6px_10px_rgba(0,0,0,0.35)]"
+                  className="h-full w-full object-contain drop-shadow-[2px_6px_10px_rgba(0,0,0,0.35)]"
                 />
               </div>
 
-              {/* Caption: centred between the left edge of Photo 1 and the left edge of Photo 2 */}
+              {/* Caption, centred between the left edges of Photo 1 and Photo 2 */}
               <p
-                className="absolute z-10 text-white text-center whitespace-nowrap"
+                className="absolute z-10 whitespace-nowrap text-center text-white"
                 style={{
                   left: "24.54%",
                   top: "86%",
                   transform: "translateX(-50%)",
                   fontFamily: INTER,
                   fontWeight: 400,
-                  fontSize: "clamp(10px, 2.35cqw, 18px)",
+                  fontSize: "clamp(10px, 2.5cqw, 20px)",
                   lineHeight: "130%",
                   letterSpacing: "0%",
                 }}
               >
-                Small moments of discovery.<br />
-                Meaningful opportunities for<br />
+                Small moments of discovery.
+                <br />
+                Meaningful opportunities for
+                <br />
                 support.
               </p>
             </div>
           </div>
-
         </div>
       </div>
     </section>

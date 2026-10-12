@@ -33,8 +33,8 @@ export function CtaBannerSection() {
           }}
         />
 
-        {/* Floating Space Stickers */}
-        <div className="absolute inset-0 pointer-events-none select-none z-10">
+        {/* Floating Space Stickers & Shining Particles */}
+        <div className="absolute inset-0 pointer-events-none select-none z-10 overflow-hidden">
           <span className="absolute top-6 left-6 sm:top-8 sm:left-10 text-2xl sm:text-3xl opacity-80 transform -rotate-12">
             🪐
           </span>
@@ -44,15 +44,45 @@ export function CtaBannerSection() {
           <span className="absolute bottom-5 right-10 sm:bottom-6 sm:right-14 text-xl sm:text-2xl opacity-80 transform rotate-6">
             🛸
           </span>
+
+          {/* Shining Particles */}
+          <div
+            className="absolute top-[28%] left-[16%] w-2 h-2 rounded-full bg-white animate-twinkle"
+            style={{ boxShadow: "0 0 10px 2px #FFD54F", animationDuration: "2.4s" }}
+          />
+          <div
+            className="absolute top-[70%] left-[24%] w-1.5 h-1.5 rounded-full bg-cyan-200 animate-twinkle"
+            style={{ boxShadow: "0 0 8px 2px #67E8F9", animationDuration: "3.2s", animationDelay: "1.1s" }}
+          />
+          <div
+            className="absolute top-[22%] right-[24%] w-2.5 h-2.5 rounded-full bg-white animate-twinkle"
+            style={{ boxShadow: "0 0 12px 3px #FFFFFF", animationDuration: "2.7s", animationDelay: "0.6s" }}
+          />
+          <div
+            className="absolute bottom-[28%] right-[32%] w-1.5 h-1.5 rounded-full bg-yellow-200 animate-twinkle"
+            style={{ boxShadow: "0 0 8px 2px #FFD54F", animationDuration: "3.0s", animationDelay: "1.8s" }}
+          />
+          <div
+            className="absolute top-[52%] left-[48%] w-1.5 h-1.5 rounded-full bg-white animate-twinkle"
+            style={{ boxShadow: "0 0 8px 2px #67E8F9", animationDuration: "2.9s", animationDelay: "1.4s" }}
+          />
+          <div
+            className="absolute bottom-[18%] left-[7%] w-2 h-2 rounded-full bg-yellow-200 animate-twinkle"
+            style={{ boxShadow: "0 0 10px 2px #FFD54F", animationDuration: "3.5s", animationDelay: "0.2s" }}
+          />
+          <div
+            className="absolute top-[16%] right-[8%] w-2 h-2 rounded-full bg-cyan-200 animate-twinkle"
+            style={{ boxShadow: "0 0 10px 2px #67E8F9", animationDuration: "2.6s", animationDelay: "0.8s" }}
+          />
         </div>
 
         {/* Outer Container (1,433px - 1,440px) */}
         <div className="relative z-20 w-full max-w-[1440px] mx-auto min-h-[320px] px-4 sm:px-8 lg:px-[88px] py-10 lg:py-0 flex flex-col justify-center">
-          
+
           {/* Centered Top Floating Pill Badge */}
           <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 z-30">
             <div
-              className="inline-flex items-center gap-2 px-[20px] py-[7px] bg-[#D8F3FF] text-[#0A1D3D] rounded-[16px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] transform rotate-[1deg] hover:rotate-0 transition-transform cursor-default whitespace-nowrap"
+              className="inline-flex items-center gap-2 px-[20px] py-[7px] bg-[#D8F3FF] text-[#0A1D3D] rounded-[16px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] transform rotate-[-1deg] hover:rotate-0 transition-transform cursor-default whitespace-nowrap"
               style={{
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 fontWeight: 800,
@@ -70,7 +100,7 @@ export function CtaBannerSection() {
 
           {/* Inner Content Row (1,264px Width, 220px Height on desktop) */}
           <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-8 pt-8 lg:pt-8 text-left">
-            
+
             {/* Left Content Column */}
             <div className="flex flex-col items-start max-w-[660px]">
               {/* Heading */}
