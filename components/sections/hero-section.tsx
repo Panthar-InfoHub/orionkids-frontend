@@ -34,28 +34,18 @@ export function HeroSection() {
               🪐
             </div>
 
-            {/* Top Pill Tag - Exact Figma Specs */}
+            {/* Top Pill Tag - Responsive for Mobile & Desktop */}
             <div
-              className="inline-flex items-center gap-[8px] px-[14px] py-[6px] h-[31px] rounded-[16px] bg-[#E8DBFF] text-[#0A1D3D] border-[2px] border-[#0A1D3D] rotate-[-2deg] origin-left select-none mb-3"
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-[14px] py-1.5 sm:py-[6px] h-auto min-h-[30px] sm:h-[31px] rounded-[14px] sm:rounded-[16px] bg-[#E8DBFF] text-[#0A1D3D] border-[2px] border-[#0A1D3D] -rotate-1 sm:-rotate-2 origin-left select-none mb-3 max-w-full"
               style={{
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
             >
-              <span className="text-xs leading-none">⚡</span>
-              <span
-                className="text-[12px] font-[800] tracking-[0.5px] uppercase leading-none text-[#0A1D3D] whitespace-nowrap"
-                style={{
-                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
-                  fontSize: "12px",
-                  fontWeight: 800,
-                  letterSpacing: "0.5px",
-                  lineHeight: "100%",
-                  color: "#0A1D3D",
-                  textTransform: "uppercase",
-                }}
-              >
-                SUPER-POWERS FOR KIDS · CLASSES 1–4 ⭐ 100% KID TESTED!
-              </span>
+              <span className="text-xs leading-none shrink-0">⚡</span>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] sm:text-[12px] font-[800] tracking-[0.3px] sm:tracking-[0.5px] uppercase leading-tight sm:leading-none text-[#0A1D3D]">
+                <span>SUPER-POWERS FOR KIDS · CLASSES 1–4</span>
+                <span className="whitespace-nowrap">⭐ 100% KID TESTED!</span>
+              </div>
             </div>
 
             {/* Main Headline */}
@@ -81,6 +71,23 @@ export function HeroSection() {
                     Tomorrows.
                   </span>
 
+                  {/* Playful Cartoon Cat GIF: Anchored directly to the top-right of the Tomorrows badge */}
+                  <div
+                    className="absolute -top-[36px] sm:-top-[46px] lg:-top-[52px] -right-[10px] sm:-right-[14px] lg:-right-[18px] w-[100px] sm:w-[130px] lg:w-[150px] h-[44px] sm:h-[56px] lg:h-[64px] pointer-events-none select-none z-20"
+                    style={{
+                      transform: "scaleX(-1)",
+                    }}
+                  >
+                    <Image
+                      src={encodeURI("/gif/cartoon.gif")}
+                      alt="Playful cartoon cat"
+                      width={150}
+                      height={64}
+                      unoptimized
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+
                   {/* SVG Line (line.svg) extending to the right from the vertical middle of Tomorrows */}
                   <div className="absolute top-[110%] -translate-y-1/2 left-0 w-[579px] max-w-none pointer-events-none select-none -z-10">
                     <Image
@@ -92,27 +99,6 @@ export function HeroSection() {
                       className="w-full h-auto"
                     />
                   </div>
-                </div>
-
-                {/* Playful Cartoon Cat GIF: Width 150px, Height 64px, Top 22px, Left 261px, Flipped horizontally to match Figma */}
-                <div
-                  className="absolute pointer-events-none select-none z-20"
-                  style={{
-                    width: "150px",
-                    height: "64px",
-                    top: "15px",
-                    left: "214px",
-                    transform: "scaleX(-1)",
-                  }}
-                >
-                  <Image
-                    src={encodeURI("/gif/cartoon.gif")}
-                    alt="Playful cartoon cat"
-                    width={150}
-                    height={64}
-                    unoptimized
-                    className="w-full h-full object-contain"
-                  />
                 </div>
               </div>
             </h1>

@@ -11,9 +11,8 @@ const HAND = "'Segoe Print', 'Comic Sans MS', 'Bradley Hand', cursive";
 // OrionKids logo
 const LOGO_SRC = "/svg/Logo.svg";
 
-/* ------------------------------------------------------------------ */
+
 /*  Doodle wall                                                         */
-/* ------------------------------------------------------------------ */
 
 type DoodleKind =
   | "star" | "smile" | "loop" | "tent" | "plane" | "people" | "yo" | "heart"
