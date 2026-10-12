@@ -2,6 +2,8 @@ import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { Navbar } from "@/components/layout/navbar";
 import { HeroSection } from "@/components/sections/hero-section";
 import { ConstellationSection } from "@/components/sections/constellation-section";
+import { GameAssessmentSection } from "@/components/sections/game-assessment-section";
+import { InsightReportSection } from "@/components/sections/insight-report-section";
 
 export default function Home() {
   return (
@@ -10,6 +12,8 @@ export default function Home() {
       <Navbar />
        <HeroSection />
       <ConstellationSection />
+       <GameAssessmentSection />
+      <ChildJourneySection />
       
     </main>
   );
