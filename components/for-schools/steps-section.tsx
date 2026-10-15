@@ -138,7 +138,7 @@ export function ForSchoolsStepsSection() {
                 key={step.num}
                 className="relative flex flex-col justify-between bg-white rounded-[24px] p-5 transition-transform duration-200 hover:-translate-y-1"
                 style={{
-                  boxShadow: "0px 8px 30px rgba(10, 29, 61, 0.08)",
+                  boxShadow: "3px 3px 0px 0px #0A1D3D",
                   minHeight: "270px",
                 }}
               >
@@ -146,7 +146,7 @@ export function ForSchoolsStepsSection() {
                 {index > 0 && (
                   <div
                     aria-hidden="true"
-                    className="hidden lg:block absolute -left-4 top-[44px] w-4 h-[3px] bg-[#2DD4BF] z-10"
+                    className="hidden lg:block absolute -left-3 top-[44px] w-5 h-[8px] bg-[#65DCAA] z-10"
                   />
                 )}
 

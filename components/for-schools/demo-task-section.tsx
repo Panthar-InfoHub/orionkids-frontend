@@ -27,25 +27,31 @@ export function ForSchoolsDemoTaskSection() {
 
   return (
     <section
-      className="relative w-full py-16 lg:py-24 overflow-hidden border-b border-[#0A1D3D]"
+      className="relative w-full py-16 lg:py-24 overflow-hidden"
       style={{ backgroundColor: "#EAF9F1" }}
     >
       <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
         {/* ================= BIG WHITE CARD WITH BELL PEAKING ================= */}
         <div
-          className="relative w-full bg-white rounded-[28px] p-6 sm:p-8 lg:p-10 border-2 border-[#0A1D3D]"
+          className="relative w-full bg-white rounded-[28px] p-6 sm:p-8 lg:p-10 "
           style={{
             boxShadow: "6px 6px 0px 0px #0A1D3D",
           }}
         >
           {/* Peeking Bell GIF on Top-Right Corner */}
-          <div className="absolute -top-7 right-6 sm:right-10 w-16 h-16 pointer-events-none select-none z-20">
+          <div
+            className="absolute z-20 pointer-events-none select-none w-[56px] h-[56px] -top-[30px] -right-[20px] sm:w-[72px] sm:h-[72px] sm:-top-[41px] sm:-right-[28px] lg:w-[86px] lg:h-[86px] lg:-top-[49px] lg:-right-[40px]"
+            style={{
+              transform: "rotate(31deg)",
+              transformOrigin: "center",
+            }}
+          >
             <Image
               src="/gif/bell.gif"
               alt="Animated cheerful bell"
-              width={64}
-              height={64}
-              className="object-contain"
+              width={86}
+              height={86}
+              className="w-full h-full object-contain"
               unoptimized
             />
           </div>
@@ -59,9 +65,9 @@ export function ForSchoolsDemoTaskSection() {
                 color: "#0A1D3D",
                 fontFamily: SPACE,
                 fontWeight: 700,
-                fontSize: "11px",
-                lineHeight: "14px",
-                letterSpacing: "0.5px",
+                fontSize: "12px",
+                lineHeight: "16px",
+                letterSpacing: "0.72x",
                 textTransform: "uppercase",
               }}
             >
@@ -70,7 +76,7 @@ export function ForSchoolsDemoTaskSection() {
             <span
               style={{
                 fontFamily: JAKARTA,
-                fontWeight: 600,
+                fontWeight: 500,
                 fontSize: "13px",
                 color: "#526176",
               }}
@@ -85,9 +91,9 @@ export function ForSchoolsDemoTaskSection() {
             style={{
               fontFamily: JAKARTA,
               fontWeight: 800,
-              fontSize: "clamp(24px, 3.5vw, 32px)",
-              lineHeight: "40px",
-              letterSpacing: "-0.6px",
+              fontSize: "clamp(25px, 3.5vw, 32px)",
+              lineHeight: "36px",
+              letterSpacing: "-0.28px",
               color: "#0A1D3D",
             }}
           >
@@ -104,7 +110,7 @@ export function ForSchoolsDemoTaskSection() {
               fontFamily: JAKARTA,
               fontWeight: 500,
               fontSize: "15px",
-              lineHeight: "23px",
+              lineHeight: "24px",
               color: "#526176",
             }}
           >
@@ -115,8 +121,8 @@ export function ForSchoolsDemoTaskSection() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
             {/* ---------------- LEFT: Interactive Playful Task ---------------- */}
             <div
-              className="rounded-[20px] p-5 sm:p-6 border border-[#0A1D3D]/10"
-              style={{ backgroundColor: "#FFF9EA" }}
+              className="rounded-[20px] p-5 sm:p-6 "
+              style={{ backgroundColor: "#F8F3E8" }}
             >
               {/* Task Header: Current Rule + Score */}
               <div className="flex items-center justify-between mb-4">
@@ -128,17 +134,17 @@ export function ForSchoolsDemoTaskSection() {
                     color: "#0A1D3D",
                   }}
                 >
-                  <span className="text-[#526176]">Current Rule: </span>
-                  <span className="text-[#0D9488]">Match by Color</span>
+                  <span className="text-[#1D1C15]">Current Rule: </span>
+                  <span className="text-[#00668A]">Match by Color</span>
                 </div>
                 <div
-                  className="px-2.5 py-0.5 rounded-full select-none"
+                  className="px-3 py-1 rounded select-none"
                   style={{
                     backgroundColor: "#FFD54F",
                     fontFamily: SPACE,
                     fontWeight: 700,
-                    fontSize: "11px",
-                    color: "#0A1D3D",
+                    fontSize: "13px",
+                    color: "#705900",
                   }}
                 >
                   Score: {score}
@@ -146,21 +152,21 @@ export function ForSchoolsDemoTaskSection() {
               </div>
 
               {/* Target Item Card */}
-              <div className="bg-white rounded-[14px] p-3 sm:p-3.5 mb-4 flex items-center justify-between shadow-sm border border-slate-100">
+              <div className="bg-white rounded-2xl p-3 sm:p-3.5 mb-4 flex items-center justify-between shadow-sm ">
                 <span
                   style={{
                     fontFamily: JAKARTA,
                     fontWeight: 700,
-                    fontSize: "14px",
-                    color: "#0A1D3D",
+                    fontSize: "16px",
+                    color: "#4E4633",
                   }}
                 >
                   Target Alien:
                 </span>
                 <span
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-white select-none"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-white select-none"
                   style={{
-                    backgroundColor: "#005B7F",
+                    backgroundColor: "#00668A",
                     fontFamily: JAKARTA,
                     fontWeight: 700,
                     fontSize: "13px",
@@ -182,7 +188,7 @@ export function ForSchoolsDemoTaskSection() {
                       ? "ring-2 ring-[#0A1D3D] shadow-md scale-102"
                       : "hover:scale-102 hover:shadow-sm"
                   }`}
-                  style={{ backgroundColor: "#BCE5FF" }}
+                  style={{ backgroundColor: "#A3DCFF" }}
                 >
                   <span className="text-xl mb-1 select-none" aria-hidden="true">
                     ⚙
@@ -192,7 +198,7 @@ export function ForSchoolsDemoTaskSection() {
                       fontFamily: JAKARTA,
                       fontWeight: 700,
                       fontSize: "12px",
-                      color: "#0A1D3D",
+                      color: "#006386",
                     }}
                   >
                     Blue Sun
@@ -208,7 +214,7 @@ export function ForSchoolsDemoTaskSection() {
                       ? "ring-2 ring-[#0A1D3D] shadow-md scale-102"
                       : "hover:scale-102 hover:shadow-sm"
                   }`}
-                  style={{ backgroundColor: "#FFE066" }}
+                  style={{ backgroundColor: "#FFD028" }}
                 >
                   <span className="text-xl mb-1 select-none" aria-hidden="true">
                     ☆
@@ -218,7 +224,7 @@ export function ForSchoolsDemoTaskSection() {
                       fontFamily: JAKARTA,
                       fontWeight: 700,
                       fontSize: "12px",
-                      color: "#0A1D3D",
+                      color: "#705900",
                     }}
                   >
                     Yellow Star
@@ -234,7 +240,7 @@ export function ForSchoolsDemoTaskSection() {
                       ? "ring-2 ring-[#0A1D3D] shadow-md scale-102"
                       : "hover:scale-102 hover:shadow-sm"
                   }`}
-                  style={{ backgroundColor: "#D6BBFF" }}
+                  style={{ backgroundColor: "#D3E0FE" }}
                 >
                   <span className="text-xl mb-1 select-none" aria-hidden="true">
                     △
@@ -257,9 +263,9 @@ export function ForSchoolsDemoTaskSection() {
                 className="text-center"
                 style={{
                   fontFamily: JAKARTA,
-                  fontWeight: 500,
-                  fontSize: "12px",
-                  color: "#526176",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  color: "#4E4633",
                 }}
               >
                 Match the target color, not its shape.
@@ -267,7 +273,10 @@ export function ForSchoolsDemoTaskSection() {
             </div>
 
             {/* ---------------- RIGHT: Classroom View & Insights ---------------- */}
-            <div className="flex flex-col gap-3">
+            <div
+              className="rounded-[16px] p-4 sm:p-5 flex flex-col gap-3"
+              style={{ backgroundColor: "#EAF6FF4D" }}
+            >
               {/* Header */}
               <div className="flex items-center justify-between pb-1">
                 <div
@@ -276,7 +285,8 @@ export function ForSchoolsDemoTaskSection() {
                     fontFamily: JAKARTA,
                     fontWeight: 700,
                     fontSize: "14px",
-                    color: "#0A1D3D",
+                    lineHeight: "24px",
+                    color: "#0E1C32",
                   }}
                 >
                   <span>📁</span>
@@ -285,9 +295,10 @@ export function ForSchoolsDemoTaskSection() {
                 <span
                   style={{
                     fontFamily: JAKARTA,
-                    fontWeight: 600,
-                    fontSize: "12px",
-                    color: "#1E5FBF",
+                    fontWeight: 700,
+                    fontSize: "13px",
+                    lineHeight: "20px",
+                    color: "#1763BC",
                   }}
                 >
                   Illustrative Only
@@ -295,7 +306,7 @@ export function ForSchoolsDemoTaskSection() {
               </div>
 
               {/* Student Card 1: Aarav M. */}
-              <div className="bg-white rounded-[16px] p-3.5 border border-slate-100 shadow-sm flex items-center justify-between gap-3">
+              <div className="bg-white rounded-[16px] p-3.5  flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 select-none"
@@ -312,8 +323,8 @@ export function ForSchoolsDemoTaskSection() {
                       style={{
                         fontFamily: JAKARTA,
                         fontWeight: 700,
-                        fontSize: "14px",
-                        lineHeight: "18px",
+                        fontSize: "16px",
+                        lineHeight: "24px",
                         color: "#0A1D3D",
                       }}
                     >
@@ -322,8 +333,9 @@ export function ForSchoolsDemoTaskSection() {
                     <div
                       style={{
                         fontFamily: JAKARTA,
-                        fontWeight: 500,
-                        fontSize: "12px",
+                        fontWeight: 700,
+                        fontSize: "13px",
+                        lineHeight: "20px",
                         color: "#526176",
                       }}
                     >
@@ -335,11 +347,12 @@ export function ForSchoolsDemoTaskSection() {
                 <span
                   className="inline-flex items-center px-3 py-1 rounded-full shrink-0 select-none"
                   style={{
-                    backgroundColor: "#EAF6FF",
-                    color: "#1E5FBF",
+                    backgroundColor: "#D8F3FF",
+                    color: "#1763BC",
                     fontFamily: JAKARTA,
                     fontWeight: 700,
                     fontSize: "11px",
+                    lineHeight: "26.5px",
                   }}
                 >
                   Notices rule changes
@@ -347,13 +360,13 @@ export function ForSchoolsDemoTaskSection() {
               </div>
 
               {/* Student Card 2: Kavya S. */}
-              <div className="bg-white rounded-[16px] p-3.5 border border-slate-100 shadow-sm flex items-center justify-between gap-3">
+              <div className="bg-white rounded-[16px] p-3.5  flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 select-none"
                     style={{
                       backgroundColor: "#F0E6FF",
-                      color: "#0A1D3D",
+                      color: "#0E1C32",
                       fontFamily: JAKARTA,
                     }}
                   >
@@ -364,8 +377,8 @@ export function ForSchoolsDemoTaskSection() {
                       style={{
                         fontFamily: JAKARTA,
                         fontWeight: 700,
-                        fontSize: "14px",
-                        lineHeight: "18px",
+                        fontSize: "16px",
+                        lineHeight: "24px",
                         color: "#0A1D3D",
                       }}
                     >
@@ -375,7 +388,7 @@ export function ForSchoolsDemoTaskSection() {
                       style={{
                         fontFamily: JAKARTA,
                         fontWeight: 500,
-                        fontSize: "12px",
+                        fontSize: "13px",
                         color: "#526176",
                       }}
                     >
@@ -387,11 +400,12 @@ export function ForSchoolsDemoTaskSection() {
                 <span
                   className="inline-flex items-center px-3 py-1 rounded-full shrink-0 select-none"
                   style={{
-                    backgroundColor: "#E8F9F0",
-                    color: "#059669",
+                    backgroundColor: "#65DCAA",
+                    color: "#0A1D3D",
                     fontFamily: JAKARTA,
                     fontWeight: 700,
                     fontSize: "11px",
+                    letterSpacing : "1px"
                   }}
                 >
                   Try: one step at a time
@@ -406,6 +420,7 @@ export function ForSchoolsDemoTaskSection() {
                   fontFamily: JAKARTA,
                   fontSize: "13px",
                   lineHeight: "20px",
+                  letterSpacing : "1px"
                 }}
               >
                 <p>

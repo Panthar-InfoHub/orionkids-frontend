@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 /* ------------------------------------------------------------------ */
 /*  Font family shortcuts                                               */
@@ -9,43 +10,8 @@ const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const SPACE = "var(--font-space-grotesk), 'Space Grotesk', sans-serif";
 
 /* ------------------------------------------------------------------ */
-/*  SVGs: Controller Doodle & Card Icons                                */
+/*  Card Icons                                                          */
 /* ------------------------------------------------------------------ */
-function GameControllerDoodle() {
-  return (
-    <svg
-      width="48"
-      height="48"
-      viewBox="0 0 48 48"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0 -rotate-12 select-none"
-      aria-hidden="true"
-    >
-      {/* Outer Controller Body */}
-      <path
-        d="M13 15C8 15 5 19 5 25C5 31 7 38 12 38C15.5 38 17.5 34 20 31H28C30.5 31 32.5 38 36 38C41 38 43 31 43 25C43 19 40 15 35 15C31 15 28 17 24 17C20 17 17 15 13 15Z"
-        fill="#FFFFFF"
-        stroke="#0A1D3D"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {/* D-Pad */}
-      <path
-        d="M12 21V29M8 25H16"
-        stroke="#0A1D3D"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-      />
-      {/* Action Buttons */}
-      <circle cx="34" cy="22" r="1.6" fill="#0A1D3D" />
-      <circle cx="38" cy="25" r="1.6" fill="#0A1D3D" />
-      <circle cx="34" cy="28" r="1.6" fill="#0A1D3D" />
-      <circle cx="30" cy="25" r="1.6" fill="#0A1D3D" />
-    </svg>
-  );
-}
 
 function TriangleRulerIcon() {
   return (
@@ -120,7 +86,7 @@ function RocketIcon() {
 export function ForSchoolsObservationsSection() {
   return (
     <section
-      className="relative w-full py-16 lg:py-20 overflow-hidden border-t border-b border-[#0A1D3D]"
+      className="relative w-full py-16 lg:py-20 overflow-hidden"
       style={{ backgroundColor: "#F3EBFF" }}
     >
       <div className="max-w-[1152px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
@@ -162,9 +128,16 @@ export function ForSchoolsObservationsSection() {
 
         {/* ================= MAIN HEADING ================= */}
         <div className="relative w-full flex flex-col items-center text-center mb-12 sm:mb-14">
-          {/* Game controller doodle on the left of title */}
-          <div className="hidden md:block absolute left-2 lg:left-8 top-1">
-            <GameControllerDoodle />
+          {/* Animated Game Remote GIF on the left of title */}
+          <div className="hidden md:block absolute left-2 lg:left-8 -top-3 w-16 h-16 pointer-events-none select-none">
+            <Image
+              src={encodeURI("/gif/game remote.gif")}
+              alt="Animated game remote"
+              width={64}
+              height={64}
+              className="object-contain"
+              unoptimized
+            />
           </div>
 
           <h2
@@ -207,7 +180,7 @@ export function ForSchoolsObservationsSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7 w-full">
           {/* ---------------- CARD 1: Playful Discovery ---------------- */}
           <div
-            className="flex flex-col justify-between rounded-[24px] p-6 sm:p-7 border-[1.5px] border-[#0A1D3D] transition-transform duration-200 hover:-translate-y-1"
+            className="flex flex-col justify-between rounded-[24px] p-6 sm:p-7  transition-transform duration-200 hover:-translate-y-1"
             style={{
               backgroundColor: "rgba(234, 246, 255, 0.8)",
               boxShadow: "6px 6px 0px 0px #0A1D3D",
@@ -299,7 +272,7 @@ export function ForSchoolsObservationsSection() {
 
           {/* ---------------- CARD 2: Everyday Support ---------------- */}
           <div
-            className="flex flex-col justify-between rounded-[24px] p-6 sm:p-7 border-[1.5px] border-[#0A1D3D] transition-transform duration-200 hover:-translate-y-1"
+            className="flex flex-col justify-between rounded-[24px] p-6 sm:p-7  transition-transform duration-200 hover:-translate-y-1"
             style={{
               backgroundColor: "rgba(232, 249, 240, 0.8)",
               boxShadow: "6px 6px 0px 0px #0A1D3D",
@@ -391,7 +364,7 @@ export function ForSchoolsObservationsSection() {
 
           {/* ---------------- CARD 3: Joyful Exploration ---------------- */}
           <div
-            className="flex flex-col justify-between rounded-[24px] p-6 sm:p-7 border-[1.5px] border-[#0A1D3D] transition-transform duration-200 hover:-translate-y-1"
+            className="flex flex-col justify-between rounded-[24px] p-6 sm:p-7  transition-transform duration-200 hover:-translate-y-1"
             style={{
               backgroundColor: "rgba(255, 240, 246, 0.8)",
               boxShadow: "6px 6px 0px 0px #0A1D3D",

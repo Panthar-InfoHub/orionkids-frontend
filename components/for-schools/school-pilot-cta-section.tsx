@@ -122,7 +122,7 @@ export function SchoolPilotCtaSection() {
     setGrades((prev) => (prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]));
 
   return (
-    <section className="w-full bg-[#FFF0F6] py-10 lg:py-14 border-b border-[#0A1D3D]">
+    <section className="w-full bg-[#FFF0F6] py-10 lg:py-14">
       <div className="mx-auto w-full max-w-[1024px] px-4 sm:px-6 lg:px-0">
         <div
           className="relative overflow-hidden rounded-[24px] bg-[#0E1C32] px-5 py-8 sm:px-8 sm:py-10 lg:min-h-[535.5px] lg:py-14 lg:pl-14 lg:pr-16"
@@ -150,9 +150,9 @@ export function SchoolPilotCtaSection() {
                   style={{
                     fontFamily: SPACE,
                     fontWeight: 700,
-                    fontSize: "10.5px",
-                    lineHeight: "14px",
-                    letterSpacing: "0.6px",
+                    fontSize: "12px",
+                    lineHeight: "16px",
+                    letterSpacing: "0.72px",
                     textTransform: "uppercase" as const,
                     color: "#0A1D3D",
                   }}
@@ -173,14 +173,14 @@ export function SchoolPilotCtaSection() {
                 >
                   Bring Playful
                   <br />
-                  Discovery to
+                  Discovery To
                   <br />
                   Your School 🏫
                 </h2>
 
                 {/* Paragraph */}
                 <p
-                  className="mt-1.5 max-w-[358px] text-[#E2E8F0]"
+                  className="mt-1.5 max-w-[358px] text-[#B9C7E4]"
                   style={{
                     fontFamily: JAKARTA,
                     fontWeight: 500,
@@ -197,11 +197,11 @@ export function SchoolPilotCtaSection() {
               {/* Explore card */}
               <div
                 className="w-full max-w-[358px] rounded-[16px] p-5"
-                style={{ backgroundColor: "rgba(255,255,255,0.09)" }}
+                style={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
               >
                 <div
                   className="mb-2.5 flex items-center gap-2 text-[#65DCAA]"
-                  style={{ fontFamily: JAKARTA, fontWeight: 700, fontSize: "13px", lineHeight: "18px" }}
+                  style={{ fontFamily: JAKARTA, fontWeight: 700, fontSize: "13px", lineHeight: "20px" }}
                 >
                   <CalendarIcon />
                   <span>Explore a School Pilot</span>
@@ -231,7 +231,7 @@ export function SchoolPilotCtaSection() {
                 className="mb-3 text-[20px] sm:text-[22px] text-[#0A1D3D]"
                 style={{
                   fontFamily: JAKARTA,
-                  fontWeight: 800,
+                  fontWeight: 700,
                   lineHeight: "28px",
                   letterSpacing: "-0.02em",
                 }}
@@ -310,7 +310,7 @@ export function SchoolPilotCtaSection() {
                       type="button"
                       aria-pressed={on}
                       onClick={() => toggleGrade(g)}
-                      className="relative flex h-[33px] w-[114px] items-center justify-center rounded-[10px] bg-[#F6F8FB] text-[#0A1D3D] cursor-pointer select-none transition-colors hover:bg-[#EEF2F6]"
+                      className="relative flex h-[33px] w-[114px] items-center justify-center rounded-[10px] bg-[#F7FBFF] text-[#0A1D3D] cursor-pointer select-none transition-colors hover:bg-[#EEF2F6]"
                       style={{ fontFamily: JAKARTA, fontWeight: 500, fontSize: "13px", lineHeight: "18px" }}
                     >
                       <span className="absolute left-[8px] top-[11px]">{on ? <CheckIcon /> : <CircleIcon />}</span>
@@ -327,7 +327,7 @@ export function SchoolPilotCtaSection() {
                 style={{
                   fontFamily: JAKARTA,
                   fontWeight: 800,
-                  fontSize: "16px",
+                  fontSize: "15px",
                   lineHeight: "24px",
                   boxShadow: "4px 4px 0 0 #0E1C32",
                 }}

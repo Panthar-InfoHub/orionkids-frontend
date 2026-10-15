@@ -31,7 +31,7 @@ export function EverydaySupportSection() {
               </div>
 
               {/* Main Photo Card */}
-              <div className="relative z-10 w-full aspect-[1/0.92] sm:aspect-[1/0.88] rounded-[32px] sm:rounded-[36px] overflow-hidden border-2 border-[#0A1D3D] shadow-[4px_6px_0px_0px_#0A1D3D] bg-slate-100">
+              <div className="relative z-10 w-full aspect-[1/0.92] sm:aspect-[1/0.88] rounded-[32px] sm:rounded-[36px] overflow-hidden   bg-slate-100">
                 <Image
                   src={encodeURI("/images/child with laptop.jpg")}
                   alt="Child interacting with laptop learning activity"
@@ -45,7 +45,7 @@ export function EverydaySupportSection() {
                 {/* Floating Badge 1: BLAST OFF! (Top Right) */}
                 <div className="absolute top-[20px] right-3 sm:right-auto sm:left-[417.3px] z-20">
                   <div
-                    className="inline-flex items-center gap-1.5 px-[14px] py-[8px] h-[31px] bg-[#D8F3FF] text-[#0A1D3D] rounded-[14px] border-2 border-[#0A1D3D] shadow-[2px_3px_0px_0px_#0A1D3D] -rotate-[5deg] hover:rotate-0 transition-transform cursor-pointer select-none whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 px-[10px] py-[8px] h-[31px] bg-[#D8F3FF] text-[#0A1D3D] rounded-[14px] border-2 border-[#0A1D3D] shadow-[2px_3px_0px_0px_#0A1D3D] -rotate-[-5deg] hover:rotate-0 transition-transform cursor-pointer select-none whitespace-nowrap"
                     style={{
                       fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                     }}
