@@ -5,128 +5,80 @@ import Image from "next/image";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const INTER = "var(--font-inter), 'Inter', sans-serif";
-const NAVY = "#0A1D3D";
-const HAND = "'Segoe Print', 'Comic Sans MS', 'Bradley Hand', cursive";
 
 // OrionKids logo
 const LOGO_SRC = "/svg/Logo.svg";
 
+/* ------------------------------------------------------------------ */
+/*  Doodle wall with Polaroid cards from /public/footer-images         */
+/* ------------------------------------------------------------------ */
 
-/*  Doodle wall                                                         */
+type CardSpec = {
+  x: number;
+  y: number;
+  rot: number;
+  imageSrc?: string;
+  label?: string;
+  author?: string;
+  isSpecialFrame?: boolean;
+};
 
-type DoodleKind =
-  | "star" | "smile" | "loop" | "tent" | "plane" | "people" | "yo" | "heart"
-  | "hello" | "thanks" | "flower" | "wow" | "cloud" | "names" | "gilar"
-  | "spiral" | "redheart" | "caret" | "scribble" | "fener";
+// Compact Strip dimensions: Width 1350px, Height 205px (eliminating huge empty gap)
+const STRIP_W = 1350;
+const STRIP_H = 205;
 
-/** Tiny hand-drawn doodles (inline SVG, 100 x 100 canvas). */
-function Doodle({ kind }: { kind: DoodleKind }) {
-  const s = { fill: "none", stroke: "#1f2937", strokeWidth: 3, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
-  const t = { fontFamily: HAND, fill: "#374151" };
-  let body: React.ReactNode = null;
-  switch (kind) {
-    case "star":
-      body = <path d="M50 22 L58 42 L80 44 L63 58 L68 80 L50 68 L32 80 L37 58 L20 44 L42 42 Z" fill="#FCD34D" stroke="#F59E0B" strokeWidth={3} strokeLinejoin="round" />;
-      break;
-    case "smile":
-      body = (<><circle cx="42" cy="52" r="24" {...s} /><circle cx="34" cy="46" r="2.5" fill="#1f2937" /><circle cx="50" cy="46" r="2.5" fill="#1f2937" /><path d="M32 58 Q42 68 52 58" {...s} /><path d="M72 40 L76 66 M66 44 L76 66 M82 44 L76 66" stroke="#F59E0B" strokeWidth={3} strokeLinecap="round" fill="none" /></>);
-      break;
-    case "loop":
-      body = <path d="M30 60 C20 40 55 25 65 45 C75 65 40 78 38 55 C36 40 58 40 56 52" {...s} />;
-      break;
-    case "tent":
-      body = <path d="M50 24 L22 76 L78 76 Z M50 24 L50 76 M38 76 L50 52 L62 76" {...s} />;
-      break;
-    case "plane":
-      body = (<><path d="M14 52 L86 52 M22 62 L78 62" {...s} /><path d="M26 30 L70 74 M70 30 L26 74" stroke="#DC2626" strokeWidth={4} strokeLinecap="round" fill="none" /></>);
-      break;
-    case "people":
-      body = (<>{[22, 42, 62, 82].map((x) => (<g key={x}><circle cx={x} cy="38" r="5" {...s} strokeWidth={2} /><path d={`M${x} 43 V60 M${x - 8} 50 H${x + 8} M${x} 60 L${x - 6} 74 M${x} 60 L${x + 6} 74`} {...s} strokeWidth={2} /></g>))}<path d="M14 82 H86" {...s} strokeWidth={2} stroke="#EF4444" /></>);
-      break;
-    case "yo":
-      body = <text x="14" y="64" fontSize="42" {...t}>YO!</text>;
-      break;
-    case "heart":
-      body = (<><path d="M50 74 C20 54 24 30 40 34 C46 36 50 42 50 42 C50 42 54 36 60 34 C76 30 80 54 50 74 Z" fill="#F9A8D4" stroke="#EC4899" strokeWidth={3} strokeLinejoin="round" /><path d="M34 40 C38 36 44 38 46 44" stroke="#60A5FA" strokeWidth={3} fill="none" strokeLinecap="round" /></>);
-      break;
-    case "hello":
-      body = <text x="8" y="60" fontSize="30" fill="#34D399" fontFamily={HAND}>Hello</text>;
-      break;
-    case "thanks":
-      body = (<><text x="8" y="40" fontSize="24" {...t}>hi thanks</text><text x="8" y="66" fontSize="24" {...t}>for wr</text></>);
-      break;
-    case "flower":
-      body = (<><circle cx="40" cy="38" r="9" fill="#F9A8D4" stroke="#EC4899" strokeWidth={2} /><circle cx="40" cy="38" r="3" fill="#FCD34D" /><path d="M40 47 C40 62 36 70 30 78 M40 60 C54 58 62 48 66 38 C54 38 44 48 40 60" stroke="#22C55E" strokeWidth={3} fill="none" strokeLinecap="round" /></>);
-      break;
-    case "wow":
-      body = (<><text x="8" y="44" fontSize="24" {...t}>WOW</text><path d="M60 54 C48 46 50 38 56 40 C60 41 60 44 60 44 C60 44 62 40 66 40 C72 38 72 48 60 54 Z" fill="#FDA4AF" stroke="#E11D48" strokeWidth={2} /></>);
-      break;
-    case "cloud":
-      body = <path d="M30 70 C16 70 16 48 32 48 C32 32 56 30 62 46 C78 44 82 70 66 70 Z" {...s} />;
-      break;
-    case "names":
-      body = (<><text x="6" y="34" fontSize="20" {...t}>Sya Jan</text><text x="30" y="58" fontSize="20" {...t}>Nama</text><text x="14" y="82" fontSize="20" {...t}>Jkw</text></>);
-      break;
-    case "gilar":
-      body = <text x="10" y="58" fontSize="34" fontStyle="italic" {...t}>Gilar</text>;
-      break;
-    case "spiral":
-      body = <path d="M52 20 C30 24 28 44 48 46 C70 48 66 70 44 72 C30 74 26 62 40 60 M62 30 L58 78" {...s} />;
-      break;
-    case "redheart":
-      body = <path d="M50 76 C16 54 24 24 42 30 C48 32 50 38 50 38 C50 38 52 32 58 30 C76 24 84 54 50 76 Z" fill="#EF4444" />;
-      break;
-    case "caret":
-      body = <path d="M40 60 L52 46 L62 62" {...s} strokeWidth={2.5} />;
-      break;
-    case "scribble":
-      body = <path d="M24 56 C28 28 62 26 70 46 C76 62 52 74 42 60 C34 48 54 42 60 54 M44 40 C50 30 64 34 62 44" {...s} />;
-      break;
-    case "fener":
-      body = (<><text x="4" y="40" fontSize="26" fill="#60A5FA" fontFamily={HAND}>Fener</text><text x="4" y="72" fontSize="26" fill="#34D399" fontFamily={HAND}>bahce</text></>);
-      break;
-  }
-  return (
-    <svg viewBox="0 0 100 100" className="w-full h-full" aria-hidden="true">
-      {body}
-    </svg>
-  );
-}
+// Exact Photo Frame specs: Width 80px, Height 92px, Colour #F5F0E8
+const CARD_W = 80;
+const CARD_H = 92;
 
-// Card centres measured from the Figma export. x/y are in px of the 1240 x 200 strip.
-type CardSpec = { x: number; y: number; rot: number; kind: DoodleKind };
-const STRIP_W = 1240;
-const STRIP_H = 200;
-const CARD_W = 73;
-const CARD_H = 84;
-
+// Compact card coordinates: Upper row center Y ~ 53px, Lower row center Y ~ 144px
 const CARDS: CardSpec[] = [
-  { x: 42.5, y: 151.5, rot: -90, kind: "star" },
-  { x: 126.5, y: 143, rot: 0, kind: "smile" },
-  { x: 200, y: 85.5, rot: -45, kind: "loop" },
-  { x: 292, y: 143, rot: 0, kind: "tent" },
-  { x: 303, y: 53, rot: 0, kind: "plane" },
-  { x: 385, y: 143.5, rot: 0, kind: "people" },
-  { x: 458, y: 53.5, rot: 0, kind: "yo" },
-  { x: 464.5, y: 144, rot: 0, kind: "heart" },
-  { x: 575.5, y: 151.5, rot: -90, kind: "hello" },
-  { x: 659, y: 143.5, rot: 0, kind: "thanks" },
-  { x: 662, y: 53.5, rot: 0, kind: "flower" },
-  { x: 738, y: 53.5, rot: -2, kind: "wow" },
-  { x: 775, y: 143.5, rot: 0, kind: "cloud" },
-  { x: 820.5, y: 54.5, rot: 9, kind: "names" },
-  { x: 903, y: 77.5, rot: -15, kind: "gilar" },
-  { x: 982.5, y: 154, rot: -90, kind: "spiral" },
-  { x: 990.5, y: 70, rot: 0, kind: "redheart" },
-  { x: 1065.5, y: 143.5, rot: 0, kind: "caret" },
-  { x: 1128.5, y: 73, rot: -45, kind: "scribble" },
-  { x: 1203, y: 143.5, rot: 0, kind: "fener" },
+  // 1. Star (rotated -90deg, lower-left flush)
+  { x: 48, y: 148, rot: -90, imageSrc: "/footer-images/star.jpg", label: "Star doodle" },
+  // 2. Book (upright, bottom row)
+  { x: 138, y: 144, rot: 0, imageSrc: "/footer-images/book.jpg", label: "Book doodle" },
+  // 3. Butterfly (tilted, between book and plant)
+  { x: 218, y: 80, rot: -39.61, imageSrc: "/footer-images/butterfly.jpg", label: "Butterfly doodle" },
+  // 4. Plant (top row above rocket)
+  { x: 330, y: 48, rot: 0, imageSrc: "/footer-images/plant.jpg", label: "Plant doodle" },
+  // 5. Rocket (bottom row below plant)
+  { x: 318, y: 144, rot: 0, imageSrc: "/footer-images/rocket.jpg", label: "Rocket doodle" },
+  // 6. Cubes (bottom row)
+  { x: 419, y: 144, rot: 0, imageSrc: "/footer-images/cubes.jpg", label: "Cubes doodle" },
+  // 7. Boat (top row above planet)
+  { x: 499, y: 48, rot: 0, imageSrc: "/footer-images/boat.jpg", label: "Boat doodle" },
+  // 8. Planet (bottom row below boat)
+  { x: 506, y: 144, rot: 0, imageSrc: "/footer-images/planet.jpg", label: "Planet doodle" },
+  // 9. Dinosaur (rotated -90deg, bottom row)
+  { x: 626, y: 148, rot: -90, imageSrc: "/footer-images/dinasaur.jpg", label: "Dinosaur doodle" },
+  // 10. Puzzle (top row above kite)
+  { x: 721, y: 48, rot: 0, imageSrc: "/footer-images/puzzle.jpg", label: "Puzzle doodle" },
+  // 11. Kite (bottom row below puzzle)
+  { x: 717, y: 144, rot: 0, imageSrc: "/footer-images/kite.jpg", label: "Kite doodle" },
+  // 12. House (top row above tortoise)
+  { x: 803, y: 48, rot: -2, imageSrc: "/footer-images/house.jpg", label: "House doodle" },
+  // 13. Tortoise (bottom row below house)
+  { x: 844, y: 144, rot: 0, imageSrc: "/footer-images/tortoise.jpg", label: "Tortoise doodle" },
+  // 14. Heart (top row, author: "", gold frame)
+  { x: 893, y: 48, rot: 9, imageSrc: "/footer-images/heart.jpg", label: "Heart doodle", isSpecialFrame: true },
+  // 15. Fruit-pencil (tilted between heart and rainbow)
+  { x: 983, y: 72, rot: -15, imageSrc: "/footer-images/fruit-pencil.jpg", label: "Pencil doodle" },
+  // 16. Rainbow (top row above flower)
+  { x: 1078, y: 60, rot: 0, imageSrc: "/footer-images/rainbow.jpg", label: "Rainbow doodle" },
+  // 17. Flower (rotated -90deg, bottom row below rainbow)
+  { x: 1070, y: 150, rot: -90, imageSrc: "/footer-images/flower.jpg", label: "Flower doodle" },
+  // 18. Fish (bottom row)
+  { x: 1160, y: 144, rot: 0, imageSrc: "/footer-images/fish.jpg", label: "Fish doodle" },
+  // 19. Stars (tilted between fish and telescope)
+  { x: 1230, y: 68, rot: -30, imageSrc: "/footer-images/stars.jpg", label: "Stars doodle" },
+  // 20. Telescope (far right, bottom row)
+  { x: 1325, y: 144, rot: 0, imageSrc: "/footer-images/telescope.jpg", label: "Telescope doodle" },
 ];
 
 function DoodleCard({ spec }: { spec: CardSpec }) {
   return (
     <div
-      className="absolute"
+      className="absolute transition-transform hover:scale-110 hover:z-20 cursor-pointer"
       style={{
         left: `${(spec.x / STRIP_W) * 100}%`,
         top: `${(spec.y / STRIP_H) * 100}%`,
@@ -135,156 +87,253 @@ function DoodleCard({ spec }: { spec: CardSpec }) {
         transform: `translate(-50%, -50%) rotate(${spec.rot}deg)`,
       }}
     >
+      {/* Photo Frame: Width 80px, Height 92px, Colour #F5F0E8
+          Exact Figma Drop Shadow: X: 0, Y: 3, Blur: 14, Spread: 0, #000000 22%
+      */}
       <div
-        className="w-full h-full flex flex-col items-center bg-[#F5F0E8]"
+        className={`relative w-full h-full rounded-[2px] overflow-hidden ${
+          spec.isSpecialFrame
+            ? "bg-[#F5F0E8] border border-[#D4AF37]/70"
+            : "bg-[#F5F0E8] border border-white/60"
+        }`}
         style={{
-          borderRadius: "5%",
-          padding: "8% 8% 0",
-          boxShadow: "0 1px 2px rgba(10,29,61,0.18), 0 4px 10px rgba(10,29,61,0.10)",
+
+          boxShadow: "0px 3px 14px 0px rgba(0, 0, 0, 0.22)",
         }}
       >
-        <div className="w-full bg-[#F6F6F6] overflow-hidden" style={{ aspectRatio: "1 / 1", borderRadius: "3%" }}>
-          <Doodle kind={spec.kind} />
-        </div>
-        <span
-          className="flex-1 flex items-center text-[#A39B8E]"
-          style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: "0.5cqw", lineHeight: 1 }}
+        {/* Image: Width 70px, Height 54px, Top 5px, Centered horizontally (Left 5px) */}
+        <div
+          className="absolute overflow-hidden bg-white rounded-[1px]"
+          style={{
+            top: `${(5 / CARD_H) * 100}%`,
+            left: `${(5 / CARD_W) * 100}%`,
+            width: `${(70 / CARD_W) * 100}%`,
+            height: `${(54 / CARD_H) * 100}%`,
+          }}
         >
-          Anonymous
-        </span>
+          {spec.imageSrc && (
+            <Image
+              src={spec.imageSrc}
+              alt={spec.label || "Children doodle"}
+              fill
+              sizes="(max-width: 768px) 70px, 90px"
+              className="object-cover object-center"
+            />
+          )}
+        </div>
+
+        {/* Anonymous: Width 70px, Height 13px, Font Georgia 400 Regular 9px, Line height 9px, #71717A */}
+        <div
+          className="absolute flex items-center justify-center text-center"
+          style={{
+            bottom: `${(8 / CARD_H) * 100}%`,
+            left: `${(5 / CARD_W) * 100}%`,
+            width: `${(70 / CARD_W) * 100}%`,
+            height: `${(13 / CARD_H) * 100}%`,
+          }}
+        >
+          <span
+            className="truncate select-none"
+            style={{
+              fontFamily: spec.isSpecialFrame
+                ? "'Brush Script MT', cursive, Georgia, serif"
+                : "Georgia, 'Times New Roman', serif",
+              fontWeight: 400,
+              fontSize: "clamp(6px, 0.725cqw, 9px)",
+              lineHeight: "9px",
+              letterSpacing: "0px",
+              color: spec.isSpecialFrame ? "#8B5A2B" : "#71717A",
+              textAlign: "center",
+            }}
+          >
+            {spec.author || "Anonymous"}
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/*  Link columns                                                        */
+/*  External Arrow Icon (↗)                                            */
 /* ------------------------------------------------------------------ */
 
-const ExternalArrow = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" className="shrink-0">
-    <path d="M3 9L9 3M4.5 3H9v4.5" stroke="#fff" strokeOpacity="0.9" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+const ArrowDiagonal = () => (
+  <svg
+    width="11"
+    height="11"
+    viewBox="0 0 12 12"
+    fill="none"
+    aria-hidden="true"
+    className="inline-block ml-1 shrink-0"
+  >
+    <path
+      d="M3.5 8.5L8.5 3.5M4.5 3.5H8.5V7.5"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 
-const linkClass =
-  "inline-flex items-center gap-1.5 text-[14px] leading-5 uppercase text-[#0A1D3D] hover:underline underline-offset-4";
-
-function LinkColumn({
-  title,
-  links,
-}: {
-  title: string;
-  links: { label: string; href: string; external?: boolean }[];
-}) {
-  return (
-    <div className="flex flex-col gap-[14px]">
-      <span
-        className="text-[14px] leading-5 uppercase text-[#6739B7] mb-[3px]"
-        style={{ fontFamily: INTER }}
-      >
-        {title}
-      </span>
-      {links.map((l) => (
-        <a key={l.label} href={l.href} className={linkClass} style={{ fontFamily: INTER }}>
-          <span>{l.label}</span>
-          {l.external && <ExternalArrow />}
-        </a>
-      ))}
-    </div>
-  );
-}
-
 /* ------------------------------------------------------------------ */
-/*  Footer                                                              */
+/*  Footer Component                                                    */
 /* ------------------------------------------------------------------ */
 
 export function FooterSection() {
   return (
     <footer
       id="footer-section"
-      className="relative w-full bg-[#DAF5E9] text-[#0A1D3D] overflow-hidden select-none pt-10 pb-[27px] scroll-mt-16"
+      className="relative w-full bg-[#DAF5E9] text-[#0A1D3D] overflow-hidden select-none pt-10 sm:pt-12 pb-8 scroll-mt-16"
     >
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[44px]">
-        {/* Divider */}
-        <div className="w-full border-t-[1.5px] border-[#CFE9DD]" />
-
-        {/* ================= TOP: tagline + links ================= */}
-        <div className="mt-10 lg:mt-[60px] flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10">
-          {/* Left: pill, headline, logo */}
-          <div className="flex flex-col items-start">
+        {/* ================= TOP: Tagline + Links matching Figma ================= */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 lg:gap-10">
+          {/* Left: Pill, Headline, Logo */}
+          <div className="flex flex-col items-start w-full lg:max-w-[850px]">
+            {/* Pill: • WHERE EVERY KIDS IS A STAR */}
             <div
-              className="inline-flex items-center gap-2 h-8 pl-[11px] pr-[14px] rounded-full border border-white/75 bg-white/25 text-[12px] uppercase text-[#0A1D3D] whitespace-nowrap"
-              style={{ fontFamily: INTER }}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#0A1D3D] text-[#0A1D3D] whitespace-nowrap uppercase"
+              style={{
+                backgroundColor: "#DAF5E9",
+                fontFamily: INTER,
+                fontWeight: 700,
+                fontSize: "14px",
+                lineHeight: "17.5px",
+                letterSpacing: "0px",
+              }}
             >
-              <span className="w-[7px] h-[7px] rounded-full bg-[#E0D54F] shrink-0" />
-              <span>Where every kids is a star</span>
+              <span className="w-2 h-2 rounded-full bg-[#E0D54F] shrink-0" />
+              <span>WHERE EVERY KIDS IS A STAR</span>
             </div>
 
+            {/* Headline */}
             <h2
-              className="mt-6 text-[#0A1D3D]"
+              className="mt-5 text-[#0A1D3D] font-extrabold text-[28px] sm:text-[36px] lg:text-[44px] leading-tight lg:leading-[55px] tracking-[-1px] lg:tracking-[-2px]"
               style={{
                 fontFamily: JAKARTA,
                 fontWeight: 800,
-                fontSize: "clamp(30px, 6vw, 46px)",
-                lineHeight: "120%",
-                letterSpacing: "-0.065em",
+                color: "#0A1D3D",
               }}
             >
-              <span className="block">Before you go, doodle something fun!</span>
-              <span className="block">Tap the star to start your adventure.</span>
+              <span className="block whitespace-normal lg:whitespace-nowrap">Before You Go, Doodle Something Fun!</span>
+              <span className="block whitespace-normal lg:whitespace-nowrap">Tap The Star To Start Your Adventure.</span>
             </h2>
 
+            {/* OrionKids Logo */}
             <Image
               src={LOGO_SRC}
               alt="OrionKids — Where Every Kid Is a Star"
-              width={141}
-              height={74}
+              width={145}
+              height={70}
               unoptimized
-              className="mt-[27px] w-[141px] h-auto"
+              className="mt-5 w-[145px] h-auto"
             />
           </div>
 
-          {/* Right: link columns */}
-          <nav aria-label="Footer" className="flex gap-x-12">
-            <LinkColumn
-              title="(Explore)"
-              links={[
-                { label: "Our approach", href: "#" },
-                { label: "For school", href: "#" },
-                { label: "For parents", href: "#" },
-                { label: "Blog", href: "#" },
-              ]}
-            />
-            <LinkColumn
-              title="(Contact)"
-              links={[
-                { label: "LinkedIn", href: "#", external: true },
-                { label: "Email", href: "#", external: true },
-                { label: "Instagram", href: "#", external: true },
-              ]}
-            />
+          {/* Right: Clean 2-column links matching Figma */}
+          <nav
+            aria-label="Footer Navigation"
+            className="flex items-start gap-[40px] pt-2 lg:pt-4 shrink-0"
+            style={{ fontFamily: INTER }}
+          >
+            {/* Column 1: Main Pages */}
+            <div
+              className="flex flex-col justify-between text-[#0A1D3D]"
+              style={{
+                width: "118px",
+                height: "166px",
+                fontFamily: INTER,
+                fontWeight: 700,
+                fontSize: "15px",
+                lineHeight: "21.75px",
+                letterSpacing: "-0.5px",
+              }}
+            >
+              <a href="#approach" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+                OUR APPROACH
+              </a>
+              <a href="#schools" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+                FOR SCHOOL
+              </a>
+              <a href="#parents" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+                FOR PARENTS
+              </a>
+              <a href="#blogs" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+                BLOGS
+              </a>
+            </div>
+
+            {/* Column 2: Social / External Links with ↗ */}
+            <div
+              className="flex flex-col text-[#0A1D3D]"
+              style={{
+                width: "107px",
+                height: "166px",
+                fontFamily: INTER,
+                fontWeight: 700,
+                fontSize: "15px",
+                lineHeight: "21.75px",
+                letterSpacing: "-0.5px",
+                rowGap: "26.33px",
+              }}
+            >
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase"
+              >
+                <span>LINKEDIN</span>
+                <ArrowDiagonal />
+              </a>
+              <a
+                href="mailto:contact@orionkids.in"
+                className="inline-flex items-center hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase"
+              >
+                <span>EMAIL</span>
+                <ArrowDiagonal />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase"
+              >
+                <span>INSTAGRAM</span>
+                <ArrowDiagonal />
+              </a>
+            </div>
           </nav>
         </div>
 
-        {/* ================= DOODLE WALL (scales as one piece) ================= */}
+        {/* ================= DOODLE WALL: Compact container without huge gap ================= */}
         <div
-          className="relative w-full mt-4"
-          style={{ containerType: "inline-size", aspectRatio: `${STRIP_W} / ${STRIP_H}` }}
-          aria-hidden="true"
+          className="relative w-full max-w-[1350px] mx-auto mt-4 sm:mt-6"
+          style={{
+            containerType: "inline-size",
+            aspectRatio: `${STRIP_W} / ${STRIP_H}`,
+          }}
+          aria-label="Children's creative doodles gallery"
         >
           {CARDS.map((c, i) => (
             <DoodleCard key={i} spec={c} />
           ))}
         </div>
 
-        {/* ================= LEGAL ROW ================= */}
+        {/* ================= LEGAL ROW matching Figma screenshot ================= */}
         <div
-          className="mt-[55px] lg:px-[44px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[10px] leading-3 text-[#0A1D3D]/85"
+          className="mt-8 sm:mt-12 pt-4 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] sm:text-[12px] text-[#0A1D3D] font-medium text-center md:text-left"
           style={{ fontFamily: INTER }}
         >
           <span>© 2026 OrionKids Digital Solutions Pvt. Ltd.</span>
-          <span>Assessment insights for learning and development. Not clinical diagnosis.</span>
+          <span className="text-[#0A1D3D]">
+            Design &amp; Development by PantharInfoHub Pvt. Ltd.
+          </span>
+          <span className="text-[#0A1D3D]">
+            Copyright 2026 • All Rights Reserved
+          </span>
         </div>
       </div>
     </footer>

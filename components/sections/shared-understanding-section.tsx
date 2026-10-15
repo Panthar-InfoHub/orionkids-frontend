@@ -84,8 +84,12 @@ export function SharedUnderstandingSection() {
   return (
     <section
       id="shared-understanding-section"
-      className="relative w-full bg-[#FFF0F6] text-[#0A1D3D] py-10 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden select-none scroll-mt-16"
+      className="relative w-full bg-[#E6F0FF] text-[#0A1D3D] py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-8 overflow-hidden select-none scroll-mt-16"
     >
+      {/* Soft ambient corner glows (#FFF6D9) matching Figma layout */}
+      <div className="absolute -top-24 -right-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl pointer-events-none opacity-70" />
+      <div className="absolute -bottom-24 -left-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl pointer-events-none opacity-70" />
+
       <div className="relative z-10 w-full max-w-[1224px] mx-auto flex flex-col gap-6 lg:gap-8">
         {/* ================= HEADER ROW ================= */}
         <div className="flex flex-col gap-1.5 text-left w-full">
@@ -101,7 +105,7 @@ export function SharedUnderstandingSection() {
               className="text-2xl sm:text-3xl lg:text-[38px] font-[800] text-[#0A1D3D] tracking-[-0.8px] flex items-center gap-2.5"
               style={{ fontFamily: JAKARTA, lineHeight: "115%" }}
             >
-              <span>One child. A shared understanding.</span>
+              <span>One Child. A Shared Understanding</span>
               <span className="text-2xl lg:text-3xl">🤝</span>
             </h2>
 
@@ -124,8 +128,8 @@ export function SharedUnderstandingSection() {
         {/* ================= DUAL CARDS ROW ================= */}
         <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6 lg:gap-[24px]">
           {/* ================= CARD 1: FOR SCHOOLS & EDUCATORS ================= */}
-          {/* Figma: 600 wide, radius 24, border 2, padding 20, gap 12, fill #E8F9F0 */}
-          <div className="relative overflow-hidden w-full lg:w-[600px] min-h-[361px] bg-[#E8F9F0] rounded-[24px] border-2 border-[#0A1D3D] shadow-[5px_6px_0px_0px_#0A1D3D] p-5 pt-[74px] flex flex-col justify-between gap-3 text-left transition-transform hover:-translate-y-0.5">
+          {/* Figma: 600 wide, radius 24, border 2, padding 20, fill #E8F9F0 */}
+          <div className="relative overflow-hidden w-full lg:w-[600px] bg-[#E8F9F0] rounded-[24px] border-2 border-[#0A1D3D] shadow-[5px_6px_0px_0px_#0A1D3D] p-5 pt-[70px] sm:pt-[74px] pb-5 flex flex-col justify-between gap-6 text-left transition-transform hover:-translate-y-0.5">
             <CornerBadge
               emoji="🎒"
               label="FOR SCHOOLS & EDUCATORS"
@@ -144,11 +148,11 @@ export function SharedUnderstandingSection() {
                   lineHeight: "115%",
                 }}
               >
-                For schools &amp; educators
+                For Schools &amp; Educators
               </h3>
 
               <ul
-                className="flex flex-col gap-0 text-[#4B5563] list-none pl-0 m-0"
+                className="flex flex-col gap-2 text-[#4B5563] list-none pl-0 m-0"
                 style={{
                   fontFamily: INTER,
                   fontWeight: 400,
@@ -157,13 +161,7 @@ export function SharedUnderstandingSection() {
                 }}
               >
                 <Bullet>
-                  Structured assessment insights improve classroom observations by offering a clearer view of each student&apos;s needs.
-                </Bullet>
-                <Bullet>
-                  This method helps in customizing individual support and promotes a more inclusive learning environment.
-                </Bullet>
-                <Bullet>
-                  Schools can boost student engagement, enhance academic performance, and address learning gaps early.
+                  Structured assessments allow teachers to identify each student&apos;s needs, enabling tailored support. This fosters better learning for everyone and helps teachers detect challenges early!
                 </Bullet>
               </ul>
             </div>
@@ -173,7 +171,7 @@ export function SharedUnderstandingSection() {
                 className="text-[13px] font-medium text-[#374151]"
                 style={{ fontFamily: INTER }}
               >
-                Understand learners · Plan support · Follow progress
+                Understand Learners · Plan Support · Follow Progress
               </span>
 
               <button
@@ -188,7 +186,7 @@ export function SharedUnderstandingSection() {
           </div>
 
           {/* ================= CARD 2: FOR PARENTS ================= */}
-          <div className="relative overflow-hidden w-full lg:w-[600px] min-h-[361px] bg-[#F0E6FF] rounded-[24px] border-2 border-[#0A1D3D] shadow-[5px_6px_0px_0px_#0A1D3D] p-5 pt-[74px] flex flex-col justify-between gap-3 text-left transition-transform hover:-translate-y-0.5">
+          <div className="relative overflow-hidden w-full lg:w-[600px] bg-[#F0E6FF] rounded-[24px] border-2 border-[#0A1D3D] shadow-[5px_6px_0px_0px_#0A1D3D] p-5 pt-[70px] sm:pt-[74px] pb-5 flex flex-col justify-between gap-6 text-left transition-transform hover:-translate-y-0.5">
             <CornerBadge
               emoji="✨"
               label="FOR PARENTS & FAMILIES"
@@ -207,11 +205,11 @@ export function SharedUnderstandingSection() {
                   lineHeight: "115%",
                 }}
               >
-                For parents
+                For Parents
               </h3>
 
               <ul
-                className="flex flex-col gap-0 text-[#4B5563] list-none pl-0 m-0"
+                className="flex flex-col gap-2 text-[#4B5563] list-none pl-0 m-0"
                 style={{
                   fontFamily: INTER,
                   fontWeight: 400,
@@ -220,8 +218,6 @@ export function SharedUnderstandingSection() {
                 }}
               >
                 <Bullet>Encourage curiosity by asking open-ended questions during playtime.</Bullet>
-                <Bullet>Create a routine that includes time for reading together every day.</Bullet>
-                <Bullet>Provide a variety of learning materials, such as books, puzzles, and art supplies.</Bullet>
                 <Bullet>Celebrate small achievements to boost your child&apos;s confidence.</Bullet>
               </ul>
             </div>
@@ -231,7 +227,7 @@ export function SharedUnderstandingSection() {
                 className="text-[13px] font-medium text-[#374151]"
                 style={{ fontFamily: INTER }}
               >
-                Recognize strengths · Find next steps · Grow together
+                Recognize Strengths · Find Next Steps · Grow Together
               </span>
 
               <button

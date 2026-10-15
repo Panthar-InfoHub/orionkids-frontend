@@ -53,7 +53,7 @@ export function ChildJourneySection() {
                 textTransform: "uppercase",
               }}
             >
-              <span className="text-xs">🧭</span>
+              <span className="text-xs">🗺️</span>
               <span>A THOUGHTFUL JOURNEY · NOT A ONE-OFF SCORE</span>
             </div>
 
@@ -64,7 +64,7 @@ export function ChildJourneySection() {
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
             >
-              <span>Your child&apos;s journey, step by step.</span>
+              <span>Your Child&apos;s Journey, Step By Step</span>
               <span className="inline-block text-2xl sm:text-3xl lg:text-[32px] select-none">🚀</span>
             </h2>
 
@@ -76,7 +76,7 @@ export function ChildJourneySection() {
                 fontWeight: 400,
               }}
             >
-              From warm-up to play to report — playful and easy to follow.
+              From warm-up to play to report , playful and easy to follow.
             </p>
           </div>
 
@@ -165,17 +165,17 @@ export function ChildJourneySection() {
                 {/* Checkpoint 1: Pink Circle */}
                 <div className="absolute left-[225px] top-[211px] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-20 select-none">
                   <div className="relative w-14 h-14 rounded-full bg-[#FF8CC7] border-[2.5px] border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center">
-                    <svg viewBox="0 0 40 40" className="w-8 h-8" fill="none">
+                    <svg viewBox="0 0 40 40" className="w-10 h-10" fill="none">
                       <path
-                        d="M 20 8 C 20 15 16 18 9 20 C 16 22 20 25 20 32 C 20 25 24 22 31 20 C 24 18 20 15 20 8 Z"
+                        d="M 20 6 C 20 14 15 17 7 20 C 15 23 20 26 20 34 C 20 26 25 23 33 20 C 25 17 20 14 20 6 Z"
                         stroke="#0A1D3D"
-                        strokeWidth="2.4"
+                        strokeWidth="2.6"
                         strokeLinejoin="round"
                         strokeLinecap="round"
                         fill="none"
                       />
-                      <circle cx="12" cy="27" r="1.8" stroke="#0A1D3D" strokeWidth="2.2" fill="none" />
-                      <path d="M 27 10 L 27 15 M 24.5 12.5 L 29.5 12.5" stroke="#0A1D3D" strokeWidth="2.2" strokeLinecap="round" />
+                      <circle cx="10" cy="28.5" r="2" stroke="#0A1D3D" strokeWidth="2.4" fill="none" />
+                      <path d="M 28 8 L 28 14 M 25 11 L 31 11" stroke="#0A1D3D" strokeWidth="2.4" strokeLinecap="round" />
                     </svg>
                     <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#FFD1E3] border-2 border-[#0A1D3D] text-[10px] font-black text-[#0A1D3D] flex items-center justify-center shadow-[1px_1px_0px_#0A1D3D]">
                       1
@@ -186,25 +186,26 @@ export function ChildJourneySection() {
                 {/* Checkpoint 2: Mint/Ice Blue Circle */}
                 <div className="absolute left-[611px] top-[341px] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-20 select-none">
                   <div className="relative w-14 h-14 rounded-full bg-[#E0F2FE] border-[2.5px] border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center">
-                    <svg viewBox="0 0 40 40" className="w-8 h-8" fill="none">
+                    <svg viewBox="0 0 40 40" className="w-10 h-10" fill="none">
                       <rect
-                        x="10"
-                        y="13"
-                        width="20"
-                        height="14"
-                        rx="3.5"
+                        x="6"
+                        y="11"
+                        width="28"
+                        height="18"
+                        rx="4"
                         stroke="#0A1D3D"
-                        strokeWidth="2.4"
+                        strokeWidth="2.6"
                         fill="none"
                       />
                       <path
-                        d="M 16 17 L 16 23 M 13 20 L 19 20"
+                        d="M 14 15.5 L 14 24.5 M 9.5 20 L 18.5 20"
                         stroke="#0A1D3D"
-                        strokeWidth="2.2"
+                        strokeWidth="2.4"
                         strokeLinecap="round"
                       />
-                      <circle cx="24" cy="18.5" r="1" fill="#0A1D3D" />
-                      <circle cx="26" cy="21.5" r="1" fill="#0A1D3D" />
+                      <circle cx="14" cy="20" r="0.8" fill="#0A1D3D" />
+                      <circle cx="23.5" cy="17.5" r="1.3" fill="#0A1D3D" />
+                      <circle cx="27" cy="21.5" r="1.3" fill="#0A1D3D" />
                     </svg>
                     <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#38BDF8] border-2 border-[#0A1D3D] text-[10px] font-black text-white flex items-center justify-center shadow-[1px_1px_0px_#0A1D3D]">
                       2
@@ -223,7 +224,7 @@ export function ChildJourneySection() {
                   }}
                 >
                   <Image
-                    src={encodeURI("/gif/annoying flying bug.gif")}
+                    src={encodeURI("/gif/annoying flying bug.webp")}
                     alt="Animated cartoon character"
                     width={150}
                     height={150}
@@ -235,36 +236,28 @@ export function ChildJourneySection() {
                 {/* Checkpoint 3: Green Circle */}
                 <div className="absolute left-[999px] top-[214px] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-20 select-none">
                   <div className="relative w-14 h-14 rounded-full bg-[#52D8A6] border-[2.5px] border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center">
-                    <svg viewBox="0 0 40 40" className="w-8 h-8" fill="none">
+                    <svg viewBox="0 0 40 40" className="w-10 h-10" fill="none">
                       <rect
-                        x="10"
-                        y="13.5"
-                        width="20"
-                        height="14"
-                        rx="3"
+                        x="6"
+                        y="11"
+                        width="28"
+                        height="18"
+                        rx="3.5"
                         stroke="#0A1D3D"
-                        strokeWidth="2.4"
+                        strokeWidth="2.6"
                         fill="none"
                       />
                       <path
-                        d="M 11 15 L 20 21.5 L 29 15"
+                        d="M 7.5 13 L 20 21.5 L 32.5 13"
                         stroke="#0A1D3D"
-                        strokeWidth="2.4"
+                        strokeWidth="2.6"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         fill="none"
                       />
                     </svg>
-                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#52D8A6] border-2 border-[#0A1D3D] text-[10px] font-black text-[#0A1D3D] flex items-center justify-center shadow-[1px_1px_0px_#0A1D3D]">
-                      <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="none">
-                        <path
-                          d="M 2.5 6.5 L 4.8 8.5 L 9.5 3.5"
-                          stroke="#0A1D3D"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#A8E6CF] border-2 border-[#0A1D3D] text-[10px] font-black text-[#0A1D3D] flex items-center justify-center shadow-[1px_1px_0px_#0A1D3D]">
+                      3
                     </span>
                   </div>
                 </div>
@@ -273,7 +266,7 @@ export function ChildJourneySection() {
                 <div className="absolute right-[32px] top-[299px] -translate-y-1/2 z-30 select-none">
                   <span className="inline-flex items-center justify-center gap-1.5 h-[28px] px-3 bg-[#EAF7EF] text-[#0A1D3D] text-[10.5px] font-black tracking-wider uppercase rounded-[8px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D]">
                     <span>FINISH</span>
-                    <span className="text-xs">🏁</span>
+                    <span className="text-xs">🎉</span>
                   </span>
                 </div>
               </div>
@@ -284,9 +277,9 @@ export function ChildJourneySection() {
                 <div
                   className="absolute top-[276px] left-[110px] w-[290.4px] h-[223.52px] bg-white rounded-[21.12px] border-[1.76px] border-[#0A1D3D] shadow-[3px_4px_0px_0px_#0A1D3D] p-[14.08px] flex flex-col justify-between gap-[7.04px] text-left transition-transform hover:-translate-y-1"
                 >
-                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#FF8CC7] text-[#0A1D3D] rounded-full border border-[#0A1D3D] text-[9.5px] font-black uppercase tracking-wider self-start select-none">
+                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#FFD028] text-[#0A1D3D] rounded-full border border-[#0A1D3D] text-[9.5px] font-black uppercase tracking-wider self-start select-none">
                     <span>LEVEL 01: WARM-UP</span>
-                    <span>🧩</span>
+                    <span>🏁</span>
                   </div>
                   <h3
                     className="text-[#0A1D3D] leading-[19.36px] font-[800]"
@@ -327,9 +320,12 @@ export function ChildJourneySection() {
                 <div
                   className="absolute top-[40px] left-[473px] w-[290.4px] h-[223.52px] bg-white rounded-[21.12px] border-[1.76px] border-[#0A1D3D] shadow-[3px_4px_0px_0px_#0A1D3D] p-[14.08px] flex flex-col justify-between gap-[7.04px] text-left transition-transform hover:-translate-y-1"
                 >
-                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#D5B6FF] text-[#0A1D3D] rounded-full border border-[#0A1D3D] text-[9.5px] font-black uppercase tracking-wider self-start select-none">
-                    <span>LEVEL 02: PLAY THE GAME</span>
-                    <span>🧠</span>
+                  <div className="flex items-center justify-between w-full">
+                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#D5B6FF] text-[#0A1D3D] rounded-full border border-[#0A1D3D] text-[9.5px] font-black uppercase tracking-wider self-start select-none">
+                      <span>LEVEL 02: PLAY THE GAME</span>
+                      <span>🔮</span>
+                    </div>
+                    <span className="text-[18px] leading-none select-none pr-0.5">🤩</span>
                   </div>
                   <h3
                     className="text-[#0A1D3D] leading-[19.36px] font-[800]"
@@ -372,7 +368,7 @@ export function ChildJourneySection() {
                 >
                   <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#65DCAA] text-[#0A1D3D] rounded-full border border-[#0A1D3D] text-[9.5px] font-black uppercase tracking-wider self-start select-none">
                     <span>LEVEL 03: REPORT TO PARENTS</span>
-                    <span>📜</span>
+                    <span>🏆</span>
                   </div>
                   <h3
                     className="text-[#0A1D3D] leading-[19.36px] font-[800]"
@@ -414,7 +410,7 @@ export function ChildJourneySection() {
               <div className="absolute bottom-5 right-6 z-30 select-none">
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1.5 px-5 py-2 bg-[#FF8CC7] text-white text-xs sm:text-sm font-black rounded-full hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none"
+                  className="inline-flex items-center gap-1.5 px-5 py-2 bg-[#FFD028] text-white text-xs sm:text-sm font-black rounded-full hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none"
                   style={{
                     fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                   }}
@@ -461,17 +457,17 @@ export function ChildJourneySection() {
               <div className="relative z-10 flex items-start gap-3 sm:gap-4">
                 {/* Checkpoint 1 Node */}
                 <div className="relative shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#FF8CC7] border-[2.5px] border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center">
-                  <svg viewBox="0 0 40 40" className="w-6 h-6 sm:w-7 sm:h-7" fill="none">
+                  <svg viewBox="0 0 40 40" className="w-8 h-8 sm:w-10 sm:h-10" fill="none">
                     <path
-                      d="M 20 8 C 20 15 16 18 9 20 C 16 22 20 25 20 32 C 20 25 24 22 31 20 C 24 18 20 15 20 8 Z"
+                      d="M 20 6 C 20 14 15 17 7 20 C 15 23 20 26 20 34 C 20 26 25 23 33 20 C 25 17 20 14 20 6 Z"
                       stroke="#0A1D3D"
-                      strokeWidth="2.4"
+                      strokeWidth="2.6"
                       strokeLinejoin="round"
                       strokeLinecap="round"
                       fill="none"
                     />
-                    <circle cx="12" cy="27" r="1.8" stroke="#0A1D3D" strokeWidth="2.2" fill="none" />
-                    <path d="M 27 10 L 27 15 M 24.5 12.5 L 29.5 12.5" stroke="#0A1D3D" strokeWidth="2.2" strokeLinecap="round" />
+                    <circle cx="10" cy="28.5" r="2" stroke="#0A1D3D" strokeWidth="2.4" fill="none" />
+                    <path d="M 28 8 L 28 14 M 25 11 L 31 11" stroke="#0A1D3D" strokeWidth="2.4" strokeLinecap="round" />
                   </svg>
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#FFD1E3] border-2 border-[#0A1D3D] text-[10px] font-black text-[#0A1D3D] flex items-center justify-center shadow-[1px_1px_0px_#0A1D3D]">
                     1
@@ -480,9 +476,9 @@ export function ChildJourneySection() {
 
                 {/* Card 1 Content */}
                 <div className="flex-1 bg-white rounded-[20px] border-2 border-[#0A1D3D] shadow-[3px_4px_0px_0px_#0A1D3D] p-3.5 sm:p-4.5 flex flex-col gap-2 transition-transform hover:-translate-y-0.5">
-                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#FF8CC7] text-[#0A1D3D] rounded-full border border-[#0A1D3D] text-[9.5px] font-black uppercase tracking-wider self-start select-none">
+                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#FFD028] text-[#0A1D3D] rounded-full border border-[#0A1D3D] text-[9.5px] font-black uppercase tracking-wider self-start select-none">
                     <span>LEVEL 01: WARM-UP</span>
-                    <span>🧩</span>
+                    <span>🏁</span>
                   </div>
                   <h3
                     className="text-[#0A1D3D] text-[15px] sm:text-[16px] font-[800] leading-snug"
@@ -514,25 +510,26 @@ export function ChildJourneySection() {
               <div className="relative z-10 flex items-start gap-3 sm:gap-4">
                 {/* Checkpoint 2 Node */}
                 <div className="relative shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#E0F2FE] border-[2.5px] border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center">
-                  <svg viewBox="0 0 40 40" className="w-6 h-6 sm:w-7 sm:h-7" fill="none">
+                  <svg viewBox="0 0 40 40" className="w-8 h-8 sm:w-10 sm:h-10" fill="none">
                     <rect
-                      x="10"
-                      y="13"
-                      width="20"
-                      height="14"
-                      rx="3.5"
+                      x="6"
+                      y="11"
+                      width="28"
+                      height="18"
+                      rx="4"
                       stroke="#0A1D3D"
-                      strokeWidth="2.4"
+                      strokeWidth="2.6"
                       fill="none"
                     />
                     <path
-                      d="M 16 17 L 16 23 M 13 20 L 19 20"
+                      d="M 14 15.5 L 14 24.5 M 9.5 20 L 18.5 20"
                       stroke="#0A1D3D"
-                      strokeWidth="2.2"
+                      strokeWidth="2.4"
                       strokeLinecap="round"
                     />
-                    <circle cx="24" cy="18.5" r="1" fill="#0A1D3D" />
-                    <circle cx="26" cy="21.5" r="1" fill="#0A1D3D" />
+                    <circle cx="14" cy="20" r="0.8" fill="#0A1D3D" />
+                    <circle cx="23.5" cy="17.5" r="1.3" fill="#0A1D3D" />
+                    <circle cx="27" cy="21.5" r="1.3" fill="#0A1D3D" />
                   </svg>
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#38BDF8] border-2 border-[#0A1D3D] text-[10px] font-black text-white flex items-center justify-center shadow-[1px_1px_0px_#0A1D3D]">
                     2
@@ -541,9 +538,12 @@ export function ChildJourneySection() {
 
                 {/* Card 2 Content */}
                 <div className="flex-1 bg-white rounded-[20px] border-2 border-[#0A1D3D] shadow-[3px_4px_0px_0px_#0A1D3D] p-3.5 sm:p-4.5 flex flex-col gap-2 transition-transform hover:-translate-y-0.5 relative">
-                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#D5B6FF] text-[#0A1D3D] rounded-full border border-[#0A1D3D] text-[9.5px] font-black uppercase tracking-wider self-start select-none">
-                    <span>LEVEL 02: PLAY THE GAME</span>
-                    <span>🧠</span>
+                  <div className="flex items-center justify-between w-full">
+                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#D5B6FF] text-[#0A1D3D] rounded-full border border-[#0A1D3D] text-[9.5px] font-black uppercase tracking-wider self-start select-none">
+                      <span>LEVEL 02: PLAY THE GAME</span>
+                      <span>🔮</span>
+                    </div>
+                    <span className="text-[18px] leading-none select-none pr-0.5">🤩</span>
                   </div>
                   <h3
                     className="text-[#0A1D3D] text-[15px] sm:text-[16px] font-[800] leading-snug"
@@ -575,36 +575,28 @@ export function ChildJourneySection() {
               <div className="relative z-10 flex items-start gap-3 sm:gap-4">
                 {/* Checkpoint 3 Node */}
                 <div className="relative shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#52D8A6] border-[2.5px] border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center">
-                  <svg viewBox="0 0 40 40" className="w-6 h-6 sm:w-7 sm:h-7" fill="none">
+                  <svg viewBox="0 0 40 40" className="w-8 h-8 sm:w-10 sm:h-10" fill="none">
                     <rect
-                      x="10"
-                      y="13.5"
-                      width="20"
-                      height="14"
-                      rx="3"
+                      x="6"
+                      y="11"
+                      width="28"
+                      height="18"
+                      rx="3.5"
                       stroke="#0A1D3D"
-                      strokeWidth="2.4"
+                      strokeWidth="2.6"
                       fill="none"
                     />
                     <path
-                      d="M 11 15 L 20 21.5 L 29 15"
+                      d="M 7.5 13 L 20 21.5 L 32.5 13"
                       stroke="#0A1D3D"
-                      strokeWidth="2.4"
+                      strokeWidth="2.6"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       fill="none"
                     />
                   </svg>
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#52D8A6] border-2 border-[#0A1D3D] text-[10px] font-black text-[#0A1D3D] flex items-center justify-center shadow-[1px_1px_0px_#0A1D3D]">
-                    <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="none">
-                      <path
-                        d="M 2.5 6.5 L 4.8 8.5 L 9.5 3.5"
-                        stroke="#0A1D3D"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#A8E6CF] border-2 border-[#0A1D3D] text-[10px] font-black text-[#0A1D3D] flex items-center justify-center shadow-[1px_1px_0px_#0A1D3D]">
+                    3
                   </span>
                 </div>
 
@@ -612,7 +604,7 @@ export function ChildJourneySection() {
                 <div className="flex-1 bg-white rounded-[20px] border-2 border-[#0A1D3D] shadow-[3px_4px_0px_0px_#0A1D3D] p-3.5 sm:p-4.5 flex flex-col gap-2 transition-transform hover:-translate-y-0.5">
                   <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#65DCAA] text-[#0A1D3D] rounded-full border border-[#0A1D3D] text-[9.5px] font-black uppercase tracking-wider self-start select-none">
                     <span>LEVEL 03: REPORT TO PARENTS</span>
-                    <span>📜</span>
+                    <span>🏆</span>
                   </div>
                   <h3
                     className="text-[#0A1D3D] text-[15px] sm:text-[16px] font-[800] leading-snug"
@@ -654,7 +646,7 @@ export function ChildJourneySection() {
                 <div className="flex-1 flex justify-center items-end pb-0">
                   <div className="w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] md:w-[150px] md:h-[150px] relative shrink-0 leading-none pointer-events-none select-none translate-y-[2px]">
                     <Image
-                      src={encodeURI("/gif/annoying flying bug.gif")}
+                      src={encodeURI("/gif/annoying flying bug.webp")}
                       alt="Animated cartoon character"
                       width={150}
                       height={150}
@@ -668,7 +660,7 @@ export function ChildJourneySection() {
                 <div className="mb-3 sm:mb-5 shrink-0">
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 bg-[#FF8CC7] text-white text-xs sm:text-sm font-black rounded-full hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] shrink-0 whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 bg-[#FFD028] text-white text-xs sm:text-sm font-black rounded-full hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] shrink-0 whitespace-nowrap"
                     style={{
                       fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                     }}

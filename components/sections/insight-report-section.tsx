@@ -4,15 +4,15 @@ import React from "react";
 import Image from "next/image";
 
 /**
- * Measured from the Figma prototype screenshot (frame 1440 x ~735, shown at 1.25x).
+ * Measured from the Figma prototype screenshot (frame 1440 wide, shown at 1.25x).
  * All numbers below are in Figma px, i.e. what you'd see in Dev Mode.
  *
  * Desktop (>= lg) layout:
- *   section padding      top 38  / bottom 72
+ *   section padding      top 38 / bottom 72
  *   content padding      left 88 / right 108  (centred in a 1440 max-width frame)
  *   left column          446 wide, pinned to the left
  *   collage              610 wide, pinned to the right, starts 18px lower than left column
- *   left column rhythm   badge(24) -30- headline -44- subtitle -34- callout -86- pill(24) -14- chips(23)
+ *   left column rhythm   badge(24) -30- headline -44- subtitle -34- callout -46- pill(24) -14- chips(23)
  */
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
@@ -24,7 +24,7 @@ const SHADOW = "clamp(3px, 0.95cqw, 8px)"; // ~6px hard yellow shadow at 610px w
 const RADIUS_MAIN = "clamp(14px, 4.16cqw, 32px)";
 const RADIUS_SECOND = "clamp(12px, 3.8cqw, 28px)";
 
-// Tiny background dots, positioned in % of the section (taken from the Figma frame)
+// Tiny background dots, positioned in % of the section
 const DOTS: { left: string; top: string; size: number; opacity: number }[] = [
   { left: "3.2%", top: "1.6%", size: 2, opacity: 0.5 },
   { left: "36.2%", top: "0.8%", size: 2, opacity: 0.4 },
@@ -90,7 +90,7 @@ export function InsightReportSection() {
   return (
     <section
       id="insight-report-section"
-      className="relative w-full bg-[#6739B7] text-white overflow-hidden select-none scroll-mt-16 py-12 lg:pt-[38px] lg:pb-[72px]"
+      className="relative w-full bg-[#0A1D3D] text-white overflow-hidden select-none scroll-mt-16 py-12 lg:pt-[38px] lg:pb-[72px]"
     >
       {/* Background dots */}
       <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
@@ -109,16 +109,12 @@ export function InsightReportSection() {
         ))}
       </div>
 
-      {/* Content frame: max 1440 (the Figma frame), 88px left / 108px right on desktop */}
+      {/* Content frame: max 1440, 88px left / 108px right on desktop */}
       <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10 xl:pl-[88px] xl:pr-[108px]">
-        {/*
-          Desktop: two fixed-width columns (446 + 610) pushed to opposite edges.
-          Below lg: stacked, left column first.
-        */}
         <div className="flex flex-col gap-12 lg:grid lg:grid-cols-[minmax(0,446px)_minmax(0,610px)] lg:justify-between lg:items-start lg:gap-x-10">
           {/* ================= LEFT COLUMN ================= */}
           <div className="flex w-full flex-col items-start text-left">
-            {/* Top pill badge: 208 x 24, Figma rotation +1deg (counter-clockwise) = CSS -1deg */}
+            {/* Top pill badge: 208 x 24, rotated -1deg */}
             <div
               className="mb-6 lg:mb-[30px] inline-flex h-[24px] w-[208px] origin-left -rotate-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border-[1.5px] border-[#0A1D3D] bg-[#65DCAA] px-2.5 text-[#0A1D3D]"
               style={{
@@ -145,28 +141,28 @@ export function InsightReportSection() {
                 letterSpacing: "-0.0364em",
               }}
             >
-              Every child is a<br />
-              constellation<br />
-              of potential. 🌟
+              Every Child Is A<br />
+              Constellation<br />
+              Of Potential. 🌟
             </h2>
 
-            {/* Subtitle: 18px / 160% / #E2E2E2 / 446 wide */}
+            {/* Subtitle: 18px / 160% / semibold / muted blue-grey / 446 wide */}
             <p
-              className="mb-6 lg:mb-[34px] max-w-[446px] text-[16px] sm:text-[18px] text-[#E2E2E2]"
+              className="mb-6 lg:mb-[34px] max-w-[446px] text-[16px] sm:text-[18px] text-[#8E9BB3]"
               style={{
-                fontFamily: INTER,
-                fontWeight: 400,
+                fontFamily: JAKARTA,
+                fontWeight: 600,
                 lineHeight: "160%",
                 letterSpacing: "0%",
               }}
             >
-              The OrionKids Insight Report maps strengths, areas
-              <br className="hidden sm:block" /> that need support, and progress into one readable
-              <br className="hidden sm:block" /> learning profile — no rankings, no labels.
+              The OrionKids Insight Report maps strengths,
+              <br className="hidden sm:block" /> areas that need support, and progress into one
+              <br className="hidden sm:block" /> readable learning profile — no rankings, no labels.
             </p>
 
             {/* Callout: 446 wide, radius 16, 2px #FFD54F border, padding 16, gap 8 */}
-            <div className="mb-8 lg:mb-[86px] flex w-full max-w-[446px] flex-col gap-[8px] rounded-[16px] border-2 border-[#FFD54F] bg-white p-[16px] text-left">
+            <div className="mb-8 lg:mb-[46px] flex w-full max-w-[446px] flex-col gap-[8px] rounded-[16px] border-2 border-[#FFD54F] bg-white p-[16px] text-left">
               <h3
                 className="flex items-center gap-1.5 text-black"
                 style={{
@@ -178,7 +174,7 @@ export function InsightReportSection() {
                 }}
               >
                 <span>🎨</span>
-                <span>Thoughtful technology. Human context.</span>
+                <span>Thoughtful Technology. Human Context.</span>
               </h3>
               <p
                 className="text-[#526176]"
@@ -198,7 +194,7 @@ export function InsightReportSection() {
 
             {/* Big pill: 258 x 24, radius 99, 1px border */}
             <div
-              className="mb-[14px] inline-flex h-[24px] w-[258px] max-w-full items-center gap-[6px] rounded-[99px] border border-[#4FA9C9] bg-[#132847] px-[12px]"
+              className="mb-[14px] inline-flex h-[24px] w-[258px] max-w-full items-center gap-[6px] rounded-[99px] border border-[#4FA9C9] bg-[#0A1D3D] px-[12px]"
               style={{
                 fontFamily: JAKARTA,
                 fontWeight: 700,
@@ -208,10 +204,10 @@ export function InsightReportSection() {
               }}
             >
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#00B4C6]" />
-              <span className="whitespace-nowrap">Orion Constellation · Growth journey map</span>
+              <span className="whitespace-nowrap">Orion Constellation · Growth Journey Map</span>
             </div>
 
-            {/* Four chips: 102 x 23, radius 10, gap 8, hard navy shadow */}
+            {/* Four chips: 102 x 23, radius 10, gap 8 */}
             <div className="flex flex-wrap items-center gap-2">
               {CHIPS.map((c) => (
                 <div
@@ -224,7 +220,7 @@ export function InsightReportSection() {
                     fontWeight: 800,
                     fontSize: "8.5px",
                     lineHeight: "100%",
-                    boxShadow: "2px 2px 0 #0A1D3D",
+                    boxShadow: "2px 2px 0 rgba(255,255,255,0.22)",
                   }}
                 >
                   <span className="shrink-0 text-[9px] leading-none">{c.emoji}</span>
@@ -235,11 +231,6 @@ export function InsightReportSection() {
           </div>
 
           {/* ================= RIGHT COLUMN: collage ================= */}
-          {/*
-            Collage canvas is 610 wide max. Everything inside is positioned in % of the canvas and
-            borders / shadows / radii / caption use `cqw`, so the composition scales as ONE piece.
-            lg:mt-[18px] reproduces the Figma offset between the two columns.
-          */}
           <div className="flex w-full justify-center lg:mt-[18px] lg:justify-end">
             <div
               className="relative w-full max-w-[610px] select-none"
@@ -252,11 +243,6 @@ export function InsightReportSection() {
               >
                 <div
                   className="relative h-full w-full overflow-hidden bg-[#0A1D3D]/30"
-                  style={{
-                    borderRadius: RADIUS_MAIN,
-                    border: `${BORDER} solid #FFD54F`,
-                    boxShadow: `${SHADOW} ${SHADOW} 0 0 #FFD54F`,
-                  }}
                 >
                   <Image
                     src="/images/children-learning-together.png"
@@ -270,22 +256,22 @@ export function InsightReportSection() {
                 </div>
               </div>
 
-              <StickerPill emoji="👾" text="BLAST OFF!" left="67.22%" top="16.82%" rotate={5} />
-              <StickerPill emoji="✨" text="SUPERSTAR APPROVED!" left="18.04%" top="75.37%" rotate={-4} />
+              <StickerPill emoji="👾" text="BLAST OFF!" left="67.4%" top="16.8%" rotate={5} />
+              <StickerPill emoji="✨" text="SUPERSTAR APPROVED!" left="19%" top="75.8%" rotate={-4} />
 
-              {/* 3D letter "A" */}
+              {/* 3D letter "ABC" (size corrected: ~64px at 610px wide) */}
               <div
                 className="pointer-events-none absolute z-30"
                 style={{
-                  left: "81.68%",
-                  top: "5.24%",
-                  width: "17%",
+                  left: "82.2%",
+                  top: "5.5%",
+                  width: "30.5%",
                   aspectRatio: "1 / 1",
                   transform: "translate(-50%, -50%) rotate(-41.5deg)",
                 }}
               >
                 <Image
-                  src="/gif/A.gif"
+                  src="/gif/ABC.webp"
                   alt="Cartoon Letter A"
                   width={150}
                   height={150}
@@ -297,14 +283,13 @@ export function InsightReportSection() {
               {/* Photo 2 */}
               <div
                 className="absolute z-20"
-                style={{ left: "49.08%", top: "59.93%", width: "42.12%", aspectRatio: "230 / 214" }}
+                style={{ left: "49.3%", top: "60.2%", width: "41.9%", aspectRatio: "230 / 214" }}
               >
                 <div
                   className="relative h-full w-full overflow-hidden bg-[#0A1D3D]/30"
                   style={{
                     borderRadius: RADIUS_SECOND,
-                    border: `${BORDER} solid #FFD54F`,
-                    boxShadow: `${SHADOW} ${SHADOW} 0 0 #FFD54F`,
+                    
                   }}
                 >
                   <Image
@@ -322,9 +307,9 @@ export function InsightReportSection() {
               <div
                 className="pointer-events-none absolute z-30"
                 style={{
-                  left: "90.93%",
-                  top: "60.39%",
-                  width: "15.9%",
+                  left: "91.4%",
+                  top: "60.5%",
+                  width: "16.4%",
                   aspectRatio: "100 / 112",
                   transform: "translate(-50%, -50%)",
                 }}
@@ -339,16 +324,15 @@ export function InsightReportSection() {
                 />
               </div>
 
-              {/* Caption, centred between the left edges of Photo 1 and Photo 2 */}
+              {/* Caption: left-aligned with Photo 1's left edge */}
               <p
-                className="absolute z-10 whitespace-nowrap text-center text-white"
+                className="absolute z-10 whitespace-nowrap text-left text-white"
                 style={{
-                  left: "24.54%",
-                  top: "86%",
-                  transform: "translateX(-50%)",
+                  left: "0%",
+                  top: "85.6%",
                   fontFamily: INTER,
                   fontWeight: 400,
-                  fontSize: "clamp(10px, 2.5cqw, 20px)",
+                  fontSize: "clamp(10px, 2.8cqw, 18px)",
                   lineHeight: "130%",
                   letterSpacing: "0%",
                 }}

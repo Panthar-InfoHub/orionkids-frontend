@@ -59,27 +59,27 @@ export function HeroSection() {
 
               <div className="relative mt-[4px] flex flex-col items-start">
                 {/* Yellow Badge: Brighter (Figma: 254x72, 16px radius, 4px border, 1deg rotate, #FFD54F) */}
-                <div className="relative z-[1] inline-flex items-center justify-center px-[12px] py-[2px] bg-[#65DCAA] text-[#0A1D3D] rounded-[16px] border-[4px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] rotate-[-1deg] origin-top-left">
+                <div className="relative z-[1] inline-flex items-center justify-center px-[12px] py-[2px] bg-[#FFD54F] text-[#0A1D3D] rounded-[16px] border-[4px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] rotate-[-1deg] origin-top-left">
                   <span className="text-[38px] sm:text-[48px] lg:text-[54px] font-[800] tracking-[-1.5px] leading-[60px] text-[#0A1D3D]">
                     Brighter
                   </span>
                 </div>
 
                 {/* Purple Badge: Tomorrows. (Figma: 365x72, 16px radius, 4px border, -2deg rotate, #00B4C6) */}
-                <div className="relative z-[3] -mt-[14px] inline-flex items-center justify-center px-[12px] py-[2px] bg-[#6739B7] text-white rounded-[16px] border-[4px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] rotate-[2deg] origin-top-left">
+                <div className="relative z-[3] -mt-[14px] inline-flex items-center justify-center px-[12px] py-[2px] bg-[#0A1D3D] text-white rounded-[16px] border-[4px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] rotate-[2deg] origin-top-left">
                   <span className="text-[38px] sm:text-[48px] lg:text-[54px] font-[800] tracking-[-1.5px] leading-[60px] text-white">
                     Tomorrows.
                   </span>
 
                   {/* Playful Cartoon Cat GIF: Anchored directly to the top-right of the Tomorrows badge */}
                   <div
-                    className="absolute -top-[36px] sm:-top-[46px] lg:-top-[52px] -right-[10px] sm:-right-[14px] lg:-right-[18px] w-[100px] sm:w-[130px] lg:w-[150px] h-[44px] sm:h-[56px] lg:h-[64px] pointer-events-none select-none z-20"
+                    className="absolute -top-[36px] sm:-top-[46px] lg:-top-[52px] -right-[45px] sm:-right-[55px] lg:-right-[70px] w-[100px] sm:w-[130px] lg:w-[150px] h-[44px] sm:h-[56px] lg:h-[64px] pointer-events-none select-none z-20"
                     style={{
                       transform: "scaleX(-1)",
                     }}
                   >
                     <Image
-                      src={encodeURI("/gif/cartoon.gif")}
+                      src={encodeURI("/gif/cartoon.webp")}
                       alt="Playful cartoon cat"
                       width={150}
                       height={64}

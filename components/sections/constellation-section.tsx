@@ -3,12 +3,12 @@
 import React from "react";
 
 const GAME_BADGES = [
-  { name: "Stroop colour-word", bg: "bg-[#7DD3FC]" },
-  { name: "Card flip", bg: "bg-[#86EFAC]" },
-  { name: "Pattern recognition", bg: "bg-[#DDD6FE]" },
-  { name: "Odd one out", bg: "bg-[#FBCFE8]" },
-  { name: "Story sequencing", bg: "bg-[#A7F3D0]" },
-  { name: "Rule discovery", bg: "bg-[#FFD54F]" },
+  { name: "Stroop Colour-Word", bg: "bg-[#56CCF2]" },
+  { name: "Card Flip", bg: "bg-[#65DCAA]" },
+  { name: "Pattern Recognition", bg: "bg-[#D5B6FF]" },
+  { name: "Odd One Out", bg: "bg-[#FF8CC7]" },
+  { name: "Rule Discovery", bg: "bg-[#FFCF70]" },
+  { name: "Story Sequencing", bg: "bg-[#65DCAA]" },
 ];
 
 const TICKER_ITEMS = [
@@ -106,25 +106,23 @@ export function ConstellationSection() {
             
             {/* Top Pill Badge */}
             <div
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#6EE7B7] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] mb-3 select-none hover:scale-105 transition-transform"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FFD028] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] mb-3 select-none hover:scale-105 transition-transform"
             >
-              <span className="w-4 h-4 rounded-full bg-[#0A1D3D] text-[#6EE7B7] inline-flex items-center justify-center text-[9px] font-bold">
-                ✨
-              </span>
+              <span className="text-xs">✨</span>
               <span
-                className="text-[11px] sm:text-[11.5px] font-black tracking-wider uppercase"
+                className="text-[11px] sm:text-[11.5px] font-black tracking-wider uppercase flex items-center gap-1.5"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
               >
-                🎮 6 GAMES · ONE UNIQUE MIND
+                <span>🎮</span>
+                <span>6 GAMES · ONE UNIQUE MIND</span>
               </span>
-              <span className="text-[10px]">✨</span>
             </div>
 
             {/* Eyebrow with Orange Dash */}
             <div className="flex items-center gap-2 mb-3">
-              <span className="w-4 h-[3px] bg-[#FF7A00] rounded-full shrink-0"></span>
+              <span className="w-4 h-[3px] bg-[#FF9800] rounded-full shrink-"></span>
               <span
                 className="text-[10.5px] sm:text-[11px] font-bold uppercase tracking-[1.4px] text-slate-300"
                 style={{
@@ -142,18 +140,18 @@ export function ConstellationSection() {
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
             >
-              No two constellations
+              No Two Constellations Are
               <br />
-              are the same.
+              The Same.
               <br />
-              Neither are two learners
+              Neither Are Two Learners.
             </h2>
 
             {/* "THAT'S THE WHOLE POINT" Pink Badge Button */}
             <div className="mb-3.5">
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FBCFE8] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] text-[11px] sm:text-xs font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FF8CC7] text-[#0A1D3D] rounded-full border-2 border-[#FFFFFF] shadow-[2px_2px_0px_0px_#FFFFFF] text-[11px] sm:text-xs font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
@@ -172,48 +170,38 @@ export function ConstellationSection() {
               }}
             >
               Every child brings a unique pattern of abilities. OrionKids explores
-              how they think, learn and connect through six games—so support
+              how they think, learn and connect through six games, so support
               can begin with understanding.
             </p>
 
             {/* 6 Game Filter / Interactive Pills */}
-            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 mb-5 max-w-[530px]">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 mb-5 max-w-[650px]">
               {GAME_BADGES.map((game) => (
                 <button
                   key={game.name}
                   type="button"
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 ${game.bg} text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] text-[11px] sm:text-xs font-bold tracking-tight hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none`}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 ${game.bg} text-[#0A1D3D] rounded-full border-2 border-[#FFFFFF] shadow-[2px_2px_0px_0px_##FFFFFF] text-[11px] sm:text-xs font-bold tracking-tight hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none`}
                   style={{
                     fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                   }}
                 >
-                  <span className="text-[10px]">★</span>
+                  <span className="text-[10px] text-[#0A1D3D]">★</span>
                   <span>{game.name}</span>
                 </button>
               ))}
             </div>
 
-            {/* Bottom Learning Profile Callout Card */}
-            <div className="w-full max-w-[430px] bg-[#E0F2FE] border-2 border-[#0A1D3D] rounded-[18px] p-3 sm:p-3.5 shadow-[3px_3px_0px_0px_#0A1D3D] flex items-center gap-3">
-              <span className="text-xl shrink-0 select-none">⭐</span>
-              <div className="flex flex-col">
-                <p
-                  className="text-xs sm:text-[13px] font-black text-[#0A1D3D] leading-tight"
-                  style={{
-                    fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
-                  }}
-                >
-                  A learning profile, not a label.
-                </p>
-                <p
-                  className="text-[10.5px] sm:text-[11.5px] font-semibold text-[#526176] leading-tight mt-0.5"
-                  style={{
-                    fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                  }}
-                >
-                  Personal growth, not comparison.
-                </p>
-              </div>
+            {/* Bottom Learning Profile Callout Card (Single-line rounded pill) */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-[#EBF8FF] text-[#0A1D3D] rounded-2xl border-2 border-[#FFFFFF] shadow-[2px_2px_0px_0px_#FFFFFF] select-none max-w-full">
+              <span className="text-base select-none">⭐</span>
+              <p
+                className="text-[12px] sm:text-[13px] font-bold text-[#0A1D3D] whitespace-nowrap"
+                style={{
+                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+                }}
+              >
+                A learning profile, not a label. Personal growth, not comparison.
+              </p>
             </div>
 
           </div>
@@ -224,23 +212,23 @@ export function ConstellationSection() {
             {/* Top Right Badges */}
             <div className="flex items-center justify-end gap-2.5 mb-2 z-20">
               <div
-                className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-white text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] text-xs font-black select-none hover:scale-105 transition-transform"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#65DCAA] text-[#0A1D3D] rounded-full border-2 border-[#FFFFFF] shadow-[2px_2px_0px_#FFFFFF] text-xs font-black select-none hover:scale-105 transition-transform"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
               >
                 <span className="text-[11px] text-[#0A1D3D]">★</span>
-                <span>6 games</span>
+                <span>6 Games</span>
               </div>
 
               <div
-                className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#67E8F9] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] text-xs font-black select-none hover:scale-105 transition-transform"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#38BDF8] text-[#0A1D3D] rounded-full border-2 border-[#FFFFFF] shadow-[2px_2px_0px_#FFFFFF] text-xs font-black select-none hover:scale-105 transition-transform"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
               >
                 <span className="text-[11px]">✨</span>
-                <span>Playful learning</span>
+                <span>Playful Learning</span>
               </div>
             </div>
 
@@ -482,30 +470,26 @@ export function ConstellationSection() {
 
                 {/* ================= INTERMEDIATE STARS ================= */}
                 {/* Center Chest Star (288,290) */}
-                <circle cx="288" cy="290" r="8" fill="#FDE047" fillOpacity="0.3" filter="url(#star-glow)" />
-                <circle cx="288" cy="290" r="4.5" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1.2" />
-                <circle cx="288" cy="290" r="1.5" fill="#FFFFFF" />
+                <circle cx="288" cy="290" r="8" fill="#ffffffff" fillOpacity="0.1" filter="url(#star-glow)" />
+                <circle cx="288" cy="290" r="4.5" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
 
                 {/* Right Arm Intermediate Star (438,245) */}
-                <circle cx="438" cy="245" r="8" fill="#FDE047" fillOpacity="0.3" filter="url(#star-glow)" />
-                <circle cx="438" cy="245" r="4.5" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1.2" />
-                <circle cx="438" cy="245" r="1.5" fill="#FFFFFF" />
+                <circle cx="438" cy="245" r="8" fill="#ffffffff" fillOpacity="0.1" filter="url(#star-glow)" />
+                <circle cx="438" cy="245" r="4.5" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
+                
 
                 {/* Orion's Belt (3 Stars) */}
                 {/* Left Belt Star (202,438) */}
-                <circle cx="202" cy="438" r="11" fill="#FDE047" fillOpacity="0.3" filter="url(#star-glow)" />
-                <circle cx="202" cy="438" r="5.5" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1.5" />
-                <circle cx="202" cy="438" r="1.8" fill="#FFFFFF" />
+                <circle cx="202" cy="438" r="11" fill="#ffffffff" fillOpacity="0.1" filter="url(#star-glow)" />
+                <circle cx="202" cy="438" r="5.5" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
 
                 {/* Middle Belt Star (224,424) */}
-                <circle cx="224" cy="424" r="11" fill="#FDE047" fillOpacity="0.3" filter="url(#star-glow)" />
-                <circle cx="224" cy="424" r="5.5" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1.5" />
-                <circle cx="224" cy="424" r="1.8" fill="#FFFFFF" />
+                <circle cx="224" cy="424" r="11" fill="#ffffffff" fillOpacity="0.1" filter="url(#star-glow)" />
+                <circle cx="224" cy="424" r="5.5" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
 
                 {/* Right Belt Star (242,410) - Large Radiant Star with Double Aura */}
-                <circle cx="242" cy="410" r="18" fill="#FDE047" fillOpacity="0.35" filter="url(#radiant-glow)" />
-                <circle cx="242" cy="410" r="7" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1.8" />
-                <circle cx="242" cy="410" r="2.5" fill="#FFFFFF" />
+                <circle cx="242" cy="410" r="18" fill="#ffffffff" fillOpacity="0.1" filter="url(#radiant-glow)" />
+                <circle cx="242" cy="410" r="7" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
 
                 {/* Sword Stars */}
                 <circle cx="226" cy="486" r="3" fill="#67E8F9" opacity="0.9" />
@@ -532,80 +516,75 @@ export function ConstellationSection() {
                 {/* 1. FOCUS / Stroop colour-word */}
                 <g className="cursor-pointer group">
                   {/* Badge & Title above star */}
-                  <rect x="233" y="166" width="42" height="17" rx="8.5" fill="#FDE047" stroke="#0A1D3D" strokeWidth="1" />
+                  <rect x="233" y="166" width="42" height="17" rx="8.5" fill="#65DCAA" stroke="#ffffffff" strokeWidth="2" />
                   <text x="254" y="178" textAnchor="middle" fill="#0A1D3D" fontSize="8.5" fontWeight="800" fontFamily="var(--font-plus-jakarta)">FOCUS</text>
-                  <text x="254" y="196" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Stroop colour-word</text>
+                  <text x="254" y="196" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Stroop Colour-Word.</text>
 
                   {/* Star */}
-                  <circle cx="254" cy="216" r="14" fill="#FDE047" fillOpacity="0.3" filter="url(#star-glow)" />
-                  <circle cx="254" cy="216" r="6.5" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1.5" />
-                  <circle cx="254" cy="216" r="2" fill="#FFFFFF" />
+                  <circle cx="254" cy="216" r="14" fill="#ffffffff" fillOpacity="0.1" filter="url(#star-glow)" />
+                  <circle cx="254" cy="216" r="6.5" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
+                  
                 </g>
 
                 {/* 2. RULES / Rule discovery */}
                 <g className="cursor-pointer group">
                   {/* Star */}
-                  <circle cx="170" cy="260" r="14" fill="#FDE047" fillOpacity="0.3" filter="url(#star-glow)" />
-                  <circle cx="170" cy="260" r="6.5" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1.5" />
-                  <circle cx="170" cy="260" r="2" fill="#FFFFFF" />
+                  <circle cx="170" cy="260" r="14" fill="#ffffffff" fillOpacity="0.1" filter="url(#star-glow)" />
+                  <circle cx="170" cy="260" r="6.5" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
                   {/* Badge & Title */}
-                  <rect x="100" y="260" width="40" height="17" rx="8.5" fill="#FDE047" stroke="#0A1D3D" strokeWidth="1" />
+                  <rect x="100" y="260" width="40" height="17" rx="8.5" fill="#65DCAA" stroke="#ffffffff" strokeWidth="2" />
                   <text x="120" y="272" textAnchor="middle" fill="#0A1D3D" fontSize="8.5" fontWeight="800" fontFamily="var(--font-plus-jakarta)">RULES</text>
-                  <text x="120" y="291" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Rule discovery</text>
-                  <text x="120" y="304" textAnchor="middle" fill="#CBD5E1" fontSize="8.5" fontWeight="400" fontFamily="var(--font-inter)">· Abstract thinking & rules</text>
+                  <text x="100" y="291" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Rule Discovery.</text>
+                  <text x="95" y="304" textAnchor="middle" fill="#CBD5E1" fontSize="8.5" fontWeight="400" fontFamily="var(--font-inter)">· Abstract thinking & rules</text>
                 </g>
 
                 {/* 3. MEMORY / Card flip */}
                 <g className="cursor-pointer group">
                   {/* Star */}
-                  <circle cx="420" cy="168" r="14" fill="#FDE047" fillOpacity="0.3" filter="url(#star-glow)" />
-                  <circle cx="420" cy="168" r="6.5" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1.5" />
-                  <circle cx="420" cy="168" r="2" fill="#FFFFFF" />
+                  <circle cx="420" cy="168" r="14" fill="#ffffffff" fillOpacity="0.1" filter="url(#star-glow)" />
+                  <circle cx="420" cy="168" r="6.5" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
                   {/* Badge & Title */}
-                  <rect x="446" y="142" width="50" height="17" rx="8.5" fill="#FFFFFF" stroke="#0A1D3D" strokeWidth="1" />
+                  <rect x="446" y="142" width="50" height="17" rx="8.5" fill="#E6F4FF" stroke="#ffffffff" strokeWidth="2" />
                   <text x="471" y="154" textAnchor="middle" fill="#0A1D3D" fontSize="8.5" fontWeight="800" fontFamily="var(--font-plus-jakarta)">MEMORY</text>
-                  <text x="471" y="172" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Card flip</text>
-                  <text x="471" y="185" textAnchor="middle" fill="#CBD5E1" fontSize="8.5" fontWeight="400" fontFamily="var(--font-inter)">· Working memory & recall</text>
+                  <text x="471" y="172" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Card Flip.</text>
+                  <text x="495" y="185" textAnchor="middle" fill="#CBD5E1" fontSize="8.5" fontWeight="400" fontFamily="var(--font-inter)">· Working memory & recall</text>
                 </g>
 
                 {/* 4. LOGIC / Pattern recognition */}
                 <g className="cursor-pointer group">
                   {/* Star */}
-                  <circle cx="410" cy="358" r="14" fill="#FDE047" fillOpacity="0.3" filter="url(#star-glow)" />
-                  <circle cx="410" cy="358" r="6.5" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1.5" />
-                  <circle cx="410" cy="358" r="2" fill="#FFFFFF" />
+                  <circle cx="410" cy="358" r="14" fill="#ffffffff" fillOpacity="0.1" filter="url(#star-glow)" />
+                  <circle cx="410" cy="358" r="6.5" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
                   {/* Badge & Title */}
-                  <rect x="440" y="332" width="40" height="17" rx="8.5" fill="#FDE047" stroke="#0A1D3D" strokeWidth="1" />
-                  <text x="460" y="344" textAnchor="middle" fill="#0A1D3D" fontSize="8.5" fontWeight="800" fontFamily="var(--font-plus-jakarta)">LOGIC</text>
-                  <text x="460" y="363" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Pattern recognition</text>
-                  <text x="460" y="376" textAnchor="middle" fill="#CBD5E1" fontSize="8.5" fontWeight="400" fontFamily="var(--font-inter)">· Logic & visual reasoning</text>
+                  <rect x="460" y="332" width="40" height="17" rx="8.5" fill="#65DCAA" stroke="#ffffffff" strokeWidth="2" />
+                  <text x="480" y="344" textAnchor="middle" fill="#0A1D3D" fontSize="8.5" fontWeight="800" fontFamily="var(--font-plus-jakarta)">LOGIC</text>
+                  <text x="490" y="363" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Pattern Recognition.</text>
+                  <text x="490" y="376" textAnchor="middle" fill="#CBD5E1" fontSize="8.5" fontWeight="400" fontFamily="var(--font-inter)">· Logic & visual reasoning</text>
                 </g>
 
                 {/* 5. NARRATIVE / Story sequencing */}
                 <g className="cursor-pointer group">
                   {/* Star */}
-                  <circle cx="155" cy="578" r="14" fill="#FDE047" fillOpacity="0.3" filter="url(#star-glow)" />
-                  <circle cx="155" cy="578" r="6.5" fill="#FEF08A" stroke="#CA8A04" strokeWidth="1.5" />
-                  <circle cx="155" cy="578" r="2" fill="#FFFFFF" />
+                  <circle cx="155" cy="578" r="14" fill="#ffffffff" fillOpacity="0.1" filter="url(#star-glow)" />
+                  <circle cx="155" cy="578" r="6.5" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
                   {/* Badge & Title */}
-                  <rect x="94" y="562" width="56" height="17" rx="8.5" fill="#FFFFFF" stroke="#0A1D3D" strokeWidth="1" />
-                  <text x="122" y="574" textAnchor="middle" fill="#0A1D3D" fontSize="8" fontWeight="800" fontFamily="var(--font-plus-jakarta)">NARRATIVE</text>
-                  <text x="122" y="593" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Story sequencing</text>
-                  <text x="122" y="606" textAnchor="middle" fill="#CBD5E1" fontSize="8.5" fontWeight="400" fontFamily="var(--font-inter)">· Narrative & social</text>
-                  <text x="122" y="618" textAnchor="middle" fill="#CBD5E1" fontSize="8.5" fontWeight="400" fontFamily="var(--font-inter)">reasoning</text>
+                  <rect x="80" y="562" width="56" height="17" rx="8.5" fill="#E6F4FF" stroke="#ffffffff" strokeWidth="2" />
+                  <text x="110" y="574" textAnchor="middle" fill="#0A1D3D" fontSize="8" fontWeight="800" fontFamily="var(--font-plus-jakarta)">NARRATIVE</text>
+                  <text x="80" y="593" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Story Sequencing.</text>
+                  <text x="95" y="606" textAnchor="middle" fill="#CBD5E1" fontSize="8.5" fontWeight="400" fontFamily="var(--font-inter)">· Narrative & social</text>
+                  <text x="110" y="618" textAnchor="middle" fill="#CBD5E1" fontSize="8.5" fontWeight="400" fontFamily="var(--font-inter)">reasoning</text>
                 </g>
 
                 {/* 6. LANGUAGE / Odd one out */}
                 <g className="cursor-pointer group">
-                  {/* Star (Cyan Glowing Star at lower right leg) */}
-                  <circle cx="294" cy="560" r="16" fill="#00E5FF" fillOpacity="0.35" filter="url(#star-glow)" />
-                  <circle cx="294" cy="560" r="7" fill="#67E8F9" stroke="#0891B2" strokeWidth="1.5" />
-                  <circle cx="294" cy="560" r="2.2" fill="#FFFFFF" />
+                  {/* Star */}
+                  <circle cx="294" cy="560" r="14" fill="#ffffffff" fillOpacity="0.1" filter="url(#star-glow)" />
+                  <circle cx="294" cy="560" r="6.5" fill="#FEF08A" stroke="#ffffffff" strokeWidth="2" />
                   
-                  {/* Title & Dark Blue LANGUAGE Badge */}
-                  <text x="296" y="592" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Odd one out</text>
-                  <rect x="268" y="602" width="56" height="18" rx="9" fill="#0A1D3D" stroke="#38BDF8" strokeWidth="1.2" />
-                  <text x="296" y="614" textAnchor="middle" fill="#FFFFFF" fontSize="8.5" fontWeight="800" fontFamily="var(--font-plus-jakarta)">LANGUAGE</text>
+                  {/* Title & White LANGUAGE Badge */}
+                  <text x="296" y="592" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800" fontFamily="var(--font-plus-jakarta)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))">Odd One Out.</text>
+                  <rect x="268" y="602" width="56" height="18" rx="9" fill="#E6F4FF" stroke="#ffffffff" strokeWidth="2" />
+                  <text x="296" y="614" textAnchor="middle" fill="#0A1D3D" fontSize="8.5" fontWeight="800" fontFamily="var(--font-plus-jakarta)">LANGUAGE</text>
                 </g>
               </svg>
             </div>
@@ -616,13 +595,18 @@ export function ConstellationSection() {
       </div>
 
       {/* Bottom Ticker Marquee Bar */}
-      <div className="relative z-10 w-full bg-black/40 backdrop-blur-md border-t border-white/10 py-3.5 px-4 overflow-hidden select-none">
-        <div className="flex items-center justify-center gap-6 sm:gap-8 flex-wrap text-[11px] sm:text-xs font-bold uppercase tracking-[2px] text-white/70">
+      <div className="relative z-10 w-full bg-[#EAF7EF]/10 opacity-[0.8] backdrop-blur-md border-t border-white/10 py-3.5 px-4 overflow-hidden select-none">
+        <div className="flex items-center justify-center gap-4 sm:gap-6 flex-wrap text-[11px] sm:text-xs font-bold uppercase tracking-[2px] text-white/80">
           {TICKER_ITEMS.map((item, idx) => (
-            <div key={idx} className="flex items-center gap-3">
-              <span className="text-[#6EE7B7] text-xs">★</span>
-              <span>{item}</span>
-            </div>
+            <React.Fragment key={idx}>
+              <div className="flex items-center gap-2">
+                <span className="text-white text-xs select-none">✦</span>
+                <span className="whitespace-nowrap">{item}</span>
+              </div>
+              {idx !== TICKER_ITEMS.length - 1 && (
+                <span className="text-white/40 select-none">·</span>
+              )}
+            </React.Fragment>
           ))}
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 const FAQ_ITEMS = [
   {
@@ -45,7 +46,7 @@ export function FaqSection() {
             
             {/* Top Pill Badge */}
             <div
-              className="inline-flex items-center gap-1.5 px-[14px] py-[5px] bg-[#D8F3FF] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] mb-5 transform rotate-[1deg] hover:rotate-0 transition-transform cursor-default select-none"
+              className="inline-flex items-center gap-1.5 px-[14px] py-[5px] bg-[#FFD028] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] mb-5 transform rotate-[-1deg] hover:rotate-0 transition-transform cursor-default select-none"
               style={{
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 fontWeight: 800,
@@ -55,7 +56,7 @@ export function FaqSection() {
                 textTransform: "uppercase",
               }}
             >
-              <span className="text-xs">🍦</span>
+              <span className="text-xs">🛡️</span>
               <span>CLARITY BUILDS TRUST</span>
             </div>
 
@@ -70,9 +71,9 @@ export function FaqSection() {
                 letterSpacing: "-1.6px",
               }}
             >
-              A little clarity,
+              A Little Clarity,
               <br />
-              before you begin.
+              Before You Begin.
             </h2>
 
             {/* Subtext Paragraph */}
@@ -86,8 +87,20 @@ export function FaqSection() {
                 letterSpacing: "0%",
               }}
             >
-              A thoughtful guide beside your child. Never an examiner across from them.
+              A caring companion for your child, never a strict examiner.
             </p>
+
+            {/* Star Mascot GIF */}
+            <div className="mt-8 sm:mt-10 lg:mt-12 w-[150px] h-[150px] relative select-none">
+              <Image
+                src="/gif/star.gif"
+                alt="Star mascot"
+                width={150}
+                height={150}
+                className="w-[150px] h-[150px] object-contain pointer-events-none"
+                unoptimized
+              />
+            </div>
 
           </div>
 

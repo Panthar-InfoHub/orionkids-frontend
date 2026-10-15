@@ -72,7 +72,11 @@ export function Navbar() {
           
           {/* Brand Logo & Pill Tag */}
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-            <Link href="/" className="flex items-center shrink-0" aria-label="OrionKids Home">
+            <Link
+              href="/"
+              className="flex items-center shrink-0 relative -left-4 sm:-left-5"
+              aria-label="OrionKids Home"
+            >
               <Image
                 src="/svg/Logo.svg"
                 alt="OrionKids Logo"
@@ -125,7 +129,7 @@ export function Navbar() {
           <div className="hidden lg:flex items-center shrink-0">
             <button
               onClick={() => setContactModalOpen(true)}
-              className="w-[201px] h-[54px] rounded-[16px] bg-[#65DCAA] text-[#0A1D3D] font-[800] text-base border-[3px] border-[#0A1D3D] shadow-[4px_4px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center transition-all cursor-pointer select-none whitespace-nowrap"
+              className="w-[201px] h-[54px] rounded-[16px] bg-[#FFD54F] text-[#0A1D3D] font-[800] text-base border-[3px] border-[#0A1D3D] shadow-[4px_4px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center transition-all cursor-pointer select-none whitespace-nowrap"
               style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
             >
               Contact Us
@@ -163,7 +167,7 @@ export function Navbar() {
                 setMobileMenuOpen(false);
                 setContactModalOpen(true);
               }}
-              className="w-full h-[54px] rounded-[16px] bg-[#65DCAA] text-[#0A1D3D] font-[800] text-base border-[3px] border-[#0A1D3D] shadow-[4px_4px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 flex items-center justify-center transition-all cursor-pointer select-none mt-2"
+              className="w-full h-[54px] rounded-[16px] bg-[#FFD54F] text-[#0A1D3D] font-[800] text-base border-[3px] border-[#0A1D3D] shadow-[4px_4px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 flex items-center justify-center transition-all cursor-pointer select-none mt-2"
               style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
             >
               Contact Us

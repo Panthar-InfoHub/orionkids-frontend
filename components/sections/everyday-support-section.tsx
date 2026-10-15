@@ -16,12 +16,12 @@ export function EverydaySupportSection() {
           <div className="lg:col-span-6 flex flex-col items-center lg:items-end text-left lg:pr-4 xl:pr-8">
             
             {/* Image Wrapper Container with Peeking Mascot */}
-            <div className="relative w-full max-w-[540px]">
+            <div className="relative w-full max-w-[540px] mt-10 sm:mt-12 lg:mt-0">
               
-              {/* Peeking GIF Mascot (Half visible above the top border) */}
-              <div className="absolute -top-15 sm:-top-20 left-1/2 -translate-x-1/2 w-20 h-20 sm:w-24 sm:h-24 z-0 pointer-events-none">
+              {/* Peeking GIF Mascot (Consistently visible above the top border on all screen sizes) */}
+              <div className="absolute -top-[70px] sm:-top-[80px] left-1/2 -translate-x-1/2 w-[84px] h-[84px] sm:w-24 sm:h-24 z-0 pointer-events-none select-none">
                 <Image
-                  src={encodeURI("/gif/rotating head child.gif")}
+                  src={encodeURI("/gif/rotating head child.webp")}
                   alt="Peeking animated mascot"
                   width={96}
                   height={96}
@@ -43,15 +43,15 @@ export function EverydaySupportSection() {
                 />
 
                 {/* Floating Badge 1: BLAST OFF! (Top Right) */}
-                <div className="absolute top-5 right-5 sm:top-6 sm:right-6 z-20">
+                <div className="absolute top-[20px] right-3 sm:right-auto sm:left-[417.3px] z-20">
                   <div
-                    className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 bg-[#EDE9FE] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-[14px] py-[8px] h-[31px] bg-[#D8F3FF] text-[#0A1D3D] rounded-[14px] border-2 border-[#0A1D3D] shadow-[2px_3px_0px_0px_#0A1D3D] -rotate-[5deg] hover:rotate-0 transition-transform cursor-pointer select-none whitespace-nowrap"
                     style={{
                       fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                     }}
                   >
-                    <span className="text-xs">👾</span>
-                    <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider">
+                    <span className="text-[12px] leading-none">👾</span>
+                    <span className="text-[11px] font-black uppercase tracking-wider leading-none">
                       BLAST OFF!
                     </span>
                   </div>
@@ -60,7 +60,7 @@ export function EverydaySupportSection() {
                 {/* Floating Badge 2: SUPERSTAR APPROVED! (Bottom Left) */}
                 <div className="absolute bottom-5 left-5 sm:bottom-6 sm:left-6 z-20">
                   <div
-                    className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 bg-[#DDF4FF] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 bg-[#DDF4FF] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:scale-105 active:scale-95 transition-transform cursor-pointer "
                     style={{
                       fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                     }}
@@ -114,9 +114,9 @@ export function EverydaySupportSection() {
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
             >
-              <span>Turn understanding</span>
+              <span>Turn Understanding</span>
               <span className="flex items-center gap-2">
-                <span>into everyday support.</span>
+                <span>Into Everyday Support.</span>
                 <span className="inline-block relative w-8 h-8 sm:w-10 sm:h-10 shrink-0">
                   <Image
                     src={encodeURI("/icons/🎯.png")}
@@ -150,7 +150,7 @@ export function EverydaySupportSection() {
                     fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                   }}
                 >
-                  <span>A next step to try</span>
+                  <span>A Next Step To Try</span>
                   <span className="text-sm">🧮</span>
                 </span>
                 <span
@@ -170,7 +170,7 @@ export function EverydaySupportSection() {
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
               >
-                Make a story, one step at a time.
+                Make A Story, One Step At A Time.
               </h3>
 
               {/* Activity Description */}
@@ -195,7 +195,7 @@ export function EverydaySupportSection() {
                     }}
                   >
                     <span>🏡</span>
-                    <span>At home</span>
+                    <span>At Home</span>
                   </span>
                   <p
                     className="text-[11px] sm:text-xs text-[#526176] leading-relaxed font-normal"
@@ -216,7 +216,7 @@ export function EverydaySupportSection() {
                     }}
                   >
                     <span>🏫</span>
-                    <span>In the classroom</span>
+                    <span>In The Classroom</span>
                   </span>
                   <p
                     className="text-[11px] sm:text-xs text-[#526176] leading-relaxed font-normal"
