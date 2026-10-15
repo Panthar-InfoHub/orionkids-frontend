@@ -153,7 +153,7 @@ export function TestimonialsSection() {
           
           {/* Top Pill Badge */}
           <div
-            className="inline-flex items-center gap-[6px] px-[16px] py-[4px] bg-[#A8E6CF] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] mb-4 transform rotate-[1deg] hover:rotate-0 transition-transform cursor-default select-none"
+            className="inline-flex items-center gap-[6px] px-[16px] py-[4px] bg-[#A8E6CF] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] mb-4 transform rotate-[-1deg] hover:rotate-0 transition-transform cursor-default select-none"
             style={{
               fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               fontWeight: 800,
@@ -177,7 +177,7 @@ export function TestimonialsSection() {
               lineHeight: "100%",
             }}
           >
-            Loved by Leaders and
+            Loved By Leaders And
             <br />
             Parents💖
           </h2>
@@ -244,7 +244,7 @@ export function TestimonialsSection() {
                   </div>
 
                   {/* Bottom Section: Divider & Author Info */}
-                  <div className="w-full border-t border-[#0A1D3D]/15 pt-3.5 mt-4 flex flex-col gap-0.5">
+                  <div className="w-full border-t-2 border-[#0A1D3D] pt-3.5 mt-4 flex flex-col gap-0.5">
                     <span
                       className="text-[#1E293B]"
                       style={{
