@@ -12,6 +12,7 @@
   --font-plus-jakarta: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
   --font-inter: var(--font-inter), "Inter", system-ui, sans-serif;
   --font-space-grotesk: var(--font-space-grotesk), "Space Grotesk", system-ui, sans-serif;
+  --font-lora: var(--font-lora), "Lora", Georgia, serif;
 }
 
 body {

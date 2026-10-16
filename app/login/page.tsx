@@ -44,13 +44,7 @@ export default function LoginPage() {
 
       {/* 3. Main Section: container max 1440px, padding L/R 88px */}
       <main className="max-w-[1440px] w-full mx-auto px-4 sm:px-8 lg:px-[88px] py-8 sm:py-12 flex-1 flex flex-col lg:flex-row items-start justify-between gap-10 lg:gap-[40px]">
-        {/* ================= LEFT DIV =================
-            Flow: Vertical
-            Width: Fixed (376px)
-            Height: Hug (786px)
-            Padding Top: 12px
-            Gap: 28px
-        */}
+
         <section
           aria-label="Welcome"
           className="w-full lg:w-[376px] shrink-0 pt-[12px] flex flex-col gap-[28px]"
@@ -81,16 +75,6 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          {/* Pill detail:
-              Flow: Horizontal
-              Width: Hug (238px)
-              Height: Hug (28px)
-              Radius: 100px
-              Border: 1.5px
-              Padding: Top 7px, Right 12px, Bottom 7px, Left 12px
-              Gap: 6px
-              bg: #65DCAA
-          */}
           <div>
             <div className="pill inline-flex items-center gap-[6px] w-auto sm:w-[238px] h-[28px] rounded-[100px] border-[1.5px] border-[#0A1D3D] bg-[#65DCAA] px-[12px] py-[7px] shadow-[2px_2px_0px_0px_#0A1D3D]">
               <span className="text-[11px] leading-none">🧩</span>
@@ -105,13 +89,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Heading:
-              Content: Every child is\na world of\npotential.
-              Width: 376px, Height: 132px
-              Font: Plus Jakarta Sans, Weight: 800 ExtraBold, Size: 38px
-              Line height: 115%, Letter spacing: -1.3px
-              Text: #10345B
-          */}
+         
           <h1
             className="w-full max-w-[376px] font-extrabold text-[#10345B]"
             style={{
@@ -127,13 +105,7 @@ export default function LoginPage() {
             potential.
           </h1>
 
-          {/* Content / Subtitle:
-              Content: Let’s start with a few details about your child, so their learning journey feels like their own.
-              Width: 376px, Height: 50px
-              Font: Inter, Weight: 400 Regular, Size: 15px
-              Line height: 165%, Letter spacing: 0%
-              Text: #526176
-          */}
+        
           <p
             className="lede w-full max-w-[376px] font-normal text-[#526176]"
             style={{
@@ -147,30 +119,10 @@ export default function LoginPage() {
             Let&apos;s start with a few details about your child, so their learning journey feels like their own.
           </p>
 
-          {/* Image (HeroIllustration):
-              Flow: Vertical
-              Width: Fill (376px)
-              Height: Hug (312px)
-              Gap: 12px
-          */}
           <HeroIllustration />
 
-          {/* Lowest div (Note Card):
-              bg: #EAF7EF
-              Flow: Vertical
-              Width: Fill (376px)
-              Height: Hug (112px)
-              Radius: 16px
-              Padding: 20px
-              Gap: 10px
-          */}
           <div className="lowest-div w-full max-w-[376px] bg-[#EAF7EF] rounded-[16px] p-[20px] flex flex-col gap-[10px]">
-            {/* Heading in lowest div:
-                Content: A thoughtful beginning
-                Flow: Horizontal, Width: Hug (185px), Height: Hug (20px), Gap: 8px
-                Font: Plus Jakarta Sans, Weight: 800 ExtraBold, Size: 14px
-                Line height: 100%, Letter spacing: 0%, Text: #10345B
-            */}
+         
             <div className="flex items-center gap-[8px] w-auto sm:w-[185px] h-[20px]">
               <svg
                 width="16"
@@ -201,12 +153,6 @@ export default function LoginPage() {
               </h4>
             </div>
 
-            {/* Description in lowest div:
-                Content: Next, you’ll review your child’s profile before exploring their first playful activity.
-                Width: 336px, Height: 42px
-                Font: Inter, Weight: 400 Regular, Size: 13px
-                Line height: 160%, Letter spacing: 0%, Text: #526176
-            */}
             <p
               className="w-full max-w-[336px] font-normal text-[#526176]"
               style={{
@@ -222,16 +168,7 @@ export default function LoginPage() {
           </div>
         </section>
 
-        {/* ================= RIGHT DIV =================
-            Flow: Vertical
-            Width: Fill (824px)
-            Height: Hug (1,353px)
-            Radius: 24px
-            Border: 1px
-            Padding: 36px
-            Gap: 26px
-            Text: #10345B
-        */}
+   
         <section
           aria-label="Child Details Form"
           className="w-full lg:max-w-[824px] lg:flex-1"

@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function ChildJourneySection() {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -408,16 +409,16 @@ export function ChildJourneySection() {
 
               {/* Bottom Right Floating Button */}
               <div className="absolute bottom-5 right-6 z-30 select-none">
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1.5 px-5 py-2 bg-[#FFD028] text-white text-xs sm:text-sm font-black rounded-full hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none"
+                <Link
+                  href="/report"
+                  className="inline-flex items-center gap-1.5 px-5 py-2 bg-[#FFD028] text-[#0A1D3D] text-xs sm:text-sm font-black rounded-full hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D]"
                   style={{
                     fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                   }}
                 >
                   <span>Report</span>
                   <span className="text-sm">→</span>
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -658,16 +659,16 @@ export function ChildJourneySection() {
 
                 {/* Report Button */}
                 <div className="mb-3 sm:mb-5 shrink-0">
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 bg-[#FFD028] text-white text-xs sm:text-sm font-black rounded-full hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] shrink-0 whitespace-nowrap"
+                  <Link
+                    href="/report"
+                    className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 bg-[#FFD028] text-[#0A1D3D] text-xs sm:text-sm font-black rounded-full hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] shrink-0 whitespace-nowrap"
                     style={{
                       fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                     }}
                   >
                     <span>Report</span>
                     <span className="text-sm">→</span>
-                  </button>
+                  </Link>
                 </div>
               </div>
 

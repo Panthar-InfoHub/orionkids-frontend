@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 /* ------------------------------------------------------------------ */
 /*  Font family shortcuts                                               */
@@ -271,8 +272,8 @@ export function ForParentsHeroSection() {
                   <span>3 quests completed this week</span>
                 </div>
 
-                <button
-                  type="button"
+                <Link
+                  href="/report"
                   className="cursor-pointer font-bold text-xs hover:underline"
                   style={{
                     fontFamily: JAKARTA,
@@ -280,7 +281,7 @@ export function ForParentsHeroSection() {
                   }}
                 >
                   Full Report →
-                </button>
+                </Link>
               </div>
 
               {/* Bottom-Left Floating Stress Badge */}

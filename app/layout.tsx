@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Outfit, Plus_Jakarta_Sans, Inter, Space_Grotesk } from "next/font/google";
+import { Outfit, Plus_Jakarta_Sans, Inter, Space_Grotesk, Lora } from "next/font/google";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -26,6 +26,13 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+const lora = Lora({
+  variable: "--font-lora",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "OrionKids | Stronger Thinking. Brighter Tomorrows.",
   description:
@@ -40,7 +47,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${plusJakartaSans.variable} ${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${outfit.variable} ${plusJakartaSans.variable} ${inter.variable} ${spaceGrotesk.variable} ${lora.variable} h-full antialiased`}
     >
       <body
         className="min-h-full flex flex-col font-sans bg-white text-[#0A1D3D]"

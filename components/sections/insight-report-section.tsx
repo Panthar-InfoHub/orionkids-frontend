@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 /**
  * Measured from the Figma prototype screenshot (frame 1440 wide, shown at 1.25x).
@@ -227,6 +228,18 @@ export function InsightReportSection() {
                   <span className="leading-none">{c.text}</span>
                 </div>
               ))}
+            </div>
+
+            {/* Direct CTA to open Ananya's Report */}
+            <div className="mt-7">
+              <Link
+                href="/report"
+                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#FFD028] text-[#0A1D3D] font-extrabold text-[14px] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#FF8CC7] hover:scale-105 active:scale-95 transition-all cursor-pointer select-none"
+                style={{ fontFamily: JAKARTA }}
+              >
+                <span>📄 View Sample Insight Report</span>
+                <span className="text-base font-bold">→</span>
+              </Link>
             </div>
           </div>
 

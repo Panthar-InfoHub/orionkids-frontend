@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Check,
   ChevronDown,
@@ -51,8 +52,8 @@ function SectionHead({
     </div>
   );
 }
-
 export default function ChildDetailsForm() {
+  const router = useRouter();
   const [childName, setChildName] = useState("");
   const [age, setAge] = useState("");
   const [language, setLanguage] = useState("");
@@ -69,8 +70,8 @@ export default function ChildDetailsForm() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      alert("Child details submitted successfully!");
-    }, 800);
+      router.push("/warm-up");
+    }, 600);
   };
 
   return (
