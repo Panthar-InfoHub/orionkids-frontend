@@ -90,7 +90,7 @@ export default function WarmUpPage() {
         />
 
         {/* Right Column: Question Card (Fill 916px, Min-height 660px, Radius 24px, Border 1px, Padding 32px, Gap 24px) */}
-        <div className="w-full md:max-w-[916px] flex-1 bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_30px_rgba(10,29,61,0.03)] p-6 sm:p-[32px] flex flex-col justify-between min-h-[660px] gap-[24px]">
+        <div className="w-full md:max-w-[916px] flex-1 bg-white rounded-[20px] sm:rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_30px_rgba(10,29,61,0.03)] p-4 sm:p-6 md:p-[32px] flex flex-col justify-between min-h-0 sm:min-h-[660px] gap-4 sm:gap-[24px]">
           {isCompleted ? (
             /* Celebration Screen when all 6 steps are complete */
             <div className="flex flex-col items-center justify-center text-center py-12 my-auto">
@@ -119,9 +119,9 @@ export default function WarmUpPage() {
               </button>
             </div>
           ) : (
-            <div className="flex flex-col h-full justify-between gap-[24px]">
+            <div className="flex flex-col h-full justify-between gap-4 sm:gap-[24px]">
               {/* Question Header */}
-              <div className="flex flex-col gap-[8px]">
+              <div className="flex flex-col gap-[6px] sm:gap-[8px]">
                 {/* Content: A LITTLE ABOUT YOU, Plus Jakarta Sans, 800 ExtraBold, 11px, 100% line height, 100% letter spacing, #526176 */}
                 <span
                   style={{
@@ -139,10 +139,10 @@ export default function WarmUpPage() {
 
                 {/* Question: Lora, 700 Bold, 34px, 125% line height, -60% letter spacing (-0.6px), #0A1D3D */}
                 <h2
+                  className="text-[22px] sm:text-[34px]"
                   style={{
                     fontFamily: LORA,
                     fontWeight: 700,
-                    fontSize: "34px",
                     lineHeight: "125%",
                     letterSpacing: "-0.6px",
                     color: "#0A1D3D",
@@ -153,10 +153,10 @@ export default function WarmUpPage() {
 
                 {/* Subtitle: Plus Jakarta Sans, 400 Regular, 16px, 100% line height, 0% letter spacing, #526176 */}
                 <p
+                  className="text-[14px] sm:text-[16px]"
                   style={{
                     fontFamily: JAKARTA,
                     fontWeight: 400,
-                    fontSize: "16px",
                     lineHeight: "140%",
                     letterSpacing: "0%",
                     color: "#526176",
@@ -166,14 +166,12 @@ export default function WarmUpPage() {
                 </p>
               </div>
 
-              {/* Options Container: Fill (852px), Min-Height 300px, Gap 12px / 16px */}
+              {/* Options Container: Styled consistently as clean rows like phone view */}
               <div
                 className={`w-full max-w-[852px] ${
                   currentQuestion.layout === "grid-4"
-                    ? "grid grid-cols-2 lg:grid-cols-4 gap-[16px] my-auto"
-                    : currentQuestion.layout === "grid-3"
-                    ? "grid grid-cols-1 sm:grid-cols-3 gap-[12px] min-h-[300px]"
-                    : "grid grid-cols-1 sm:grid-cols-2 gap-[12px] min-h-[300px]"
+                    ? "grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-[16px] my-auto"
+                    : "grid grid-cols-1 gap-2.5 sm:gap-3"
                 }`}
               >
                 {currentQuestion.options.map((option) => (
@@ -208,18 +206,18 @@ export default function WarmUpPage() {
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="inline-flex items-center justify-center gap-[12px] h-[54px] px-[24px] rounded-[12px] border border-[#0A1D3D] text-[#0A1D3D] bg-white hover:bg-slate-50 active:scale-[0.98] transition-all cursor-pointer select-none"
+                    className="inline-flex items-center justify-center gap-2 sm:gap-[12px] h-[46px] sm:h-[54px] px-4 sm:px-[24px] rounded-[12px] border border-[#0A1D3D] text-[#0A1D3D] bg-white hover:bg-slate-50 active:scale-[0.98] transition-all cursor-pointer select-none"
                     style={{
                       fontFamily: JAKARTA,
                       fontWeight: 800,
-                      fontSize: "15px",
+                      fontSize: "14px",
                       lineHeight: "100%",
                       letterSpacing: "0%",
                     }}
                   >
                     <svg
-                      width="18"
-                      height="18"
+                      width="16"
+                      height="16"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#0A1D3D"
@@ -233,13 +231,13 @@ export default function WarmUpPage() {
                   </button>
 
                   {/* Right Actions: Take a pause & Finish/Continue */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     {/* Take a pause button on Step 6 */}
                     {isLastStep && (
                       <button
                         type="button"
                         onClick={() => setIsPauseModalOpen(true)}
-                        className="inline-flex items-center justify-center h-[54px] px-[24px] rounded-[12px] border border-[#D8DFE8] text-[#0A1D3D] bg-white hover:bg-slate-50 active:scale-[0.98] transition-all cursor-pointer select-none font-bold text-[15px]"
+                        className="inline-flex items-center justify-center h-[46px] sm:h-[54px] px-3 sm:px-[24px] rounded-[12px] border border-[#D8DFE8] text-[#0A1D3D] bg-white hover:bg-slate-50 active:scale-[0.98] transition-all cursor-pointer select-none font-bold text-[13px] sm:text-[15px]"
                         style={{ fontFamily: JAKARTA }}
                       >
                         Take a pause
@@ -251,7 +249,7 @@ export default function WarmUpPage() {
                       type="button"
                       onClick={handleNext}
                       disabled={!selectedAnswer}
-                      className={`inline-flex items-center justify-center gap-[12px] h-[54px] px-[24px] rounded-[12px] border-2 border-[#0A1D3D] transition-all select-none ${
+                      className={`inline-flex items-center justify-center gap-2 sm:gap-[12px] h-[46px] sm:h-[54px] px-4 sm:px-[24px] rounded-[12px] border-2 border-[#0A1D3D] transition-all select-none ${
                         selectedAnswer
                           ? "bg-[#FFD028] text-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 cursor-pointer"
                           : "bg-[#E2E8F0] text-[#94A3B8] border-transparent cursor-not-allowed"
@@ -259,7 +257,7 @@ export default function WarmUpPage() {
                       style={{
                         fontFamily: JAKARTA,
                         fontWeight: 800,
-                        fontSize: "15px",
+                        fontSize: "14px",
                         lineHeight: "100%",
                         letterSpacing: "0%",
                       }}
