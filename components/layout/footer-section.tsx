@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const INTER = "var(--font-inter), 'Inter', sans-serif";
@@ -251,18 +252,21 @@ export function FooterSection() {
                 letterSpacing: "-0.5px",
               }}
             >
-              <a href="#approach" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+              <Link href="/#approach" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
                 OUR APPROACH
-              </a>
-              <a href="#schools" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+              </Link>
+              <Link href="/about-us" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+                ABOUT US
+              </Link>
+              <Link href="/for-schools" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
                 FOR SCHOOL
-              </a>
-              <a href="#parents" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+              </Link>
+              <Link href="/for-parents" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
                 FOR PARENTS
-              </a>
-              <a href="#blogs" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+              </Link>
+              <Link href="/#blogs" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
                 BLOGS
-              </a>
+              </Link>
             </div>
 
             {/* Column 2: Social / External Links with ↗ */}

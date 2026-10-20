@@ -5,8 +5,10 @@ import Image from "next/image";
 import { SITE_CONFIG } from "@/lib/constants";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 export function Navbar() {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
@@ -37,12 +39,9 @@ export function Navbar() {
 
       const diff = currentScrollY - lastScrollY;
 
-      // Neeche scroll karne par -> Hide Navbar
       if (diff > 8) {
         setIsVisible(false);
-      }
-      // Upar scroll karne par -> Show Navbar
-      else if (diff < -8) {
+      } else if (diff < -8) {
         setIsVisible(true);
       }
 
@@ -64,12 +63,11 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`w-full bg-white border-b border-slate-200 sticky top-0 z-40 transition-transform duration-300 ease-in-out will-change-transform ${
-          isVisible ? "translate-y-0 shadow-sm" : "-translate-y-full pointer-events-none"
-        }`}
+        className={`w-full bg-white border-b border-slate-200 sticky top-0 z-40 transition-transform duration-300 ease-in-out will-change-transform ${isVisible ? "translate-y-0 shadow-sm" : "-translate-y-full pointer-events-none"
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-[31px] h-[68px] flex items-center justify-between">
-          
+
           {/* Brand Logo & Pill Tag */}
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <Link
@@ -86,7 +84,7 @@ export function Navbar() {
                 className="w-[115px] h-[61px] object-contain shrink-0"
               />
             </Link>
-            
+
             <div
               className="hidden sm:inline-flex items-center gap-1 px-[8px] py-[3px] h-[17px] rounded-full bg-[#D8F3FF] text-[#0A1D3D] border-[2px] border-[#0A1D3D] whitespace-nowrap shrink-0"
               style={{
@@ -106,23 +104,28 @@ export function Navbar() {
             aria-label="Main Navigation"
             style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
           >
-            {SITE_CONFIG.navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-[14px] font-[700] text-[#0A1D3D] leading-none tracking-normal hover:text-[#00BCD4] transition-colors relative py-0.5 whitespace-nowrap hover:after:content-[''] hover:after:absolute hover:after:-bottom-1 hover:after:left-0 hover:after:w-full hover:after:h-[2px] hover:after:bg-[#00BCD4] hover:after:rounded-full"
-                style={{
-                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  lineHeight: "100%",
-                  letterSpacing: "0%",
-                  color: "#0A1D3D",
-                }}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {SITE_CONFIG.navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className={`text-[14px] font-[700] leading-none tracking-normal transition-colors relative py-0.5 whitespace-nowrap hover:text-[#00BCD4] ${isActive
+                      ? "text-[#00BCD4] after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-[#00BCD4] after:rounded-full"
+                      : "text-[#0A1D3D]"
+                    }`}
+                  style={{
+                    fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    lineHeight: "100%",
+                    letterSpacing: "0%",
+                  }}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Action CTA — Contact Us Button */}
@@ -152,16 +155,20 @@ export function Navbar() {
             className="lg:hidden bg-white border-b-2 border-[#0A1D3D] px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top-4 duration-200"
             style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
           >
-            {SITE_CONFIG.navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-[15px] font-[700] text-[#0A1D3D] py-1 hover:text-[#00BCD4]"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {SITE_CONFIG.navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`text-[15px] font-[700] py-1 transition-colors ${isActive ? "text-[#00BCD4]" : "text-[#0A1D3D] hover:text-[#00BCD4]"
+                    }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
@@ -176,7 +183,7 @@ export function Navbar() {
         )}
       </header>
 
-     
+
     </>
   );
 }

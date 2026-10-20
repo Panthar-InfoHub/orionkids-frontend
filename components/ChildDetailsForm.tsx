@@ -3,16 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Check,
-  ChevronDown,
-  Clock,
-  HeartHandshake,
-  Loader2,
-  ArrowRight,
-  School,
-  Smile,
-} from "lucide-react";
+import { Check, ChevronDown,Clock,HeartHandshake,Loader2,ArrowRight,School, Smile, } from "lucide-react";
 
 const JAKARTA = "[font-family:var(--font-plus-jakarta),sans-serif]";
 
@@ -23,8 +14,8 @@ const FIELD =
 const CLASSES = [
   { label: "Classes 1", locked: false },
   { label: "Classes 2", locked: false },
-  { label: "Classes 3", locked: true },
-  { label: "Classes 4", locked: true },
+  { label: "Classes 3", locked: false },
+  { label: "Classes 4", locked: false },
 ];
 
 function SectionHead({

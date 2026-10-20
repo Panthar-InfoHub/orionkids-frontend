@@ -27,7 +27,7 @@ export const SITE_CONFIG: SiteConfig = {
   },
   navLinks: [
     { label: "Our Approach", href: "#approach" },
-    { label: "About Us", href: "#about" },
+    { label: "About Us", href: "/about-us" },
     { label: "For Schools", href: "/for-schools" },
     { label: "For Parents", href: "/for-parents" },
     { label: "Blog", href: "#blog" },

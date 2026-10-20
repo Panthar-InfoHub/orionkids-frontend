@@ -81,7 +81,7 @@ export function FaqSection() {
               className="text-[#526176] text-left max-w-[390px]"
               style={{
                 fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                fontWeight: 400,
+                fontWeight: 400, 
                 fontSize: "16px",
                 lineHeight: "160%",
                 letterSpacing: "0%",
