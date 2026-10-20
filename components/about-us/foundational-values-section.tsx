@@ -68,7 +68,7 @@ const VALUES: Value[] = [
 
 export function FoundationalValuesSection() {
   return (
-    <section className="w-full bg-white border-t-2 border-b border-t-[#1B204A] border-b-[#1B204A]/40 py-16 lg:py-24">
+    <section className="w-full bg-white border-b  border-b-[#1B204A]/40 py-16 lg:py-24">
       <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 lg:px-[88px]">
         {/* ================= Header ================= */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-12 sm:mb-14">

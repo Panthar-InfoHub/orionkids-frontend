@@ -10,11 +10,11 @@ const NAVY = "#1B204A";
 
 export function ClosingCtaSection() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#E8F9F0] py-14 sm:py-20 border-b-2 border-[#1B204A]">
+    <section className="relative w-full overflow-hidden bg-[#E8F9F0] py-14 sm:py-20 p-2">
       {/* Soft pink glow peeking out behind the bottom-right corner of the card */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-24 -right-16 w-[340px] h-[340px] rounded-full bg-[#F9A8D4]/60 blur-[70px]"
+        className="pointer-events-none absolute bottom-8 sm:bottom-12 right-0 sm:right-10 w-[380px] h-[380px] rounded-full bg-[#F9A8D4]/50 blur-[80px]"
       />
 
       <div className="relative mx-auto w-full max-w-[1440px] px-4 sm:px-8 lg:px-[88px]">

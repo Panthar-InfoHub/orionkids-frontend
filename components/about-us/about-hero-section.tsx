@@ -25,7 +25,7 @@ const STAR = "0,-1 0.2245,-0.309 0.9511,-0.309 0.363,0.118 0.5878,0.809 0,0.382 
 export function AboutHeroSection() {
   return (
     <section
-      className="relative w-full overflow-hidden border-b-2 border-[#1B204A]"
+      className="relative w-full overflow-hidden border-b-2 border-[#1B204A]/10"
       style={{ background: HERO_BG }}
     >
       <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 pt-12 pb-14 lg:pt-[94px] lg:pb-[52px]">
