@@ -69,10 +69,10 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-[31px] h-[68px] flex items-center justify-between">
 
           {/* Brand Logo & Pill Tag */}
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0">
             <Link
               href="/"
-              className="flex items-center shrink-0 relative -left-4 sm:-left-5"
+              className="flex items-center shrink-0"
               aria-label="OrionKids Home"
             >
               <Image
@@ -81,12 +81,13 @@ export function Navbar() {
                 width={115}
                 height={61}
                 priority
-                className="w-[115px] h-[61px] object-contain shrink-0"
+                className="w-[96px] sm:w-[110px] xl:w-[115px] h-auto object-contain shrink-0"
               />
             </Link>
 
+            {/* Tagline Pill — Show only on large desktop screens so middle screens have plenty of room */}
             <div
-              className="hidden sm:inline-flex items-center gap-1 px-[8px] py-[3px] h-[17px] rounded-full bg-[#D8F3FF] text-[#0A1D3D] border-[2px] border-[#0A1D3D] whitespace-nowrap shrink-0"
+              className="hidden xl:inline-flex items-center gap-1 px-[9px] py-[3px] h-[19px] rounded-full bg-[#D8F3FF] text-[#0A1D3D] border-[1.5px] border-[#0A1D3D] whitespace-nowrap shrink-0"
               style={{
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
@@ -98,9 +99,9 @@ export function Navbar() {
             </div>
           </div>
 
-          {/* Desktop Nav Links */}
+          {/* Desktop Nav Links — Generous spacing as original */}
           <nav
-            className="hidden lg:flex items-center justify-between w-[544px] h-[20px] shrink-0"
+            className="hidden lg:flex items-center gap-6 xl:gap-8 shrink-0"
             aria-label="Main Navigation"
             style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
           >
@@ -110,16 +111,14 @@ export function Navbar() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`text-[14px] font-[700] leading-none tracking-normal transition-colors relative py-0.5 whitespace-nowrap hover:text-[#00BCD4] ${isActive
+                  className={`text-[14px] font-[700] leading-none tracking-normal transition-colors relative py-1 whitespace-nowrap hover:text-[#00BCD4] ${
+                    isActive
                       ? "text-[#00BCD4] after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-[#00BCD4] after:rounded-full"
                       : "text-[#0A1D3D]"
-                    }`}
+                  }`}
                   style={{
                     fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
-                    fontSize: "14px",
-                    fontWeight: 700,
                     lineHeight: "100%",
-                    letterSpacing: "0%",
                   }}
                 >
                   {link.label}
@@ -132,7 +131,7 @@ export function Navbar() {
           <div className="hidden lg:flex items-center shrink-0">
             <button
               onClick={() => setContactModalOpen(true)}
-              className="w-[201px] h-[54px] rounded-[16px] bg-[#FFD54F] text-[#0A1D3D] font-[800] text-base border-[3px] border-[#0A1D3D] shadow-[4px_4px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center transition-all cursor-pointer select-none whitespace-nowrap"
+              className="px-5 xl:px-6 h-[46px] xl:h-[50px] rounded-[14px] xl:rounded-[16px] bg-[#FFD54F] text-[#0A1D3D] font-[800] text-[14px] xl:text-[15px] border-[2.5px] border-[#0A1D3D] shadow-[3px_3px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1.5px_1.5px_0px_0px_#0A1D3D] flex items-center justify-center transition-all cursor-pointer select-none whitespace-nowrap"
               style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
             >
               Contact Us

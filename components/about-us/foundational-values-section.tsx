@@ -74,7 +74,7 @@ export function FoundationalValuesSection() {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-12 sm:mb-14">
           <div>
             <span
-              className="inline-flex items-center h-7 px-3 rounded-lg border-[1.5px] border-[#1B204A] bg-[#FFE9E4] text-[#FF6B4A] uppercase select-none"
+              className="inline-flex items-center h-7 px-3 rounded-lg border-[2px] border-[#1B204A] bg-[#FFE9E4] text-[#FF6B4A] uppercase select-none"
               style={{
                 fontFamily: JAKARTA,
                 fontWeight: 700,
@@ -120,7 +120,7 @@ export function FoundationalValuesSection() {
           {VALUES.map((v) => (
             <article
               key={v.no}
-              className="flex flex-col rounded-[20px] border-2 border-[#1B204A] p-6 shadow-[3px_4px_0_#1B204A] transition-transform hover:-translate-y-1 duration-200"
+              className="flex flex-col rounded-[20px]  p-6 shadow-[3px_4px_0_#1B204A] transition-transform hover:-translate-y-1 duration-200"
               style={{ backgroundColor: v.cardBg }}
             >
               <span

@@ -49,7 +49,7 @@ export function AboutFoundationSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 mb-8 sm:mb-10">
           
           {/* ----- CARD 01: Who we are ----- */}
-          <div className="relative bg-white border-2 border-[#1B204A] rounded-[24px] p-6 sm:p-9 shadow-[4px_6px_0px_#1B204A] flex flex-col justify-between gap-8 transition-transform hover:-translate-y-1 duration-200">
+          <div className="relative bg-[#FDFBF7]  rounded-[24px] p-6 sm:p-9 shadow-[4px_6px_0px_#1B204A] flex flex-col justify-between gap-8 transition-transform hover:-translate-y-1 duration-200">
             <div>
               {/* Badge 01 */}
               <div
@@ -89,7 +89,7 @@ export function AboutFoundationSection() {
           </div>
 
           {/* ----- CARD 02: Why we exist ----- */}
-          <div className="relative bg-white border-2 border-[#1B204A] rounded-[24px] p-6 sm:p-9 shadow-[4px_6px_0px_#1B204A] flex flex-col justify-between gap-8 transition-transform hover:-translate-y-1 duration-200">
+          <div className="relative bg-[#EFF2FF]  rounded-[24px] p-6 sm:p-9 shadow-[4px_6px_0px_#1B204A] flex flex-col justify-between gap-8 transition-transform hover:-translate-y-1 duration-200">
             <div>
               {/* Badge 02 */}
               <div
@@ -131,15 +131,15 @@ export function AboutFoundationSection() {
         <div
           className="relative w-full rounded-[24px] border-2 border-[#1B204A] p-6 sm:p-8 lg:p-9 shadow-[4px_6px_0px_#1B204A] flex flex-col items-start gap-4 transition-transform hover:-translate-y-0.5 duration-200"
           style={{
-            background: "linear-gradient(135deg, #EFF6FF 0%, #FAF5FF 50%, #F0FDF4 100%)",
+            background: "linear-gradient(90deg, #FFF9EA 0%, #FFFFFF 50%, #EDF7FF 100%)",
           }}
         >
           {/* Pill Tag */}
           <div
-            className="inline-flex items-center px-3.5 py-1 rounded-full bg-[#1B204A] text-white text-[10px] sm:text-[11px] font-[800] tracking-[0.8px] uppercase select-none"
+            className="inline-flex items-center px-3.5 py-1 rounded-[6px] bg-[#1B204A] text-white text-[10px] sm:text-[11px] font-[800] tracking-[0.8px] uppercase select-none"
             style={{ fontFamily: JAKARTA }}
           >
-            SECTION 02 • CRAFT &amp; PRINCIPLES
+            SECTION 03 • CRAFT &amp; PRINCIPLES
           </div>
 
           {/* Heading */}
