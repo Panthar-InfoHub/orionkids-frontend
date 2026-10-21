@@ -30,8 +30,8 @@ export const SITE_CONFIG: SiteConfig = {
     { label: "About Us", href: "/about-us" },
     { label: "For Schools", href: "/for-schools" },
     { label: "For Parents", href: "/for-parents" },
-    { label: "Blog", href: "#blog" },
-    { label: "Printables", href: "#printables" },
+    { label: "Blog", href: "/blog" },
+    { label: "Printables", href: "/printables" },
   ],
   heroBadges: [
     { icon: "🎮", text: "100% Game-Based", bg: "bg-[#D8F3FF]" },

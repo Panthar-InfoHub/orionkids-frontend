@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, ChevronDown,Clock,HeartHandshake,Loader2,ArrowRight,School, Smile, } from "lucide-react";
+import { Check, ChevronDown, Clock, HeartHandshake, Loader2, ArrowRight, School, Smile, } from "lucide-react";
 
 const JAKARTA = "[font-family:var(--font-plus-jakarta),sans-serif]";
 
@@ -138,9 +138,8 @@ export default function ChildDetailsForm() {
                 id="language"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className={`${FIELD} appearance-none pr-11 cursor-pointer ${
-                  language === "" ? "!text-[#8793A8] !font-normal" : ""
-                }`}
+                className={`${FIELD} appearance-none pr-11 cursor-pointer ${language === "" ? "!text-[#8793A8] !font-normal" : ""
+                  }`}
               >
                 <option value="" disabled>
                   Select home language
@@ -204,11 +203,10 @@ export default function ChildDetailsForm() {
                     aria-checked={isSelected}
                     disabled={c.locked}
                     onClick={() => setSelectedClass(c.label)}
-                    className={`w-full h-[47px] px-[14px] rounded-[12px] flex items-center justify-between text-left text-[13px] text-[#0B2A5B] transition-colors disabled:cursor-not-allowed ${
-                      isSelected
+                    className={`w-full h-[47px] px-[14px] rounded-[12px] flex items-center justify-between text-left text-[13px] text-[#0B2A5B] transition-colors disabled:cursor-not-allowed ${isSelected
                         ? "bg-[#EDE4FF] font-semibold"
                         : "font-medium hover:bg-[#F6F2FF]"
-                    } ${c.locked ? "hover:bg-transparent" : "cursor-pointer"}`}
+                      } ${c.locked ? "hover:bg-transparent" : "cursor-pointer"}`}
                   >
                     <span>{c.label}</span>
                     {c.locked && (

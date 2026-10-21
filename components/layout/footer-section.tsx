@@ -14,143 +14,84 @@ const LOGO_SRC = "/svg/Logo.svg";
 /*  Doodle wall with Polaroid cards from /public/footer-images         */
 /* ------------------------------------------------------------------ */
 
-type CardSpec = {
-  x: number;
-  y: number;
-  rot: number;
-  imageSrc?: string;
-  label?: string;
-  author?: string;
-  isSpecialFrame?: boolean;
+type DoodleSpec = {
+  src: string;
+  x: number; // center x in 1350px coordinate space
+  y: number; // center y in 205px coordinate space
+  w: number; // display width in 1350px coordinate space
+  h: number; // display height in 205px coordinate space
+  zIndex: number;
+  alt: string;
 };
 
-// Compact Strip dimensions: Width 1350px, Height 205px (eliminating huge empty gap)
+// Compact Strip dimensions: Width 1350px, Height 205px matching Figma canvas
 const STRIP_W = 1350;
 const STRIP_H = 205;
 
-// Exact Photo Frame specs: Width 80px, Height 92px, Colour #F5F0E8
-const CARD_W = 80;
-const CARD_H = 92;
-
-// Compact card coordinates: Upper row center Y ~ 53px, Lower row center Y ~ 144px
-const CARDS: CardSpec[] = [
-  // 1. Star (rotated -90deg, lower-left flush)
-  { x: 48, y: 148, rot: -90, imageSrc: "/footer-images/star.jpg", label: "Star doodle" },
-  // 2. Book (upright, bottom row)
-  { x: 138, y: 144, rot: 0, imageSrc: "/footer-images/book.jpg", label: "Book doodle" },
-  // 3. Butterfly (tilted, between book and plant)
-  { x: 218, y: 80, rot: -39.61, imageSrc: "/footer-images/butterfly.jpg", label: "Butterfly doodle" },
-  // 4. Plant (top row above rocket)
-  { x: 330, y: 48, rot: 0, imageSrc: "/footer-images/plant.jpg", label: "Plant doodle" },
-  // 5. Rocket (bottom row below plant)
-  { x: 318, y: 144, rot: 0, imageSrc: "/footer-images/rocket.jpg", label: "Rocket doodle" },
-  // 6. Cubes (bottom row)
-  { x: 419, y: 144, rot: 0, imageSrc: "/footer-images/cubes.jpg", label: "Cubes doodle" },
-  // 7. Boat (top row above planet)
-  { x: 499, y: 48, rot: 0, imageSrc: "/footer-images/boat.jpg", label: "Boat doodle" },
-  // 8. Planet (bottom row below boat)
-  { x: 506, y: 144, rot: 0, imageSrc: "/footer-images/planet.jpg", label: "Planet doodle" },
-  // 9. Dinosaur (rotated -90deg, bottom row)
-  { x: 626, y: 148, rot: -90, imageSrc: "/footer-images/dinasaur.jpg", label: "Dinosaur doodle" },
-  // 10. Puzzle (top row above kite)
-  { x: 721, y: 48, rot: 0, imageSrc: "/footer-images/puzzle.jpg", label: "Puzzle doodle" },
-  // 11. Kite (bottom row below puzzle)
-  { x: 717, y: 144, rot: 0, imageSrc: "/footer-images/kite.jpg", label: "Kite doodle" },
-  // 12. House (top row above tortoise)
-  { x: 803, y: 48, rot: -2, imageSrc: "/footer-images/house.jpg", label: "House doodle" },
-  // 13. Tortoise (bottom row below house)
-  { x: 844, y: 144, rot: 0, imageSrc: "/footer-images/tortoise.jpg", label: "Tortoise doodle" },
-  // 14. Heart (top row, author: "", gold frame)
-  { x: 893, y: 48, rot: 9, imageSrc: "/footer-images/heart.jpg", label: "Heart doodle", isSpecialFrame: true },
-  // 15. Fruit-pencil (tilted between heart and rainbow)
-  { x: 983, y: 72, rot: -15, imageSrc: "/footer-images/fruit-pencil.jpg", label: "Pencil doodle" },
-  // 16. Rainbow (top row above flower)
-  { x: 1078, y: 60, rot: 0, imageSrc: "/footer-images/rainbow.jpg", label: "Rainbow doodle" },
-  // 17. Flower (rotated -90deg, bottom row below rainbow)
-  { x: 1070, y: 150, rot: -90, imageSrc: "/footer-images/flower.jpg", label: "Flower doodle" },
-  // 18. Fish (bottom row)
-  { x: 1160, y: 144, rot: 0, imageSrc: "/footer-images/fish.jpg", label: "Fish doodle" },
-  // 19. Stars (tilted between fish and telescope)
-  { x: 1230, y: 68, rot: -30, imageSrc: "/footer-images/stars.jpg", label: "Stars doodle" },
-  // 20. Telescope (far right, bottom row)
-  { x: 1325, y: 144, rot: 0, imageSrc: "/footer-images/telescope.jpg", label: "Telescope doodle" },
+// Exact 20 Figma-exported doodle cards matching the official design
+const CARDS: DoodleSpec[] = [
+  // 1. Star doodle (rotated 90deg sideways, lower-left flush)
+  { src: "/footer-images/24.png", x: 48, y: 148, w: 90, h: 78, zIndex: 1, alt: "Star doodle" },
+  // 2. Smiley face with flower bouquet (bottom row)
+  { src: "/footer-images/21.png", x: 135, y: 144, w: 80, h: 81, zIndex: 2, alt: "Smiley and flower bouquet doodle" },
+  // 3. Tilted swirl diamond (upper floating between cards 2 & 5)
+  { src: "/footer-images/20.png", x: 218, y: 82, w: 110, h: 111, zIndex: 1, alt: "Abstract swirl doodle" },
+  // 4. Boat / hat with red cross X (top row)
+  { src: "/footer-images/19.png", x: 326, y: 55, w: 78, h: 87, zIndex: 1, alt: "Red cross boat doodle" },
+  // 5. Tent / triangle doodle (bottom row below card 4)
+  { src: "/footer-images/22.png", x: 318, y: 144, w: 80, h: 81, zIndex: 2, alt: "Tent doodle" },
+  // 6. YOCHI stick figures family (bottom row)
+  { src: "/footer-images/17.png", x: 412, y: 144, w: 80, h: 81, zIndex: 2, alt: "YOCHI family stick figures doodle" },
+  // 7. YO! text doodle (top row)
+  { src: "/footer-images/16.png", x: 495, y: 55, w: 78, h: 87, zIndex: 1, alt: "YO! doodle" },
+  // 8. Walking smiling heart (bottom row below card 7)
+  { src: "/footer-images/18.png", x: 504, y: 144, w: 80, h: 81, zIndex: 2, alt: "Walking smiling heart doodle" },
+  // 9. Hello :) doodle (rotated 90deg sideways, bottom row)
+  { src: "/footer-images/13.png", x: 618, y: 148, w: 94, h: 74, zIndex: 2, alt: "Hello smiley doodle" },
+  // 10. Green and pink flower (top row)
+  { src: "/footer-images/9.png", x: 712, y: 52, w: 78, h: 87, zIndex: 1, alt: "Flower doodle" },
+  // 11. WOW <3 TEH (top row next to flower)
+  { src: "/footer-images/8.png", x: 792, y: 52, w: 80, h: 89, zIndex: 2, alt: "WOW love doodle" },
+  // 12. "hi, thanks for inspi" (bottom row below card 10)
+  { src: "/footer-images/12.png", x: 712, y: 144, w: 80, h: 81, zIndex: 2, alt: "Inspirational thank you doodle" },
+  // 13. Circle / stone outline (bottom row next to card 12)
+  { src: "/footer-images/11.png", x: 802, y: 144, w: 80, h: 81, zIndex: 2, alt: "Stone outline doodle" },
+  // 14. "SAYA LAWAT AKAN jkw" (top row, slightly tilted)
+  { src: "/footer-images/7.png", x: 875, y: 58, w: 88, h: 95, zIndex: 3, alt: "Saya Lawat doodle" },
+  // 15. "Gilan" signature (top row, tilted)
+  { src: "/footer-images/6.png", x: 960, y: 72, w: 93, h: 99, zIndex: 4, alt: "Gilan signature doodle" },
+  // 16. Red heart doodle (top row next to Gilan)
+  { src: "/footer-images/5.png", x: 1045, y: 55, w: 78, h: 87, zIndex: 3, alt: "Red heart doodle" },
+  // 17. "Bilal" signature (rotated 90deg sideways, bottom row)
+  { src: "/footer-images/10.png", x: 1048, y: 148, w: 94, h: 74, zIndex: 2, alt: "Bilal signature doodle" },
+  // 18. Squiggle "h" doodle (bottom row next to Bilal)
+  { src: "/footer-images/3.png", x: 1140, y: 144, w: 80, h: 81, zIndex: 2, alt: "Squiggle doodle" },
+  // 19. Tilted butterfly diamond (floating between cards 16/18 and 20)
+  { src: "/footer-images/1.png", x: 1220, y: 75, w: 110, h: 109, zIndex: 3, alt: "Tilted butterfly doodle" },
+  // 20. "Fener Bahçe" doodle (bottom row far right)
+  { src: "/footer-images/2.png", x: 1305, y: 144, w: 76, h: 88, zIndex: 2, alt: "Fener Bahçe doodle" },
 ];
 
-function DoodleCard({ spec }: { spec: CardSpec }) {
+function DoodleCard({ spec }: { spec: DoodleSpec }) {
   return (
     <div
-      className="absolute transition-transform hover:scale-110 hover:z-20 cursor-pointer"
+      className="absolute transition-transform duration-200 hover:scale-110 hover:!z-30 cursor-pointer pointer-events-auto"
       style={{
         left: `${(spec.x / STRIP_W) * 100}%`,
         top: `${(spec.y / STRIP_H) * 100}%`,
-        width: `${(CARD_W / STRIP_W) * 100}%`,
-        aspectRatio: `${CARD_W} / ${CARD_H}`,
-        transform: `translate(-50%, -50%) rotate(${spec.rot}deg)`,
+        width: `${(spec.w / STRIP_W) * 100}%`,
+        height: `${(spec.h / STRIP_H) * 100}%`,
+        transform: "translate(-50%, -50%)",
+        zIndex: spec.zIndex,
       }}
     >
-      {/* Photo Frame: Width 80px, Height 92px, Colour #F5F0E8
-          Exact Figma Drop Shadow: X: 0, Y: 3, Blur: 14, Spread: 0, #000000 22%
-      */}
-      <div
-        className={`relative w-full h-full rounded-[2px] overflow-hidden ${
-          spec.isSpecialFrame
-            ? "bg-[#F5F0E8] border border-[#D4AF37]/70"
-            : "bg-[#F5F0E8] border border-white/60"
-        }`}
-        style={{
-
-          boxShadow: "0px 3px 14px 0px rgba(0, 0, 0, 0.22)",
-        }}
-      >
-        {/* Image: Width 70px, Height 54px, Top 5px, Centered horizontally (Left 5px) */}
-        <div
-          className="absolute overflow-hidden bg-white rounded-[1px]"
-          style={{
-            top: `${(5 / CARD_H) * 100}%`,
-            left: `${(5 / CARD_W) * 100}%`,
-            width: `${(70 / CARD_W) * 100}%`,
-            height: `${(54 / CARD_H) * 100}%`,
-          }}
-        >
-          {spec.imageSrc && (
-            <Image
-              src={spec.imageSrc}
-              alt={spec.label || "Children doodle"}
-              fill
-              sizes="(max-width: 768px) 70px, 90px"
-              className="object-cover object-center"
-            />
-          )}
-        </div>
-
-        {/* Anonymous: Width 70px, Height 13px, Font Georgia 400 Regular 9px, Line height 9px, #71717A */}
-        <div
-          className="absolute flex items-center justify-center text-center"
-          style={{
-            bottom: `${(8 / CARD_H) * 100}%`,
-            left: `${(5 / CARD_W) * 100}%`,
-            width: `${(70 / CARD_W) * 100}%`,
-            height: `${(13 / CARD_H) * 100}%`,
-          }}
-        >
-          <span
-            className="truncate select-none"
-            style={{
-              fontFamily: spec.isSpecialFrame
-                ? "'Brush Script MT', cursive, Georgia, serif"
-                : "Georgia, 'Times New Roman', serif",
-              fontWeight: 400,
-              fontSize: "clamp(6px, 0.725cqw, 9px)",
-              lineHeight: "9px",
-              letterSpacing: "0px",
-              color: spec.isSpecialFrame ? "#8B5A2B" : "#71717A",
-              textAlign: "center",
-            }}
-          >
-            {spec.author || "Anonymous"}
-          </span>
-        </div>
-      </div>
+      <Image
+        src={spec.src}
+        alt={spec.alt}
+        fill
+        sizes="(max-width: 768px) 80px, 120px"
+        className="object-contain select-none pointer-events-none drop-shadow-none"
+      />
     </div>
   );
 }
@@ -313,17 +254,18 @@ export function FooterSection() {
         </div>
 
         {/* ================= DOODLE WALL: Compact container without huge gap ================= */}
-        <div
-          className="relative w-full max-w-[1350px] mx-auto mt-4 sm:mt-6"
-          style={{
-            containerType: "inline-size",
-            aspectRatio: `${STRIP_W} / ${STRIP_H}`,
-          }}
-          aria-label="Children's creative doodles gallery"
-        >
-          {CARDS.map((c, i) => (
-            <DoodleCard key={i} spec={c} />
-          ))}
+        <div className="w-full overflow-x-auto md:overflow-visible pb-2 pt-2 scrollbar-none">
+          <div
+            className="relative w-full min-w-[920px] md:min-w-0 max-w-[1350px] mx-auto mt-4 sm:mt-6"
+            style={{
+              aspectRatio: `${STRIP_W} / ${STRIP_H}`,
+            }}
+            aria-label="Children's creative doodles gallery"
+          >
+            {CARDS.map((c, i) => (
+              <DoodleCard key={i} spec={c} />
+            ))}
+          </div>
         </div>
 
         {/* ================= LEGAL ROW matching Figma screenshot ================= */}
