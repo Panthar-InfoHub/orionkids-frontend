@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import confetti from "canvas-confetti";
 import { SITE_CONFIG } from "@/lib/constants";
 
 export function HeroSection() {
@@ -163,9 +165,11 @@ export function HeroSection() {
           {/* ================= RIGHT COLUMN: Hero Visual & Floating Badges ================= */}
           <div className="relative flex items-center justify-center lg:justify-end select-none mt-6 lg:mt-0">
 
-            {/* The Photo Container with Exact Figma Specs (592px × 516px) & Asymmetrical Organic Radii */}
-            <div
-              className="relative w-full max-w-[592px] h-[360px] sm:h-[440px] lg:h-[516px] overflow-hidden shadow-2xl shadow-slate-300/80 bg-slate-100"
+            {/* The Photo Container with Exact Figma Specs (592px × 516px) & Asymmetrical Organic Radii - Clickable to /login */}
+            <Link
+              href="/login"
+              aria-label="Start child cognitive onboarding adventure"
+              className="group relative block w-full max-w-[592px] h-[360px] sm:h-[440px] lg:h-[516px] overflow-hidden shadow-2xl shadow-slate-300/80 bg-slate-100 cursor-pointer rounded-[100px_32px_100px_32px] transition-all duration-300 hover:shadow-cyan-200/50 hover:scale-[1.015] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#00BCD4]"
               style={{
                 borderTopLeftRadius: "100px",
                 borderTopRightRadius: "32px",
@@ -175,16 +179,16 @@ export function HeroSection() {
             >
               <Image
                 src={encodeURI("/images/Child exploring a tablet.png")}
-                alt="Child exploring a tablet"
+                alt="Child exploring a tablet - Click to start onboarding"
                 fill
                 priority
                 unoptimized
-                className="object-cover"
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 592px"
               />
 
               {/* Floating Pill Badge: Top Right */}
-              <div className="absolute top-4 right-4 sm:top-7 sm:right-4 z-20">
+              <div className="absolute top-4 right-4 sm:top-7 sm:right-4 z-20 pointer-events-none transition-transform duration-300 group-hover:scale-105">
                 <div className="px-3.5 py-1.5 rounded-full bg-white text-[#0A1D3D] border-2 border-[#0A1D3D] text-[11px] sm:text-xs font-black uppercase tracking-wide shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center gap-1.5 rotate-[15deg]">
                   <span>🎮</span>
                   <span>CLASS 1–4 QUEST</span>
@@ -192,7 +196,7 @@ export function HeroSection() {
               </div>
 
               {/* Floating Card: Top Left Mind Mastery */}
-              <div className="absolute top-15 left-5 sm:top-15 sm:left-6 z-20 bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-lg border border-slate-100 flex items-center gap-3">
+              <div className="absolute top-15 left-5 sm:top-15 sm:left-6 z-20 bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-lg border border-slate-100 flex items-center gap-3 pointer-events-none transition-transform duration-300 group-hover:-translate-y-0.5">
                 <div className="w-9 h-9 rounded-xl bg-[#FFCE38] border border-amber-300 flex items-center justify-center text-sm shadow-sm shrink-0">
                   ⭐
                 </div>
@@ -207,10 +211,10 @@ export function HeroSection() {
               </div>
 
               {/* Floating Group: Bottom Left (Overlapping Badge + Card) */}
-              <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5 z-20 flex flex-col items-start select-none">
+              <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5 z-20 flex flex-col items-start select-none pointer-events-none transition-transform duration-300 group-hover:-translate-y-0.5">
                 {/* Floating Badge: Overlapping top of card */}
                 <div className="relative -mb-3.5 ml-2 z-30">
-                  <div className="px-3 py-1 rounded-full bg-[#FFDE59] text-[#0A1D3D] border-2 border-[#0A1D3D] text-[10px] sm:text-[11px] font-black uppercase tracking-wide shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center gap-1 rotate-[-3deg] origin-left hover:rotate-0 transition-transform cursor-default">
+                  <div className="px-3 py-1 rounded-full bg-[#FFDE59] text-[#0A1D3D] border-2 border-[#0A1D3D] text-[10px] sm:text-[11px] font-black uppercase tracking-wide shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center gap-1 rotate-[-3deg] origin-left">
                     <span>🛡️</span>
                     <span>100% FUN & KID-SAFE</span>
                   </div>
@@ -235,14 +239,22 @@ export function HeroSection() {
               </div>
 
               {/* Floating Badge: Bottom Right Streak */}
-              <div className="absolute bottom-4 right-15 sm:bottom-5 sm:right-15 z-20">
-                <div className="px-3.5 py-1.5 rounded-full bg-[#00BCD4] text-[#0A1D3D] border-2 border-[#0A1D3D] text-[11px] sm:text-xs font-black uppercase tracking-wide shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center gap-1.5 hover:scale-105 transition-transform cursor-default">
+              <div className="absolute bottom-4 right-15 sm:bottom-5 sm:right-15 z-20 pointer-events-none transition-transform duration-300 group-hover:scale-105">
+                <div className="px-3.5 py-1.5 rounded-full bg-[#00BCD4] text-[#0A1D3D] border-2 border-[#0A1D3D] text-[11px] sm:text-xs font-black uppercase tracking-wide shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center gap-1.5">
                   <span className="text-xs">⚡</span>
                   <span>STREAK: 7 DAYS!</span>
                 </div>
               </div>
 
-            </div>
+              {/* Subtle hover overlay hint */}
+              <div className="absolute inset-0 bg-[#0A1D3D]/0 group-hover:bg-[#0A1D3D]/5 transition-colors duration-300 flex items-center justify-center pointer-events-none">
+                <span className="opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 px-4 py-2 rounded-full bg-white/95 text-[#0A1D3D] font-black text-xs shadow-lg border border-slate-200 flex items-center gap-1.5">
+                  <span>✨</span>
+                  <span>Click to begin child journey</span>
+                  <span>→</span>
+                </span>
+              </div>
+            </Link>
 
           </div>
 
