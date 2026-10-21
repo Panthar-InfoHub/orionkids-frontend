@@ -110,12 +110,12 @@ export function InsightReportSection() {
         ))}
       </div>
 
-      {/* Content frame: max 1440, 88px left / 108px right on desktop */}
+      {/* Content frame*/}
       <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10 xl:pl-[88px] xl:pr-[108px]">
         <div className="flex flex-col gap-12 lg:grid lg:grid-cols-[minmax(0,446px)_minmax(0,610px)] lg:justify-between lg:items-start lg:gap-x-10">
-          {/* ================= LEFT COLUMN ================= */}
+
           <div className="flex w-full flex-col items-start text-left">
-            {/* Top pill badge: 208 x 24, rotated -1deg */}
+            {/* Top pill badge */}
             <div
               className="mb-6 lg:mb-[30px] inline-flex h-[24px] w-[208px] origin-left -rotate-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border-[1.5px] border-[#0A1D3D] bg-[#65DCAA] px-2.5 text-[#0A1D3D]"
               style={{
@@ -132,7 +132,6 @@ export function InsightReportSection() {
               <span className="text-[11px] leading-none">✨</span>
             </div>
 
-            {/* Headline: 44px / 112% / -1.6px */}
             <h2
               className="mb-6 lg:mb-[44px] max-w-[340px] text-[34px] sm:text-[40px] lg:text-[44px] text-white"
               style={{
@@ -147,7 +146,6 @@ export function InsightReportSection() {
               Of Potential. 🌟
             </h2>
 
-            {/* Subtitle: 18px / 160% / semibold / muted blue-grey / 446 wide */}
             <p
               className="mb-6 lg:mb-[34px] max-w-[446px] text-[16px] sm:text-[18px] text-[#8E9BB3]"
               style={{
@@ -230,17 +228,6 @@ export function InsightReportSection() {
               ))}
             </div>
 
-            {/* Direct CTA to open Ananya's Report */}
-            <div className="mt-7">
-              <Link
-                href="/report"
-                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#FFD028] text-[#0A1D3D] font-extrabold text-[14px] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#FF8CC7] hover:scale-105 active:scale-95 transition-all cursor-pointer select-none"
-                style={{ fontFamily: JAKARTA }}
-              >
-                <span>📄 View Sample Insight Report</span>
-                <span className="text-base font-bold">→</span>
-              </Link>
-            </div>
           </div>
 
           {/* ================= RIGHT COLUMN: collage ================= */}
@@ -272,7 +259,6 @@ export function InsightReportSection() {
               <StickerPill emoji="👾" text="BLAST OFF!" left="67.4%" top="16.8%" rotate={5} />
               <StickerPill emoji="✨" text="SUPERSTAR APPROVED!" left="19%" top="75.8%" rotate={-4} />
 
-              {/* 3D letter "ABC" (size corrected: ~64px at 610px wide) */}
               <div
                 className="pointer-events-none absolute z-30"
                 style={{

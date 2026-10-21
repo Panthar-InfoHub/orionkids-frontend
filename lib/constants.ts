@@ -26,7 +26,7 @@ export const SITE_CONFIG: SiteConfig = {
     href: "#quest",
   },
   navLinks: [
-    { label: "Our Approach", href: "#approach" },
+    { label: "Our Approach", href: "/our-approach" },
     { label: "About Us", href: "/about-us" },
     { label: "For Schools", href: "/for-schools" },
     { label: "For Parents", href: "/for-parents" },

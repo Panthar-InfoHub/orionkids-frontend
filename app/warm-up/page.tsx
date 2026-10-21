@@ -14,7 +14,6 @@ export default function WarmUpPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [isCompleted, setIsCompleted] = useState(false);
   const [isPauseModalOpen, setIsPauseModalOpen] = useState(false);
 
   const totalSteps = WARM_UP_QUESTIONS.length;
@@ -33,7 +32,7 @@ export default function WarmUpPage() {
     if (currentStep < totalSteps - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      setIsCompleted(true);
+      router.push("/for-schools");
     }
   };
 
@@ -41,7 +40,7 @@ export default function WarmUpPage() {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
     } else {
-      router.push("/login");
+      router.push("/onboarding");
     }
   };
 
@@ -91,35 +90,7 @@ export default function WarmUpPage() {
 
         {/* Right Column: Question Card (Fill 916px, Min-height 660px, Radius 24px, Border 1px, Padding 32px, Gap 24px) */}
         <div className="w-full md:max-w-[916px] flex-1 bg-white rounded-[20px] sm:rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_30px_rgba(10,29,61,0.03)] p-4 sm:p-6 md:p-[32px] flex flex-col justify-between min-h-0 sm:min-h-[660px] gap-4 sm:gap-[24px]">
-          {isCompleted ? (
-            /* Celebration Screen when all 6 steps are complete */
-            <div className="flex flex-col items-center justify-center text-center py-12 my-auto">
-              <div className="w-20 h-20 rounded-full bg-[#E8F9F0] flex items-center justify-center text-4xl mb-5 shadow-sm">
-                🎉
-              </div>
-              <h2
-                className="text-[26px] sm:text-[32px] font-extrabold text-[#0A1D3D] mb-3"
-                style={{ fontFamily: JAKARTA }}
-              >
-                Warm-up Complete!
-              </h2>
-              <p
-                className="text-[15px] text-[#526176] max-w-[480px] mb-8"
-                style={{ fontFamily: JAKARTA }}
-              >
-                Great job completing your warm-up! You’re all set and ready for the Stroop colour-word activity.
-              </p>
-              <button
-                type="button"
-                onClick={() => router.push("/for-schools")}
-                className="inline-flex items-center justify-center px-8 py-3.5 rounded-full font-bold text-[15px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer"
-                style={{ fontFamily: JAKARTA }}
-              >
-                Start Stroop Activity
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col h-full justify-between gap-4 sm:gap-[24px]">
+          <div className="flex flex-col h-full justify-between gap-4 sm:gap-[24px]">
               {/* Question Header */}
               <div className="flex flex-col gap-[6px] sm:gap-[8px]">
                 {/* Content: A LITTLE ABOUT YOU, Plus Jakarta Sans, 800 ExtraBold, 11px, 100% line height, 100% letter spacing, #526176 */}
@@ -280,7 +251,6 @@ export default function WarmUpPage() {
                 </div>
               </div>
             </div>
-          )}
         </div>
       </main>
 

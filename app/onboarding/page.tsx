@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Every child is a world of potential. Let's start with a few details about your child, so their learning journey feels like their own.",
 };
 
-export default function LoginPage() {
+export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between selection:bg-[#FFE066] selection:text-[#0A1D3D]">
       {/* 1. Topmost line: colour #FF8CC7, height 6px */}
@@ -44,7 +44,6 @@ export default function LoginPage() {
 
       {/* 3. Main Section: container max 1440px, padding L/R 88px */}
       <main className="max-w-[1440px] w-full mx-auto px-4 sm:px-8 lg:px-[88px] py-8 sm:py-12 flex-1 flex flex-col lg:flex-row items-start justify-between gap-10 lg:gap-[40px]">
-
         <section
           aria-label="Welcome"
           className="w-full lg:w-[376px] shrink-0 pt-[12px] flex flex-col gap-[28px]"
@@ -89,7 +88,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-         
           <h1
             className="w-full max-w-[376px] font-extrabold text-[#10345B]"
             style={{
@@ -105,7 +103,6 @@ export default function LoginPage() {
             potential.
           </h1>
 
-        
           <p
             className="lede w-full max-w-[376px] font-normal text-[#526176]"
             style={{
@@ -122,7 +119,6 @@ export default function LoginPage() {
           <HeroIllustration />
 
           <div className="lowest-div w-full max-w-[376px] bg-[#EAF7EF] rounded-[16px] p-[20px] flex flex-col gap-[10px]">
-         
             <div className="flex items-center gap-[8px] w-auto sm:w-[185px] h-[20px]">
               <svg
                 width="16"
@@ -168,7 +164,6 @@ export default function LoginPage() {
           </div>
         </section>
 
-   
         <section
           aria-label="Child Details Form"
           className="w-full lg:max-w-[824px] lg:flex-1"

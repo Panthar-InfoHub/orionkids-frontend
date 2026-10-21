@@ -83,7 +83,7 @@ export function ClosingCtaSection() {
               Discover Our Approach
             </Link>
             <Link
-              href="/login"
+              href="/onboarding"
               className="inline-flex items-center justify-center h-[52px] px-6 rounded-xl bg-white transition-transform hover:-translate-y-0.5"
               style={{
                 fontFamily: JAKARTA,

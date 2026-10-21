@@ -1,26 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import confetti from "canvas-confetti";
 import { SITE_CONFIG } from "@/lib/constants";
-import { QuestModal } from "@/components/ui/quest-modal";
 
 export function HeroSection() {
-  const [questModalOpen, setQuestModalOpen] = useState(false);
-  const [questModalTitle, setQuestModalTitle] = useState("Quick 2-Minute Cognitive Adventure");
-
-  const handleLaunchQuest = (title = "Launch Free Quest! 🚀") => {
-    confetti({
-      particleCount: 120,
-      spread: 80,
-      origin: { y: 0.6 },
-      colors: ["#FFCE38", "#00BCD4", "#0A1D3D"],
-    });
-    setQuestModalTitle(title);
-    setQuestModalOpen(true);
-  };
-
   return (
     <section className="relative w-full bg-white min-h-[calc(100vh-103px)] flex flex-col justify-center pt-3 pb-8 lg:pt-4 lg:pb-10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -155,7 +139,6 @@ export function HeroSection() {
 
               {/* Left Button: Enjoy a Quick 2-Minute Adventure */}
               <button
-                onClick={() => handleLaunchQuest("2-Minute Cognitive Adventure 🍿")}
                 className="h-[52px] px-5 sm:px-6 rounded-2xl bg-white text-[#0A1D3D] font-black text-xs sm:text-sm md:text-[15px] whitespace-nowrap border-[2.5px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_6px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center gap-2.5 transition-all cursor-pointer select-none"
               >
                 {/* Circular play icon outline with black triangle */}
@@ -165,13 +148,13 @@ export function HeroSection() {
                 <span>🍿 Enjoy a Quick 2-Minute Adventure</span>
               </button>
 
-              {/* Right Button: Launch Free Quest! */}
-              <button
-                onClick={() => handleLaunchQuest("Launch Free Quest! 🚀")}
+              {/* Right Button: Launch Free Quest! (Navigates to /onboarding) */}
+              <Link
+                href="/onboarding"
                 className="h-[52px] px-6 sm:px-7 rounded-2xl bg-[#D8F3FF] text-[#0A1D3D] font-black text-xs sm:text-sm md:text-[15px] whitespace-nowrap border-[2.5px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_6px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center gap-2 transition-all cursor-pointer select-none"
               >
                 <span>🎮 Launch Free Quest! 🚀</span>
-              </button>
+              </Link>
 
             </div>
 
@@ -266,12 +249,7 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Interactive Micro-Quest Modal */}
-      <QuestModal
-        isOpen={questModalOpen}
-        onClose={() => setQuestModalOpen(false)}
-        title={questModalTitle}
-      />
+    
     </section>
   );
 }
