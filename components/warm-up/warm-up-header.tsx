@@ -8,12 +8,13 @@ interface WarmUpHeaderProps {
   currentStep: number;
   totalSteps: number;
   isLastStep?: boolean;
+  isCompleted?: boolean;
 }
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const SPACE = "var(--font-space-grotesk), 'Space Grotesk', sans-serif";
 
-export function WarmUpHeader({ currentStep, totalSteps, isLastStep }: WarmUpHeaderProps) {
+export function WarmUpHeader({ currentStep, totalSteps, isLastStep, isCompleted = false }: WarmUpHeaderProps) {
   return (
     <header className="w-full">
       {/* 1. Topmost accent line: bg #FF8CC7, height 6px */}
@@ -109,7 +110,7 @@ export function WarmUpHeader({ currentStep, totalSteps, isLastStep }: WarmUpHead
               </span>
             </div>
 
-            {/* Right step indicator: Warm-up • 6 of 6 */}
+            {/* Right step indicator: Warm-up • 6 of 6 OR Warm-up complete · 6 of 6 */}
             <div
               style={{
                 fontFamily: JAKARTA,
@@ -120,14 +121,16 @@ export function WarmUpHeader({ currentStep, totalSteps, isLastStep }: WarmUpHead
                 color: "#0A1D3D",
               }}
             >
-              Warm-up • {currentStep + 1} of {totalSteps}
+              {isCompleted
+                ? `Warm-up complete · ${totalSteps} of ${totalSteps}`
+                : `Warm-up • ${currentStep + 1} of ${totalSteps}`}
             </div>
           </div>
 
           {/* 6-Segment Progress Bar: Yellow line height 6px */}
           <div className="grid grid-cols-6 gap-2 w-full">
             {Array.from({ length: totalSteps }).map((_, idx) => {
-              const isCompletedOrActive = idx <= currentStep;
+              const isCompletedOrActive = isCompleted || idx <= currentStep;
               return (
                 <div
                   key={idx}

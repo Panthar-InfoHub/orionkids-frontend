@@ -6,6 +6,8 @@ import { WARM_UP_QUESTIONS } from "@/components/warm-up/warm-up-data";
 import { WarmUpHeader } from "@/components/warm-up/warm-up-header";
 import { WarmUpSidebar } from "@/components/warm-up/warm-up-sidebar";
 import { OptionCard } from "@/components/warm-up/option-card";
+import { StroopIntroCard } from "@/components/warm-up/stroop-intro-card";
+import { submitWarmUpAnswers } from "@/lib/api/warmup";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const LORA = "var(--font-lora), 'Lora', Georgia, serif";
@@ -16,6 +18,7 @@ export default function WarmUpPage() {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [isPauseModalOpen, setIsPauseModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const totalSteps = WARM_UP_QUESTIONS.length;
   const currentQuestion = WARM_UP_QUESTIONS[currentStep];
@@ -45,18 +48,51 @@ export default function WarmUpPage() {
     }
   };
 
+  const handleStartStroopGame = async () => {
+    setIsSubmitting(true);
+    try {
+      const response = await submitWarmUpAnswers({
+        answers,
+        completedAt: new Date().toISOString(),
+      });
+      router.push(response.nextGameRoute || "/games/stroop");
+    } catch (err) {
+      console.error("Failed to submit warm-up answers:", err);
+      router.push("/games/stroop");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F0F6FA] flex flex-col justify-between selection:bg-[#FFE066] selection:text-[#0A1D3D]">
       {/* 1. Header with Breadcrumb & Progress Stepper */}
-      <WarmUpHeader currentStep={currentStep} totalSteps={totalSteps} isLastStep={isLastStep} />
+      <WarmUpHeader
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        isLastStep={isLastStep}
+        isCompleted={isCompleted}
+      />
 
       {/* 2. Main Content Area: Standard 2-column layout matching other pages */}
       <main className="max-w-[1440px] w-full mx-auto px-4 sm:px-8 lg:px-[88px] py-8 sm:py-10 flex-1 flex flex-col md:flex-row items-start justify-between gap-8 lg:gap-[32px]">
         {/* Left Column: Sidebar with Mascot */}
         <WarmUpSidebar
-          tag={isLastStep ? "HOW YOU FEEL" : currentQuestion.tag}
+          tag={
+            isCompleted
+              ? "WARM-UP COMPLETE"
+              : isLastStep
+              ? "HOW YOU FEEL"
+              : currentQuestion.tag
+          }
           title={
-            isLastStep ? (
+            isCompleted ? (
+              <>
+                You’re ready
+                <br />
+                for a little play!
+              </>
+            ) : isLastStep ? (
               <>
                 Tell us what
                 <br />
@@ -71,7 +107,12 @@ export default function WarmUpPage() {
             )
           }
           subtitle={
-            isLastStep ? (
+            isCompleted ? (
+              <>
+                Thanks for sharing what makes you, you. Next comes a simple
+                colour game.
+              </>
+            ) : isLastStep ? (
               <>
                 Everyone learns differently.
                 <br />
@@ -87,38 +128,23 @@ export default function WarmUpPage() {
               ? "Need a moment? Rest or ask a grown-up to stay beside you."
               : "You can ask a grown-up to read the question with you."
           }
+          plainBottomNote={
+            isCompleted
+              ? "Your answers help us understand you. They are not a score."
+              : undefined
+          }
         />
 
-        {/* Right Column: Question Card (Fill 916px, Min-height 660px, Radius 24px, Border 1px, Padding 32px, Gap 24px) */}
-        <div className="w-full md:max-w-[916px] flex-1 bg-white rounded-[20px] sm:rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_30px_rgba(10,29,61,0.03)] p-4 sm:p-6 md:p-[32px] flex flex-col justify-between min-h-0 sm:min-h-[660px] gap-4 sm:gap-[24px]">
-          {isCompleted ? (
-            /* Celebration Screen when all 6 steps are complete */
-            <div className="flex flex-col items-center justify-center text-center py-12 my-auto">
-              <div className="w-20 h-20 rounded-full bg-[#E8F9F0] flex items-center justify-center text-4xl mb-5 shadow-sm">
-                🎉
-              </div>
-              <h2
-                className="text-[26px] sm:text-[32px] font-extrabold text-[#0A1D3D] mb-3"
-                style={{ fontFamily: JAKARTA }}
-              >
-                Warm-up Complete!
-              </h2>
-              <p
-                className="text-[15px] text-[#526176] max-w-[480px] mb-8"
-                style={{ fontFamily: JAKARTA }}
-              >
-                Great job completing your warm-up! You’re all set and ready for the Stroop colour-word activity.
-              </p>
-              <button
-                type="button"
-                onClick={() => router.push("/for-schools")}
-                className="inline-flex items-center justify-center px-8 py-3.5 rounded-full font-bold text-[15px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer"
-                style={{ fontFamily: JAKARTA }}
-              >
-                Start Stroop Activity
-              </button>
-            </div>
-          ) : (
+        {/* Right Column: Question Card or Stroop Intro Screen */}
+        {isCompleted ? (
+          <StroopIntroCard
+            onBack={() => setIsCompleted(false)}
+            onPause={() => setIsPauseModalOpen(true)}
+            onStartGame={handleStartStroopGame}
+            isLoading={isSubmitting}
+          />
+        ) : (
+          <div className="w-full md:max-w-[916px] flex-1 bg-white rounded-[20px] sm:rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_30px_rgba(10,29,61,0.03)] p-4 sm:p-6 md:p-[32px] flex flex-col justify-between min-h-0 sm:min-h-[660px] gap-4 sm:gap-[24px]">
             <div className="flex flex-col h-full justify-between gap-4 sm:gap-[24px]">
               {/* Question Header */}
               <div className="flex flex-col gap-[6px] sm:gap-[8px]">
@@ -280,8 +306,8 @@ export default function WarmUpPage() {
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
 
       {/* 3. Bottom Footer */}

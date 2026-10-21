@@ -8,6 +8,7 @@ interface WarmUpSidebarProps {
   subtitle?: React.ReactNode;
   bottomCardTitle?: string;
   bottomCardBody?: string;
+  plainBottomNote?: React.ReactNode;
 }
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
@@ -60,6 +61,7 @@ export function WarmUpSidebar({
   subtitle = "There are no right or wrong answers. Just tell us what feels like you.",
   bottomCardTitle = "Take your time.",
   bottomCardBody = "You can ask a grown-up to read the question with you.",
+  plainBottomNote,
 }: WarmUpSidebarProps) {
   return (
     <aside className="w-full sm:w-[300px] shrink-0 flex flex-col items-start gap-[24px] pt-0 md:pt-[28px] select-none">
@@ -138,36 +140,53 @@ export function WarmUpSidebar({
       </div>
 
       {/* 5. Lowest Div */}
-      <div
-        className="w-full max-w-[300px] rounded-[18px] p-[20px] flex flex-col gap-[8px]"
-        style={{ backgroundColor: "#EAF7EF" }}
-      >
-        <h4
-          style={{
-            fontFamily: JAKARTA,
-            fontWeight: 800,
-            fontSize: "14px",
-            lineHeight: "100%",
-            letterSpacing: "0%",
-            color: "#0A1D3D",
-          }}
+      {plainBottomNote ? (
+        <div className="w-full max-w-[300px]">
+          <p
+            style={{
+              fontFamily: JAKARTA,
+              fontWeight: 400,
+              fontSize: "13px",
+              lineHeight: "160%",
+              letterSpacing: "0%",
+              color: "#526176",
+            }}
+          >
+            {plainBottomNote}
+          </p>
+        </div>
+      ) : (
+        <div
+          className="w-full max-w-[300px] rounded-[18px] p-[20px] flex flex-col gap-[8px]"
+          style={{ backgroundColor: "#EAF7EF" }}
         >
-          {bottomCardTitle}
-        </h4>
+          <h4
+            style={{
+              fontFamily: JAKARTA,
+              fontWeight: 800,
+              fontSize: "14px",
+              lineHeight: "100%",
+              letterSpacing: "0%",
+              color: "#0A1D3D",
+            }}
+          >
+            {bottomCardTitle}
+          </h4>
 
-        <p
-          style={{
-            fontFamily: JAKARTA,
-            fontWeight: 400,
-            fontSize: "13px",
-            lineHeight: "160%",
-            letterSpacing: "0%",
-            color: "#526176",
-          }}
-        >
-          {bottomCardBody}
-        </p>
-      </div>
+          <p
+            style={{
+              fontFamily: JAKARTA,
+              fontWeight: 400,
+              fontSize: "13px",
+              lineHeight: "160%",
+              letterSpacing: "0%",
+              color: "#526176",
+            }}
+          >
+            {bottomCardBody}
+          </p>
+        </div>
+      )}
     </aside>
   );
 }
