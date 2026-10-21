@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import Link from "next/link";
 import confetti from "canvas-confetti";
 import { SITE_CONFIG } from "@/lib/constants";
 
