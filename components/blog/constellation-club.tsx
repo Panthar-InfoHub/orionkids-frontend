@@ -16,7 +16,7 @@ export function ConstellationClub() {
   );
 
   return (
-    <section className="max-w-5xl mx-auto px-4 sm:px-6 mb-12 sm:mb-14">
+    <section className="max-w-5xl mx-auto px-4 sm:px-6 mb-7 sm:mb-9">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#EFF3FF] via-[#EEF3FE] to-[#E3ECFE] border border-[#DCE4F7] p-6 sm:p-8 md:p-9 text-center shadow-xs">
         {/* Decorative soft glow */}
         <div

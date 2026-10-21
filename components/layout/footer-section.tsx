@@ -127,23 +127,20 @@ export function FooterSection() {
   return (
     <footer
       id="footer-section"
-      className="relative w-full bg-[#DAF5E9] text-[#0A1D3D] overflow-hidden select-none pt-10 sm:pt-12 pb-8 scroll-mt-16"
+      className="relative w-full bg-[#DAF5E9] text-[#0A1D3D] overflow-hidden select-none pt-6 sm:pt-7 pb-4 sm:pb-5 scroll-mt-16"
     >
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[44px]">
         {/* ================= TOP: Tagline + Links matching Figma ================= */}
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 lg:gap-10">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-8">
           {/* Left: Pill, Headline, Logo */}
           <div className="flex flex-col items-start w-full lg:max-w-[850px]">
             {/* Pill: • WHERE EVERY KIDS IS A STAR */}
             <div
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#0A1D3D] text-[#0A1D3D] whitespace-nowrap uppercase"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#0A1D3D] text-[#0A1D3D] whitespace-nowrap uppercase text-xs font-bold"
               style={{
                 backgroundColor: "#DAF5E9",
                 fontFamily: INTER,
-                fontWeight: 700,
-                fontSize: "14px",
-                lineHeight: "17.5px",
-                letterSpacing: "0px",
+                letterSpacing: "0.2px",
               }}
             >
               <span className="w-2 h-2 rounded-full bg-[#E0D54F] shrink-0" />
@@ -152,7 +149,7 @@ export function FooterSection() {
 
             {/* Headline */}
             <h2
-              className="mt-5 text-[#0A1D3D] font-extrabold text-[28px] sm:text-[36px] lg:text-[44px] leading-tight lg:leading-[55px] tracking-[-1px] lg:tracking-[-2px]"
+              className="mt-2.5 sm:mt-3 text-[#0A1D3D] font-extrabold text-xl sm:text-2xl lg:text-[28px] leading-snug tracking-tight"
               style={{
                 fontFamily: JAKARTA,
                 fontWeight: 800,
@@ -167,32 +164,21 @@ export function FooterSection() {
             <Image
               src={LOGO_SRC}
               alt="OrionKids — Where Every Kid Is a Star"
-              width={145}
-              height={70}
+              width={125}
+              height={60}
               unoptimized
-              className="mt-5 w-[145px] h-auto"
+              className="mt-2.5 sm:mt-3 w-[115px] sm:w-[125px] h-auto"
             />
           </div>
 
-          {/* Right: Clean 2-column links matching Figma */}
+          {/* Right: Clean 2-column links matching reference image */}
           <nav
             aria-label="Footer Navigation"
-            className="flex items-start gap-[40px] pt-2 lg:pt-4 shrink-0"
+            className="flex items-start gap-8 sm:gap-10 pt-1 lg:pt-2 shrink-0"
             style={{ fontFamily: INTER }}
           >
             {/* Column 1: Main Pages */}
-            <div
-              className="flex flex-col justify-between text-[#0A1D3D]"
-              style={{
-                width: "118px",
-                height: "166px",
-                fontFamily: INTER,
-                fontWeight: 700,
-                fontSize: "15px",
-                lineHeight: "21.75px",
-                letterSpacing: "-0.5px",
-              }}
-            >
+            <div className="flex flex-col space-y-1.5 sm:space-y-2 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
               <Link href="/#approach" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
                 OUR APPROACH
               </Link>
@@ -205,25 +191,13 @@ export function FooterSection() {
               <Link href="/for-parents" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
                 FOR PARENTS
               </Link>
-              <Link href="/#blogs" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+              <Link href="/blog" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
                 BLOGS
               </Link>
             </div>
 
             {/* Column 2: Social / External Links with ↗ */}
-            <div
-              className="flex flex-col text-[#0A1D3D]"
-              style={{
-                width: "107px",
-                height: "166px",
-                fontFamily: INTER,
-                fontWeight: 700,
-                fontSize: "15px",
-                lineHeight: "21.75px",
-                letterSpacing: "-0.5px",
-                rowGap: "26.33px",
-              }}
-            >
+            <div className="flex flex-col space-y-1.5 sm:space-y-2 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
               <a
                 href="https://linkedin.com"
                 target="_blank"
@@ -254,9 +228,9 @@ export function FooterSection() {
         </div>
 
         {/* ================= DOODLE WALL: Compact container without huge gap ================= */}
-        <div className="w-full overflow-x-auto md:overflow-visible pb-2 pt-2 scrollbar-none">
+        <div className="w-full overflow-x-auto md:overflow-visible pb-1 pt-1 scrollbar-none">
           <div
-            className="relative w-full min-w-[920px] md:min-w-0 max-w-[1350px] mx-auto mt-4 sm:mt-6"
+            className="relative w-full min-w-[920px] md:min-w-0 max-w-[1350px] mx-auto mt-1 sm:mt-2"
             style={{
               aspectRatio: `${STRIP_W} / ${STRIP_H}`,
             }}
@@ -268,16 +242,16 @@ export function FooterSection() {
           </div>
         </div>
 
-        {/* ================= LEGAL ROW matching Figma screenshot ================= */}
+        {/* ================= LEGAL ROW matching reference screenshot ================= */}
         <div
-          className="mt-8 sm:mt-12 pt-4 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] sm:text-[12px] text-[#0A1D3D] font-medium text-center md:text-left"
+          className="mt-2.5 sm:mt-3 pt-2.5 border-t border-[#0A1D3D]/10 flex flex-col md:flex-row items-center justify-between gap-2 text-[10px] sm:text-[11px] text-[#0A1D3D]/80 font-medium text-center md:text-left"
           style={{ fontFamily: INTER }}
         >
           <span>© 2026 OrionKids Digital Solutions Pvt. Ltd.</span>
-          <span className="text-[#0A1D3D]">
+          <span>
             Design &amp; Development by PantharInfoHub Pvt. Ltd.
           </span>
-          <span className="text-[#0A1D3D]">
+          <span>
             Copyright 2026 • All Rights Reserved
           </span>
         </div>

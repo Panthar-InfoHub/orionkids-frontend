@@ -16,11 +16,14 @@ export interface PrintableItem {
   downloadUrl: string;
   previewType?: "maze" | "crossword" | "grid" | "scramble" | "doodle" | "tracker" | "math" | "bats" | "candy";
   cardImage?: string;
+  image?: string;
   printCountText?: string;
   subcategory?: string;
+  subcategoryColor?: string;
   accentColor?: string;
   badgeLabel?: string;
   badgeIcon?: string;
+  badgeBg?: string;
   isFeatured?: boolean;
   isSpotlight?: boolean;
   tags: string[];
