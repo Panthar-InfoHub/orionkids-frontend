@@ -129,7 +129,7 @@ export function ForSchoolsObservationsSection() {
         {/* ================= MAIN HEADING ================= */}
         <div className="relative w-full flex flex-col items-center text-center mb-12 sm:mb-14">
           {/* Animated Game Remote GIF on the left of title */}
-          <div className="hidden md:block absolute left-2 lg:left-8 -top-3 w-16 h-16 pointer-events-none select-none">
+          <div className=" md:block absolute left-2 lg:left-8 -top-3 w-16 h-16 pointer-events-none select-none rotate-[-31.27deg]">
             <Image
               src={encodeURI("/gif/game remote.gif")}
               alt="Animated game remote"

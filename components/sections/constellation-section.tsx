@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { StarIcon } from "@/components/ui/star-icon";
 
 const GAME_BADGES = [
   { name: "Stroop Colour-Word", bg: "bg-[#56CCF2]" },
@@ -106,9 +107,11 @@ export function ConstellationSection() {
             
             {/* Top Pill Badge */}
             <div
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FFD028] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] mb-3 select-none hover:scale-105 transition-transform"
+              className="inline-flex items-center gap-2 pl-1.5 pr-3.5 py-1 bg-[#FFD028] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] mb-3 select-none hover:scale-105 transition-transform"
             >
-              <span className="text-xs">✨</span>
+              <div className="w-5 h-5 rounded-full bg-[#0A1D3D] flex items-center justify-center shrink-0">
+                <StarIcon size={12} strokeColor="#FFD028" strokeWidth={2} />
+              </div>
               <span
                 className="text-[11px] sm:text-[11.5px] font-black tracking-wider uppercase flex items-center gap-1.5"
                 style={{
@@ -151,14 +154,14 @@ export function ConstellationSection() {
             <div className="mb-3.5">
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FF8CC7] text-[#0A1D3D] rounded-full border-2 border-[#FFFFFF] shadow-[2px_2px_0px_0px_#FFFFFF] text-[11px] sm:text-xs font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#FF8CC7] text-[#0A1D3D] rounded-full border-2 border-[#FFFFFF] shadow-[2px_2px_0px_0px_#FFFFFF] text-[11px] sm:text-xs font-black uppercase tracking-wide hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
               >
-                <span>🌸</span>
+                <StarIcon size={15} strokeColor="#0A1D3D" strokeWidth={2} className="shrink-0" />
                 <span>THAT&apos;S THE WHOLE POINT</span>
-                <span className="text-xs">→</span>
+                <span className="text-xs font-black">→</span>
               </button>
             </div>
 
@@ -212,7 +215,7 @@ export function ConstellationSection() {
             {/* Top Right Badges */}
             <div className="flex items-center justify-end gap-2.5 mb-2 z-20">
               <div
-                className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#65DCAA] text-[#0A1D3D] rounded-full border-2 border-[#FFFFFF] shadow-[2px_2px_0px_#FFFFFF] text-xs font-black select-none hover:scale-105 transition-transform"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#65DCAA] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] text-xs font-black select-none hover:scale-105 transition-transform"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
@@ -222,7 +225,7 @@ export function ConstellationSection() {
               </div>
 
               <div
-                className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#38BDF8] text-[#0A1D3D] rounded-full border-2 border-[#FFFFFF] shadow-[2px_2px_0px_#FFFFFF] text-xs font-black select-none hover:scale-105 transition-transform"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#38BDF8] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] text-xs font-black select-none hover:scale-105 transition-transform"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}

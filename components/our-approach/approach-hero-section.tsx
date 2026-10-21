@@ -220,9 +220,9 @@ export function ApproachHeroSection() {
           </div>
 
           {/* ================= RIGHT – Constellation Engine ================= */}
-          <div className="lg:col-span-5 w-full min-w-0 lg:mt-[74px] flex justify-center lg:justify-end">
+          <div className="lg:col-span-5 w-full min-w-0 lg:mt-[87.5px] flex justify-center lg:justify-end">
             <div
-              className="w-full max-w-[460px] lg:max-w-[420px] rounded-3xl border-[3px] bg-white p-5 sm:p-6 shadow-[4px_4px_0_#0F172A] sm:shadow-[6px_6px_0_#0F172A]"
+              className="w-full max-w-[419px] flex flex-col gap-[20px] rounded-[24px] border-[2px] bg-white p-[28px] shadow-[8px_8px_0px_0px_#0F172A]"
               style={{ borderColor: INK }}
             >
               {/* Header */}
@@ -310,7 +310,7 @@ export function ApproachHeroSection() {
                 {PHASES.map((p) => (
                   <div
                     key={p.no}
-                    className="rounded-[14px] border-2 p-3 sm:p-3.5 shadow-[3px_3px_0_#0F172A] flex flex-col"
+                    className="rounded-[14px] border-2 p-3 sm:p-3.5 shadow-[3px_3px_0_#0284C7] flex flex-col"
                     style={{ backgroundColor: p.bg, borderColor: INK }}
                   >
                     <div className="flex items-center justify-between">

@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { StarIcon } from "@/components/ui/star-icon";
 
 export function ChildJourneySection() {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -37,6 +38,27 @@ export function ChildJourneySection() {
       id="child-journey-section"
       className="relative w-full bg-[#F3EBFF] py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-[60px] select-none scroll-mt-0 overflow-x-hidden"
     >
+      {/* Floating Explorer Robot (lg+).
+          Figma: Left 924px, Top 28px, 164 x 164 — measured from the 1440px frame,
+          so it is anchored to the section (not to the 1264px inner container). */}
+      <div
+        aria-hidden="true"
+        className="hidden lg:block absolute inset-x-0 top-0 z-20 pointer-events-none select-none"
+      >
+        <div className="relative mx-auto w-full max-w-[1440px]">
+          <div className="absolute top-7 left-[64.17%] w-[clamp(112px,11.4vw,164px)] aspect-square">
+            <Image
+              src="/robots/robo1.png"
+              alt="OrionKids Explorer Robot"
+              width={164}
+              height={164}
+              className="w-full h-full object-contain drop-shadow-[0_8px_16px_rgba(10,29,61,0.12)]"
+              priority
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="relative z-10 w-full max-w-[1264px] mx-auto flex flex-col items-center">
 
         {/* ================= HEADER AREA ================= */}
@@ -81,15 +103,26 @@ export function ChildJourneySection() {
             </p>
           </div>
 
-          {/* Top Right Label */}
-          <span
-            className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#526176] self-start sm:self-end pb-1 whitespace-nowrap"
-            style={{
-              fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
-            }}
-          >
-            EXPANDED GAME FLOW
-          </span>
+          {/* Top Right Label & Mobile Robot */}
+          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto self-start sm:self-end">
+            <span
+              className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#526176] pb-1 whitespace-nowrap"
+              style={{
+                fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+              }}
+            >
+              EXPANDED GAME FLOW
+            </span>
+            <div className="block lg:hidden w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 shrink-0 -my-2 sm:-my-3 pointer-events-none select-none">
+              <Image
+                src="/robots/robo1.png"
+                alt="OrionKids Explorer Robot"
+                width={164}
+                height={164}
+                className="w-full h-full object-contain drop-shadow-sm"
+              />
+            </div>
+          </div>
         </div>
 
         {/* ================= DESKTOP HORIZONTAL CANVAS (>= 1024px) ================= */}
@@ -166,18 +199,7 @@ export function ChildJourneySection() {
                 {/* Checkpoint 1: Pink Circle */}
                 <div className="absolute left-[225px] top-[211px] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-20 select-none">
                   <div className="relative w-14 h-14 rounded-full bg-[#FF8CC7] border-[2.5px] border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center">
-                    <svg viewBox="0 0 40 40" className="w-10 h-10" fill="none">
-                      <path
-                        d="M 20 6 C 20 14 15 17 7 20 C 15 23 20 26 20 34 C 20 26 25 23 33 20 C 25 17 20 14 20 6 Z"
-                        stroke="#0A1D3D"
-                        strokeWidth="2.6"
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                        fill="none"
-                      />
-                      <circle cx="10" cy="28.5" r="2" stroke="#0A1D3D" strokeWidth="2.4" fill="none" />
-                      <path d="M 28 8 L 28 14 M 25 11 L 31 11" stroke="#0A1D3D" strokeWidth="2.4" strokeLinecap="round" />
-                    </svg>
+                    <StarIcon size={28} strokeColor="#0A1D3D" strokeWidth={2} />
                     <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#FFD1E3] border-2 border-[#0A1D3D] text-[10px] font-black text-[#0A1D3D] flex items-center justify-center shadow-[1px_1px_0px_#0A1D3D]">
                       1
                     </span>
@@ -458,18 +480,8 @@ export function ChildJourneySection() {
               <div className="relative z-10 flex items-start gap-3 sm:gap-4">
                 {/* Checkpoint 1 Node */}
                 <div className="relative shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#FF8CC7] border-[2.5px] border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center">
-                  <svg viewBox="0 0 40 40" className="w-8 h-8 sm:w-10 sm:h-10" fill="none">
-                    <path
-                      d="M 20 6 C 20 14 15 17 7 20 C 15 23 20 26 20 34 C 20 26 25 23 33 20 C 25 17 20 14 20 6 Z"
-                      stroke="#0A1D3D"
-                      strokeWidth="2.6"
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                      fill="none"
-                    />
-                    <circle cx="10" cy="28.5" r="2" stroke="#0A1D3D" strokeWidth="2.4" fill="none" />
-                    <path d="M 28 8 L 28 14 M 25 11 L 31 11" stroke="#0A1D3D" strokeWidth="2.4" strokeLinecap="round" />
-                  </svg>
+                <StarIcon size={28} strokeColor="#0A1D3D" strokeWidth={2} />
+
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#FFD1E3] border-2 border-[#0A1D3D] text-[10px] font-black text-[#0A1D3D] flex items-center justify-center shadow-[1px_1px_0px_#0A1D3D]">
                     1
                   </span>

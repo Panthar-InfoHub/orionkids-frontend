@@ -61,8 +61,27 @@ export function ForSchoolsHeroSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           {/* ================= LEFT COLUMN ================= */}
-          <div className="flex flex-col items-start text-left z-10 pt-2 lg:pt-4">
-            {/* Upper Pill: FOR EDUCATORS & SCHOOLS • CLASSES 1–6 */}
+          <div className="relative flex flex-col items-start text-left z-10 pt-2 lg:pt-4">
+            {/* Waving Robot (robo5.png) matching Figma placement */}
+            <div
+              className="absolute pointer-events-none select-none z-20 transition-transform hover:scale-105 duration-300
+                         w-[85px] h-[85px] top-[15px] right-0
+                         sm:w-[115px] sm:h-[115px] sm:top-[28px] sm:right-2
+                         md:w-[145px] md:h-[145px] md:top-[32px] md:right-4
+                         lg:w-[165px] lg:h-[165px] lg:top-[35px] lg:-right-[30px]
+                         xl:w-[185px] xl:h-[185px] xl:top-[30px] xl:-right-[45px]"
+            >
+              <Image
+                src="/robots/robo5.png"
+                alt="Waving OrionKids Robot"
+                width={185}
+                height={185}
+                className="w-full h-full object-contain drop-shadow-[0_12px_24px_rgba(14,28,50,0.15)]"
+                priority
+              />
+            </div>
+
+            {/* Upper Pill: FOR EDUCATORS & SCHOOLS • CLASSES 1–8 */}
             <div
               className="inline-flex items-center gap-2 rounded-full select-none mb-5"
               style={{
@@ -79,8 +98,8 @@ export function ForSchoolsHeroSection() {
                 color: "#0E1C32",
               }}
             >
-              <span className="text-sm select-none">⭐</span>
-              <span>FOR EDUCATORS & SCHOOLS • CLASSES 1–6</span>
+              <span className="text-sm select-none">🪐</span>
+              <span>FOR EDUCATORS & SCHOOLS • CLASSES 1–8</span>
             </div>
 
             {/* Main Headline */}
@@ -100,7 +119,7 @@ export function ForSchoolsHeroSection() {
               {/* "Constellation" badge */}
               <span className="inline-block relative mt-1">
                 <span
-                  className="inline-flex items-center justify-center px-[14px] py-[4px]"
+                  className="inline-flex items-center justify-center px-[10px] py-[1px]"
                   style={{
                     backgroundColor: "#0A1D3D",
                     color: "#FFFFFF",
@@ -125,9 +144,8 @@ export function ForSchoolsHeroSection() {
 
             {/* Description */}
             <p
-              className="mb-6"
+              className="mb-6 max-w-[580px] lg:max-w-[500px] xl:max-w-[560px]"
               style={{
-                maxWidth: "672px",
                 fontFamily: JAKARTA,
                 fontWeight: 700,
                 fontSize: "18px",
@@ -136,9 +154,9 @@ export function ForSchoolsHeroSection() {
                 color: "#526176",
               }}
             >
-              See how children learn through play. OrionKids helps educators
-              notice strategies and plan everyday classroom support. Educational
-              insights, not diagnosis or medical screening.
+              Explore how children learn through play with OrionKids. Our AI platform helps educators
+              identify strategies and plan daily classroom support, providing insights without needing
+              diagnosis or medical screening.
             </p>
 
             {/* CTA Buttons */}

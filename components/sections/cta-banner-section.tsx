@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import confetti from "canvas-confetti";
 
 
 
@@ -29,14 +28,7 @@ const DOT_PATTERN = {
 } as const;
 
 export function CtaBannerSection() {
-  const handleCtaClick = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ["#65DCAA", "#FFCE38", "#1763BC"],
-    });
-  };
+ 
 
   return (
     <>
@@ -115,7 +107,6 @@ export function CtaBannerSection() {
             <div className="shrink-0 flex items-center w-full lg:w-auto min-[1400px]:mr-14">
               <button
                 type="button"
-                onClick={handleCtaClick}
                 className="w-full sm:w-[304px] h-[54px] rounded-[16px] bg-[#FFD028] text-[#0A1D3D] text-sm shadow-[5px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0px_0px_#0A1D3D] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[2px_2px_0px_0px_#0A1D3D] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/60 flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap"
                 style={{ fontFamily: JAKARTA, fontWeight: 800 }}
               >

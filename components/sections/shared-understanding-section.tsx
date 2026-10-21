@@ -1,22 +1,13 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const INTER = "var(--font-inter), 'Inter', sans-serif";
 const NAVY = "#0A1D3D";
 
-/**
- * Corner badge — measured from the Figma export (1:1 px, origin = card's inner top-left).
- *
- *  - Three concentric circles centred at (13.5, 21.5): outer Ø104 (outerColor),
- *    middle Ø86 (ring colour), inner Ø64 (dot colour); all with a 2px navy border.
- *    They are clipped by the card (card = overflow-hidden), so only the corner shows.
- *  - One white pill: 29px tall, 2px navy border, hard 4px bottom shadow, running
- *    underneath the circles. Emoji starts at x≈65, label is 15px / 800 / tracking-wider.
- *
- * Must be rendered inside a `relative overflow-hidden` card.
- */
+
 function CornerBadge({
   emoji,
   label,
@@ -84,15 +75,35 @@ export function SharedUnderstandingSection() {
   return (
     <section
       id="shared-understanding-section"
-      className="relative w-full bg-[#E6F0FF] text-[#0A1D3D] py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-8 overflow-hidden select-none scroll-mt-16"
+      className="relative w-full bg-[#E6F0FF] text-[#0A1D3D] py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-8 select-none scroll-mt-16"
     >
       {/* Soft ambient corner glows (#FFF6D9) matching Figma layout */}
-      <div className="absolute -top-24 -right-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl pointer-events-none opacity-70" />
-      <div className="absolute -bottom-24 -left-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl pointer-events-none opacity-70" />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+        <div className="absolute -top-24 -right-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl opacity-70" />
+        <div className="absolute -bottom-24 -left-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl opacity-70" />
+      </div>
 
       <div className="relative z-10 w-full max-w-[1224px] mx-auto flex flex-col gap-6 lg:gap-8">
+        {/* Flying Rocket Robot (Figma Specs: Width 184px, Height 184px, Top 638px, Left -29px) */}
+        <div
+          className="absolute z-20 pointer-events-none select-none transition-transform duration-300
+                     w-[105px] h-[105px] -top-[65px] left-1
+                     sm:w-[135px] sm:h-[135px] sm:-top-[88px] sm:left-[-12px]
+                     lg:w-[165px] lg:h-[165px] lg:-top-[112px] lg:left-[-22px]
+                     xl:w-[184px] xl:h-[184px] xl:-top-[125px] xl:left-[-29px]"
+        >
+          <Image
+            src="/robots/robo3.png"
+            alt="Rocket robot"
+            width={184}
+            height={184}
+            className="w-full h-full object-contain drop-shadow-[0_12px_24px_rgba(10,29,61,0.22)]"
+            priority
+          />
+        </div>
+
         {/* ================= HEADER ROW ================= */}
-        <div className="flex flex-col gap-1.5 text-left w-full">
+        <div className="flex flex-col gap-2.5 sm:gap-3 text-left w-full pt-1 sm:pt-2">
           <span
             className="text-[11px] sm:text-xs font-black tracking-[1.2px] uppercase text-[#0A1D3D]/80"
             style={{ fontFamily: JAKARTA, lineHeight: "100%" }}

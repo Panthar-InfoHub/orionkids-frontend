@@ -63,7 +63,7 @@ export function EthicalFoundationSection() {
         <div className="relative z-10 mx-auto w-full max-w-[896px] flex flex-col">
           {/* Pill */}
           <span
-            className="self-start inline-flex items-center gap-1.5 max-w-full min-h-[34px] px-3.5 py-2 rounded-lg bg-[#FFC72C] -rotate-1 shadow-[0_0_14px_rgba(255,255,255,0.18)] select-none"
+            className="self-start inline-flex items-center gap-1.5 max-w-full min-h-[34px] px-3.5 py-2 rounded-lg bg-[#FFC72C] -rotate-1 shadow-[0_0_14px_rgba(0,0,0)] select-none border-2"
             style={{
               color: NAVY,
               fontFamily: JAKARTA,
@@ -87,7 +87,7 @@ export function EthicalFoundationSection() {
           >
             Built to be used{" "}
             <span
-              className="underline decoration-[#FF6B4A] decoration-[3px] sm:decoration-4 underline-offset-[6px]"
+              className="underline decoration-[#FF6B4A] decoration-[3px] sm:decoration-4 underline-offset-[10px]"
               style={{ color: GOLD }}
             >
               responsibly.
@@ -106,7 +106,7 @@ export function EthicalFoundationSection() {
 
           {/* Boundary box */}
           <div
-            className="mt-7 w-full flex items-start gap-4 rounded-[20px] sm:rounded-3xl border-2 bg-[#1B2D4D] p-5 sm:p-8"
+            className="mt-7 w-full flex items-start gap-4 rounded-[20px] sm:rounded-3xl border-2 bg-[#FFFFFF]/10 p-5 sm:p-8"
             style={{ borderColor: GOLD }}
           >
             <span
@@ -118,7 +118,7 @@ export function EthicalFoundationSection() {
 
             <div className="flex flex-col items-start gap-2 min-w-0">
               <span
-                className="inline-flex items-center min-h-[26px] px-2.5 py-1 rounded-md border-[1.5px] bg-[#0C2240] text-white uppercase"
+                className="inline-flex items-center min-h-[26px] px-2.5 py-1 rounded-md border-[2px] bg-[#0F172A] border-[#FFD028] text-[#FFD028] uppercase"
                 style={{
                   borderColor: GOLD,
                   fontFamily: JAKARTA,
@@ -187,7 +187,7 @@ export function EthicalFoundationSection() {
             {TRUST.map((t) => (
               <div
                 key={t.title}
-                className="flex items-center gap-3.5 rounded-2xl border border-white/10 bg-[#1B3152] px-5 py-3.5 min-h-[69px]"
+                className="flex items-center gap-3.5 rounded-2xl border border-#0F172A bg-[#FFFFFF]/10 px-5 py-3.5 min-h-[69px]"
               >
                 <span className="text-[24px] leading-none shrink-0 select-none" aria-hidden="true">
                   {t.icon}

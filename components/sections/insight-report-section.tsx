@@ -91,7 +91,7 @@ export function InsightReportSection() {
   return (
     <section
       id="insight-report-section"
-      className="relative w-full bg-[#0A1D3D] text-white overflow-hidden select-none scroll-mt-16 py-12 lg:pt-[38px] lg:pb-[72px]"
+      className="relative w-full bg-[#0A1D3D] text-white overflow-hidden select-none scroll-mt-16 pt-12 pb-16 lg:pt-[38px] lg:pb-[72px]"
     >
       {/* Background dots */}
       <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
@@ -219,7 +219,7 @@ export function InsightReportSection() {
                     fontWeight: 800,
                     fontSize: "8.5px",
                     lineHeight: "100%",
-                    boxShadow: "2px 2px 0 rgba(255,255,255,0.22)",
+                    boxShadow: "3px 3px 0 #000000",
                   }}
                 >
                   <span className="shrink-0 text-[9px] leading-none">{c.emoji}</span>
@@ -243,6 +243,9 @@ export function InsightReportSection() {
               >
                 <div
                   className="relative h-full w-full overflow-hidden bg-[#0A1D3D]/30"
+                  style={{
+                    borderRadius: RADIUS_MAIN,
+                  }}
                 >
                   <Image
                     src="/images/children-learning-together.png"
@@ -288,7 +291,7 @@ export function InsightReportSection() {
                   className="relative h-full w-full overflow-hidden bg-[#0A1D3D]/30"
                   style={{
                     borderRadius: RADIUS_SECOND,
-                    
+                    border: "2.5px solid #FFD028",
                   }}
                 >
                   <Image
@@ -300,6 +303,20 @@ export function InsightReportSection() {
                     sizes="(max-width: 768px) 45vw, 260px"
                   />
                 </div>
+              </div>
+
+              {/* Robot Hand*/}
+              <div
+                className="pointer-events-none absolute z-30 select-none aspect-square w-[23.64%] left-[82%] top-[95%] xl:left-[89.34%] xl:top-[91.45%]"
+              >
+                <Image
+                  src="/robots/robo2.png"
+                  alt="Robot hand holding AI processor chip"
+                  width={193}
+                  height={193}
+                  className="h-full w-full object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)]"
+                  priority
+                />
               </div>
 
               {/* Bullseye sticker on Photo 2's top-right corner */}

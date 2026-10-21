@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { StarIcon } from "@/components/ui/star-icon";
 
 const CHECKLIST_ITEMS = [
   "Simple, age-appropriate instructions",
@@ -228,15 +229,9 @@ export function GameAssessmentSection() {
 
               {/* Sparkle */}
               <div className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
-                <svg className="w-11 h-11 sm:w-[52px] sm:h-[52px]" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <circle cx="26" cy="26" r="24.5" fill="#FFD243" stroke="#0A1D3D" strokeWidth="2.5" />
-                  <path
-                    d="M 26 12 C 26 19.5 20.5 25 13 26 C 20.5 27 26 32.5 26 40 C 26 32.5 31.5 27 39 26 C 31.5 25 26 19.5 26 12 Z"
-                    stroke="#0A1D3D" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round"
-                  />
-                  <path d="M 38 12.5 V 17.5 M 35.5 15 H 40.5" stroke="#0A1D3D" strokeWidth="2.4" strokeLinecap="round" />
-                  <circle cx="14" cy="37.5" r="2.5" stroke="#0A1D3D" strokeWidth="2.4" fill="none" />
-                </svg>
+                <div className="w-11 h-11 sm:w-[52px] sm:h-[52px] rounded-full bg-[#FFD243] border-[2.5px] border-[#0A1D3D] flex items-center justify-center select-none shadow-sm">
+                  <StarIcon className="w-6 h-6 sm:w-7 sm:h-7" strokeColor="#0A1D3D" strokeWidth={1.8} />
+                </div>
               </div>
 
               {/* Heart */}
