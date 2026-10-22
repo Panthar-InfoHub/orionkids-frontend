@@ -11,7 +11,7 @@ const INTER = "var(--font-inter), 'Inter', sans-serif";
 const LOGO_SRC = "/svg/Logo.svg";
 
 /* ------------------------------------------------------------------ */
-/*  Doodle wall with Polaroid cards from /public/footer-images         */
+/*  Doodle wall with Polaroid cards from /public/svg/001.svg - 021.svg */
 /* ------------------------------------------------------------------ */
 
 type DoodleSpec = {
@@ -24,52 +24,52 @@ type DoodleSpec = {
   alt: string;
 };
 
-// Compact Strip dimensions: Width 1350px, Height 205px matching Figma canvas
-const STRIP_W = 1350;
-const STRIP_H = 205;
+// Compact Strip dimensions: Width 1400px, Height 210px matching Figma canvas
+const STRIP_W = 1400;
+const STRIP_H = 210;
 
-// Exact 20 Figma-exported doodle cards matching the official design
+// Exact 20 vector doodle cards with increased size and tight, playful spacing matching reference image
 const CARDS: DoodleSpec[] = [
   // 1. Star doodle (rotated 90deg sideways, lower-left flush)
-  { src: "/footer-images/24.png", x: 48, y: 148, w: 90, h: 78, zIndex: 1, alt: "Star doodle" },
+  { src: "/svg/021.svg", x: 98, y: 164, w: 110, h: 86, zIndex: 1, alt: "Star doodle" },
   // 2. Smiley face with flower bouquet (bottom row)
-  { src: "/footer-images/21.png", x: 135, y: 144, w: 80, h: 81, zIndex: 2, alt: "Smiley and flower bouquet doodle" },
+  { src: "/svg/019.svg", x: 183, y: 156, w: 96, h: 97, zIndex: 2, alt: "Smiley and flower bouquet doodle" },
   // 3. Tilted swirl diamond (upper floating between cards 2 & 5)
-  { src: "/footer-images/20.png", x: 218, y: 82, w: 110, h: 111, zIndex: 1, alt: "Abstract swirl doodle" },
+  { src: "/svg/018.svg", x: 253, y: 98, w: 130, h: 131, zIndex: 1, alt: "Abstract swirl doodle" },
   // 4. Boat / hat with red cross X (top row)
-  { src: "/footer-images/19.png", x: 326, y: 55, w: 78, h: 87, zIndex: 1, alt: "Red cross boat doodle" },
+  { src: "/svg/017.svg", x: 358, y: 69, w: 96, h: 106, zIndex: 1, alt: "Red cross boat doodle" },
   // 5. Tent / triangle doodle (bottom row below card 4)
-  { src: "/footer-images/22.png", x: 318, y: 144, w: 80, h: 81, zIndex: 2, alt: "Tent doodle" },
+  { src: "/svg/020.svg", x: 350, y: 156, w: 96, h: 97, zIndex: 2, alt: "Tent doodle" },
   // 6. YOCHI stick figures family (bottom row)
-  { src: "/footer-images/17.png", x: 412, y: 144, w: 80, h: 81, zIndex: 2, alt: "YOCHI family stick figures doodle" },
+  { src: "/svg/015.svg", x: 444, y: 156, w: 96, h: 97, zIndex: 2, alt: "YOCHI family stick figures doodle" },
   // 7. YO! text doodle (top row)
-  { src: "/footer-images/16.png", x: 495, y: 55, w: 78, h: 87, zIndex: 1, alt: "YO! doodle" },
+  { src: "/svg/013.svg", x: 519, y: 74, w: 96, h: 106, zIndex: 1, alt: "YO! doodle" },
   // 8. Walking smiling heart (bottom row below card 7)
-  { src: "/footer-images/18.png", x: 504, y: 144, w: 80, h: 81, zIndex: 2, alt: "Walking smiling heart doodle" },
+  { src: "/svg/016.svg", x: 528, y: 156, w: 96, h: 97, zIndex: 2, alt: "Walking smiling heart doodle" },
   // 9. Hello :) doodle (rotated 90deg sideways, bottom row)
-  { src: "/footer-images/13.png", x: 618, y: 148, w: 94, h: 74, zIndex: 2, alt: "Hello smiley doodle" },
+  { src: "/svg/012.svg", x: 640, y: 164, w: 110, h: 86, zIndex: 2, alt: "Hello smiley doodle" },
   // 10. Green and pink flower (top row)
-  { src: "/footer-images/9.png", x: 712, y: 52, w: 78, h: 87, zIndex: 1, alt: "Flower doodle" },
+  { src: "/svg/008.svg", x: 726, y: 70, w: 96, h: 106, zIndex: 1, alt: "Flower doodle" },
   // 11. WOW <3 TEH (top row next to flower)
-  { src: "/footer-images/8.png", x: 792, y: 52, w: 80, h: 89, zIndex: 2, alt: "WOW love doodle" },
+  { src: "/svg/007.svg", x: 804, y: 70, w: 98, h: 108, zIndex: 2, alt: "WOW love doodle" },
   // 12. "hi, thanks for inspi" (bottom row below card 10)
-  { src: "/footer-images/12.png", x: 712, y: 144, w: 80, h: 81, zIndex: 2, alt: "Inspirational thank you doodle" },
+  { src: "/svg/011.svg", x: 725, y: 156, w: 96, h: 97, zIndex: 2, alt: "Inspirational thank you doodle" },
   // 13. Circle / stone outline (bottom row next to card 12)
-  { src: "/footer-images/11.png", x: 802, y: 144, w: 80, h: 81, zIndex: 2, alt: "Stone outline doodle" },
+  { src: "/svg/010.svg", x: 842, y: 156, w: 96, h: 97, zIndex: 2, alt: "Stone outline doodle" },
   // 14. "SAYA LAWAT AKAN jkw" (top row, slightly tilted)
-  { src: "/footer-images/7.png", x: 875, y: 58, w: 88, h: 95, zIndex: 3, alt: "Saya Lawat doodle" },
+  { src: "/svg/006.svg", x: 888, y: 70, w: 104, h: 112, zIndex: 3, alt: "Saya Lawat doodle" },
   // 15. "Gilan" signature (top row, tilted)
-  { src: "/footer-images/6.png", x: 960, y: 72, w: 93, h: 99, zIndex: 4, alt: "Gilan signature doodle" },
+  { src: "/svg/005.svg", x: 972, y: 80, w: 110, h: 117, zIndex: 4, alt: "Gilan signature doodle" },
   // 16. Red heart doodle (top row next to Gilan)
-  { src: "/footer-images/5.png", x: 1045, y: 55, w: 78, h: 87, zIndex: 3, alt: "Red heart doodle" },
+  { src: "/svg/004.svg", x: 1060, y: 80, w: 96, h: 106, zIndex: 3, alt: "Red heart doodle" },
   // 17. "Bilal" signature (rotated 90deg sideways, bottom row)
-  { src: "/footer-images/10.png", x: 1048, y: 148, w: 94, h: 74, zIndex: 2, alt: "Bilal signature doodle" },
+  { src: "/svg/009.svg", x: 1057, y: 164, w: 110, h: 86, zIndex: 2, alt: "Bilal signature doodle" },
   // 18. Squiggle "h" doodle (bottom row next to Bilal)
-  { src: "/footer-images/3.png", x: 1140, y: 144, w: 80, h: 81, zIndex: 2, alt: "Squiggle doodle" },
+  { src: "/svg/003.svg", x: 1138, y: 156, w: 96, h: 97, zIndex: 2, alt: "Squiggle doodle" },
   // 19. Tilted butterfly diamond (floating between cards 16/18 and 20)
-  { src: "/footer-images/1.png", x: 1220, y: 75, w: 110, h: 109, zIndex: 3, alt: "Tilted butterfly doodle" },
+  { src: "/svg/001.svg", x: 1201, y: 98, w: 130, h: 129, zIndex: 3, alt: "Tilted butterfly doodle" },
   // 20. "Fener Bahçe" doodle (bottom row far right)
-  { src: "/footer-images/2.png", x: 1305, y: 144, w: 76, h: 88, zIndex: 2, alt: "Fener Bahçe doodle" },
+  { src: "/svg/002.svg", x: 1282, y: 156, w: 92, h: 106, zIndex: 2, alt: "Fener Bahçe doodle" },
 ];
 
 function DoodleCard({ spec }: { spec: DoodleSpec }) {
@@ -85,12 +85,13 @@ function DoodleCard({ spec }: { spec: DoodleSpec }) {
         zIndex: spec.zIndex,
       }}
     >
-      <Image
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={spec.src}
         alt={spec.alt}
-        fill
-        sizes="(max-width: 768px) 80px, 120px"
-        className="object-contain select-none pointer-events-none drop-shadow-none"
+        className="w-full h-full object-contain select-none pointer-events-none drop-shadow-none"
+        loading="lazy"
+        decoding="async"
       />
     </div>
   );
@@ -127,7 +128,7 @@ export function FooterSection() {
   return (
     <footer
       id="footer-section"
-      className="relative w-full bg-[#DAF5E9] text-[#0A1D3D] overflow-hidden select-none pt-6 sm:pt-7 pb-4 sm:pb-5 scroll-mt-16"
+      className="relative w-full bg-[#DAF5E9] text-[#0A1D3D] overflow-hidden select-none pt-7 sm:pt-8 pb-5 sm:pb-6 scroll-mt-16"
     >
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[44px]">
         {/* ================= TOP: Tagline + Links matching Figma ================= */}
@@ -143,21 +144,25 @@ export function FooterSection() {
                 letterSpacing: "0.2px",
               }}
             >
-              <span className="w-2 h-2 rounded-full bg-[#E0D54F] shrink-0" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#E0D54F] shrink-0" />
               <span>WHERE EVERY KIDS IS A STAR</span>
             </div>
 
-            {/* Headline */}
+            {/* Headline matching reference image */}
             <h2
-              className="mt-2.5 sm:mt-3 text-[#0A1D3D] font-extrabold text-xl sm:text-2xl lg:text-[28px] leading-snug tracking-tight"
+              className="mt-2.5 sm:mt-3 text-[#0A1D3D] font-extrabold text-xl sm:text-2xl lg:text-[30px] leading-snug tracking-tight"
               style={{
                 fontFamily: JAKARTA,
                 fontWeight: 800,
                 color: "#0A1D3D",
               }}
             >
-              <span className="block whitespace-normal lg:whitespace-nowrap">Before You Go, Doodle Something Fun!</span>
-              <span className="block whitespace-normal lg:whitespace-nowrap">Tap The Star To Start Your Adventure.</span>
+              <span className="block whitespace-normal lg:whitespace-nowrap">
+                Before You Go, Doodle Something Fun!
+              </span>
+              <span className="block whitespace-normal lg:whitespace-nowrap">
+                Tap The Star To Start Your Adventure.
+              </span>
             </h2>
 
             {/* OrionKids Logo */}
@@ -167,23 +172,20 @@ export function FooterSection() {
               width={125}
               height={60}
               unoptimized
-              className="mt-2.5 sm:mt-3 w-[115px] sm:w-[125px] h-auto"
+              className="mt-3 sm:mt-4 w-[115px] sm:w-[125px] h-auto"
             />
           </div>
 
           {/* Right: Clean 2-column links matching reference image */}
           <nav
             aria-label="Footer Navigation"
-            className="flex items-start gap-8 sm:gap-10 pt-1 lg:pt-2 shrink-0"
+            className="flex items-start gap-8 sm:gap-12 pt-1 lg:pt-2 shrink-0"
             style={{ fontFamily: INTER }}
           >
-            {/* Column 1: Main Pages */}
-            <div className="flex flex-col space-y-1.5 sm:space-y-2 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
+            {/* Column 1: Main Pages (OUR APPROACH, FOR SCHOOL, FOR PARENTS, BLOGS) */}
+            <div className="flex flex-col space-y-2 sm:space-y-2.5 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
               <Link href="/#approach" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
                 OUR APPROACH
-              </Link>
-              <Link href="/about-us" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
-                ABOUT US
               </Link>
               <Link href="/for-schools" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
                 FOR SCHOOL
@@ -196,8 +198,8 @@ export function FooterSection() {
               </Link>
             </div>
 
-            {/* Column 2: Social / External Links with ↗ */}
-            <div className="flex flex-col space-y-1.5 sm:space-y-2 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
+            {/* Column 2: Social / External Links with ↗ (LINKEDIN, EMAIL, INSTAGRAM) */}
+            <div className="flex flex-col space-y-2 sm:space-y-2.5 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
               <a
                 href="https://linkedin.com"
                 target="_blank"
@@ -227,10 +229,10 @@ export function FooterSection() {
           </nav>
         </div>
 
-        {/* ================= DOODLE WALL: Compact container without huge gap ================= */}
-        <div className="w-full overflow-x-auto md:overflow-visible pb-1 pt-1 scrollbar-none">
+        {/* ================= DOODLE WALL: Clean, crisp vector cards gallery ================= */}
+        <div className="w-full overflow-x-auto md:overflow-visible pb-1 pt-2 sm:pt-3 scrollbar-none">
           <div
-            className="relative w-full min-w-[920px] md:min-w-0 max-w-[1350px] mx-auto mt-1 sm:mt-2"
+            className="relative w-full min-w-[960px] md:min-w-0 max-w-[1400px] mx-auto"
             style={{
               aspectRatio: `${STRIP_W} / ${STRIP_H}`,
             }}
@@ -244,7 +246,7 @@ export function FooterSection() {
 
         {/* ================= LEGAL ROW matching reference screenshot ================= */}
         <div
-          className="mt-2.5 sm:mt-3 pt-2.5 border-t border-[#0A1D3D]/10 flex flex-col md:flex-row items-center justify-between gap-2 text-[10px] sm:text-[11px] text-[#0A1D3D]/80 font-medium text-center md:text-left"
+          className="mt-4 sm:mt-5 flex flex-col md:flex-row items-center justify-between gap-2 text-[10px] sm:text-[11px] text-[#0A1D3D] font-medium text-center md:text-left"
           style={{ fontFamily: INTER }}
         >
           <span>© 2026 OrionKids Digital Solutions Pvt. Ltd.</span>

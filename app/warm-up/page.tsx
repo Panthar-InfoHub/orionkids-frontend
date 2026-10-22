@@ -16,6 +16,7 @@ export default function WarmUpPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [isCompleted, setIsCompleted] = useState(false);
   const [isPauseModalOpen, setIsPauseModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,7 +36,7 @@ export default function WarmUpPage() {
     if (currentStep < totalSteps - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      router.push("/for-schools");
+      setIsCompleted(true);
     }
   };
 
