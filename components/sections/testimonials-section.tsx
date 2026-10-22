@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
-
+import Image from "next/image";
 const TESTIMONIALS = [
   {
     stars: 5,
@@ -146,6 +146,19 @@ export function TestimonialsSection() {
       id="testimonials-section"
       className="relative w-full bg-[#EAF6FF] text-[#0A1D3D] pt-10 sm:pt-12 lg:pt-14 pb-12 sm:pb-14 lg:pb-16 px-3 sm:px-6 lg:px-8 overflow-hidden select-none scroll-mt-16"
     >
+        <Image
+    src="/robots/robo4.png"
+    alt="OrionKids robot mascot"
+    width={259}
+    height={194}
+    priority
+    draggable={false}
+    className="
+      pointer-events-none select-none absolute z-0 h-auto rotate-[21.18deg]
+      w-[84px]  top-2     right-2
+      sm:w-[140px] sm:top-4 sm:right-[4%]
+      md:w-[190px] md:top-5 md:right-[6%]
+      lg:w-[259px] lg:top-[28px] lg:right-[10%]"/>
       <div className="relative z-10 w-full max-w-[1400px] mx-auto flex flex-col items-center">
         
         {/* ================= HEADER AREA ================= */}

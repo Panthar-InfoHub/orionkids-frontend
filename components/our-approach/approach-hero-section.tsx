@@ -16,6 +16,7 @@ interface Phase {
   chipBg: string;
   chipColor: string;
   subColor: string;
+  shadowColor: string;
 }
 
 const PHASES: Phase[] = [
@@ -28,6 +29,7 @@ const PHASES: Phase[] = [
     chipBg: "#38BDF8",
     chipColor: "#0F172A",
     subColor: "#0C4A6E",
+    shadowColor: "#0284C7",
   },
   {
     no: "02",
@@ -38,6 +40,7 @@ const PHASES: Phase[] = [
     chipBg: "#FBBF24",
     chipColor: "#0F172A",
     subColor: "#78350F",
+    shadowColor: "#D97706",
   },
   {
     no: "03",
@@ -48,6 +51,7 @@ const PHASES: Phase[] = [
     chipBg: "#FF6B4A",
     chipColor: "#0F172A",
     subColor: "#431407",
+    shadowColor: "#EA580C",
   },
   {
     no: "04",
@@ -58,6 +62,7 @@ const PHASES: Phase[] = [
     chipBg: "#34D399",
     chipColor: "#0F172A",
     subColor: "#022C22",
+    shadowColor: "#059669",
   },
 ];
 
@@ -310,8 +315,12 @@ export function ApproachHeroSection() {
                 {PHASES.map((p) => (
                   <div
                     key={p.no}
-                    className="rounded-[14px] border-2 p-3 sm:p-3.5 shadow-[3px_3px_0_#0284C7] flex flex-col"
-                    style={{ backgroundColor: p.bg, borderColor: INK }}
+                    className="rounded-[14px] border-2 p-3 sm:p-3.5 flex flex-col transition-transform hover:-translate-y-0.5"
+                    style={{
+                      backgroundColor: p.bg,
+                      borderColor: INK,
+                      boxShadow: `4px 4px 0px 0px ${p.shadowColor}`,
+                    }}
                   >
                     <div className="flex items-center justify-between">
                       <span
@@ -375,7 +384,7 @@ export function ApproachHeroSection() {
                   Centered on child curiosity
                 </span>
                 <span
-                  className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md border-[1.5px] bg-[#FFE98F] text-[11px]"
+                  className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md border-2 bg-[#FFD028] text-[11px] shadow-[2px_2px_0_#0F172A]"
                   style={{ borderColor: INK, fontFamily: INTER, fontWeight: 700, color: INK }}
                 >
                   100% Kid-Safe <span aria-hidden="true">🛡️</span>

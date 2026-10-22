@@ -75,8 +75,27 @@ export function SharedUnderstandingSection() {
   return (
     <section
       id="shared-understanding-section"
-      className="relative w-full bg-[#E6F0FF] text-[#0A1D3D] py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-8 select-none scroll-mt-16"
+      className="relative w-full bg-[#E6F0FF] text-[#0A1D3D] pt-24 sm:pt-28 lg:pt-32 pb-10 sm:pb-12 lg:pb-16 px-4 sm:px-6 lg:px-8 select-none scroll-mt-16"
     >
+      {/* Robot Mascot Anchored Directly on the Section Border (Half in Everyday Support, Half in Shared Understanding) */}
+      <div className="absolute top-0 left-0 right-0 z-20 pointer-events-none select-none">
+        <div className="w-full max-w-[1224px] mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div
+            className="absolute -translate-y-1/2 left-4 sm:left-6 lg:left-8 -ml-1 sm:-ml-3 lg:-ml-[29px]
+                       w-[110px] h-[110px] sm:w-[145px] sm:h-[145px] lg:w-[184px] lg:h-[184px]"
+          >
+            <Image
+              src="/robots/robo3.png"
+              alt="OrionKids rocket robot mascot"
+              width={184}
+              height={184}
+              className="w-full h-full object-contain drop-shadow-[0_12px_24px_rgba(10,29,61,0.18)]"
+              priority
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Soft ambient corner glows (#FFF6D9) matching Figma layout */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
         <div className="absolute -top-24 -right-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl opacity-70" />
@@ -84,24 +103,6 @@ export function SharedUnderstandingSection() {
       </div>
 
       <div className="relative z-10 w-full max-w-[1224px] mx-auto flex flex-col gap-6 lg:gap-8">
-        {/* Flying Rocket Robot (Figma Specs: Width 184px, Height 184px, Top 638px, Left -29px) */}
-        <div
-          className="absolute z-20 pointer-events-none select-none transition-transform duration-300
-                     w-[105px] h-[105px] -top-[65px] left-1
-                     sm:w-[135px] sm:h-[135px] sm:-top-[88px] sm:left-[-12px]
-                     lg:w-[165px] lg:h-[165px] lg:-top-[112px] lg:left-[-22px]
-                     xl:w-[184px] xl:h-[184px] xl:-top-[125px] xl:left-[-29px]"
-        >
-          <Image
-            src="/robots/robo3.png"
-            alt="Rocket robot"
-            width={184}
-            height={184}
-            className="w-full h-full object-contain drop-shadow-[0_12px_24px_rgba(10,29,61,0.22)]"
-            priority
-          />
-        </div>
-
         {/* ================= HEADER ROW ================= */}
         <div className="flex flex-col gap-2.5 sm:gap-3 text-left w-full pt-1 sm:pt-2">
           <span

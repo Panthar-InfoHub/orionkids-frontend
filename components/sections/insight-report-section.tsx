@@ -91,7 +91,7 @@ export function InsightReportSection() {
   return (
     <section
       id="insight-report-section"
-      className="relative w-full bg-[#0A1D3D] text-white overflow-hidden select-none scroll-mt-16 pt-12 pb-16 lg:pt-[38px] lg:pb-[72px]"
+      className="relative w-full bg-[#0A1D3D] text-white overflow-hidden select-none scroll-mt-16 pt-12 pb-24 sm:pb-32 lg:pt-[38px] lg:pb-40"
     >
       {/* Background dots */}
       <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
@@ -285,7 +285,7 @@ export function InsightReportSection() {
               {/* Photo 2 */}
               <div
                 className="absolute z-20"
-                style={{ left: "49.3%", top: "60.2%", width: "41.9%", aspectRatio: "230 / 214" }}
+                style={{ left: "49.3%", top: "58%", width: "42%", aspectRatio: "230 / 214" }}
               >
                 <div
                   className="relative h-full w-full overflow-hidden bg-[#0A1D3D]/30"
@@ -303,20 +303,25 @@ export function InsightReportSection() {
                     sizes="(max-width: 768px) 45vw, 260px"
                   />
                 </div>
-              </div>
 
-              {/* Robot Hand*/}
-              <div
-                className="pointer-events-none absolute z-30 select-none aspect-square w-[23.64%] left-[82%] top-[95%] xl:left-[89.34%] xl:top-[91.45%]"
-              >
-                <Image
-                  src="/robots/robo2.png"
-                  alt="Robot hand holding AI processor chip"
-                  width={193}
-                  height={193}
-                  className="h-full w-full object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)]"
-                  priority
-                />
+                {/* Robot Hand with AI Chip (Anchored directly to Photo 2 bottom-right) */}
+                <div
+                  className="pointer-events-none absolute z-30 select-none"
+                  style={{
+                    left: "28%",
+                    top: "64%",
+                    width: "125%",
+                    aspectRatio: "1 / 1",
+                  }}
+                >
+                  <Image
+                    src="/robots/robo2.png"
+                    alt="Robot hand holding AI processor chip"
+                    fill
+                    className="object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)]"
+                    priority
+                  />
+                </div>
               </div>
 
               {/* Bullseye sticker on Photo 2's top-right corner */}

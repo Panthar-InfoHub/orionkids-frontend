@@ -38,9 +38,7 @@ export function ChildJourneySection() {
       id="child-journey-section"
       className="relative w-full bg-[#F3EBFF] py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-[60px] select-none scroll-mt-0 overflow-x-hidden"
     >
-      {/* Floating Explorer Robot (lg+).
-          Figma: Left 924px, Top 28px, 164 x 164 — measured from the 1440px frame,
-          so it is anchored to the section (not to the 1264px inner container). */}
+      {/* Floating Explorer Robot */}
       <div
         aria-hidden="true"
         className="hidden lg:block absolute inset-x-0 top-0 z-20 pointer-events-none select-none"
