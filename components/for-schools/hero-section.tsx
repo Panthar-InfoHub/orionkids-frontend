@@ -193,22 +193,22 @@ export function ForSchoolsHeroSection() {
                 type="button"
                 className="inline-flex items-center justify-center cursor-pointer select-none hover:scale-105 active:scale-95 transition-transform"
                 style={{
-                  height: "52px",
-                  paddingLeft: "24px",
+                  height: "49px",
+                  paddingLeft: "22px",
                   paddingRight: "24px",
                   borderRadius: "9999px",
                   backgroundColor: "#FFFFFF",
                   border: "2px solid #0A1D3D",
                   fontFamily: JAKARTA,
                   fontWeight: 800,
-                  fontSize: "15px",
+                  fontSize: "14px",
                   lineHeight: "24px",
                   letterSpacing: "0px",
                   color: "#0A1D3D",
                   whiteSpace: "nowrap" as const,
                 }}
               >
-                📄 Sample Class Report
+                📄 Sample Student Report
               </button>
             </div>
 

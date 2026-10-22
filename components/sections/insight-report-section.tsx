@@ -29,10 +29,10 @@ const DOTS: { left: string; top: string; size: number; opacity: number }[] = [
 ];
 
 const CHIPS = [
-  { emoji: "✨", text: "Curiosity sparks", bg: "#FFFFFF", color: "#0A1D3D" },
-  { emoji: "🔭", text: "First discoveries", bg: "#FF8CC7", color: "#FFFFFF" },
-  { emoji: "🌟", text: "Patterns emerge", bg: "#7DD3FC", color: "#FFFFFF" },
-  { emoji: "🚀", text: "Confident learner", bg: "#EAF7EF", color: "#0A1D3D" },
+  { emoji: "✨", line1: "Curiosity", line2: "spark", bg: "#FFFFFF", color: "#0A1D3D" },
+  { emoji: "🔭", line1: "First", line2: "Discoveries", bg: "#FF8CC7", color: "#FFFFFF" },
+  { emoji: "🌟", line1: "Patterns", line2: "Emerge", bg: "#7DD3FC", color: "#FFFFFF" },
+  { emoji: "🚀", line1: "Confident", line2: "learner", bg: "#EAF7EF", color: "#0A1D3D" },
 ];
 
 /** Light-blue sticker pill with navy border + hard shadow; centred on (left, top) and tilted. */
@@ -195,24 +195,24 @@ export function InsightReportSection() {
               <span className="whitespace-nowrap">Orion Constellation · Growth Journey Map</span>
             </div>
 
-            {/* Four chips: 102 x 23, radius 10, gap 8 */}
-            <div className="flex flex-wrap items-center gap-2">
+            {/* Four journey buttons in a single row */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap overflow-x-auto sm:overflow-visible scrollbar-none max-w-full pb-1">
               {CHIPS.map((c) => (
                 <div
-                  key={c.text}
-                  className="flex h-[23px] w-[102px] items-center justify-center gap-[3px] whitespace-nowrap rounded-[10px]"
+                  key={c.line1}
+                  className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 whitespace-nowrap rounded-[12px] sm:rounded-[14px] transition-all duration-200 hover:scale-105 hover:-translate-y-0.5 active:scale-95 cursor-pointer select-none shrink-0"
                   style={{
                     background: c.bg,
                     color: c.color,
                     fontFamily: JAKARTA,
-                    fontWeight: 800,
-                    fontSize: "8.5px",
-                    lineHeight: "100%",
-                    boxShadow: "3px 3px 0 #000000",
+                    boxShadow: "0 2px 5px rgba(0,0,0,0.2), 1.5px 1.5px 0 rgba(255,255,255,0.22)",
                   }}
                 >
-                  <span className="shrink-0 text-[9px] leading-none">{c.emoji}</span>
-                  <span className="leading-none">{c.text}</span>
+                  <span className="shrink-0 text-[16px] sm:text-[18px] leading-none">{c.emoji}</span>
+                  <div className="flex flex-col text-left leading-[1.15]">
+                    <span className="text-[11px] sm:text-[12px] font-extrabold tracking-tight">{c.line1}</span>
+                    <span className="text-[10.5px] sm:text-[11.5px] font-extrabold tracking-tight opacity-95">{c.line2}</span>
+                  </div>
                 </div>
               ))}
             </div>
