@@ -4,17 +4,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-/**
- * Measured from the Figma prototype screenshot (frame 1440 wide, shown at 1.25x).
- * All numbers below are in Figma px, i.e. what you'd see in Dev Mode.
- *
- * Desktop (>= lg) layout:
- *   section padding      top 38 / bottom 72
- *   content padding      left 88 / right 108  (centred in a 1440 max-width frame)
- *   left column          446 wide, pinned to the left
- *   collage              610 wide, pinned to the right, starts 18px lower than left column
- *   left column rhythm   badge(24) -30- headline -44- subtitle -34- callout -46- pill(24) -14- chips(23)
- */
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const INTER = "var(--font-inter), 'Inter', sans-serif";
@@ -304,24 +293,7 @@ export function InsightReportSection() {
                   />
                 </div>
 
-                {/* Robot Hand with AI Chip (Anchored directly to Photo 2 bottom-right) */}
-                <div
-                  className="pointer-events-none absolute z-30 select-none"
-                  style={{
-                    left: "28%",
-                    top: "64%",
-                    width: "125%",
-                    aspectRatio: "1 / 1",
-                  }}
-                >
-                  <Image
-                    src="/robots/robo2.png"
-                    alt="Robot hand holding AI processor chip"
-                    fill
-                    className="object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)]"
-                    priority
-                  />
-                </div>
+
               </div>
 
               {/* Bullseye sticker on Photo 2's top-right corner */}
@@ -367,6 +339,20 @@ export function InsightReportSection() {
             </div>
           </div>
         </div>
+      </div>
+      {/* Robot Hand (Positioned in bottom-right corner) */}
+      <div
+        className="pointer-events-none absolute z-20 select-none bottom-0 right-0
+                   w-[120px] h-[120px] sm:w-[170px] sm:h-[170px] md:w-[200px] md:h-[200px] lg:w-[230px] lg:h-[230px] xl:w-[230px] xl:h-[230px]"
+      >
+        <Image
+          src="/robots/robo2.png"
+          alt="Robot hand holding AI processor chip"
+          width={310}
+          height={310}
+          className="h-full w-full object-contain object-right-bottom drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)]"
+          priority
+        />
       </div>
     </section>
   );

@@ -85,8 +85,7 @@ export function ChildJourneySection() {
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
             >
-              <span>Your Child&apos;s Journey, Step By Step</span>
-              <span className="inline-block text-2xl sm:text-3xl lg:text-[32px] select-none">🚀</span>
+              <span>Your Child&apos;s Journey, Step By Step 🚀</span>
             </h2>
 
             {/* Subtitle */}
