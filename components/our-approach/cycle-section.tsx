@@ -92,7 +92,7 @@ export function CycleSection() {
               textTransform: "uppercase",
             }}
           >
-            <span className="text-xs">✦</span>
+            <span className="text-xs">⚡</span>
             <span>THE ORIONKIDS CYCLE</span>
           </div>
 
@@ -118,14 +118,14 @@ export function CycleSection() {
           {CYCLE_STEPS.map((step) => (
             <div
               key={step.phaseNum}
-              className="relative bg-white rounded-[24px] border-[2px] border-[#0A1D3D] p-[28px] flex flex-col justify-between min-h-[410px] overflow-hidden hover:-translate-y-1 hover:shadow-[4px_6px_0px_0px_#0A1D3D] transition-all duration-200 select-none group"
+              className="relative bg-white rounded-[24px] border-[2px] border-[#0A1D3D] p-[28px] flex flex-col justify-between min-h-[410px] overflow-hidden  shadow-[4px_6px_0px_0px_#0A1D3D] transition-all duration-200 select-none group"
               style={{
                 fontFamily: JAKARTA,
               }}
             >
               {/* Corner Phase Number Tab (01, 02, 03, 04) */}
               <div
-                className="absolute top-0 right-0 w-[44px] h-[44px] rounded-tr-[22px] rounded-bl-[22px] border-l-[2px] border-b-[2px] border-[#0A1D3D] flex items-center justify-center font-[800] text-[13px] text-[#0A1D3D] z-10"
+                className="absolute top-0 right-0 w-[44px] h-[44px] rounded-tr-[22px] rounded-bl-[30px] border-l-[2px] border-b-[2px] border-[#0A1D3D] flex items-center justify-center font-[800] text-[13px] text-[#0A1D3D] z-10"
                 style={{ backgroundColor: step.cornerBg }}
               >
                 {step.phaseNum}

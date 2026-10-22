@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const INTER = "var(--font-inter), 'Inter', sans-serif";
@@ -11,38 +12,66 @@ export function AboutFoundationSection() {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[88px]">
         
         {/* ================= SECTION HEADER ================= */}
-        <div className="flex flex-col items-start max-w-[850px] mb-12 sm:mb-16">
-          {/* Pill Tag */}
-          <div
-            className="inline-flex items-center px-4 py-1.5 rounded-full border-2 border-[#1B204A] bg-[#EFF2FF] text-[#1B204A] select-none shadow-[2px_2px_0px_#1B204A] mb-5"
-            style={{
-              fontFamily: JAKARTA,
-              fontWeight: 800,
-              fontSize: "11px",
-              lineHeight: "100%",
-              letterSpacing: "0.8px",
-              textTransform: "uppercase",
-            }}
-          >
-            OUR FOUNDATION
+        <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 mb-12 sm:mb-16">
+          {/* Mobile & Tablet floating robot */}
+          <div className="absolute top-0 right-0 w-20 h-20 sm:w-28 sm:h-28 lg:hidden pointer-events-none select-none">
+            <Image
+              src="/robots/robo1.png"
+              alt="OrionKids Explorer Robot"
+              width={112}
+              height={112}
+              className="w-full h-full object-contain drop-shadow-[0_8px_16px_rgba(27,32,74,0.12)]"
+              priority
+            />
           </div>
 
-          {/* Heading */}
-          <h2
-            className="text-[34px] sm:text-[42px] lg:text-[48px] font-[800] text-[#1B204A] tracking-[-1px] leading-[1.15]"
-            style={{ fontFamily: JAKARTA }}
-          >
-            The Story Behind OrionKids
-          </h2>
+          <div className="flex flex-col items-start max-w-[800px] pr-20 sm:pr-28 lg:pr-0">
+            {/* Pill Tag */}
+            <div
+              className="inline-flex items-center px-4 py-1.5 rounded-full border-2 border-[#1B204A] bg-[#EFF2FF] text-[#1B204A] select-none shadow-[2px_2px_0px_#1B204A] mb-5"
+              style={{
+                fontFamily: JAKARTA,
+                fontWeight: 800,
+                fontSize: "11px",
+                lineHeight: "100%",
+                letterSpacing: "0.8px",
+                textTransform: "uppercase",
+              }}
+            >
+              OUR FOUNDATION
+            </div>
 
-          {/* Description */}
-          <p
-            className="mt-4 text-[16px] sm:text-[18px] leading-[28px] sm:leading-[30px] font-normal text-[#475467]"
-            style={{ fontFamily: INTER }}
-          >
-            We started with a shared realization among parents, educators, and software builders:
-            cognitive growth during childhood is dynamic, personal, and profoundly shaped by everyday encouragement.
-          </p>
+            {/* Heading */}
+            <h2
+              className="text-[34px] sm:text-[42px] lg:text-[48px] font-[800] text-[#1B204A] tracking-[-1px] leading-[1.15]"
+              style={{ fontFamily: JAKARTA }}
+            >
+              The Story Behind OrionKids
+            </h2>
+
+            {/* Description */}
+            <p
+              className="mt-4 text-[16px] sm:text-[18px] leading-[28px] sm:leading-[30px] font-normal text-[#475467]"
+              style={{ fontFamily: INTER }}
+            >
+              We started with a shared realization among parents, educators, and software builders:
+              cognitive growth during childhood is dynamic, personal, and profoundly shaped by everyday encouragement.
+            </p>
+          </div>
+
+          {/* Desktop Robot (sitting above Card 02 matching Figma) */}
+          <div className="hidden lg:flex items-center justify-center lg:pr-10 xl:pr-16 shrink-0 self-center">
+            <div className="w-[165px] h-[165px] xl:w-[185px] xl:h-[185px] select-none pointer-events-none hover:scale-105 transition-transform duration-300">
+              <Image
+                src="/robots/robo1.png"
+                alt="OrionKids Explorer Robot"
+                width={185}
+                height={185}
+                className="w-full h-full object-contain drop-shadow-[0_12px_24px_rgba(27,32,74,0.15)]"
+                priority
+              />
+            </div>
+          </div>
         </div>
 
         {/* ================= TWO CARDS GRID (01 & 02) ================= */}
@@ -129,7 +158,7 @@ export function AboutFoundationSection() {
 
         {/* ================= FULL-WIDTH BOTTOM CARD: HOW WE BUILD ================= */}
         <div
-          className="relative w-full rounded-[24px] border-2 border-[#1B204A] p-6 sm:p-8 lg:p-9 shadow-[4px_6px_0px_#1B204A] flex flex-col items-start gap-4 transition-transform hover:-translate-y-0.5 duration-200"
+          className="relative w-full rounded-[24px]  p-6 sm:p-8 lg:p-9 shadow-[4px_6px_0px_#1B204A] flex flex-col items-start gap-4 transition-transform hover:-translate-y-0.5 duration-200"
           style={{
             background: "linear-gradient(90deg, #FFF9EA 0%, #FFFFFF 50%, #EDF7FF 100%)",
           }}

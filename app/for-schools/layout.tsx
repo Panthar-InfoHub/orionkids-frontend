@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { Navbar } from "@/components/layout/navbar";
 
 export const metadata: Metadata = {
@@ -15,7 +14,6 @@ export default function ForSchoolsLayout({
 }) {
   return (
     <main className="min-h-screen flex flex-col selection:bg-[#FFE066] selection:text-[#1E293B]">
-      <AnnouncementBar />
       <Navbar />
       {children}
     </main>

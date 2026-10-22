@@ -1,22 +1,13 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const INTER = "var(--font-inter), 'Inter', sans-serif";
 const NAVY = "#0A1D3D";
 
-/**
- * Corner badge — measured from the Figma export (1:1 px, origin = card's inner top-left).
- *
- *  - Three concentric circles centred at (13.5, 21.5): outer Ø104 (outerColor),
- *    middle Ø86 (ring colour), inner Ø64 (dot colour); all with a 2px navy border.
- *    They are clipped by the card (card = overflow-hidden), so only the corner shows.
- *  - One white pill: 29px tall, 2px navy border, hard 4px bottom shadow, running
- *    underneath the circles. Emoji starts at x≈65, label is 15px / 800 / tracking-wider.
- *
- * Must be rendered inside a `relative overflow-hidden` card.
- */
+
 function CornerBadge({
   emoji,
   label,
@@ -84,15 +75,36 @@ export function SharedUnderstandingSection() {
   return (
     <section
       id="shared-understanding-section"
-      className="relative w-full bg-[#E6F0FF] text-[#0A1D3D] py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-8 overflow-hidden select-none scroll-mt-16"
+      className="relative w-full bg-[#E6F0FF] text-[#0A1D3D] pt-24 sm:pt-28 lg:pt-32 pb-10 sm:pb-12 lg:pb-16 px-4 sm:px-6 lg:px-8 select-none scroll-mt-16"
     >
+      {/* Robot Mascot Anchored Directly on the Section Border (Half in Everyday Support, Half in Shared Understanding) */}
+      <div className="absolute top-0 left-0 right-0 z-20 pointer-events-none select-none">
+        <div className="w-full max-w-[1224px] mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div
+            className="absolute -translate-y-1/2 left-4 sm:left-6 lg:left-8 -ml-1 sm:-ml-3 lg:-ml-[29px]
+                       w-[110px] h-[110px] sm:w-[145px] sm:h-[145px] lg:w-[184px] lg:h-[184px]"
+          >
+            <Image
+              src="/robots/robo3.png"
+              alt="OrionKids rocket robot mascot"
+              width={184}
+              height={184}
+              className="w-full h-full object-contain drop-shadow-[0_12px_24px_rgba(10,29,61,0.18)]"
+              priority
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Soft ambient corner glows (#FFF6D9) matching Figma layout */}
-      <div className="absolute -top-24 -right-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl pointer-events-none opacity-70" />
-      <div className="absolute -bottom-24 -left-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl pointer-events-none opacity-70" />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+        <div className="absolute -top-24 -right-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl opacity-70" />
+        <div className="absolute -bottom-24 -left-24 w-[460px] h-[360px] rounded-full bg-[#FFF6D9] blur-3xl opacity-70" />
+      </div>
 
       <div className="relative z-10 w-full max-w-[1224px] mx-auto flex flex-col gap-6 lg:gap-8">
         {/* ================= HEADER ROW ================= */}
-        <div className="flex flex-col gap-1.5 text-left w-full">
+        <div className="flex flex-col gap-2.5 sm:gap-3 text-left w-full pt-1 sm:pt-2">
           <span
             className="text-[11px] sm:text-xs font-black tracking-[1.2px] uppercase text-[#0A1D3D]/80"
             style={{ fontFamily: JAKARTA, lineHeight: "100%" }}

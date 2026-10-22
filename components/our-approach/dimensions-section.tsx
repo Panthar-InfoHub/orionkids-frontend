@@ -26,7 +26,7 @@ const DIMENSIONS: DimensionCard[] = [
     title: "Memory",
     description: "remembering, retaining and working with information.",
     quest: "Quest: Pattern Recall",
-    questBorder: "#3F5BA9",
+    questBorder: "#0F172A",
     questBg: "#EEF2FF",
   },
   {
@@ -36,7 +36,7 @@ const DIMENSIONS: DimensionCard[] = [
     title: "Attention",
     description: "sustaining focus and responding to relevant information.",
     quest: "Quest: Star Seeker",
-    questBorder: "#D99A00",
+    questBorder: "#0F172A",
     questBg: "#FFF7DB",
   },
   {
@@ -46,7 +46,7 @@ const DIMENSIONS: DimensionCard[] = [
     title: "Reasoning",
     description: "recognizing patterns, relationships and logical connections.",
     quest: "Quest: Logic Mazes",
-    questBorder: "#0E9AA7",
+    questBorder: "#0F172A",
     questBg: "#E4F8FA",
   },
   {
@@ -56,7 +56,7 @@ const DIMENSIONS: DimensionCard[] = [
     title: "Processing",
     description: "responding to information efficiently and accurately.",
     quest: "Quest: Sound & Signal",
-    questBorder: "#E5484D",
+    questBorder: "#0F172A",
     questBg: "#FFEDEE",
   },
   {
@@ -66,7 +66,7 @@ const DIMENSIONS: DimensionCard[] = [
     title: "Problem Solving",
     description: "planning, adapting and finding possible solutions.",
     quest: "Quest: Bridge Builder",
-    questBorder: "#10A878",
+    questBorder: "#0F172A",
     questBg: "#E3F8EF",
   },
   {
@@ -76,7 +76,7 @@ const DIMENSIONS: DimensionCard[] = [
     title: "Language and Verbal Skills",
     description: "working with words, meaning and verbal information.",
     quest: "Quest: Fable Tracks",
-    questBorder: "#8B5CF6",
+    questBorder: "#0F172A",
     questBg: "#F1EAFF",
   },
   {
@@ -86,7 +86,7 @@ const DIMENSIONS: DimensionCard[] = [
     title: "Visual-Spatial Skills",
     description: "understanding visual relationships, patterns and space.",
     quest: "Quest: Astro Tangrams",
-    questBorder: "#0E9AA7",
+    questBorder: "#0F172A",
     questBg: "#E4F8FA",
   },
   {
@@ -96,7 +96,7 @@ const DIMENSIONS: DimensionCard[] = [
     title: "Executive Functions",
     description: "planning, flexibility, inhibition and goal-directed thinking.",
     quest: "Quest: Chameleon Shift",
-    questBorder: "#F08A4B",
+    questBorder: "#0F172A",
     questBg: "#FFEBDD",
   },
 ];
@@ -119,7 +119,20 @@ export function DimensionsSection() {
               textTransform: "uppercase",
             }}
           >
-            <span className="w-[3px] h-3 rounded-full bg-white/90 shrink-0" aria-hidden="true" />
+                <svg
+                  width="16"
+                  height="5"
+                  viewBox="0 0 16 5"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="rotate-270 shrink-0"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M0 4.70312V0H15.5312V4.70312H0V4.70312M1.53125 1.25781H1.09375V3.44531H1.53125V1.97559L2.39941 3.44531H2.84375V1.25781H2.40625V2.73438L1.53125 1.25781V1.25781M5.03125 1.25781H3.28125V3.44531H5.03125V1.25781V1.25781M3.71875 3.00781V1.69531H4.59375V3.00781H3.71875V3.00781M7.65625 1.25781H5.90625V3.44531H7.65625V2.13281H6.78125V2.57031H7.21875V3.00781H6.34375V1.69531H7.65625V1.25781V1.25781M8.53125 1.25781H8.09375V3.44531H9.625V3.00781H8.53125V1.25781V1.25781M9.40625 1.25781H8.96875V2.57031H10.0625V3.44531H10.5V1.25781H10.0625V2.13281H9.40625V1.25781V1.25781M11.375 2.13281V1.69531H12.0312V2.13281H11.375V2.13281M12.4688 1.25781H10.9375V3.44531H11.375V2.57031H12.4688V1.25781V1.25781M13.3438 1.25781H12.9062V3.44531H13.3438V2.46094H14V3.44531H14.4375V1.25781H14V2.02344H13.3438V1.25781V1.25781"
+                    fill="#FFFFFF"
+                  />
+                </svg>
             <span>Developmental Horizons</span>
           </span>
 
@@ -127,7 +140,7 @@ export function DimensionsSection() {
             className="mt-3 max-w-[720px] text-[30px] sm:text-[38px] lg:text-[44px] leading-[1.08]"
             style={{ fontFamily: JAKARTA, fontWeight: 800, letterSpacing: "-0.04em", color: INK }}
           >
-            What we explore across every quest
+            What We Explore Across Every Quest
           </h2>
 
           <p
@@ -180,7 +193,7 @@ export function DimensionsSection() {
               className="text-[13px] sm:text-[14px] xl:text-[15px] leading-[22px] sm:leading-6"
               style={{ fontFamily: INTER, fontWeight: 500, color: "#1B204A" }}
             >
-              <span className="underline underline-offset-2 decoration-[#1B204A]/60">
+              <span className="underline underline-offset-2 decoration-[#92400E]">
                 Note on Scope:
               </span>{" "}
               These eight dimensions are development-related thinking areas designed to guide
@@ -200,8 +213,8 @@ export function DimensionsSection() {
               style={{ borderColor: INK }}
             >
               <span
-                className="w-14 h-14 rounded-[14px] border-[1.5px] flex items-center justify-center text-[24px] leading-none shrink-0"
-                style={{ backgroundColor: d.iconBg, borderColor: "rgba(10,29,61,0.55)" }}
+                className="w-14 h-14 rounded-[14px] border-[2px] flex items-center justify-center text-[24px] leading-none shrink-0"
+                style={{ backgroundColor: d.iconBg, borderColor: "#0F172A" }}
                 aria-hidden="true"
               >
                 {d.icon}

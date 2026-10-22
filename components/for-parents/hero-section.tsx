@@ -3,76 +3,61 @@
 import React from "react";
 import Link from "next/link";
 
-/* ------------------------------------------------------------------ */
-/*  Font family shortcuts                                               */
-/* ------------------------------------------------------------------ */
+/**
+ * Measured from the Figma screenshot (frame 1440 wide, 100% zoom, shown at 1.25x).
+ * Every number is in Figma px (what Dev Mode shows).
+ *
+ *   content frame        left 88 / right 104, 1440 max width
+ *   section              top padding 59 (headline starts here)
+ *   headline             60px / line-height 115% (~69px pitch)
+ *   yellow badge         border 3, rotate -1deg, 2 lines, right padding 48
+ *   card                 446 x 352, border 3, radius 24, hard shadow 8px
+ *   card top             46px lower than the headline top
+ *   card inner           padding 18  ->  header 40 / box1 84 / box2 102 / footer 20
+ */
+
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const SPACE = "var(--font-space-grotesk), 'Space Grotesk', sans-serif";
+const INTER = "var(--font-inter), 'Inter', sans-serif";
+
+const NAVY = "#0A1D3D";
 
 export function ForParentsHeroSection() {
   return (
-    <section className="relative w-full bg-white pt-8 pb-6 lg:pt-10 lg:pb-8 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-start">
+    <section className="relative w-full overflow-hidden bg-[#F7FBFF] pt-10 pb-14 lg:pt-[59px]">
+      <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10 xl:pl-[88px] xl:pr-[104px]">
+        <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[minmax(0,1fr)_clamp(340px,31vw,446px)] lg:gap-x-8">
           {/* ================= LEFT COLUMN ================= */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left z-10">
-            {/* Top Green Pill */}
-            <div
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] mb-6 select-none"
-              style={{
-                height: "28px",
-                paddingLeft: "20px",
-                paddingRight: "20px",
-                backgroundColor: "#65DCAA",
-                color: "#0A1D3D",
-                fontFamily: SPACE,
-                fontWeight: 700,
-                fontSize: "12px",
-                lineHeight: "16px",
-                letterSpacing: "0.72px",
-                textTransform: "uppercase",
-              }}
-            >
-              <span className="text-sm select-none" aria-hidden="true">
-                🏡
-              </span>
-              <span>THE PARENT PORTAL • GENTLE CHILD UNDERSTANDING</span>
-            </div>
-
-            {/* Headline with Yellow Badge */}
+          <div className="z-10 flex min-w-0 flex-col items-start text-left">
+            {/* Headline with yellow badge */}
             <h1
-              className="mb-6"
+              className="mb-7"
               style={{
                 fontFamily: JAKARTA,
                 fontWeight: 800,
-                color: "#0A1D3D",
-                fontSize: "clamp(34px, 4.5vw, 56px)",
+                color: NAVY,
+                fontSize: "clamp(32px, 4.17vw, 60px)",
                 lineHeight: "1.15",
-                letterSpacing: "-1.4px",
+                letterSpacing: "-0.025em",
               }}
             >
               <span>Understand How Your</span>
               <br />
               <span>Child Thinks ,</span>
               <br />
-              {/* Yellow tilted badge box */}
-              <span className="inline-block relative mt-2 mb-1">
+              <span className="relative mb-1 mt-[5px] inline-block max-w-full">
                 <span
-                  className="inline-flex flex-col justify-center rounded-[16px] border-[2.5px] border-[#0A1D3D]"
+                  className="inline-flex max-w-full flex-col justify-center rounded-[16px] border-[3px]"
                   style={{
                     backgroundColor: "#FFD028",
-                    color: "#0A1D3D",
-                    paddingTop: "6px",
-                    paddingBottom: "8px",
+                    borderColor: NAVY,
+                    color: NAVY,
+                    paddingTop: "4px",
+                    paddingBottom: "5px",
                     paddingLeft: "20px",
-                    paddingRight: "36px",
+                    paddingRight: "clamp(24px, 3.3vw, 48px)",
                     transform: "rotate(-1deg)",
-                    boxShadow: "2px 2px 0px 0px #0A1D3D",
-                    fontFamily: JAKARTA,
-                    fontWeight: 800,
-                    fontSize: "clamp(30px, 4.2vw, 54px)",
-                    lineHeight: "1.15",
-                    letterSpacing: "-1.4px",
+                    boxShadow: `3px 3px 0px 0px ${NAVY}`,
                   }}
                 >
                   <span>Over Dinner, Not Doctor</span>
@@ -81,71 +66,104 @@ export function ForParentsHeroSection() {
               </span>
             </h1>
 
-            {/* Subtitle Description */}
+            {/* Green pill */}
+            <div
+              className="mb-5 inline-flex max-w-full select-none items-center gap-1.5 rounded-full border border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D]"
+              style={{
+                height: "28px",
+                paddingLeft: "20px",
+                paddingRight: "20px",
+                backgroundColor: "#65DCAA",
+                color: NAVY,
+                fontFamily: SPACE,
+                fontWeight: 700,
+                fontSize: "12px",
+                lineHeight: "16px",
+                letterSpacing: "0.72px",
+                textTransform: "uppercase",
+              }}
+            >
+              <span className="select-none text-sm" aria-hidden="true">
+                🏡
+              </span>
+              <span className="truncate">THE PARENT PORTAL • GENTLE CHILD UNDERSTANDING</span>
+            </div>
+
+            {/* Subtitle */}
             <p
-              className="mb-2"
               style={{
                 maxWidth: "560px",
                 fontFamily: JAKARTA,
                 fontWeight: 500,
-                fontSize: "18px",
+                fontSize: "16px",
                 lineHeight: "28px",
                 letterSpacing: "0px",
                 color: "#4E4633",
               }}
             >
-              Say goodbye to ambiguous report cards and percentile anxiety. OrionKids turns 15-minute playful games into clear, loving insights and conversation starters for your kitchen table.
+              Wave farewell to unclear report cards and percentile stress. OrionKids transforms
+              15-minute engaging games into transparent, AI-driven insights and conversation
+              starters for your family discussions.
             </p>
           </div>
 
           {/* ================= RIGHT COLUMN (INSIGHT CARD) ================= */}
-          <div className="lg:col-span-5 relative w-full pt-4 lg:pt-2">
-            {/* Main Insight Card */}
+          <div className="relative w-full lg:mt-[46px]">
             <div
-              className="relative w-full bg-white rounded-[24px] border-[2.5px] border-[#0A1D3D] p-5 sm:p-6"
+              className="relative mx-auto w-full max-w-[446px] rounded-[24px] lg:ml-auto lg:mr-0 border-[3px] bg-white px-[18px] pb-[33px] pt-[18px]"
               style={{
-                boxShadow: "7px 7px 0px 0px #0A1D3D",
+                borderColor: NAVY,
+                boxShadow: `8px 8px 0px 0px ${NAVY}`,
               }}
             >
-              {/* Top-Right Floating Testimonial Badge */}
+              {/* Top-right testimonial badge */}
               <div
-                className="absolute -top-4 right-2 sm:right-5 z-20 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white border-2 border-[#0A1D3D] select-none whitespace-nowrap"
+                className="absolute right-[-10px] top-[-24px] z-20 inline-flex rotate-[2deg] select-none items-center gap-[6px] whitespace-nowrap rounded-full border-[2.5px] bg-white sm:right-[-20px] lg:right-[-27px]"
                 style={{
-                  boxShadow: "3px 3px 0px 0px #0A1D3D",
-                  fontFamily: JAKARTA,
-                  fontWeight: 700,
-                  fontSize: "12px",
-                  color: "#0A1D3D",
+                  borderColor: NAVY,
+                  boxShadow: `3px 3px 0px 0px ${NAVY}`,
+                  padding: "4px 14px",
+                  fontFamily: INTER,
+                  fontWeight: 600,
+                  fontSize: "12.5px",
+                  lineHeight: "16px",
+                  letterSpacing: "-0.01em",
+                  color: NAVY,
                 }}
               >
-                <span className="text-red-500">❤️</span>
-                <span>&ldquo;Gave us peace of mind&rdquo; — Priya M., Mom of 2</span>
+                <span className="text-[14px] leading-none">❤️</span>
+                <span>&quot;Gave us peace of mind&quot; — Priya M., Mom of 2</span>
               </div>
 
-              {/* Card Header: Avatar, Name & Week 2 Digest */}
-              <div className="flex items-center justify-between mb-4 pt-1">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-full bg-[#38BDF8] flex items-center justify-center text-lg select-none">
+              {/* Header: avatar, title, week badge */}
+              <div className="mb-3 flex items-center justify-between gap-3 border-b border-[#E5E7EB] pb-[6px]">
+                <div className="flex min-w-0 items-center gap-2">
+                  <div className="flex h-10 w-10 shrink-0 select-none items-center justify-center rounded-full border-2 border-[#22B8E0] bg-[#BDE6FA] text-[20px] leading-none">
                     👦
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3
+                      className="truncate"
                       style={{
-                        fontFamily: JAKARTA,
-                        fontWeight: 800,
-                        fontSize: "15px",
+                        fontFamily: INTER,
+                        fontWeight: 600,
+                        fontSize: "16px",
                         lineHeight: "20px",
-                        color: "#0A1D3D",
+                        letterSpacing: "-0.015em",
+                        color: NAVY,
                       }}
                     >
                       Aarav&apos;s Sunday Discovery
                     </h3>
                     <p
+                      className="truncate"
                       style={{
-                        fontFamily: JAKARTA,
-                        fontWeight: 500,
-                        fontSize: "12px",
-                        color: "#64748B",
+                        fontFamily: INTER,
+                        fontWeight: 400,
+                        fontSize: "11.5px",
+                        lineHeight: "16px",
+                        letterSpacing: "-0.01em",
+                        color: "#374151",
                       }}
                     >
                       Age 8 • Last played: Yesterday 4:15 PM
@@ -154,10 +172,10 @@ export function ForParentsHeroSection() {
                 </div>
 
                 <span
-                  className="px-2.5 py-0.5 rounded-[6px] select-none uppercase tracking-wider"
+                  className="inline-flex h-[18px] shrink-0 select-none items-center whitespace-nowrap rounded-[4px] px-2 uppercase"
                   style={{
-                    backgroundColor: "#EAF6FF",
-                    color: "#1E5FBF",
+                    backgroundColor: "#DDEFFC",
+                    color: NAVY,
                     fontFamily: SPACE,
                     fontWeight: 700,
                     fontSize: "10px",
@@ -168,63 +186,77 @@ export function ForParentsHeroSection() {
                 </span>
               </div>
 
-              {/* Box 1: Star Strength */}
-              <div className="rounded-[14px] p-3.5 bg-[#F2FBF7] border border-[#A7F3D0]/70 mb-3">
+              {/* Box 1: Star strength (84px tall) */}
+              <div className="mb-[13px] rounded-[14px] border border-[#8FD3E3] bg-[#E8F5EC] px-3 pb-[11px] pt-[13px]">
                 <div
-                  className="mb-1.5 flex items-center gap-1"
+                  className="mb-[7px] flex items-center gap-[7px]"
                   style={{
                     fontFamily: SPACE,
                     fontWeight: 700,
-                    fontSize: "10.5px",
+                    fontSize: "10px",
                     lineHeight: "14px",
-                    letterSpacing: "0.6px",
-                    color: "#065F46",
+                    color: NAVY,
                     textTransform: "uppercase",
                   }}
                 >
-                  <span>☆</span>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke={NAVY}
+                    strokeWidth="2.2"
+                    strokeLinejoin="round"
+                    className="shrink-0"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 2.5l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.4l-5.9 3.3 1.2-6.6L2.5 9.5l6.6-.9z" />
+                  </svg>
                   <span>STAR STRENGTH: SPATIAL LOGIC &amp; DIVERGENT THINKING</span>
                 </div>
                 <p
                   style={{
-                    fontFamily: JAKARTA,
-                    fontWeight: 500,
-                    fontSize: "12px",
-                    lineHeight: "18px",
-                    color: "#334155",
+                    fontFamily: INTER,
+                    fontWeight: 400,
+                    fontSize: "13px",
+                    lineHeight: "18.4px",
+                    letterSpacing: "-0.01em",
+                    color: "#1F2937",
                   }}
                 >
-                  Aarav prefers non-linear shortcuts to solve complex puzzles, staying focused and synthesizing ideas!
+                  Aarav prefers non-linear shortcuts to solve complex puzzles, staying focused and
+                  synthesizing ideas!
                 </p>
               </div>
 
-              {/* Box 2: Tonight's 5-Minute Dinner Prompt */}
-              <div className="rounded-[14px] p-3.5 bg-[#F0FDF4] border border-[#65DCAA] relative mb-4">
-                <div className="flex items-center justify-between mb-2">
+              {/* Box 2: Dinner prompt (102px tall) */}
+              <div className="rounded-[14px] border-[1.5px] border-[#12B5CB] bg-white px-3 pb-3 pt-[11px]">
+                <div className="mb-[5px] flex items-center justify-between gap-2">
                   <div
-                    className="flex items-center gap-1.5"
+                    className="flex min-w-0 items-center gap-1.5"
                     style={{
                       fontFamily: SPACE,
                       fontWeight: 700,
-                      fontSize: "10.5px",
+                      fontSize: "10px",
                       lineHeight: "14px",
-                      letterSpacing: "0.5px",
-                      color: "#0A1D3D",
+                      color: NAVY,
                       textTransform: "uppercase",
                     }}
                   >
-                    <span>🍴</span>
-                    <span>TONIGHT&apos;S 5-MINUTE DINNER PROMPT 🍝</span>
+                    <span className="shrink-0 text-[11px] leading-none">🍴</span>
+                    <span className="truncate">TONIGHT&apos;S 5-MINUTE DINNER PROMPT</span>
+                    <span className="shrink-0 text-[8px] leading-none">🍝</span>
                   </div>
                   <span
-                    className="px-2 py-0.5 rounded-full select-none"
+                    className="inline-flex h-[19px] shrink-0 select-none items-center whitespace-nowrap rounded-[4px] px-[6px]"
                     style={{
-                      backgroundColor: "#38BDF8",
-                      color: "#FFFFFF",
-                      fontFamily: SPACE,
-                      fontWeight: 700,
-                      fontSize: "9.5px",
-                      lineHeight: "12px",
+                      backgroundColor: "#7ACFF5",
+                      color: NAVY,
+                      fontFamily: INTER,
+                      fontWeight: 600,
+                      fontSize: "11px",
+                      lineHeight: "16px",
+                      letterSpacing: "-0.01em",
                     }}
                   >
                     Try Tonight
@@ -232,74 +264,111 @@ export function ForParentsHeroSection() {
                 </div>
 
                 <p
-                  className="mb-1.5 italic"
+                  className="mb-[6px]"
                   style={{
-                    fontFamily: JAKARTA,
-                    fontWeight: 600,
-                    fontSize: "12px",
-                    lineHeight: "18px",
-                    color: "#0A1D3D",
+                    fontFamily: INTER,
+                    fontWeight: 400,
+                    fontSize: "13px",
+                    lineHeight: "16px",
+                    letterSpacing: "-0.01em",
+                    color: NAVY,
                   }}
                 >
-                  Ask him: &ldquo;If a clock ran backwards, what would happen to breakfast?&rdquo;
+                  Ask him:{" "}
+                  <em>&quot;If a clock ran backwards, what would happen to breakfast?&quot;</em>
                 </p>
                 <p
                   className="italic"
                   style={{
-                    fontFamily: JAKARTA,
-                    fontWeight: 500,
-                    fontSize: "11px",
-                    lineHeight: "15px",
-                    color: "#64748B",
+                    fontFamily: INTER,
+                    fontWeight: 400,
+                    fontSize: "10px",
+                    lineHeight: "14px",
+                    letterSpacing: "-0.01em",
+                    color: "#4B5563",
                   }}
                 >
                   💡 Encourages his temporal sequencing strength naturally.
                 </p>
               </div>
 
-              {/* Card Footer: Quests completed & Full Report */}
-              <div className="flex items-center justify-between pt-1">
+              {/* Footer */}
+              <div className="mt-4 flex h-5 items-center justify-between">
                 <div
-                  className="flex items-center gap-1.5"
+                  className="flex items-center gap-[6px]"
                   style={{
-                    fontFamily: JAKARTA,
-                    fontWeight: 700,
-                    fontSize: "12px",
-                    color: "#7C3AED",
+                    fontFamily: INTER,
+                    fontWeight: 600,
+                    fontSize: "11.5px",
+                    letterSpacing: "-0.01em",
+                    color: "#1E293B",
                   }}
                 >
-                  <span>✔</span>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#6D4FD8"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+                    <path d="m9 11 3 3L22 4" />
+                  </svg>
                   <span>3 quests completed this week</span>
                 </div>
 
                 <Link
                   href="/report"
-                  className="cursor-pointer font-bold text-xs hover:underline"
+                  className="cursor-pointer whitespace-nowrap hover:underline"
                   style={{
-                    fontFamily: JAKARTA,
-                    color: "#7C3AED",
+                    fontFamily: INTER,
+                    fontWeight: 600,
+                    fontSize: "11.5px",
+                    letterSpacing: "-0.01em",
+                    color: "#6D3FC0",
                   }}
                 >
                   Full Report →
                 </Link>
               </div>
 
-              {/* Bottom-Left Floating Stress Badge */}
+              {/* Bottom-left stress badge */}
               <div
-                className="absolute -bottom-3.5 -left-3 sm:-left-4 z-20 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border-2 border-[#0A1D3D] select-none whitespace-nowrap"
+                className="absolute bottom-[-16px] left-[-8px] z-20 inline-flex -rotate-2 select-none items-center gap-[6px] whitespace-nowrap rounded-full border-[2.5px] sm:left-[-16px] lg:left-[-22px]"
                 style={{
-                  backgroundColor: "#38BDF8",
-                  color: "#0A1D3D",
-                  boxShadow: "3px 3px 0px 0px #0A1D3D",
+                  backgroundColor: "#52C3F2",
+                  borderColor: NAVY,
+                  color: NAVY,
+                  boxShadow: `3px 3px 0px 0px ${NAVY}`,
+                  padding: "5px 16px",
                   fontFamily: SPACE,
                   fontWeight: 700,
                   fontSize: "11px",
-                  lineHeight: "14px",
-                  letterSpacing: "0.5px",
+                  lineHeight: "15px",
+                  letterSpacing: "0.03em",
                   textTransform: "uppercase",
                 }}
               >
-                <span className="text-xs">🛡️</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke={NAVY}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="shrink-0"
+                  aria-hidden="true"
+                >
+                  <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" />
+                  <path d="m9 12 2 2 4-4" />
+                </svg>
+                <span className="text-[10px] leading-none">✨</span>
                 <span>0% TEST STRESS • 100% JOYFUL PLAY</span>
               </div>
             </div>

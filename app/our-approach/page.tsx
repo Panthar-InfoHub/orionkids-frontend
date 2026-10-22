@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { Navbar } from "@/components/layout/navbar";
 import { ApproachHeroSection } from "@/components/our-approach/approach-hero-section";
 import { CycleSection } from "@/components/our-approach/cycle-section";
@@ -17,7 +16,6 @@ export const metadata: Metadata = {
 export default function OurApproachPage() {
   return (
     <main className="min-h-screen flex flex-col bg-white selection:bg-[#FFE066] selection:text-[#0A1D3D]">
-      <AnnouncementBar />
       <Navbar />
       <ApproachHeroSection />
       <CycleSection />

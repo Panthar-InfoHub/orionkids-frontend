@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { Navbar } from "@/components/layout/navbar";
 import { AboutHeroSection } from "@/components/about-us/about-hero-section";
 import { AboutFoundationSection } from "@/components/about-us/about-foundation-section";
@@ -17,8 +16,7 @@ export const metadata: Metadata = {
 export default function AboutUsPage() {
   return (
     <main className="min-h-screen flex flex-col bg-white selection:bg-[#FFE066] selection:text-[#0A1D3D]">
-      {/* 1. Top Announcement Bar */}
-      <AnnouncementBar />
+   
 
       {/* 2. Main Navigation Bar */}
       <Navbar />

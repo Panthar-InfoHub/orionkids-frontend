@@ -4,17 +4,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-/**
- * Measured from the Figma prototype screenshot (frame 1440 wide, shown at 1.25x).
- * All numbers below are in Figma px, i.e. what you'd see in Dev Mode.
- *
- * Desktop (>= lg) layout:
- *   section padding      top 38 / bottom 72
- *   content padding      left 88 / right 108  (centred in a 1440 max-width frame)
- *   left column          446 wide, pinned to the left
- *   collage              610 wide, pinned to the right, starts 18px lower than left column
- *   left column rhythm   badge(24) -30- headline -44- subtitle -34- callout -46- pill(24) -14- chips(23)
- */
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const INTER = "var(--font-inter), 'Inter', sans-serif";
@@ -91,7 +80,7 @@ export function InsightReportSection() {
   return (
     <section
       id="insight-report-section"
-      className="relative w-full bg-[#0A1D3D] text-white overflow-hidden select-none scroll-mt-16 py-12 lg:pt-[38px] lg:pb-[72px]"
+      className="relative w-full bg-[#0A1D3D] text-white overflow-hidden select-none scroll-mt-16 pt-12 pb-24 sm:pb-32 lg:pt-[38px] lg:pb-40"
     >
       {/* Background dots */}
       <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
@@ -219,7 +208,7 @@ export function InsightReportSection() {
                     fontWeight: 800,
                     fontSize: "8.5px",
                     lineHeight: "100%",
-                    boxShadow: "2px 2px 0 rgba(255,255,255,0.22)",
+                    boxShadow: "3px 3px 0 #000000",
                   }}
                 >
                   <span className="shrink-0 text-[9px] leading-none">{c.emoji}</span>
@@ -243,6 +232,9 @@ export function InsightReportSection() {
               >
                 <div
                   className="relative h-full w-full overflow-hidden bg-[#0A1D3D]/30"
+                  style={{
+                    borderRadius: RADIUS_MAIN,
+                  }}
                 >
                   <Image
                     src="/images/children-learning-together.png"
@@ -282,13 +274,13 @@ export function InsightReportSection() {
               {/* Photo 2 */}
               <div
                 className="absolute z-20"
-                style={{ left: "49.3%", top: "60.2%", width: "41.9%", aspectRatio: "230 / 214" }}
+                style={{ left: "49.3%", top: "58%", width: "42%", aspectRatio: "230 / 214" }}
               >
                 <div
                   className="relative h-full w-full overflow-hidden bg-[#0A1D3D]/30"
                   style={{
                     borderRadius: RADIUS_SECOND,
-                    
+                    border: "2.5px solid #FFD028",
                   }}
                 >
                   <Image
@@ -300,6 +292,8 @@ export function InsightReportSection() {
                     sizes="(max-width: 768px) 45vw, 260px"
                   />
                 </div>
+
+
               </div>
 
               {/* Bullseye sticker on Photo 2's top-right corner */}
@@ -345,6 +339,20 @@ export function InsightReportSection() {
             </div>
           </div>
         </div>
+      </div>
+      {/* Robot Hand (Positioned in bottom-right corner) */}
+      <div
+        className="pointer-events-none absolute z-20 select-none bottom-0 right-0
+                   w-[120px] h-[120px] sm:w-[170px] sm:h-[170px] md:w-[200px] md:h-[200px] lg:w-[230px] lg:h-[230px] xl:w-[230px] xl:h-[230px]"
+      >
+        <Image
+          src="/robots/robo2.png"
+          alt="Robot hand holding AI processor chip"
+          width={310}
+          height={310}
+          className="h-full w-full object-contain object-right-bottom drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)]"
+          priority
+        />
       </div>
     </section>
   );

@@ -58,11 +58,11 @@ export function ForSchoolsHeroSection() {
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+      <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_472px] gap-8 lg:gap-10 xl:gap-14 items-start">
           {/* ================= LEFT COLUMN ================= */}
-          <div className="flex flex-col items-start text-left z-10 pt-2 lg:pt-4">
-            {/* Upper Pill: FOR EDUCATORS & SCHOOLS • CLASSES 1–6 */}
+          <div className="relative flex flex-col items-start text-left z-10 pt-2 lg:pt-4">
+            {/* Upper Pill: FOR EDUCATORS & SCHOOLS • CLASSES 1–8 */}
             <div
               className="inline-flex items-center gap-2 rounded-full select-none mb-5"
               style={{
@@ -79,55 +79,76 @@ export function ForSchoolsHeroSection() {
                 color: "#0E1C32",
               }}
             >
-              <span className="text-sm select-none">⭐</span>
-              <span>FOR EDUCATORS & SCHOOLS • CLASSES 1–6</span>
+              <span className="text-sm select-none">🪐</span>
+              <span>FOR EDUCATORS & SCHOOLS • CLASSES 1–8</span>
             </div>
 
-            {/* Main Headline */}
-            <h1
-              className="mb-4"
-              style={{
-                fontFamily: JAKARTA,
-                fontWeight: 800,
-                color: "#0A1D3D",
-                fontSize: "clamp(36px, 5vw, 56px)",
-                lineHeight: "64px",
-                letterSpacing: "-1.4px",
-              }}
-            >
-              <span>Every Child is a</span>
-              <br />
-              {/* "Constellation" badge */}
-              <span className="inline-block relative mt-1">
-                <span
-                  className="inline-flex items-center justify-center px-[14px] py-[4px]"
-                  style={{
-                    backgroundColor: "#0A1D3D",
-                    color: "#FFFFFF",
-                    borderRadius: "12px",
-                    border: "3px solid #0E1C32",
-                    boxShadow: "4px 5px 0px 0px #0E1C32",
-                    transform: "rotate(1deg)",
-                    fontFamily: JAKARTA,
-                    fontWeight: 800,
-                    fontSize: "clamp(34px, 5vw, 56px)",
-                    lineHeight: "64px",
-                    letterSpacing: "-1.4px",
-                  }}
-                >
-                  Constellation
-                </span>
-              </span>{" "}
-              <span>of</span>
-              <br />
-              <span>Potential.</span>
-            </h1>
+            {/* Headline and Robot Wrapper */}
+            <div className="relative w-full max-w-[640px]">
+              {/* Main Headline */}
+              <h1
+                className="mb-4"
+                style={{
+                  fontFamily: JAKARTA,
+                  fontWeight: 800,
+                  color: "#0A1D3D",
+                  fontSize: "clamp(30px, 4vw, 48px)",
+                  lineHeight: "1.18",
+                  letterSpacing: "-1.2px",
+                }}
+              >
+                <span>Every Child is a</span>
+                <br />
+                {/* "Constellation" badge */}
+                <span className="inline-block relative mt-1">
+                  <span
+                    className="inline-flex items-center justify-center px-3 py-0.5"
+                    style={{
+                      backgroundColor: "#0A1D3D",
+                      color: "#FFFFFF",
+                      borderRadius: "12px",
+                      border: "3px solid #0E1C32",
+                      boxShadow: "4px 5px 0px 0px #0E1C32",
+                      transform: "rotate(1deg)",
+                      fontFamily: JAKARTA,
+                      fontWeight: 800,
+                      fontSize: "clamp(28px, 4vw, 48px)",
+                      lineHeight: "inherit",
+                      letterSpacing: "-1.2px",
+                    }}
+                  >
+                    Constellation
+                  </span>
+                </span>{" "}
+                <span>of</span>
+                <br />
+                <span>Potential.</span>
+              </h1>
+
+              {/* Waving Robot (robo5.png) matching Figma placement */}
+              <div
+                className="absolute pointer-events-none select-none z-20 transition-transform hover:scale-105 duration-300
+                           w-[85px] h-[85px] top-0 right-0 sm:right-auto
+                           sm:w-[110px] sm:h-[110px] sm:top-1 sm:left-[340px]
+                           md:w-[130px] md:h-[130px] md:top-1 md:left-[360px]
+                           lg:w-[150px] lg:h-[150px] lg:top-1 lg:left-[360px]
+                           xl:w-[170px] xl:h-[170px] xl:top-0 xl:left-[390px]"
+              >
+                <Image
+                  src="/robots/robo5.png"
+                  alt="Waving OrionKids Robot"
+                  width={170}
+                  height={170}
+                  className="w-full h-full object-contain drop-shadow-[0_12px_24px_rgba(14,28,50,0.15)]"
+                  priority
+                />
+              </div>
+            </div>
 
             {/* Description */}
             <p
-              className="mb-6"
+              className="mb-6 max-w-[580px] lg:max-w-[500px] xl:max-w-[560px]"
               style={{
-                maxWidth: "672px",
                 fontFamily: JAKARTA,
                 fontWeight: 700,
                 fontSize: "18px",
@@ -136,9 +157,9 @@ export function ForSchoolsHeroSection() {
                 color: "#526176",
               }}
             >
-              See how children learn through play. OrionKids helps educators
-              notice strategies and plan everyday classroom support. Educational
-              insights, not diagnosis or medical screening.
+              Explore how children learn through play with OrionKids. Our AI platform helps educators
+              identify strategies and plan daily classroom support, providing insights without needing
+              diagnosis or medical screening.
             </p>
 
             {/* CTA Buttons */}

@@ -7,7 +7,7 @@ export function EverydaySupportSection() {
   return (
     <section
       id="everyday-support-section"
-      className="relative w-full bg-white text-[#0A1D3D] py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-12 overflow-hidden select-none scroll-mt-16"
+      className="relative w-full bg-white text-[#0A1D3D] py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-12 select-none scroll-mt-16"
     >
       <div className="relative z-10 w-full max-w-[1440px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
@@ -82,6 +82,8 @@ export function EverydaySupportSection() {
               >
                 Small moments of discovery. Meaningful opportunities for support.
               </p>
+
+
 
             </div>
 

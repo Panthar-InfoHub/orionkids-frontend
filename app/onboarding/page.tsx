@@ -13,10 +13,10 @@ export const metadata: Metadata = {
 export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between selection:bg-[#FFE066] selection:text-[#0A1D3D]">
-      {/* 1. Topmost line: colour #FF8CC7, height 6px */}
+      {/* 1. Topmost line*/}
       <div className="w-full h-[6px] bg-[#FF8CC7]" />
 
-      {/* 2. Navbar: Fill (1,440px), Height (98px), Border Bottom 1px, Padding L/R 88px, Gap 35px */}
+      {/* 2. Navbar*/}
       <header className="top w-full bg-white border-b border-[#E7EDF6] sticky top-0 z-30">
         <div className="top-in max-w-[1440px] w-full mx-auto h-[98px] px-4 sm:px-8 lg:px-[88px] flex items-center justify-between gap-[35px]">
           <Link href="/" className="logo flex items-center shrink-0" aria-label="OrionKids Home">
@@ -30,7 +30,7 @@ export default function OnboardingPage() {
             />
           </Link>
 
-          {/* Pill in navbar: Hug (141px), Hug (23px), Radius 100px, Padding T/B 5px, L/R 10px, bg #D8F3FF */}
+          {/* Pill in navbar*/}
           <span
             className="tag inline-flex items-center justify-center w-auto sm:w-[141px] h-[23px] rounded-[100px] bg-[#D8F3FF] px-[10px] py-[5px] text-[10px] font-extrabold uppercase tracking-wider text-[#0A1D3D] whitespace-nowrap shrink-0"
             style={{
@@ -42,7 +42,7 @@ export default function OnboardingPage() {
         </div>
       </header>
 
-      {/* 3. Main Section: container max 1440px, padding L/R 88px */}
+      {/* 3. Main Section*/}
       <main className="max-w-[1440px] w-full mx-auto px-4 sm:px-8 lg:px-[88px] py-8 sm:py-12 flex-1 flex flex-col lg:flex-row items-start justify-between gap-10 lg:gap-[40px]">
         <section
           aria-label="Welcome"
