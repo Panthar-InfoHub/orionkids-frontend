@@ -84,14 +84,64 @@ export function SharedUnderstandingSection() {
             className="absolute -translate-y-1/2 left-4 sm:left-6 lg:left-8 -ml-1 sm:-ml-3 lg:-ml-[29px]
                        w-[110px] h-[110px] sm:w-[145px] sm:h-[145px] lg:w-[184px] lg:h-[184px]"
           >
-            <Image
-              src="/robots/robo3.png"
-              alt="OrionKids rocket robot mascot"
-              width={184}
-              height={184}
-              className="w-full h-full object-contain drop-shadow-[0_12px_24px_rgba(10,29,61,0.18)]"
-              priority
-            />
+            {/* Automatic 3.0s Flight Surge + 0.8s Resting Hold Container */}
+            <div className="relative w-full h-full animate-rocket-flight">
+              {/* Cyan Thruster Engine Plasma Glow behind the flame */}
+              <div
+                className="absolute pointer-events-none rounded-full animate-rocket-engine"
+                style={{
+                  left: "14%",
+                  top: "72%",
+                  width: "28%",
+                  height: "28%",
+                  background:
+                    "radial-gradient(circle, rgba(56, 189, 248, 0.85) 0%, rgba(6, 182, 212, 0.45) 45%, rgba(14, 165, 233, 0) 75%)",
+                  filter: "blur(6px)",
+                }}
+              />
+
+              {/* Trailing Stardust / Energy Particles */}
+              <span
+                className="absolute pointer-events-none rounded-full bg-cyan-300 animate-rocket-spark-1"
+                style={{
+                  left: "18%",
+                  top: "76%",
+                  width: "5px",
+                  height: "5px",
+                  boxShadow: "0 0 6px #38bdf8",
+                }}
+              />
+              <span
+                className="absolute pointer-events-none rounded-full bg-[#A5F3FC] animate-rocket-spark-2"
+                style={{
+                  left: "14%",
+                  top: "80%",
+                  width: "4px",
+                  height: "4px",
+                  boxShadow: "0 0 5px #67e8f9",
+                }}
+              />
+              <span
+                className="absolute pointer-events-none rounded-full bg-white animate-rocket-spark-3"
+                style={{
+                  left: "16%",
+                  top: "78%",
+                  width: "3px",
+                  height: "3px",
+                  boxShadow: "0 0 5px #ffffff",
+                }}
+              />
+
+              {/* Robot Mascot Image */}
+              <Image
+                src="/robots/robo3.png"
+                alt="OrionKids rocket robot mascot"
+                width={184}
+                height={184}
+                className="relative z-10 w-full h-full object-contain drop-shadow-[0_12px_24px_rgba(10,29,61,0.18)]"
+                priority
+              />
+            </div>
           </div>
         </div>
       </div>

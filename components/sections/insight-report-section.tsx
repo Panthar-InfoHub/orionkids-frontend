@@ -296,9 +296,9 @@ export function InsightReportSection() {
 
               </div>
 
-              {/* Bullseye sticker on Photo 2's top-right corner */}
+              {/* Bullseye sticker on Photo 2's top-right corner with zoom in/zoom out animation */}
               <div
-                className="pointer-events-none absolute z-30"
+                className="pointer-events-none absolute z-30 select-none"
                 style={{
                   left: "91.4%",
                   top: "60.5%",
@@ -307,14 +307,17 @@ export function InsightReportSection() {
                   transform: "translate(-50%, -50%)",
                 }}
               >
-                <Image
-                  src={encodeURI("/icons/🎯.png")}
-                  alt="Bullseye Target"
-                  width={100}
-                  height={112}
-                  unoptimized
-                  className="h-full w-full object-contain drop-shadow-[2px_6px_10px_rgba(0,0,0,0.35)]"
-                />
+                {/* Automatic Zoom-In and Zoom-Out (3.0s active + 0.8s hold) */}
+                <div className="w-full h-full animate-target-zoom">
+                  <Image
+                    src={encodeURI("/icons/🎯.png")}
+                    alt="Bullseye Target"
+                    width={100}
+                    height={112}
+                    unoptimized
+                    className="h-full w-full object-contain"
+                  />
+                </div>
               </div>
 
               {/* Caption: left-aligned with Photo 1's left edge */}

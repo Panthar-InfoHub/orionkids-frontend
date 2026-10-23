@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import { StarIcon } from "@/components/ui/star-icon";
 
 const CHECKLIST_ITEMS = [
   "Simple, age-appropriate instructions",
@@ -18,29 +17,31 @@ export function GameAssessmentSection() {
   return (
     <section
       id="game-assessment-section"
-      className="relative w-full lg:min-h-[796px] overflow-hidden py-14 sm:py-16 lg:py-20 px-4 sm:px-8 lg:px-10 xl:px-[88px] flex items-center select-none scroll-mt-16"
-      style={{
-        background:
-          "radial-gradient(ellipse 60% 60% at 85% 15%, rgba(254, 215, 226, 0.45) 0%, rgba(218, 245, 233, 1) 75%)",
-      }}
+      className="relative w-full lg:min-h-[760px] overflow-hidden py-16 sm:py-20 lg:py-24 px-4 sm:px-8 lg:px-12 xl:px-[88px] flex items-center select-none scroll-mt-16 bg-[#DAF5EA]"
     >
+      {/* Dreamy pink radial glow in top-right corner */}
+      <div
+        className="absolute -top-16 -right-16 w-[450px] h-[450px] lg:w-[550px] lg:h-[550px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255, 182, 218, 0.55) 0%, rgba(255, 182, 218, 0) 70%)",
+        }}
+      />
+
       <div className="relative z-10 w-full max-w-[1320px] mx-auto">
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-10 xl:gap-14">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-12 xl:gap-16">
 
           {/* ================= LEFT COLUMN: GAME TABLET CARD ================= */}
-          <div className="w-full min-w-0 max-w-[668px] lg:flex-[1.3] relative">
-
-            {/* Soft cyan glow */}
-            <div className="absolute -right-4 lg:-right-8 top-1/2 -translate-y-1/2 w-40 h-40 sm:w-64 sm:h-64 rounded-full bg-[#D8F3FE]/70 blur-2xl pointer-events-none" />
+          <div className="w-full min-w-0 max-w-[620px] lg:flex-[1.25] relative">
 
             {/* Peach backplate */}
-            <div className="relative z-10 w-full bg-[#FDE3DA] rounded-[24px] sm:rounded-[36px] overflow-hidden shadow-[0_20px_50px_rgba(15,23,42,0.06)] border border-white/60">
+            <div className="relative z-10 w-full bg-[#FCE5DE] rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-[0_20px_50px_rgba(15,23,42,0.06)] border border-white/60">
 
               {/* Inner white card */}
-              <div className="w-full bg-white rounded-t-[24px] sm:rounded-t-[36px] rounded-b-[20px] sm:rounded-b-[28px] p-4 sm:p-7 lg:p-8 flex flex-col justify-between shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
+              <div className="w-full bg-white rounded-t-[28px] sm:rounded-t-[36px] rounded-b-[22px] sm:rounded-b-[28px] p-4 sm:p-6 lg:p-7 flex flex-col justify-between shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
 
                 {/* Header bar */}
-                <div className="flex items-center justify-between gap-3 pb-3 sm:pb-4">
+                <div className="flex items-center justify-between gap-3 pb-3 sm:pb-3.5">
                   <span
                     className="text-[#0A1D3D] text-base sm:text-[18px] font-extrabold leading-none"
                     style={{ fontFamily: JAKARTA }}
@@ -49,7 +50,7 @@ export function GameAssessmentSection() {
                   </span>
                   <button
                     type="button"
-                    className="flex items-center gap-1.5 text-xs text-[#526176] hover:text-[#0A1D3D] transition-colors cursor-pointer shrink-0 min-h-[32px]"
+                    className="flex items-center gap-1.5 text-xs sm:text-[13px] text-[#526176] hover:text-[#0A1D3D] transition-colors cursor-pointer shrink-0"
                     style={{ fontFamily: INTER }}
                   >
                     <svg
@@ -71,7 +72,7 @@ export function GameAssessmentSection() {
                 </div>
 
                 {/* Game screen */}
-                <div className="relative w-full aspect-[16/10.4] my-2 sm:my-3 rounded-[16px] sm:rounded-[24px] overflow-hidden border-2 sm:border-[2.5px] border-[#00B4D8] bg-slate-900 shadow-sm">
+                <div className="relative w-full aspect-[16/10.2] my-2 sm:my-3 rounded-[16px] sm:rounded-[22px] overflow-hidden border-2 sm:border-[2.5px] border-[#00B4D8] bg-slate-900 shadow-sm">
                   <Image
                     src={encodeURI("/images/bernard creek.png")}
                     alt="Bernard of the Creek Part 2 Game Preview"
@@ -86,16 +87,16 @@ export function GameAssessmentSection() {
                 {/* Footer bar */}
                 <div className="flex items-center justify-between pt-3 sm:pt-4 gap-3 flex-wrap">
                   <p
-                    className="text-[#0A1D3D] text-[13px] sm:text-[13.5px] leading-snug flex-1 min-w-[180px]"
+                    className="text-[#0A1D3D] text-[13px] sm:text-[13.5px] font-medium leading-snug flex-1 min-w-[180px]"
                     style={{ fontFamily: INTER }}
                   >
-                    Keep exploring. You&apos;re finding the pattern! 🌟
+                    Keep exploring. You&apos;re finding the pattern 🌟
                   </p>
 
                   <button
                     type="button"
-                    className="inline-flex items-center justify-center gap-1.5 px-6 h-[40px] bg-[#FFD54F] text-[#0A1D3D] rounded-full shadow-[0_4px_14px_rgba(255,110,174,0.4)] hover:scale-105 active:scale-95 transition-all cursor-pointer max-[420px]:w-full"
-                    style={{ fontFamily: JAKARTA, fontWeight: 800, fontSize: "13px" }}
+                    className="inline-flex items-center justify-center gap-1.5 px-6 h-[40px] bg-[#FFD243] hover:bg-[#FBC02D] text-[#0A1D3D] rounded-full hover:scale-105 active:scale-95 transition-all cursor-pointer font-extrabold text-[13px]"
+                    style={{ fontFamily: JAKARTA }}
                   >
                     <span>Continue</span>
                     <span className="text-sm font-bold">→</span>
@@ -106,43 +107,26 @@ export function GameAssessmentSection() {
               {/* Disclaimer strip */}
               <div className="py-2.5 sm:py-3 px-4 text-center">
                 <p
-                  className="text-[#526176] text-[11px] sm:text-[12px] leading-normal"
+                  className="text-[#64748B] text-[11px] sm:text-[12px] font-medium leading-normal"
                   style={{ fontFamily: INTER }}
                 >
-                  Conceptual game preview · Illustrative activity, not a live assessment
+                  Conceptual Game Preview · Illustrative Activity, Not A Live Assessment
                 </p>
               </div>
             </div>
           </div>
 
-          {/* ================= RIGHT COLUMN: FEATURES & MASCOT ================= */}
-          <div className="w-full min-w-0 max-w-[668px] lg:max-w-[516px] lg:flex-1 flex flex-col items-start text-left pt-16 sm:pt-20 lg:pt-0">
+          {/* ================= RIGHT COLUMN: FEATURES & BADGE ================= */}
+          <div className="w-full min-w-0 max-w-[620px] lg:max-w-[500px] lg:flex-1 flex flex-col items-start text-left">
 
-            {/* Pill badge + rabbit (anchored together on all viewports) */}
-            <div className="relative inline-block mb-5 select-none">
-
-              {/* Rabbit: stays right beside the pill and above headline on ALL views */}
-              <div
-                className="absolute pointer-events-none z-10 left-[155px] sm:left-[172.42px] -top-[76px] sm:-top-[84px] w-[95px] h-[127px] sm:w-[107px] sm:h-[143px]"
-              >
-                <Image
-                  src={encodeURI("/gif/rabbit.webp")}
-                  alt="Playful rabbit mascot"
-                  width={107}
-                  height={143}
-                  unoptimized
-                  className="w-full h-full object-contain"
-                />
-              </div>
-
+            {/* Pill badge + Party Popper */}
+            <div className="relative flex items-center gap-3 mb-6 select-none">
               {/* Pill */}
               <div
                 className="inline-flex items-center justify-center gap-1.5 bg-[#DDF4FF] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] hover:scale-105 transition-transform"
                 style={{
-                  width: "164px",
-                  height: "24px",
-                  padding: "5px 14px",
-                  transform: "rotate(-1deg)",
+                  height: "26px",
+                  padding: "4px 14px",
                   borderRadius: "9999px",
                 }}
               >
@@ -155,31 +139,42 @@ export function GameAssessmentSection() {
                   <span>✨</span>
                 </span>
               </div>
+
+              {/* Party Popper SVG */}
+              <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 -mt-3 pointer-events-none">
+                <Image
+                  src="/icons/party-popper.svg"
+                  alt="Party Popper"
+                  width={56}
+                  height={56}
+                  className="w-full h-full object-contain"
+                />
+              </div>
             </div>
 
             {/* Headline */}
             <h2
-              className="text-[#0A1D3D] mb-4 text-left max-w-[420px] font-extrabold"
+              className="text-[#0A1D3D] mb-4 text-left font-extrabold"
               style={{
                 fontFamily: JAKARTA,
-                fontSize: "clamp(30px, 2.5vw + 20px, 44px)",
+                fontSize: "clamp(32px, 3vw + 16px, 46px)",
                 lineHeight: "112%",
-                letterSpacing: "-0.036em",
+                letterSpacing: "-0.03em",
               }}
             >
-              Assessment That
+              Assessment that
               <br />
-              <span className="sm:whitespace-nowrap">Feels Like Play. 🎉</span>
+              <span>feels like play</span>
             </h2>
 
             {/* Subtitle */}
             <p
-              className="text-[#526176] mb-6 max-w-[516px] text-base sm:text-lg leading-[1.6]"
+              className="text-[#526176] mb-6 max-w-[500px] text-base sm:text-[17px] leading-[1.65]"
               style={{ fontFamily: INTER }}
             >
-              A pattern to spot. A story to explore. A puzzle to solve. Interactive
-              games invite curiosity while helping us observe how each child
-              approaches a challenge.
+              A pattern to recognize. A narrative to delve into. A puzzle to crack.
+              Interactive games spark curiosity and allow us to see how each child
+              tackles a challenge.
             </p>
 
             {/* Checklist */}
@@ -187,13 +182,13 @@ export function GameAssessmentSection() {
               {CHECKLIST_ITEMS.map((item) => (
                 <li key={item} className="flex items-start gap-2.5">
                   <span
-                    className="text-[#0A1D3D] font-black text-sm leading-[21px] shrink-0"
+                    className="text-[#0A1D3D] font-bold text-sm leading-[21px] shrink-0"
                     aria-hidden="true"
                   >
                     ✓
                   </span>
                   <span
-                    className="text-[13px] sm:text-[14px] leading-[21px] font-medium text-[#0A1D3D]"
+                    className="text-[14px] sm:text-[15px] leading-[21px] font-medium text-[#0A1D3D]"
                     style={{ fontFamily: INTER }}
                   >
                     {item}
@@ -215,32 +210,78 @@ export function GameAssessmentSection() {
             </div>
 
             {/* Sticker badges */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-3.5">
-              {/* Smiley */}
+            <div className="flex items-center gap-3 sm:gap-3.5 select-none">
+              {/* Sticker 1: Smiley */}
               <div className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
-                <svg className="w-11 h-11 sm:w-[52px] sm:h-[52px]" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <svg
+                  className="w-11 h-11 sm:w-[50px] sm:h-[50px]"
+                  viewBox="0 0 52 52"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
                   <circle cx="26" cy="26" r="24.5" fill="#FFD243" stroke="#0A1D3D" strokeWidth="2.5" />
-                  <circle cx="26" cy="26" r="16.5" stroke="#0A1D3D" strokeWidth="2.5" fill="none" />
-                  <circle cx="21" cy="22.5" r="2" fill="#0A1D3D" />
-                  <circle cx="31" cy="22.5" r="2" fill="#0A1D3D" />
-                  <path d="M 20.5 28 C 22 32.5 30 32.5 31.5 28" stroke="#0A1D3D" strokeWidth="2.5" strokeLinecap="round" />
+                  <circle cx="21" cy="22" r="2.2" fill="#0A1D3D" />
+                  <circle cx="31" cy="22" r="2.2" fill="#0A1D3D" />
+                  <path
+                    d="M 19.5 29 C 21.5 33.5 30.5 33.5 32.5 29"
+                    stroke="#0A1D3D"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </div>
 
-              {/* Sparkle */}
+              {/* Sticker 2: 4-pointed Sparkle Star */}
               <div className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
-                <div className="w-11 h-11 sm:w-[52px] sm:h-[52px] rounded-full bg-[#FFD243] border-[2.5px] border-[#0A1D3D] flex items-center justify-center select-none shadow-sm">
-                  <StarIcon className="w-6 h-6 sm:w-7 sm:h-7" strokeColor="#0A1D3D" strokeWidth={1.8} />
-                </div>
-              </div>
-
-              {/* Heart */}
-              <div className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
-                <svg className="w-11 h-11 sm:w-[52px] sm:h-[52px]" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <svg
+                  className="w-11 h-11 sm:w-[50px] sm:h-[50px]"
+                  viewBox="0 0 52 52"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
                   <circle cx="26" cy="26" r="24.5" fill="#FFD243" stroke="#0A1D3D" strokeWidth="2.5" />
                   <path
-                    d="M 26 38.5 C 25.3 37.8 14 28.5 14 20 C 14 15.2 17.5 12.5 21.8 12.5 C 24.4 12.5 25.8 13.8 26 14.5 C 26.2 13.8 27.6 12.5 30.2 12.5 C 34.5 12.5 38 15.2 38 20 C 38 28.5 26.7 37.8 26 38.5 Z"
-                    stroke="#0A1D3D" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round"
+                    d="M 26 13 C 26 19.5 21 25 14 26 C 21 27 26 32.5 26 39 C 26 32.5 31 27 38 26 C 31 25 26 19.5 26 13 Z"
+                    stroke="#0A1D3D"
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M 37 13.5 V 17.5 M 35 15.5 H 39"
+                    stroke="#0A1D3D"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <circle
+                    cx="15"
+                    cy="36.5"
+                    r="2"
+                    stroke="#0A1D3D"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                </svg>
+              </div>
+
+              {/* Sticker 3: Heart */}
+              <div className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
+                <svg
+                  className="w-11 h-11 sm:w-[50px] sm:h-[50px]"
+                  viewBox="0 0 52 52"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <circle cx="26" cy="26" r="24.5" fill="#FFD243" stroke="#0A1D3D" strokeWidth="2.5" />
+                  <path
+                    d="M 26 38 C 25.3 37.3 15 28.5 15 20.5 C 15 16 18.2 13 22.2 13 C 24.5 13 25.6 14.1 26 14.8 C 26.4 14.1 27.5 13 29.8 13 C 33.8 13 37 16 37 20.5 C 37 28.5 26.7 37.3 26 38 Z"
+                    stroke="#0A1D3D"
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
                   />
                 </svg>
               </div>

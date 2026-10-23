@@ -233,26 +233,6 @@ export function ChildJourneySection() {
                   </div>
                 </div>
 
-                {/* Animated Character GIF */}
-                <div
-                  className="absolute z-20 select-none pointer-events-none"
-                  style={{
-                    width: "150px",
-                    height: "150px",
-                    top: "402px",
-                    left: "557px",
-                  }}
-                >
-                  <Image
-                    src={encodeURI("/gif/annoying flying bug.webp")}
-                    alt="Animated cartoon character"
-                    width={150}
-                    height={150}
-                    unoptimized
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-
                 {/* Checkpoint 3: Green Circle */}
                 <div className="absolute left-[999px] top-[214px] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-20 select-none">
                   <div className="relative w-14 h-14 rounded-full bg-[#52D8A6] border-[2.5px] border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center">
@@ -642,32 +622,18 @@ export function ChildJourneySection() {
                 </div>
               </div>
 
-              {/* ROAD END: FINISH (on road track) + GIF touching bottom border (shifted left/center) + REPORT BUTTON */}
-              <div className="relative z-10 flex items-end justify-between gap-2 pt-2 sm:pt-3 -mb-4 sm:-mb-7">
+              {/* ROAD END: FINISH (on road track) + REPORT BUTTON */}
+              <div className="relative z-10 flex items-center justify-between gap-2 pt-2 sm:pt-3 mb-1 sm:mb-2">
                 {/* FINISH at ending of road */}
-                <div className="w-12 sm:w-14 flex justify-center shrink-0 mb-3 sm:mb-5">
+                <div className="w-12 sm:w-14 flex justify-center shrink-0">
                   <span className="inline-flex items-center justify-center gap-1 h-[28px] px-2.5 bg-[#EAF7EF] text-[#0A1D3D] text-[10px] sm:text-[10.5px] font-black tracking-wider uppercase rounded-[8px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D]">
                     <span>FINISH</span>
                     <span className="text-xs">🏁</span>
                   </span>
                 </div>
 
-                {/* Animated GIF shifted left/center, touching the bottom border line */}
-                <div className="flex-1 flex justify-center items-end pb-0">
-                  <div className="w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] md:w-[150px] md:h-[150px] relative shrink-0 leading-none pointer-events-none select-none translate-y-[2px]">
-                    <Image
-                      src={encodeURI("/gif/annoying flying bug.webp")}
-                      alt="Animated cartoon character"
-                      width={150}
-                      height={150}
-                      unoptimized
-                      className="w-full h-full object-contain object-bottom"
-                    />
-                  </div>
-                </div>
-
                 {/* Report Button */}
-                <div className="mb-3 sm:mb-5 shrink-0">
+                <div className="shrink-0">
                   <Link
                     href="/report"
                     className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 bg-[#FFD028] text-[#0A1D3D] text-xs sm:text-sm font-black rounded-full hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] shrink-0 whitespace-nowrap"

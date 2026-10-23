@@ -100,3 +100,168 @@ body {
 .animate-sparkle {
   animation: sparkle 3s infinite ease-in-out;
 }
+
+/* ========================================================
+   Rocket Robot Mascot (Shared Understanding Section)
+   3.0s smooth flight surge + 0.8s hold at rest (3.8s cycle)
+   ======================================================== */
+
+@keyframes rocket-flight-cycle {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  12% {
+    transform: translate3d(-1px, 2px, 0) rotate(-1deg);
+  }
+  35% {
+    transform: translate3d(7px, -14px, 0) rotate(2deg);
+  }
+  55% {
+    transform: translate3d(9px, -16px, 0) rotate(0.5deg);
+  }
+  68% {
+    transform: translate3d(4px, -6px, 0) rotate(-1deg);
+  }
+  78.95%, 100% {
+    /* 0.8s hold at rest (from 3.0s to 3.8s) */
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+}
+
+@keyframes rocket-engine-cycle {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+  12% {
+    opacity: 0.75;
+    transform: scale(1.1);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+  55% {
+    opacity: 0.85;
+    transform: scale(1.15);
+  }
+  70% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  78.95%, 100% {
+    /* 0.8s hold at rest */
+    opacity: 0.25;
+    transform: scale(0.75);
+  }
+}
+
+@keyframes rocket-spark-1-cycle {
+  0%, 8% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.3);
+  }
+  18% {
+    opacity: 0.9;
+    transform: translate3d(-6px, 7px, 0) scale(1);
+  }
+  35% {
+    opacity: 0;
+    transform: translate3d(-22px, 26px, 0) scale(0.2);
+  }
+  35.1%, 100% {
+    opacity: 0;
+  }
+}
+
+@keyframes rocket-spark-2-cycle {
+  0%, 22% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.3);
+  }
+  34% {
+    opacity: 0.85;
+    transform: translate3d(-8px, 10px, 0) scale(1);
+  }
+  50% {
+    opacity: 0;
+    transform: translate3d(-28px, 32px, 0) scale(0.15);
+  }
+  50.1%, 100% {
+    opacity: 0;
+  }
+}
+
+@keyframes rocket-spark-3-cycle {
+  0%, 38% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.3);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate3d(-9px, 11px, 0) scale(1.1);
+  }
+  68% {
+    opacity: 0;
+    transform: translate3d(-32px, 36px, 0) scale(0.1);
+  }
+  68.1%, 100% {
+    opacity: 0;
+  }
+}
+
+.animate-rocket-flight {
+  animation: rocket-flight-cycle 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+.animate-rocket-engine {
+  animation: rocket-engine-cycle 3.8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-rocket-spark-1 {
+  animation: rocket-spark-1-cycle 3.8s linear infinite;
+}
+
+.animate-rocket-spark-2 {
+  animation: rocket-spark-2-cycle 3.8s linear infinite;
+}
+
+.animate-rocket-spark-3 {
+  animation: rocket-spark-3-cycle 3.8s linear infinite;
+}
+
+/* ========================================================
+   Bullseye Target Sticker (Insight Report Section)
+   Smooth Zoom-In & Zoom-Out animation (3.0s active + 0.8s hold)
+   ======================================================== */
+
+@keyframes target-zoom-cycle {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(2px 6px 10px rgba(0, 0, 0, 0.35));
+  }
+  38% {
+    transform: scale(1.04);
+    filter: drop-shadow(3px 12px 20px rgba(0, 0, 0, 0.45));
+  }
+  78.95% {
+    transform: scale(1);
+    filter: drop-shadow(2px 6px 10px rgba(0, 0, 0, 0.35));
+  }
+  100% {
+    /* 0.8s hold at normal scale (from 3.0s to 3.8s) */
+    transform: scale(1);
+    filter: drop-shadow(2px 6px 10px rgba(0, 0, 0, 0.35));
+  }
+}
+
+.animate-target-zoom {
+  animation: target-zoom-cycle 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  transform-origin: center center;
+  will-change: transform, filter;
+}
+
+
+
