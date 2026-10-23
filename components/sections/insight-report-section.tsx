@@ -251,25 +251,6 @@ export function InsightReportSection() {
               <StickerPill emoji="👾" text="BLAST OFF!" left="67.4%" top="16.8%" rotate={5} />
               <StickerPill emoji="✨" text="SUPERSTAR APPROVED!" left="19%" top="75.8%" rotate={-4} />
 
-              <div
-                className="pointer-events-none absolute z-30"
-                style={{
-                  left: "82.2%",
-                  top: "5.5%",
-                  width: "30.5%",
-                  aspectRatio: "1 / 1",
-                  transform: "translate(-50%, -50%) rotate(-41.5deg)",
-                }}
-              >
-                <Image
-                  src="/gif/ABC.webp"
-                  alt="Cartoon Letter A"
-                  width={150}
-                  height={150}
-                  unoptimized
-                  className="h-full w-full object-contain drop-shadow-[2px_6px_10px_rgba(0,0,0,0.35)]"
-                />
-              </div>
 
               {/* Photo 2 */}
               <div
