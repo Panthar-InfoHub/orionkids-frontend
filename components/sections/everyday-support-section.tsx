@@ -119,9 +119,9 @@ export function EverydaySupportSection() {
               <span>Turn Understanding</span>
               <span className="flex items-center gap-2">
                 <span>Into Everyday Support.</span>
-                <span className="inline-block relative w-8 h-8 sm:w-10 sm:h-10 shrink-0">
+                <span className="inline-flex items-center justify-center align-middle relative w-18 h-18 sm:w-24 sm:h-24 lg:w-[68px] lg:h-[68px] shrink-0 -my-2">
                   <Image
-                    src={encodeURI("/icons/🎯.png")}
+                    src="/svg/Target.svg"
                     alt="Target bullseye"
                     fill
                     unoptimized

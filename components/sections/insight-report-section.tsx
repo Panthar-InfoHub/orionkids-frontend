@@ -291,10 +291,10 @@ export function InsightReportSection() {
                 {/* Automatic Zoom-In and Zoom-Out (3.0s active + 0.8s hold) */}
                 <div className="w-full h-full animate-target-zoom">
                   <Image
-                    src="/svg/Target.svg"
+                    src={encodeURI("/icons/🎯.png")}
                     alt="Bullseye Target"
                     width={100}
-                    height={100}
+                    height={112}
                     unoptimized
                     className="h-full w-full object-contain"
                   />
