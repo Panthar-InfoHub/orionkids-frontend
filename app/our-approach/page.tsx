@@ -10,7 +10,7 @@ import { FooterSection } from "@/components/layout/footer-section";
 export const metadata: Metadata = {
   title: "Our Approach | OrionKids",
   description:
-    "Observe. Understand. Personalize. Track. From observation to insight, from insight to action, and from action to measurable progress.",
+    "Play. Discover. Understand. Support. Growth. From observation to insight, from insight to action, and from action to measurable progress.",
 };
 
 export default function OurApproachPage() {

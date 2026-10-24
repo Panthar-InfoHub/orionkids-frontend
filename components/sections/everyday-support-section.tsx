@@ -111,15 +111,14 @@ export function EverydaySupportSection() {
 
             {/* Main Headline with Target Icon */}
             <h2
-              className="text-3xl sm:text-4xl lg:text-[46px] font-[800] text-[#0A1D3D] leading-[1.15] tracking-[-1px] mb-4 flex flex-wrap items-center gap-x-2"
+              className="text-3xl sm:text-4xl lg:text-[46px] font-[800] text-[#0A1D3D] leading-[1.15] tracking-[-1px] mb-4 flex flex-wrap items-center gap-x-3"
               style={{
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
             >
-              <span>Turn Understanding</span>
-              <span className="flex items-center gap-2">
-                <span>Into Everyday Support.</span>
-                <span className="inline-flex items-center justify-center align-middle relative w-18 h-18 sm:w-24 sm:h-24 lg:w-[68px] lg:h-[68px] shrink-0 -my-2">
+              <span className="inline-flex items-center gap-2 sm:gap-3">
+                <span>Turn Understanding</span>
+                <span className="inline-flex items-center justify-center align-middle relative w-12 h-12 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px] shrink-0 -my-2">
                   <Image
                     src="/svg/Target.svg"
                     alt="Target bullseye"
@@ -129,6 +128,7 @@ export function EverydaySupportSection() {
                   />
                 </span>
               </span>
+              <span>Into Everyday Support.</span>
             </h2>
 
             {/* Subtitle Description */}

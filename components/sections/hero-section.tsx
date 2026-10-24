@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -106,7 +105,7 @@ export function HeroSection() {
                 fontFamily: "var(--font-inter), 'Inter', sans-serif",
               }}
             >
-              Playful cognitive assessment, thoughtful insights and practical next steps. See the child beyond a score.
+              Cognitive evaluations and reflections are crucial. View the child beyond just a number, especially in how AI recognizes their unique abilities.
             </p>
 
             {/* 3 Feature Badges in a Row */}

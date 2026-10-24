@@ -5,30 +5,31 @@ import Image from "next/image";
 
 const FAQ_ITEMS = [
   {
-    question: "Is social distraction beneficial for the child?",
+    question: "How does social media affect a child's cognitive development?",
     answer:
-      "No. OrionKids offers assessment insights to support learning and development. It does not diagnose conditions or replace qualified clinical or educational professionals.",
+      "Excessive or age-inappropriate social media use may affect a child's attention, sleep, and opportunities for meaningful learning. OrionKids encourages balanced screen habits, interactive learning, and activities that help children practise memory, reasoning, attention, and problem-solving.",
+  },
+  {
+    question: "Will OrionKids compare my child with other children?",
+    answer:
+      "OrionKids prioritizes understanding each child's individual learning profile and progress over time rather than defining them by rankings or labels. Any comparisons with age-based benchmarks should be used only where scientifically validated and appropriate.",
+  },
+  {
+    question:
+      "What makes OrionKids different from traditional academic assessments?",
+    answer:
+      "Traditional assessments often focus on academic knowledge and marks. OrionKids focuses on exploring cognitive skills and tracking progress over time, providing complementary insights into how children approach different learning activities.",
   },
   {
     question:
       "Will it help a child shine bright, build confidence, or showcase their talents to the world?",
     answer:
-      "The focus is each child's learning profile and progress over time—not a leaderboard, a ranking or a label. A child is never reduced to a score.",
+      "Yes, these activities can help children discover their unique talents, build self-confidence, express themselves, and shine bright by showcasing their abilities to the world.",
   },
   {
     question: "Will these activities help a child thrive in the world?",
     answer:
-      "A starting point for understanding and practical support. Read observations in context with parents and educators; OrionKids does not guarantee academic outcomes.",
-  },
-  {
-    question: "What should we expect from the insights?",
-    answer:
-      "A starting point for understanding and practical support. Read observations in context with parents and educators; OrionKids does not guarantee academic outcomes.",
-  },
-  {
-    question: "What should we expect from the insights?",
-    answer:
-      "A starting point for understanding and practical support. Read observations in context with parents and educators; OrionKids does not guarantee academic outcomes.",
+      "Yes, when designed thoughtfully, these activities can help children develop essential life skills, confidence, creativity, and emotional resilience, helping them thrive in an ever-changing world.",
   },
 ];
 
