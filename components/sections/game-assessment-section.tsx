@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const CHECKLIST_ITEMS = [
   "Simple, age-appropriate instructions",
@@ -93,14 +94,14 @@ export function GameAssessmentSection() {
                     Keep exploring. You&apos;re finding the pattern 🌟
                   </p>
 
-                  <button
-                    type="button"
+                  <Link
+                    href="/warm-up"
                     className="inline-flex items-center justify-center gap-1.5 px-6 h-[40px] bg-[#FFD243] hover:bg-[#FBC02D] text-[#0A1D3D] rounded-full hover:scale-105 active:scale-95 transition-all cursor-pointer font-extrabold text-[13px]"
                     style={{ fontFamily: JAKARTA }}
                   >
                     <span>Continue</span>
                     <span className="text-sm font-bold">→</span>
-                  </button>
+                  </Link>
                 </div>
               </div>
 

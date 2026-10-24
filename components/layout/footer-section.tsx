@@ -166,14 +166,16 @@ export function FooterSection() {
             </h2>
 
             {/* OrionKids Logo */}
-            <Image
-              src={LOGO_SRC}
-              alt="OrionKids — Where Every Kid Is a Star"
-              width={125}
-              height={60}
-              unoptimized
-              className="mt-3 sm:mt-4 w-[115px] sm:w-[125px] h-auto"
-            />
+            <Link href="/" className="inline-block cursor-pointer">
+              <Image
+                src={LOGO_SRC}
+                alt="OrionKids — Where Every Kid Is a Star"
+                width={125}
+                height={60}
+                unoptimized
+                className="mt-3 sm:mt-4 w-[115px] sm:w-[125px] h-auto"
+              />
+            </Link>
           </div>
 
           {/* Right: Clean 2-column links matching reference image */}
@@ -184,16 +186,16 @@ export function FooterSection() {
           >
             {/* Column 1: Main Pages (OUR APPROACH, FOR SCHOOL, FOR PARENTS, BLOGS) */}
             <div className="flex flex-col space-y-2 sm:space-y-2.5 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
-              <Link href="/#approach" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+              <Link href="/our-approach" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer">
                 OUR APPROACH
               </Link>
-              <Link href="/for-schools" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+              <Link href="/for-schools" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer">
                 FOR SCHOOL
               </Link>
-              <Link href="/for-parents" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+              <Link href="/for-parents" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer">
                 FOR PARENTS
               </Link>
-              <Link href="/blog" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase">
+              <Link href="/blog" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer">
                 BLOGS
               </Link>
             </div>

@@ -78,8 +78,8 @@ export function ClosingCtaSection() {
           {/* Actions */}
           <div className="flex flex-wrap items-center gap-4 lg:gap-6 shrink-0">
             <Link
-              href="/#approach"
-              className="inline-flex items-center justify-center h-[52px] px-6 rounded-xl bg-[#FFCA28] shadow-[0_0_0_1px_rgba(255,255,255,0.08)] transition-transform hover:-translate-y-0.5"
+              href="/our-approach"
+              className="inline-flex items-center justify-center h-[52px] px-6 rounded-xl bg-[#FFCA28] shadow-[0_0_0_1px_rgba(255,255,255,0.08)] transition-transform hover:-translate-y-0.5 cursor-pointer"
               style={{
                 fontFamily: JAKARTA,
                 fontWeight: 700,

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, ChevronDown, Clock, HeartHandshake, Loader2, ArrowRight, School, Smile, } from "lucide-react";
+import { Check, ChevronDown, Clock, HeartHandshake, Loader2, ArrowRight, School, Smile, Lock } from "lucide-react";
 
 const JAKARTA = "[font-family:var(--font-plus-jakarta),sans-serif]";
 
@@ -14,8 +14,8 @@ const FIELD =
 const CLASSES = [
   { label: "Classes 1", locked: false },
   { label: "Classes 2", locked: false },
-  { label: "Classes 3", locked: false },
-  { label: "Classes 4", locked: false },
+  { label: "Classes 3", locked: true },
+  { label: "Classes 4", locked: true },
 ];
 
 function SectionHead({
@@ -50,6 +50,7 @@ export default function ChildDetailsForm() {
   const [language, setLanguage] = useState("");
   const [school, setSchool] = useState("");
   const [selectedClass, setSelectedClass] = useState("Classes 1");
+  const [lockedNotice, setLockedNotice] = useState<string | null>(null);
   const [studentId, setStudentId] = useState("");
   const [parentEmail, setParentEmail] = useState("");
   const [parentMobile, setParentMobile] = useState("");
@@ -58,6 +59,11 @@ export default function ChildDetailsForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const chosen = CLASSES.find((c) => c.label === selectedClass);
+    if (chosen?.locked) {
+      setLockedNotice("Please select an available class to continue.");
+      return;
+    }
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -201,29 +207,73 @@ export default function ChildDetailsForm() {
                     type="button"
                     role="radio"
                     aria-checked={isSelected}
-                    disabled={c.locked}
-                    onClick={() => setSelectedClass(c.label)}
-                    className={`w-full h-[47px] px-[14px] rounded-[12px] flex items-center justify-between text-left text-[13px] text-[#0B2A5B] transition-colors disabled:cursor-not-allowed ${isSelected
-                        ? "bg-[#EDE4FF] font-semibold"
-                        : "font-medium hover:bg-[#F6F2FF]"
-                      } ${c.locked ? "hover:bg-transparent" : "cursor-pointer"}`}
+                    aria-disabled={c.locked}
+                    onClick={() => {
+                      if (c.locked) {
+                        setLockedNotice(
+                          `${c.label} is currently locked. Assessments for Classes 3 & 4 are coming soon!`
+                        );
+                        return;
+                      }
+                      setSelectedClass(c.label);
+                      setLockedNotice(null);
+                    }}
+                    className={`w-full h-[47px] px-[14px] rounded-[12px] flex items-center justify-between text-left text-[13px] transition-all ${
+                      c.locked
+                        ? "bg-[#F8FAFC] text-[#7B879B] border border-dashed border-[#E2E8F0] cursor-not-allowed select-none opacity-85 hover:bg-[#F1F5F9]"
+                        : isSelected
+                        ? "bg-[#EDE4FF] font-semibold text-[#0B2A5B] cursor-pointer"
+                        : "font-medium text-[#0B2A5B] hover:bg-[#F6F2FF] cursor-pointer"
+                    }`}
                   >
-                    <span>{c.label}</span>
+                    <span className={c.locked ? "text-[#7B879B]" : "text-[#0B2A5B]"}>
+                      {c.label}
+                    </span>
                     {c.locked && (
-                      <svg
-                        className="w-[19px] h-[19px] mr-0.5 text-[#22385E]"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        role="img"
-                        aria-label="Locked"
-                      >
-                        <path d="M7 10V8a5 5 0 0 1 10 0v2h1a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 18 21H6a1.5 1.5 0 0 1-1.5-1.5v-8A1.5 1.5 0 0 1 6 10h1zm2.2 0h5.6V8a2.8 2.8 0 0 0-5.6 0v2z" />
-                      </svg>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#E9EEF5] text-[#55657E] border border-[#D5DFEC]">
+                          Coming Soon
+                        </span>
+                        <svg
+                          className="w-[18px] h-[18px] text-[#55657E]"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          role="img"
+                          aria-label="Locked"
+                        >
+                          <path d="M7 10V8a5 5 0 0 1 10 0v2h1a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 18 21H6a1.5 1.5 0 0 1-1.5-1.5v-8A1.5 1.5 0 0 1 6 10h1zm2.2 0h5.6V8a2.8 2.8 0 0 0-5.6 0v2z" />
+                        </svg>
+                      </div>
                     )}
                   </button>
                 );
               })}
             </div>
+
+            {lockedNotice && (
+              <div
+                role="status"
+                className="mt-2.5 flex items-start justify-between gap-2.5 p-3 rounded-[12px] bg-[#FFFBEB] border border-[#FDE68A] text-[#92400E] text-[12px] leading-5 animate-in fade-in"
+              >
+                <div className="flex items-start gap-2.5">
+                  <Lock className="w-4 h-4 shrink-0 mt-0.5 text-[#D97706]" aria-hidden="true" />
+                  <div>
+                    <p className="font-semibold text-[#92400E]">{lockedNotice}</p>
+                    <p className="text-[11px] text-[#B45309] mt-0.5">
+                      Please select Class 1 or Class 2 to proceed with your child&apos;s journey.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setLockedNotice(null)}
+                  className="text-[#B45309] hover:text-[#78350F] p-0.5 text-base font-bold leading-none cursor-pointer"
+                  aria-label="Dismiss notice"
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="mt-[18px]">

@@ -81,8 +81,8 @@ export function AboutHeroSection() {
 
             {/* CTA */}
             <Link
-              href="#approach"
-              className="mt-8 sm:mt-10 inline-flex items-center justify-center gap-2 w-full sm:w-[261.8px] h-14 px-6 rounded-2xl border-2 border-[#1B204A] bg-[#FF6B4A] text-white shadow-[4px_4px_0_#1B204A] hover:shadow-[2px_2px_0_#1B204A] hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all select-none"
+              href="/our-approach"
+              className="mt-8 sm:mt-10 inline-flex items-center justify-center gap-2 w-full sm:w-[261.8px] h-14 px-6 rounded-2xl border-2 border-[#1B204A] bg-[#FF6B4A] text-white shadow-[4px_4px_0_#1B204A] hover:shadow-[2px_2px_0_#1B204A] hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all select-none cursor-pointer"
               style={{
                 fontFamily: JAKARTA,
                 fontWeight: 700,

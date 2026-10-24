@@ -22,8 +22,8 @@ interface Phase {
 const PHASES: Phase[] = [
   {
     no: "01",
-    title: "Observe",
-    sub: "Unforced joyful play",
+    title: "Play",
+    sub: "Unforced joyful games",
     emoji: "🎮",
     bg: "#E0F2FE",
     chipBg: "#38BDF8",
@@ -33,6 +33,17 @@ const PHASES: Phase[] = [
   },
   {
     no: "02",
+    title: "Discover",
+    sub: "Emerging cognitive styles",
+    emoji: "🔍",
+    bg: "#F3E8FF",
+    chipBg: "#C084FC",
+    chipColor: "#0F172A",
+    subColor: "#581C87",
+    shadowColor: "#9333EA",
+  },
+  {
+    no: "03",
     title: "Understand",
     sub: "Holistic cognitive map",
     emoji: "🧠",
@@ -43,10 +54,10 @@ const PHASES: Phase[] = [
     shadowColor: "#D97706",
   },
   {
-    no: "03",
-    title: "Personalize",
+    no: "04",
+    title: "Support",
     sub: "Home & school routines",
-    emoji: "🎨",
+    emoji: "🤝",
     bg: "#FFEDD5",
     chipBg: "#FF6B4A",
     chipColor: "#0F172A",
@@ -54,10 +65,10 @@ const PHASES: Phase[] = [
     shadowColor: "#EA580C",
   },
   {
-    no: "04",
-    title: "Track",
-    sub: "Longitudinal growth arc",
-    emoji: "📈",
+    no: "05",
+    title: "Growth",
+    sub: "Longitudinal milestone arc",
+    emoji: "🌱",
     bg: "#D9F6E9",
     chipBg: "#34D399",
     chipColor: "#0F172A",
@@ -134,21 +145,22 @@ export function ApproachHeroSection() {
 
             {/* Headline */}
             <h1
-              className="text-[36px] sm:text-[46px] lg:text-[44px] xl:text-[52px] leading-[1.05]"
+              className="text-[34px] sm:text-[44px] lg:text-[42px] xl:text-[48px] leading-[1.08]"
               style={{ fontFamily: JAKARTA, fontWeight: 800, letterSpacing: "-1.4px" }}
             >
               <span className="block">
-                <span className="text-[#0284C7]">Observe.</span>{" "}
+                <span className="text-[#0284C7]">Play.</span>{" "}
+                <span className="text-[#9333EA]">Discover.</span>{" "}
                 <span
-                  className="text-[#D97706] rounded-xl bg-[#FFD028]/30 px-2.5"
+                  className="text-[#D97706] rounded-xl bg-[#FFD028]/30 px-2"
                   style={{ boxDecorationBreak: "clone", WebkitBoxDecorationBreak: "clone" }}
                 >
                   Understand.
-                </span> 
+                </span>
               </span>
-              <span className="block">
-                <span className="text-[#FF6B4A]">Personalize.</span>{" "}
-                <span className="text-[#059669]">Track.</span>
+              <span className="block mt-1">
+                <span className="text-[#FF6B4A]">Support.</span>{" "}
+                <span className="text-[#059669]">Growth.</span>
               </span>
             </h1>
 
@@ -270,7 +282,7 @@ export function ApproachHeroSection() {
                       className="mt-0.5 max-w-[190px] text-[10px] leading-[14px] text-[#64748B]"
                       style={{ fontFamily: INTER }}
                     >
-                      Continuous 4-Phase Developmental Flow
+                      Continuous 5-Phase Developmental Flow
                     </p>
                   </div>
                 </div>
@@ -290,32 +302,12 @@ export function ApproachHeroSection() {
                 </span>
               </div>
 
-              {/* 2x2 grid */}
+              {/* 5-phase grid */}
               <div className="relative mt-5 grid grid-cols-2 gap-3.5">
-                {/* Center junction badge */}
-                <span
-                  className="absolute z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[44px] h-[44px] sm:w-[48px] sm:h-[48px] rounded-full bg-[#0F172A] flex items-center justify-center shadow-md select-none"
-                  aria-hidden="true"
-                >
-                  <svg
-                    width="22"
-                    height="7"
-                    viewBox="0 0 16 5"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="shrink-0"
-                  >
-                    <path
-                      d="M0 4.70312V0H15.5312V4.70312H0V4.70312M1.53125 1.25781H1.09375V3.44531H1.53125V1.97559L2.39941 3.44531H2.84375V1.25781H2.40625V2.73438L1.53125 1.25781V1.25781M5.03125 1.25781H3.28125V3.44531H5.03125V1.25781V1.25781M3.71875 3.00781V1.69531H4.59375V3.00781H3.71875V3.00781M7.65625 1.25781H5.90625V3.44531H7.65625V2.13281H6.78125V2.57031H7.21875V3.00781H6.34375V1.69531H7.65625V1.25781V1.25781M8.53125 1.25781H8.09375V3.44531H9.625V3.00781H8.53125V1.25781V1.25781M9.40625 1.25781H8.96875V2.57031H10.0625V3.44531H10.5V1.25781H10.0625V2.13281H9.40625V1.25781V1.25781M11.375 2.13281V1.69531H12.0312V2.13281H11.375V2.13281M12.4688 1.25781H10.9375V3.44531H11.375V2.57031H12.4688V1.25781V1.25781M13.3438 1.25781H12.9062V3.44531H13.3438V2.46094H14V3.44531H14.4375V1.25781H14V2.02344H13.3438V1.25781V1.25781"
-                      fill="#FFD028"
-                    />
-                  </svg>
-                </span>
-
                 {PHASES.map((p) => (
                   <div
                     key={p.no}
-                    className="rounded-[14px] border-2 p-3 sm:p-3.5 flex flex-col transition-transform hover:-translate-y-0.5"
+                    className="rounded-[14px] border-2 p-3 sm:p-3.5 flex flex-col transition-transform hover:-translate-y-0.5 last:col-span-2 sm:last:col-span-2"
                     style={{
                       backgroundColor: p.bg,
                       borderColor: INK,
