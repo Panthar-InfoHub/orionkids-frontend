@@ -261,14 +261,14 @@ export function ForSchoolsHeroSection() {
                 className="relative w-full overflow-hidden"
                 style={{
                   borderRadius: "20px",
-                  aspectRatio: "439 / 256",
+                  aspectRatio: "440 / 256",
                 }}
               >
                 <Image
-                  src="/images/teacher and students.jpg"
+                  src="/svg/school-hero.png"
                   alt="Classroom play session — children learning together"
                   fill
-                  className="object-cover"
+                  className="object-cover object-center"
                   sizes="(max-width: 1024px) 100vw, 440px"
                   priority
                 />

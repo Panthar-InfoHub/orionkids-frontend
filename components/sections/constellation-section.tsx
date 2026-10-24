@@ -167,7 +167,7 @@ export function ConstellationSection() {
 
             {/* Descriptive Paragraph */}
             <p
-              className="text-[14px] sm:text-[15px] font-[400] text-[#CBD5E1] leading-[1.6] max-w-[520px] mb-4 sm:mb-5"
+              className="text-[14px] sm:text-[15px] font-[600] text-[#CBD5E1] leading-[1.6] max-w-[520px] mb-4 sm:mb-5"
               style={{
                 fontFamily: "var(--font-inter), 'Inter', sans-serif",
               }}
