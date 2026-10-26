@@ -132,7 +132,7 @@ const MINI_GAMES = [
 /* ------------------------------------------------------------------ */
 export function ForParentsMiniGamesSection() {
   return (
-    <section className="relative w-full bg-white pt-2 pb-12 lg:pt-4 lg:pb-16 overflow-hidden">
+    <section id="how-it-works" className="relative w-full bg-white pt-2 pb-12 lg:pt-4 lg:pb-16 overflow-hidden scroll-mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         {/* ================= HEADER AREA (2 COLUMNS) ================= */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 lg:gap-12 mb-12">

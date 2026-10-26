@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 
 /* ------------------------------------------------------------------ */
 /*  Font family shortcuts                                               */
@@ -116,18 +115,6 @@ export function ForSchoolsStepsSection() {
           >
             Start with a school walkthrough. Plan a play session, review observations and choose a small teaching step that fits your classroom.
           </p>
-
-          {/* Animated Animals GIF (top-right of header area) */}
-          <div className="hidden lg:block absolute right-0 -top-4 w-[150px] h-[150px] pointer-events-none select-none">
-            <Image
-              src="/gif/animals.gif"
-              alt="Friendly playful animals illustration"
-              width={150}
-              height={150}
-              className="object-contain"
-              unoptimized
-            />
-          </div>
         </div>
 
         {/* ================= 4 CARDS GRID (1,024px max width) ================= */}

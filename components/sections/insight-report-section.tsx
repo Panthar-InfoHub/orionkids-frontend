@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { AnimatedDartTarget } from "./animated-dart-target";
 
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
@@ -277,28 +278,21 @@ export function InsightReportSection() {
 
               </div>
 
-              {/* Bullseye sticker on Photo 2's top-right corner with zoom in/zoom out animation */}
+              {/* Premium Animated Bullseye Dart sticker on Photo 2's top-right corner */}
               <div
-                className="pointer-events-none absolute z-30 select-none"
+                className="absolute z-30 select-none overflow-visible"
                 style={{
                   left: "91.4%",
                   top: "60.5%",
-                  width: "16.4%",
-                  aspectRatio: "100 / 112",
+                  width: "18%",
+                  aspectRatio: "1 / 1",
                   transform: "translate(-50%, -50%)",
                 }}
               >
-                {/* Automatic Zoom-In and Zoom-Out (3.0s active + 0.8s hold) */}
-                <div className="w-full h-full animate-target-zoom">
-                  <Image
-                    src={encodeURI("/icons/🎯.png")}
-                    alt="Bullseye Target"
-                    width={100}
-                    height={112}
-                    unoptimized
-                    className="h-full w-full object-contain"
-                  />
-                </div>
+                <AnimatedDartTarget
+                  className="w-full h-full"
+                  interactiveReplay={true}
+                />
               </div>
 
               {/* Caption: left-aligned with Photo 1's left edge */}

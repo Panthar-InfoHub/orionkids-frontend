@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const INTER = "var(--font-inter), 'Inter', sans-serif";
@@ -135,42 +136,30 @@ export function AboutHeroSection() {
             </div>
           </div>
 
-          {/* ================= RIGHT COLUMN – illustration card ================= */}
+          {/* ================= RIGHT COLUMN – hero photograph card ================= */}
           <div className="lg:col-span-5 w-full flex justify-center lg:justify-start lg:pl-3">
             <div
-              className="relative flex flex-col w-full max-w-[478.66px] min-h-[440px] lg:min-h-[451.5px] rounded-[24px] border-4 border-[#1B204A] bg-white p-4 pb-3.5 shadow-[6px_6px_0_#1B204A] rotate-[1deg]"
+              className="relative flex flex-col w-full max-w-[478.66px] rounded-[24px] border-4 border-[#1B204A] bg-white p-3.5 sm:p-4 shadow-[6px_6px_0_#1B204A] rotate-[1deg] transition-transform duration-300 hover:rotate-0"
               role="img"
-              aria-label="Illustration placeholder: Every Child's Unique Rhythm"
+              aria-label="Children learning and collaborating with tactile materials at OrionKids"
             >
-              {/* Dashed gradient panel */}
-              <div
-                className="relative flex-1 min-h-[360px] overflow-hidden rounded-2xl border-2 border-dashed border-[#1B204A]/30 flex items-center justify-center"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #EFF2FF 0%, #FFFBEB 50%, #E6F8F1 100%)",
-                }}
-              >
-                {/* Decorative shapes */}
-                <span
-                  aria-hidden="true"
-                  className="absolute -left-[18px] top-[55%] -translate-y-1/2 w-[50px] h-[50px] rounded-full border-2 border-[#1B204A]/15 pointer-events-none"
-                  style={{ backgroundColor: "#FDDC79" }}
+              {/* Photo Frame */}
+              <div className="relative w-full aspect-[4/3] sm:aspect-[478/360] overflow-hidden rounded-[18px] border-2 border-[#1B204A]/20 bg-[#F1F5F9] shadow-inner group">
+                <Image
+                  src="/images/child.jpeg"
+                  alt="Children learning together with tactile blocks at OrionKids"
+                  fill
+                  priority
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
+                  className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
                 />
-                <span
-                  aria-hidden="true"
-                  className="absolute right-[33px] bottom-11 w-14 h-14 rounded-[18px] border-[1.5px] border-[#1B204A]/30 rotate-[14deg] pointer-events-none"
-                  style={{ backgroundColor: "#F1DCCE" }}
-                />
-                <span
-                  aria-hidden="true"
-                  className="absolute left-3 bottom-7 text-[22px] leading-none select-none pointer-events-none"
-                >
-                  🌱
-                </span>
 
-                {/* Top-left ref pill */}
+                {/* Subtle soft gradient overlay at bottom for depth */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent pointer-events-none" />
+
+                {/* Top-left badge pill */}
                 <span
-                  className="absolute left-3.5 top-3.5 inline-flex items-center h-[22px] px-2.5 rounded-full border-[1px] border-[#1B204A] bg-white text-[#1B204A] select-none"
+                  className="absolute left-3.5 top-3.5 inline-flex items-center gap-1.5 h-[24px] px-2.5 rounded-full border border-[#1B204A] bg-white/95 text-[#1B204A] shadow-sm select-none backdrop-blur-sm"
                   style={{
                     fontFamily: MONO,
                     fontWeight: 700,
@@ -178,85 +167,20 @@ export function AboutHeroSection() {
                     lineHeight: "15px",
                   }}
                 >
-                  #ART-HERO-01
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+                  <span>#LEARNING-STUDIO</span>
                 </span>
 
-                {/* Top-right sparkle cluster */}
-                <svg
-                  aria-hidden="true"
-                  className="absolute right-4 top-7 pointer-events-none"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
-                  fill="none"
-                  stroke={NAVY}
-                  strokeWidth="1"
-                  strokeLinejoin="round"
-                >
-                  <g transform="translate(7 7) scale(5.6)">
-                    <polygon points={STAR} vectorEffect="non-scaling-stroke" />
-                  </g>
-                  <g transform="translate(16 8.5) scale(3)">
-                    <polygon points={STAR} vectorEffect="non-scaling-stroke" />
-                  </g>
-                  <g transform="translate(11.5 16) scale(2.8)">
-                    <polygon points={STAR} vectorEffect="non-scaling-stroke" />
-                  </g>
-                </svg>
-
-                {/* Centre content */}
-                <div className="relative z-10 flex flex-col items-center text-center px-4 py-10">
-                  <div className="w-16 h-16 rounded-[18px] border-[3px] border-[#1B204A] bg-[#FFCA28] shadow-[3px_3px_0_#1B204A] flex items-center justify-center">
-                    <svg
-                      width="28"
-                      height="28"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke={NAVY}
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <rect x="3" y="3" width="18" height="18" rx="2.5" />
-                      <circle cx="8.5" cy="8.5" r="1.5" />
-                      <path d="m21 15-5-5L5 21" />
-                    </svg>
-                  </div>
-
-                  <span
-                    className="mt-3.5 inline-flex items-center h-[26px] px-2.5 rounded-lg bg-[#1B204A] text-white uppercase select-none"
-                    style={{
-                      fontFamily: MONO,
-                      fontWeight: 700,
-                      fontSize: "11px",
-                      lineHeight: "16px",
-                      letterSpacing: "0.5px",
-                    }}
-                  >
-                    Asset Placeholder
-                  </span>
-
-                  <h3
-                    className="mt-[3px] text-[17px] sm:text-[18px] leading-tight text-[#1B204A]"
-                    style={{ fontFamily: JAKARTA, fontWeight: 700, letterSpacing: "-0.2px" }}
-                  >
-                    Every Child&apos;s Unique Rhythm
-                  </h3>
-
-                  <p
-                    className="mt-1 max-w-[320px] text-[11.5px] leading-[17px] text-[#475467]"
-                    style={{ fontFamily: INTER, fontWeight: 400 }}
-                  >
-                    Playful illustration block: Diverse children exploring tactile puzzle
-                    blocks while parents and educators observe with care.
-                  </p>
+                {/* Decorative sticker badge in bottom-right */}
+                <div className="absolute right-3.5 bottom-3.5 inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FFCA28] border-2 border-[#1B204A] shadow-[2px_2px_0_#1B204A] text-[#1B204A] text-[11px] font-black select-none pointer-events-none">
+                  <span>✨</span>
+                  <span style={{ fontFamily: JAKARTA }}>Active Discovery</span>
                 </div>
               </div>
 
               {/* Bottom bar */}
               <div
-                className="mt-2 flex items-center justify-between gap-3 pl-1 pr-3 min-h-6 text-[12px] leading-4"
+                className="mt-3 flex items-center justify-between gap-3 px-1 min-h-6 text-[12px] leading-4"
                 style={{ fontFamily: INTER, fontWeight: 600 }}
               >
                 <span className="flex items-center gap-1.5 text-[#1B204A]">

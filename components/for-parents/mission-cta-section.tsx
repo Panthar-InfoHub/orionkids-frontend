@@ -45,7 +45,8 @@ export function ForParentsMissionCtaSection() {
 
   return (
     <section
-      className="relative w-full overflow-hidden py-16 lg:py-[91px]"
+      id="parent-portal-mission"
+      className="relative w-full overflow-hidden py-16 lg:py-[91px] scroll-mt-12"
       style={{ backgroundColor: "#F7FBFF" }}
     >
       <div className="mx-auto w-full max-w-[896px] px-4 sm:px-6 lg:px-0">
@@ -83,7 +84,7 @@ export function ForParentsMissionCtaSection() {
             style={{ aspectRatio: "152 / 128" }}
           >
             <Image
-              src="/icons/%F0%9F%8E%AF.png"
+              src={encodeURI("/svg/dart_target.svg")}
               alt="Bullseye target dart"
               width={152}
               height={128}
