@@ -1,5 +1,5 @@
 import React from "react";
-import { Download } from "lucide-react";
+import { Download, Sparkles, BookOpen } from "lucide-react";
 import { PrintableItem } from "@/types/printables";
 
 const JAKARTA = "font-[family-name:var(--font-plus-jakarta),sans-serif]";
@@ -110,8 +110,8 @@ export function PrintableCardPreview({
   priority = false,
 }: PrintableCardPreviewProps) {
   return (
-    <div className="relative w-full aspect-[238/179] bg-[#F1F5F9] rounded-[18px] overflow-hidden border border-slate-100 flex items-center justify-center p-1 select-none">
-      {/* High-quality responsive SVG illustration */}
+    <div className="relative w-full aspect-[238/179] bg-[#F1F5F9] rounded-[18px] overflow-hidden border border-slate-100 flex items-center justify-center p-0 select-none">
+      {/* High-quality responsive illustration / blog photography */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={image}
@@ -120,7 +120,7 @@ export function PrintableCardPreview({
         height={179}
         loading={priority ? "eager" : "lazy"}
         decoding="async"
-        className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-[1.03] drop-shadow-2xs"
+        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
       />
 
       {/* Top-Left Target Age Badge */}
@@ -136,6 +136,14 @@ export function PrintableCardPreview({
           <PrintableCardCategoryBadge icon={badgeIcon} bgColor={badgeBg} />
         </div>
       )}
+
+      {/* Bottom Floating 2-Page Indicator Pill */}
+      <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#0A1D3D]/85 backdrop-blur-xs text-white text-[9px] font-bold tracking-tight shadow-xs">
+          <Sparkles className="w-2.5 h-2.5 text-[#FFC72C]" />
+          <span>2-Page Companion PDF</span>
+        </span>
+      </div>
     </div>
   );
 }
@@ -153,16 +161,16 @@ export function PrintableCardSubcategory({
   colorClass = "text-[#D97706]",
 }: PrintableCardSubcategoryProps) {
   return (
-    <div
-      className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider mb-1 mt-3 ${colorClass}`}
+    <span
+      className={`text-[9px] sm:text-[10px] font-black uppercase tracking-wider block mb-0.5 ${colorClass}`}
     >
       {children}
-    </div>
+    </span>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 6. PrintableCardTitle (Card Title Heading)                         */
+/* 6. PrintableCardTitle (Bold Headline matching design)              */
 /* ------------------------------------------------------------------ */
 export interface PrintableCardTitleProps {
   children: React.ReactNode;
@@ -175,7 +183,7 @@ export function PrintableCardTitle({
 }: PrintableCardTitleProps) {
   return (
     <h3
-      className={`text-sm sm:text-[15px] font-black text-[#0A1D3D] leading-snug tracking-tight mb-1.5 line-clamp-1 ${JAKARTA} ${className}`}
+      className={`text-sm sm:text-[15px] font-black text-[#0A1D3D] leading-snug line-clamp-1 group-hover:text-[#0D9488] transition-colors mb-1 ${JAKARTA} ${className}`}
     >
       {children}
     </h3>
@@ -183,7 +191,7 @@ export function PrintableCardTitle({
 }
 
 /* ------------------------------------------------------------------ */
-/* 7. PrintableCardDescription (Card Description Paragraph)           */
+/* 7. PrintableCardDescription (2-line clamped summary)                */
 /* ------------------------------------------------------------------ */
 export interface PrintableCardDescriptionProps {
   children: React.ReactNode;
@@ -196,7 +204,7 @@ export function PrintableCardDescription({
 }: PrintableCardDescriptionProps) {
   return (
     <p
-      className={`text-xs text-[#526176] leading-relaxed line-clamp-2 mb-3.5 font-normal ${className}`}
+      className={`text-[11px] sm:text-xs text-[#526176] line-clamp-2 leading-relaxed mb-3 ${className}`}
     >
       {children}
     </p>
@@ -204,7 +212,7 @@ export function PrintableCardDescription({
 }
 
 /* ------------------------------------------------------------------ */
-/* 8. PrintableCardBody (Modular Text Container)                      */
+/* 8. PrintableCardBody (Composite Content Container)                 */
 /* ------------------------------------------------------------------ */
 export interface PrintableCardBodyProps {
   subcategory?: string;
@@ -215,27 +223,25 @@ export interface PrintableCardBodyProps {
 
 export function PrintableCardBody({
   subcategory,
-  subcategoryColor = "text-[#D97706]",
+  subcategoryColor,
   title,
   description,
 }: PrintableCardBodyProps) {
   return (
-    <div className="flex-1 flex flex-col justify-between">
-      <div>
-        {subcategory && (
-          <PrintableCardSubcategory colorClass={subcategoryColor}>
-            {subcategory}
-          </PrintableCardSubcategory>
-        )}
-        <PrintableCardTitle>{title}</PrintableCardTitle>
-        <PrintableCardDescription>{description}</PrintableCardDescription>
-      </div>
+    <div className="flex flex-col mt-2.5 flex-1">
+      {subcategory && (
+        <PrintableCardSubcategory colorClass={subcategoryColor}>
+          {subcategory}
+        </PrintableCardSubcategory>
+      )}
+      <PrintableCardTitle>{title}</PrintableCardTitle>
+      <PrintableCardDescription>{description}</PrintableCardDescription>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 9. PrintableCardDownloadCount (Prints metric badge)                */
+/* 9. PrintableCardDownloadCount (Footer Metadata)                    */
 /* ------------------------------------------------------------------ */
 export interface PrintableCardDownloadCountProps {
   countText?: string;
@@ -245,49 +251,48 @@ export function PrintableCardDownloadCount({
   countText = "1.8k prints",
 }: PrintableCardDownloadCountProps) {
   return (
-    <div className="flex items-center gap-1 text-[11px] font-bold text-[#64748B]">
-      <Download className="w-3 h-3 stroke-[2.2] text-[#64748B]" />
-      <span>{countText}</span>
-    </div>
+    <span className="text-[10px] sm:text-[11px] font-bold text-slate-400">
+      {countText}
+    </span>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 10. PrintableCardAction (Get PDF Pill Action)                       */
+/* 10. PrintableCardAction (The Golden Yellow Download Button)         */
 /* ------------------------------------------------------------------ */
 export interface PrintableCardActionProps {
-  label?: string;
   href?: string;
+  downloadFilename?: string;
   onClick?: () => void;
+  className?: string;
 }
 
 export function PrintableCardAction({
-  label = "Get PDF",
   href,
+  downloadFilename,
   onClick,
+  className = "",
 }: PrintableCardActionProps) {
   const content = (
-    <>
-      <span>{label}</span>
-      <span className="text-xs font-bold leading-none">↓</span>
-    </>
+    <div
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFC72C] hover:bg-[#FFD233] border border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none text-[11px] font-black text-[#0A1D3D] transition-all"
+    >
+      <Download className="w-3.5 h-3.5 stroke-[2.4]" />
+      <span>Get PDF</span>
+    </div>
   );
-
-  const className =
-    "inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#FFF4D6] hover:bg-[#FFE9A6] active:scale-95 text-[#D97706] text-xs font-black transition-all shadow-2xs select-none";
 
   if (href) {
     return (
       <a
         href={href}
+        download={downloadFilename}
         onClick={(e) => {
-          if (onClick) {
-            e.preventDefault();
-            e.stopPropagation();
-            onClick();
-          }
+          e.stopPropagation();
+          onClick?.();
         }}
-        className={className}
+        title="Download combined 2-page PDF"
+        className={`${className} cursor-pointer`}
       >
         {content}
       </a>
@@ -314,19 +319,25 @@ export function PrintableCardAction({
 export interface PrintableCardFooterProps {
   printCountText?: string;
   downloadUrl?: string;
+  slug?: string;
   onDownload?: () => void;
 }
 
 export function PrintableCardFooter({
   printCountText = "1.8k prints",
   downloadUrl,
+  slug,
   onDownload,
 }: PrintableCardFooterProps) {
+  const resolvedUrl = downloadUrl || (slug ? `/api/printables/${slug}/pdf` : undefined);
+  const filename = slug ? `OrionKids-${slug}-Worksheet.pdf` : "OrionKids-Worksheet.pdf";
+
   return (
     <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between mt-auto">
       <PrintableCardDownloadCount countText={printCountText} />
       <PrintableCardAction
-        href={downloadUrl}
+        href={resolvedUrl}
+        downloadFilename={filename}
         onClick={onDownload}
       />
     </div>
@@ -349,7 +360,7 @@ export function PrintableCard({
   priority = false,
   className = "",
 }: PrintableCardProps) {
-  const imageUrl = item.image || item.cardImage || "/svg/201.svg";
+  const imageUrl = item.coverImage || item.image || item.cardImage || "/images/blog/blog 1.jpeg";
 
   return (
     <PrintableCardRoot
@@ -379,6 +390,7 @@ export function PrintableCard({
       <PrintableCardFooter
         printCountText={item.printCountText}
         downloadUrl={item.downloadUrl}
+        slug={item.slug}
         onDownload={onDownload ? () => onDownload(item) : undefined}
       />
     </PrintableCardRoot>

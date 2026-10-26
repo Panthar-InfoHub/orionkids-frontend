@@ -1,5 +1,5 @@
 import React from "react";
-import { Printer } from "lucide-react";
+import { Printer, Download, Sparkles } from "lucide-react";
 import { PrintableItem } from "@/types/printables";
 
 const JAKARTA = "font-[family-name:var(--font-plus-jakarta),sans-serif]";
@@ -182,14 +182,28 @@ export function FeaturedPrintables({
                   {item.title}
                 </h3>
                 <div className="flex items-center justify-between mt-1.5">
-                  <span className="text-[9px] font-bold text-slate-300">
-                    {item.ageRange}
-                  </span>
-                  
-                  {/* Circular White Print Action Button */}
-                  <div className="w-5 h-5 rounded-full bg-white text-[#0A1D3D] group-hover:bg-[#FFC72C] flex items-center justify-center transition-colors shadow-2xs">
-                    <Printer className="w-3 h-3 stroke-[2.2]" />
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] font-bold text-slate-300">
+                      {item.ageRange}
+                    </span>
+                    <span className="text-[8px] font-semibold text-emerald-300 bg-emerald-950/60 px-1.5 py-0.2 rounded">
+                      2-Page PDF
+                    </span>
                   </div>
+                  
+                  {/* Circular Download Action Button with instant PDF download */}
+                  <a
+                    href={item.downloadUrl || `/api/printables/${item.slug}/pdf`}
+                    download={`OrionKids-${item.slug}-Worksheet.pdf`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                    title="Instant Download: Blog Companion + Activity Worksheet"
+                    className="w-6 h-6 rounded-full bg-white text-[#0A1D3D] hover:bg-[#FFC72C] active:scale-90 flex items-center justify-center transition-all shadow-xs cursor-pointer z-10"
+                    aria-label={`Download ${item.title} 2-Page PDF`}
+                  >
+                    <Download className="w-3.5 h-3.5 stroke-[2.2]" />
+                  </a>
                 </div>
               </div>
 
