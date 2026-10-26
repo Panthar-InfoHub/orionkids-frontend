@@ -27,7 +27,7 @@ export function BlogFeaturedQuest({ post }: BlogFeaturedQuestProps) {
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] bg-slate-100 border border-[#E4E9F2]">
                 {/* Direct img tag to bypass Next.js image proxy attachment headers */}
                 <img
-                  src={post.imageUrl}
+                  src={encodeURI(post.imageUrl)}
                   alt={post.title}
                   className="w-full h-full object-cover"
                   loading="lazy"
@@ -81,11 +81,9 @@ export function BlogFeaturedQuest({ post }: BlogFeaturedQuestProps) {
 
               {/* Title */}
               <h2 className="text-xl sm:text-2xl lg:text-[25px] font-bold text-[#0D1829] tracking-tight leading-snug mb-2">
-                Why{" "}
-                <span className="text-[#FFB800] relative">
-                  &quot;Simon Says&quot;
-                </span>{" "}
-                is Actually an Executive Function Superhero
+                <Link href={`/blog/${post.slug}`} className="hover:text-[#4F46E5] transition-colors">
+                  {post.title}
+                </Link>
               </h2>
 
               {/* Excerpt */}
@@ -114,10 +112,10 @@ export function BlogFeaturedQuest({ post }: BlogFeaturedQuestProps) {
               {/* Action and Metrics */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#F0F4FA]">
                 <Link
-                  href={`#read-${post.slug}`}
+                  href={`/blog/${post.slug}`}
                   className="inline-flex items-center gap-1.5 bg-[#FFCF25] hover:bg-[#FFC400] active:scale-95 text-[#0A1D3D] text-xs font-bold px-4 sm:px-5 py-2.5 rounded-full transition-all cursor-pointer shadow-xs hover:shadow-sm"
                 >
-                  <span>Read Story &amp; Grab Activity Sheet</span>
+                  <span>Read Full Article &amp; Insights</span>
                   <span>→</span>
                 </Link>
 

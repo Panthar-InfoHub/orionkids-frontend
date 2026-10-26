@@ -17,6 +17,10 @@ export interface PrintableItem {
   previewType?: "maze" | "crossword" | "grid" | "scramble" | "doodle" | "tracker" | "math" | "bats" | "candy";
   cardImage?: string;
   image?: string;
+  coverImage?: string;
+  worksheetFile?: string;
+  blogSlug?: string;
+  discussionGuide?: string[];
   printCountText?: string;
   subcategory?: string;
   subcategoryColor?: string;
