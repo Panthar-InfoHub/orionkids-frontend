@@ -174,6 +174,7 @@ export function FooterSection() {
                 height={60}
                 unoptimized
                 className="mt-3 sm:mt-4 w-[115px] sm:w-[125px] h-auto"
+                style={{ width: "auto", height: "auto" }}
               />
             </Link>
           </div>
@@ -194,6 +195,9 @@ export function FooterSection() {
               </Link>
               <Link href="/for-parents" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer">
                 FOR PARENTS
+              </Link>
+              <Link href="/about-us" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer">
+                ABOUT US
               </Link>
               <Link href="/blog" className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer">
                 BLOGS

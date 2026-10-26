@@ -34,6 +34,9 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://orionkids.in"
+  ),
   title: "OrionKids | Stronger Thinking. Brighter Tomorrows.",
   description:
     "Playful cognitive assessment, thoughtful insights and practical next steps for kids in Classes 1–4. Where every kid is a star.",

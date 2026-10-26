@@ -5,11 +5,18 @@
 
 export type BlogCategoryType =
   | "All Stories"
+  | "Education System"
+  | "Teachers & Schools"
+  | "For Parents"
+  | "Child Development"
+  | "Parenting Tips"
+  | "Future Skills"
   | "Cognitive Play"
   | "Parent Tips"
   | "In the Classroom"
   | "Screen-Time Balance"
-  | "Printables & Crafts";
+  | "Printables & Crafts"
+  | string;
 
 export interface BlogAuthor {
   name: string;
@@ -28,17 +35,23 @@ export interface BlogPost {
   excerpt: string;
   category: BlogCategoryType;
   categoryBadge: string;
-  categoryBadgeColor: string; // e.g. blue, green, purple, amber, red
-  topicTag: string; // e.g. "NEUROSCIENCE OF PLAY", "EARLY MATH HACK", "DIAGNOSTIC BREAKDOWN"
+  categoryBadgeColor: string; // e.g. blue, green, purple, amber, red, teal, indigo, cyan
+  topicTag: string; // e.g. "BEYOND ACADEMIC MARKS", "NEUROSCIENCE OF PLAY"
   readTime: string; // e.g. "5 Min Read"
   imageUrl: string;
   author: BlogAuthor;
   isFeatured?: boolean;
-  featuredBadge?: string;
+  featuredBadge?: string | null;
   keyDiscoveries?: string[];
   likesCount?: string;
   downloadsCount?: string;
   publishedAt: string;
+  date?: string;
+  pillBg?: string;
+  pillText?: string;
+  seoTitle?: string;
+  metaDescription?: string;
+  content?: string[];
 }
 
 export interface BlogCategoryMeta {

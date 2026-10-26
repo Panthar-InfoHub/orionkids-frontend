@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Sparkles, Calendar, Clock, ArrowRight } from "lucide-react";
 import { BlogPost } from "@/types/blog";
 
 interface BlogArticlesGridProps {
@@ -8,153 +8,118 @@ interface BlogArticlesGridProps {
   totalCount?: number;
 }
 
-const BADGE_COLORS: Record<string, string> = {
-  teal: "bg-[#0D9488] text-white",
-  cyan: "bg-[#0284C7] text-white",
-  purple: "bg-[#7C3AED] text-white",
-  red: "bg-[#DC2626] text-white",
-  indigo: "bg-[#4F46E5] text-white",
-  mint: "bg-[#059669] text-white",
-  blue: "bg-[#2563EB] text-white",
+const CATEGORY_STYLES: Record<string, { bg: string; text: string }> = {
+  "Education System": { bg: "bg-[#E0F2FE]", text: "text-[#0284C7]" },
+  "Teachers & Schools": { bg: "bg-[#FFE4E6]", text: "text-[#E11D48]" },
+  "For Parents": { bg: "bg-[#DCFCE7]", text: "text-[#16A34A]" },
+  "Child Development": { bg: "bg-[#F3E8FF]", text: "text-[#9333EA]" },
+  "Parenting Tips": { bg: "bg-[#FEF3C7]", text: "text-[#D97706]" },
+  "Future Skills": { bg: "bg-[#E0F2FE]", text: "text-[#0284C7]" },
 };
 
-const TOPIC_COLORS: Record<string, string> = {
-  "EARLY MATH HACK": "text-[#0D9488]",
-  "DIAGNOSTIC BREAKDOWN": "text-[#D97706]",
-  "NO FLASHCARDS NEEDED": "text-[#4F46E5]",
-  "RESILIENCE TRAINING": "text-[#E11D48]",
-  "FROM THE FIELD": "text-[#6366F1]",
-  "WEEKEND EXPEDITION": "text-[#059669]",
-};
-
-const AVATAR_BG: Record<string, string> = {
-  EK: "bg-teal-100 text-teal-800",
-  JM: "bg-sky-100 text-sky-800",
-  SL: "bg-purple-100 text-purple-800",
-  TA: "bg-rose-100 text-rose-800",
-  MB: "bg-indigo-100 text-indigo-800",
-  CN: "bg-emerald-100 text-emerald-800",
-};
-
-export function BlogArticlesGrid({ posts, totalCount = 48 }: BlogArticlesGridProps) {
+export function BlogArticlesGrid({ posts, totalCount = 6 }: BlogArticlesGridProps) {
   return (
-    <section className="max-w-5xl mx-auto px-4 sm:px-6 mb-10 sm:mb-12">
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-4 sm:mb-5">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 sm:mb-8">
         <div>
-          <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#FF8A00] uppercase tracking-wider mb-1">
-            <Sparkles className="w-3 h-3 text-[#FF8A00]" />
-            <span>FRESH THINKING FIELD NOTES</span>
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#FF8A00] uppercase tracking-wider mb-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-[#FF8A00]" />
+            <span>FRESH THINKING &amp; FIELD NOTES</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#0D1829] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D1829] tracking-tight">
             Trending Quests &amp; Articles
           </h2>
         </div>
 
-        <div className="text-xs font-medium text-[#64748B]">
-          Showing {posts.length} of {totalCount} Research Sparks
+        <div className="text-xs font-semibold text-[#64748B] bg-slate-100 px-3 py-1 rounded-full self-start sm:self-auto">
+          Showing {posts.length} of {totalCount} Articles
         </div>
       </div>
 
       {/* Grid of Articles */}
       {posts.length === 0 ? (
-        <div className="text-center py-12 bg-[#F8FAFC] rounded-2xl border border-dashed border-gray-300">
-          <p className="text-sm font-semibold text-gray-600 mb-1">
+        <div className="text-center py-16 bg-[#F8FAFC] rounded-2xl border border-dashed border-gray-300">
+          <p className="text-base font-semibold text-gray-700 mb-1">
             No articles match your current filter.
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-500">
             Try choosing another category or clearing your search term.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
           {posts.map((post) => {
-            const badgeClass =
-              BADGE_COLORS[post.categoryBadgeColor] || "bg-[#0D9488] text-white";
-            const topicClass =
-              TOPIC_COLORS[post.topicTag] || "text-[#0D9488]";
-            const avatarBgClass =
-              (post.author.initials && AVATAR_BG[post.author.initials]) ||
-              "bg-gray-100 text-gray-800";
+            const catStyle =
+              CATEGORY_STYLES[post.category] || {
+                bg: post.pillBg || "bg-indigo-50",
+                text: post.pillText || "text-indigo-600",
+              };
+
+            const postDate = post.date || post.publishedAt || "Oct 2026";
+            const encodedImageUrl = encodeURI(post.imageUrl);
 
             return (
               <article
                 key={post.id}
-                className="group flex flex-col bg-white rounded-2xl border border-[#E4E9F2] overflow-hidden shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                className="group flex flex-col bg-white rounded-2xl sm:rounded-[22px] border border-slate-200/90 overflow-hidden shadow-[0_2px_10px_rgba(15,23,42,0.04)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.09)] hover:-translate-y-1 transition-all duration-300"
               >
-                {/* Image Wrap */}
-                <div className="p-2.5 pb-0">
-                  <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100">
-                    <img
-                      src={post.imageUrl}
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
-
-                    {/* Top-left category tag inside image */}
-                    <div className="absolute top-2 left-2">
-                      <span
-                        className={`text-[9px] font-extrabold tracking-wider px-2 py-0.5 rounded-full uppercase shadow-xs ${badgeClass}`}
-                      >
-                        {post.categoryBadge}
-                      </span>
-                    </div>
-
-                    {/* Bottom-right read time */}
-                    <div className="absolute bottom-2 right-2">
-                      <span className="bg-white/95 backdrop-blur-xs text-[#0D1829] text-[9px] font-semibold px-1.5 py-0.5 rounded-full shadow-xs">
-                        {post.readTime}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                {/* Image Cover */}
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 block"
+                >
+                  <img
+                    src={encodedImageUrl}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </Link>
 
                 {/* Card Content */}
-                <div className="p-4 flex-1 flex flex-col justify-between">
-                  <div>
-                    {/* Topic Tag */}
-                    <div
-                      className={`text-[10px] font-bold tracking-wider uppercase mb-1 flex items-center gap-1 ${topicClass}`}
-                    >
-                      <span className="text-[10px]">✦</span>
-                      <span>{post.topicTag}</span>
+                <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
+                  <div className="flex-1 flex flex-col">
+                    {/* Category Pill */}
+                    <div className="mb-3">
+                      <span
+                        className={`inline-block text-xs font-bold px-3 py-1 rounded-full ${catStyle.bg} ${catStyle.text}`}
+                      >
+                        {post.category}
+                      </span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-sm sm:text-[15px] font-bold text-[#0D1829] leading-snug tracking-tight mb-1.5 group-hover:text-[#0A7B6E] transition-colors line-clamp-2">
-                      <Link href={`#read-${post.slug}`}>{post.title}</Link>
+                    <h3 className="text-lg sm:text-[19px] font-bold text-[#0F172A] leading-snug tracking-tight mb-2.5 group-hover:text-[#4F46E5] transition-colors line-clamp-2">
+                      <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                     </h3>
 
                     {/* Excerpt */}
-                    <p className="text-xs text-[#4B587C] leading-relaxed line-clamp-2 mb-3">
+                    <p className="text-[13.5px] text-[#64748B] leading-relaxed line-clamp-3 mb-5">
                       {post.excerpt}
                     </p>
                   </div>
 
-                  {/* Card Footer */}
-                  <div className="pt-2.5 border-t border-[#F0F4FA] flex items-center justify-between mt-auto">
-                    {/* Author Pill */}
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      {post.author.initials && (
-                        <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[9px] shrink-0 ${avatarBgClass}`}
-                        >
-                          {post.author.initials}
-                        </div>
-                      )}
-                      <span className="text-[11px] font-semibold text-[#0D1829] truncate">
-                        {post.author.name}
-                      </span>
+                  {/* Card Footer: Date, Read Time, and Read More link */}
+                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto text-xs text-[#64748B]">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1 font-medium">
+                        <Calendar className="w-3.5 h-3.5 text-[#94A3B8]" />
+                        <span>{postDate}</span>
+                      </div>
+                      <div className="flex items-center gap-1 font-medium">
+                        <Clock className="w-3.5 h-3.5 text-[#94A3B8]" />
+                        <span>{post.readTime}</span>
+                      </div>
                     </div>
 
-                    {/* Read > link */}
                     <Link
-                      href={`#read-${post.slug}`}
-                      className="inline-flex items-center gap-0.5 text-xs font-bold text-[#FF8A00] hover:text-[#EA580C] hover:underline shrink-0"
+                      href={`/blog/${post.slug}`}
+                      className="inline-flex items-center gap-1 text-xs font-bold text-[#4F46E5] group-hover:text-[#4338CA] hover:underline shrink-0"
                     >
-                      <span>Read</span>
-                      <ArrowRight className="w-3 h-3" />
+                      <span>Read More</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                     </Link>
                   </div>
                 </div>

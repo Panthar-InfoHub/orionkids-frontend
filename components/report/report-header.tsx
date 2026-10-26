@@ -36,6 +36,7 @@ export function ReportHeader() {
               height={65}
               priority
               className="w-[96px] xs:w-[110px] sm:w-[130px] h-auto object-contain"
+              style={{ height: "auto" }}
             />
           </Link>
 
