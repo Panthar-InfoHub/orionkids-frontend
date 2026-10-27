@@ -79,15 +79,15 @@ export function WarmUpHeader({ currentStep, totalSteps, isLastStep, isCompleted 
 
               <span className="text-[#526176] text-[12px] select-none">›</span>
 
-              {/* Your warm-up: 800 ExtraBold, 12px, #0A1D3D */}
+              {/* Your warm-up: 800 ExtraBold during warm-up, 400 Regular when completed */}
               <span
                 style={{
                   fontFamily: JAKARTA,
-                  fontWeight: 800,
+                  fontWeight: isCompleted ? 400 : 800,
                   fontSize: "12px",
                   lineHeight: "100%",
                   letterSpacing: "0%",
-                  color: "#0A1D3D",
+                  color: isCompleted ? "#526176" : "#0A1D3D",
                 }}
               >
                 Your warm-up
@@ -95,15 +95,15 @@ export function WarmUpHeader({ currentStep, totalSteps, isLastStep, isCompleted 
 
               <span className="text-[#526176] text-[12px] select-none">›</span>
 
-              {/* Stroop colour-word: 400 Regular, 12px, #526176 */}
+              {/* Stroop colour-word: 800 ExtraBold when warm-up completed, 400 Regular during warm-up */}
               <span
                 style={{
                   fontFamily: JAKARTA,
-                  fontWeight: 400,
+                  fontWeight: isCompleted ? 800 : 400,
                   fontSize: "12px",
                   lineHeight: "100%",
                   letterSpacing: "0%",
-                  color: "#526176",
+                  color: isCompleted ? "#0A1D3D" : "#526176",
                 }}
               >
                 Stroop colour-word
