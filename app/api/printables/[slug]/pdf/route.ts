@@ -41,13 +41,19 @@ export async function GET(
       request.nextUrl.searchParams.get("inline") === "true";
 
     const dispositionType = isPreview ? "inline" : "attachment";
+    const isDev = process.env.NODE_ENV === "development";
+    const cacheHeader = isPreview || isDev
+      ? "no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0"
+      : "public, max-age=3600, stale-while-revalidate=1800";
 
     return new NextResponse(Buffer.from(pdfBuffer), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `${dispositionType}; filename="${safeFilename}"`,
-        "Cache-Control": "public, max-age=86400, stale-while-revalidate=43200",
+        "Cache-Control": cacheHeader,
+        "Pragma": "no-cache",
+        "Expires": "0",
       },
     });
   } catch (error) {
