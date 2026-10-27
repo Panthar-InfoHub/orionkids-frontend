@@ -3,19 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { SITE_CONFIG } from "@/lib/constants";
-import { Menu, X, LogIn, LogOut, User } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
-import { performSignOut } from "@/lib/api/auth";
 
 export function Navbar() {
   const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { data: session } = useSession();
-  const [avatarErrorSrc, setAvatarErrorSrc] = useState<string | null>(null);
-  const isAvatarBroken = Boolean(session?.user?.image && avatarErrorSrc === session.user.image);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -133,44 +128,13 @@ export function Navbar() {
 
           {/* Action CTAs */}
           <div className="hidden lg:flex items-center gap-3 shrink-0">
-            {session?.user ? (
-              <div className="flex items-center gap-2.5">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
-                  {session.user.image && !isAvatarBroken ? (
-                    <Image
-                      src={session.user.image}
-                      alt={session.user.name || "User"}
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 rounded-full object-cover"
-                      onError={() => setAvatarErrorSrc(session.user.image || null)}
-                    />
-                  ) : (
-                    <User className="w-4 h-4 text-slate-600" />
-                  )}
-                  <span className="text-xs font-bold text-[#0A1D3D] max-w-[120px] truncate">
-                    {session.user.name || session.user.email}
-                  </span>
-                </div>
-                <button
-                  onClick={performSignOut}
-                  title="Sign Out"
-                  className="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
-                  aria-label="Sign Out"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="px-4 xl:px-5 h-[42px] rounded-[14px] bg-[#00BCD4] hover:bg-[#00acc1] text-white font-[800] text-[13px] xl:text-[14px] shadow-sm hover:shadow transition-all flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer"
-                style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
-              >
-                <LogIn className="w-4 h-4" />
-                <span>Sign In</span>
-              </Link>
-            )}
+            <button
+              type="button"
+              className="px-5 xl:px-6 h-[42px] rounded-[14px] bg-[#FFD028] hover:bg-[#FFC524] text-[#0A1D3D] font-[800] text-[13px] xl:text-[14px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center whitespace-nowrap cursor-pointer select-none"
+              style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+            >
+              <span>Contact Us</span>
+            </button>
           </div>
 
           {/* Mobile menu trigger */}
@@ -206,27 +170,13 @@ export function Navbar() {
             })}
 
             <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
-              {session?.user ? (
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    performSignOut();
-                  }}
-                  className="w-full h-[46px] rounded-[14px] bg-rose-50 text-rose-700 font-[800] text-sm border border-rose-200 flex items-center justify-center gap-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Sign Out ({session.user.name || session.user.email})</span>
-                </button>
-              ) : (
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full h-[46px] rounded-[14px] bg-[#00BCD4] text-white font-[800] text-sm flex items-center justify-center gap-2"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>Sign In with Google</span>
-                </Link>
-              )}
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full h-[46px] rounded-[14px] bg-[#FFD028] hover:bg-[#FFC524] text-[#0A1D3D] font-[800] text-sm border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center cursor-pointer select-none"
+              >
+                <span>Contact Us</span>
+              </button>
             </div>
           </div>
         )}
