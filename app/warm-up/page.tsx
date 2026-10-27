@@ -75,7 +75,7 @@ export default function WarmUpPage() {
       />
 
       {/* 2. Main Content Area: Standard 2-column layout matching other pages */}
-      <main className="max-w-[1440px] w-full mx-auto px-4 sm:px-8 lg:px-[88px] py-8 sm:py-10 flex-1 flex flex-col md:flex-row items-start justify-between gap-8 lg:gap-[32px]">
+      <main className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-[88px] py-3 sm:py-4 lg:py-4 flex-1 flex flex-col md:flex-row items-start justify-between gap-6 lg:gap-[28px]">
         {/* Left Column: Sidebar with Mascot */}
         <WarmUpSidebar
           tag={
@@ -144,16 +144,16 @@ export default function WarmUpPage() {
             isLoading={isSubmitting}
           />
         ) : (
-          <div className="w-full md:max-w-[916px] flex-1 bg-white rounded-[20px] sm:rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_30px_rgba(10,29,61,0.03)] p-4 sm:p-6 md:p-[32px] flex flex-col justify-between min-h-0 sm:min-h-[660px] gap-4 sm:gap-[24px]">
-            <div className="flex flex-col h-full justify-between gap-4 sm:gap-[24px]">
+          <div className="w-full md:max-w-[916px] flex-1 bg-white rounded-[20px] sm:rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_30px_rgba(10,29,61,0.03)] p-4 sm:p-5 lg:p-6 flex flex-col justify-between min-h-[440px] lg:min-h-[480px] gap-3 sm:gap-4">
+            <div className="flex flex-col flex-1 h-full justify-between gap-3 sm:gap-4">
               {/* Question Header */}
-              <div className="flex flex-col gap-[6px] sm:gap-[8px]">
+              <div className="flex flex-col gap-[4px] sm:gap-[6px]">
                 {/* Content: A LITTLE ABOUT YOU, Plus Jakarta Sans, 800 ExtraBold, 11px, 100% line height, 100% letter spacing, #526176 */}
                 <span
                   style={{
                     fontFamily: JAKARTA,
                     fontWeight: 800,
-                    fontSize: "11px",
+                    fontSize: "10.5px",
                     lineHeight: "100%",
                     letterSpacing: "1px",
                     color: "#526176",
@@ -163,23 +163,23 @@ export default function WarmUpPage() {
                   A LITTLE ABOUT YOU
                 </span>
 
-                {/* Question: Lora, 700 Bold, 34px, 125% line height, -60% letter spacing (-0.6px), #0A1D3D */}
+                {/* Question: Lora, 700 Bold, 26px, 125% line height, -0.6px letter spacing */}
                 <h2
-                  className="text-[22px] sm:text-[34px]"
+                  className="text-[20px] sm:text-[24px] lg:text-[26px]"
                   style={{
                     fontFamily: LORA,
                     fontWeight: 700,
-                    lineHeight: "125%",
-                    letterSpacing: "-0.6px",
+                    lineHeight: "120%",
+                    letterSpacing: "-0.5px",
                     color: "#0A1D3D",
                   }}
                 >
                   {currentQuestion.question}
                 </h2>
 
-                {/* Subtitle: Plus Jakarta Sans, 400 Regular, 16px, 100% line height, 0% letter spacing, #526176 */}
+                {/* Subtitle: Plus Jakarta Sans, 400 Regular, 13.5px */}
                 <p
-                  className="text-[14px] sm:text-[16px]"
+                  className="text-[13px] sm:text-[13.5px]"
                   style={{
                     fontFamily: JAKARTA,
                     fontWeight: 400,
@@ -192,12 +192,14 @@ export default function WarmUpPage() {
                 </p>
               </div>
 
-              {/* Options Container: Styled consistently as clean rows like phone view */}
+              {/* Options Container: 2-column grid on desktop (lg:) matching Figma, 1-column on mobile & tablet */}
               <div
-                className={`w-full max-w-[852px] ${
+                className={`w-full max-w-[852px] my-auto ${
                   currentQuestion.layout === "grid-4"
-                    ? "grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-[16px] my-auto"
-                    : "grid grid-cols-1 gap-2.5 sm:gap-3"
+                    ? "grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5"
+                    : currentQuestion.layout === "grid-3"
+                    ? "grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-2.5"
+                    : "grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-2.5"
                 }`}
               >
                 {currentQuestion.options.map((option) => (
@@ -211,15 +213,15 @@ export default function WarmUpPage() {
                 ))}
               </div>
 
-              {/* Bottom Area */}
-              <div className="flex flex-col gap-4">
+              {/* Bottom Area: Pinned to bottom so buttons never shift position between steps */}
+              <div className="flex flex-col gap-2 sm:gap-2.5 mt-auto pt-1">
                 {/* Helper Micro-text */}
                 <p
                   style={{
                     fontFamily: JAKARTA,
                     fontWeight: 400,
-                    fontSize: "13px",
-                    lineHeight: "160%",
+                    fontSize: "12px",
+                    lineHeight: "140%",
                     color: "#526176",
                   }}
                 >
@@ -227,23 +229,23 @@ export default function WarmUpPage() {
                 </p>
 
                 {/* Navigation Controls: Back Button & Next / Finish Actions */}
-                <div className="pt-2 flex items-center justify-between gap-3">
+                <div className="pt-1 flex items-center justify-between gap-3">
                   {/* Back Button */}
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="inline-flex items-center justify-center gap-2 sm:gap-[12px] h-[46px] sm:h-[54px] px-4 sm:px-[24px] rounded-[12px] border border-[#0A1D3D] text-[#0A1D3D] bg-white hover:bg-slate-50 active:scale-[0.98] transition-all cursor-pointer select-none"
+                    className="inline-flex items-center justify-center gap-2 sm:gap-[10px] h-[40px] sm:h-[46px] px-4 sm:px-[20px] rounded-[12px] border border-[#0A1D3D] text-[#0A1D3D] bg-white hover:bg-slate-50 active:scale-[0.98] transition-all cursor-pointer select-none"
                     style={{
                       fontFamily: JAKARTA,
                       fontWeight: 800,
-                      fontSize: "14px",
+                      fontSize: "13.5px",
                       lineHeight: "100%",
                       letterSpacing: "0%",
                     }}
                   >
                     <svg
-                      width="16"
-                      height="16"
+                      width="15"
+                      height="15"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#0A1D3D"
@@ -263,7 +265,7 @@ export default function WarmUpPage() {
                       <button
                         type="button"
                         onClick={() => setIsPauseModalOpen(true)}
-                        className="inline-flex items-center justify-center h-[46px] sm:h-[54px] px-3 sm:px-[24px] rounded-[12px] border border-[#D8DFE8] text-[#0A1D3D] bg-white hover:bg-slate-50 active:scale-[0.98] transition-all cursor-pointer select-none font-bold text-[13px] sm:text-[15px]"
+                        className="inline-flex items-center justify-center h-[40px] sm:h-[46px] px-3 sm:px-[18px] rounded-[12px] border border-[#D8DFE8] text-[#0A1D3D] bg-white hover:bg-slate-50 active:scale-[0.98] transition-all cursor-pointer select-none font-bold text-[13px] sm:text-[14px]"
                         style={{ fontFamily: JAKARTA }}
                       >
                         Take a pause
@@ -275,7 +277,7 @@ export default function WarmUpPage() {
                       type="button"
                       onClick={handleNext}
                       disabled={!selectedAnswer}
-                      className={`inline-flex items-center justify-center gap-2 sm:gap-[12px] h-[46px] sm:h-[54px] px-4 sm:px-[24px] rounded-[12px] border-2 border-[#0A1D3D] transition-all select-none ${
+                      className={`inline-flex items-center justify-center gap-2 sm:gap-[10px] h-[40px] sm:h-[46px] px-4 sm:px-[22px] rounded-[12px] border-2 border-[#0A1D3D] transition-all select-none ${
                         selectedAnswer
                           ? "bg-[#FFD028] text-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 cursor-pointer"
                           : "bg-[#E2E8F0] text-[#94A3B8] border-transparent cursor-not-allowed"
@@ -283,15 +285,15 @@ export default function WarmUpPage() {
                       style={{
                         fontFamily: JAKARTA,
                         fontWeight: 800,
-                        fontSize: "14px",
+                        fontSize: "13.5px",
                         lineHeight: "100%",
                         letterSpacing: "0%",
                       }}
                     >
                       <span>{isLastStep ? "Finish warm-up" : "Continue"}</span>
                       <svg
-                        width="18"
-                        height="18"
+                        width="16"
+                        height="16"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -312,7 +314,7 @@ export default function WarmUpPage() {
 
       {/* 3. Bottom Footer */}
       <footer className="w-full border-t border-[#D8DFE8] bg-transparent">
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[88px] py-[22px] min-h-[58px] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-[88px] py-3 sm:py-3.5 min-h-[44px] flex flex-col sm:flex-row items-center justify-between gap-2">
           <p
             style={{
               fontFamily: JAKARTA,

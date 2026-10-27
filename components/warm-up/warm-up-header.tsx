@@ -20,32 +20,32 @@ export function WarmUpHeader({ currentStep, totalSteps, isLastStep, isCompleted 
       {/* 1. Topmost accent line: bg #FF8CC7, height 6px */}
       <div className="w-full h-[6px] bg-[#FF8CC7]" />
 
-      {/* 2. Main Navigation Bar: Fill (1,440px), Height Fixed (98px), bg #E9EDF2, Border Bottom 1px, Padding L/R 88px, Gap 35px */}
+      {/* 2. Main Navigation Bar */}
       <div className="w-full bg-[#FFFFFF] border-b border-[#D8DFE8]">
-        <div className="max-w-[1440px] w-full mx-auto h-[98px] px-4 sm:px-8 lg:px-[88px] flex items-center gap-[35px]">
+        <div className="max-w-[1440px] w-full mx-auto h-[64px] sm:h-[72px] px-4 sm:px-6 lg:px-8 xl:px-[88px] flex items-center gap-[24px] sm:gap-[35px]">
           <Link href="/" className="flex items-center shrink-0" aria-label="OrionKids Home">
             <Image
               src="/svg/Logo.svg"
               alt="OrionKids Logo"
-              width={151}
-              height={80}
+              width={126}
+              height={60}
               priority
-              className="w-[151px] h-[80px] object-contain"
+              className="w-[115px] h-[54px] sm:w-[130px] sm:h-[62px] object-contain"
             />
           </Link>
 
           {/* Pill in navbar: Hug (141px), Hug (23px), Radius 100px, Padding T/B 5px, L/R 10px, bg #EAF7EF, Text #0A1D3D */}
           <span
-            className="inline-flex items-center justify-center w-[141px] h-[23px] rounded-[100px] text-[#0A1D3D] whitespace-nowrap shrink-0 select-none"
+            className="inline-flex items-center justify-center w-[130px] sm:w-[141px] h-[22px] rounded-[100px] text-[#0A1D3D] whitespace-nowrap shrink-0 select-none"
             style={{
               backgroundColor: "#EAF7EF",
-              paddingTop: "5px",
-              paddingBottom: "5px",
-              paddingLeft: "10px",
-              paddingRight: "10px",
+              paddingTop: "4px",
+              paddingBottom: "4px",
+              paddingLeft: "8px",
+              paddingRight: "8px",
               fontFamily: JAKARTA,
               fontWeight: 800,
-              fontSize: "10px",
+              fontSize: "9.5px",
               lineHeight: "100%",
               letterSpacing: "0.6px",
               textTransform: "uppercase",
@@ -56,9 +56,9 @@ export function WarmUpHeader({ currentStep, totalSteps, isLastStep, isCompleted 
         </div>
       </div>
 
-      {/* 3. Sub-header: Breadcrumb & Progress Stepper: Width Fill (1,264px), Gap 12px, Flow Vertical */}
-      <div className="w-full bg-[#F0F6FA] pt-5 pb-3">
-        <div className="max-w-[1264px] w-full mx-auto px-4 sm:px-8 lg:px-0 flex flex-col gap-[12px]">
+      {/* 3. Sub-header: Breadcrumb & Progress Stepper */}
+      <div className="w-full bg-[#F0F6FA] pt-2.5 sm:pt-3 pb-2">
+        <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-[88px] flex flex-col gap-[10px] sm:gap-[12px]">
           {/* Top Row: Breadcrumbs on Left, Step Indicator on Right */}
           <div className="flex items-center justify-between">
             {/* Breadcrumb Steps */}
