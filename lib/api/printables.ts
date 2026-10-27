@@ -241,9 +241,9 @@ export const ALL_ACTIVITY_ITEMS: PrintableItem[] = [
     fileSize: "670 KB",
     downloadUrl: "/api/printables/the-monster-next-door/pdf",
     worksheetFile: "OrionKids_04_The_Monster_Next_Door.pdf",
-    coverImage: "/images/blog/blog 2.jpeg",
+    coverImage: "/star-kids-2.png",
     blogSlug: "challenges-teachers-face-in-understanding-each-childs-learning-needs",
-    cardImage: "/images/blog/blog 2.jpeg",
+    cardImage: "/star-kids-2.png",
     printCountText: "1.9k prints",
     previewType: "doodle",
     badgeLabel: "IMAGINATION",
@@ -316,9 +316,9 @@ export const ALL_ACTIVITY_ITEMS: PrintableItem[] = [
     fileSize: "670 KB",
     downloadUrl: "/api/printables/build-a-robot-helper/pdf",
     worksheetFile: "OrionKids_07_Build_a_Robot_Helper.pdf",
-    coverImage: "/images/blog/blog 4.jpeg",
+    coverImage: "/starkids-11.png",
     blogSlug: "how-cognitive-skills-shape-your-childs-learning-journey",
-    cardImage: "/images/blog/blog 4.jpeg",
+    cardImage: "/starkids-11.png",
     printCountText: "3.7k prints",
     previewType: "grid",
     badgeLabel: "ROBOTICS",
@@ -366,9 +366,9 @@ export const ALL_ACTIVITY_ITEMS: PrintableItem[] = [
     fileSize: "670 KB",
     downloadUrl: "/api/printables/design-a-dream-pizza/pdf",
     worksheetFile: "OrionKids_09_Design_a_Dream_Pizza.pdf",
-    coverImage: "/images/blog/Blog 5.jpeg",
+    coverImage: "/images/blog/kitchen-sorting.jpg",
     blogSlug: "10-simple-ways-to-build-problem-solving-skills-at-home",
-    cardImage: "/images/blog/Blog 5.jpeg",
+    cardImage: "/images/blog/kitchen-sorting.jpg",
     printCountText: "4.8k prints",
     previewType: "candy",
     badgeLabel: "FRACTIONS",
@@ -1060,7 +1060,7 @@ export const ALL_ACTIVITY_ITEMS: PrintableItem[] = [
 export async function getPrintablesData(
   filters?: PrintablesFilterParams
 ): Promise<PrintablesData> {
-  const apiUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = process.env.BACKEND_API_URL;
 
   if (apiUrl) {
     try {

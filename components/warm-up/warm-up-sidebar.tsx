@@ -64,16 +64,16 @@ export function WarmUpSidebar({
   plainBottomNote,
 }: WarmUpSidebarProps) {
   return (
-    <aside className="w-full sm:w-[300px] shrink-0 flex flex-col items-start gap-[24px] pt-0 md:pt-[28px] select-none">
+    <aside className="w-full sm:w-[280px] lg:w-[300px] shrink-0 flex flex-col items-start gap-3 sm:gap-3.5 lg:gap-4 pt-0 md:pt-1 select-none">
       {/* 1. Top Pill */}
       <div>
         <span
-          className="inline-flex items-center px-3 py-1 rounded-full uppercase"
+          className="inline-flex items-center px-3 py-0.5 rounded-full uppercase"
           style={{
             backgroundColor: "#EAF7EF",
             fontFamily: JAKARTA,
             fontWeight: 800,
-            fontSize: "11px",
+            fontSize: "10.5px",
             lineHeight: "100%",
             letterSpacing: "0.88px",
             color: "#10345B",
@@ -86,12 +86,12 @@ export function WarmUpSidebar({
       {/* 2. Main Heading */}
       <div className="w-full max-w-[300px]">
         <h1
+          className="text-[26px] sm:text-[30px] lg:text-[34px]"
           style={{
             fontFamily: JAKARTA,
             fontWeight: 800,
-            fontSize: "38px",
-            lineHeight: "120%",
-            letterSpacing: "-1px",
+            lineHeight: "115%",
+            letterSpacing: "-0.8px",
             color: "#0A1D3D",
           }}
         >
@@ -102,11 +102,11 @@ export function WarmUpSidebar({
       {/* 3. Subtitle / Description */}
       <div className="w-full max-w-[300px]">
         <p
+          className="text-[13.5px] sm:text-[14.5px]"
           style={{
             fontFamily: JAKARTA,
             fontWeight: 400,
-            fontSize: "17px",
-            lineHeight: "165%",
+            lineHeight: "150%",
             letterSpacing: "0%",
             color: "#526176",
           }}
@@ -116,10 +116,10 @@ export function WarmUpSidebar({
       </div>
 
       {/* 4. Star Mascot */}
-      <div className="w-[260px] h-[230px] flex items-center justify-center relative self-start ml-0">
+      <div className="w-[180px] h-[160px] lg:w-[200px] lg:h-[180px] flex items-center justify-center relative self-start ml-0 my-0.5">
         {/* Sparkle (top-left) */}
         <span
-          className="absolute left-1 top-12 text-[18px] select-none"
+          className="absolute left-1 top-8 text-[16px] select-none"
           style={{ color: "#FD9D03" }}
           aria-hidden="true"
         >
@@ -128,13 +128,13 @@ export function WarmUpSidebar({
 
         {/* Small Dot (bottom-right) */}
         <span
-          className="absolute right-2 bottom-10 w-2.5 h-2.5 rounded-full select-none"
+          className="absolute right-2 bottom-6 w-2.5 h-2.5 rounded-full select-none"
           style={{ backgroundColor: "#FD9D03" }}
           aria-hidden="true"
         />
 
-        {/* Inside Circle: 210px x 210px, bg #E6F4FF */}
-        <div className="w-[210px] h-[210px] rounded-full bg-[#E6F4FF] flex items-center justify-center relative shadow-sm">
+        {/* Inside Circle */}
+        <div className="w-[150px] h-[150px] lg:w-[170px] lg:h-[170px] rounded-full bg-[#E6F4FF] flex items-center justify-center relative shadow-sm">
           <SmilingStarIllustration />
         </div>
       </div>
@@ -146,8 +146,8 @@ export function WarmUpSidebar({
             style={{
               fontFamily: JAKARTA,
               fontWeight: 400,
-              fontSize: "13px",
-              lineHeight: "160%",
+              fontSize: "12.5px",
+              lineHeight: "150%",
               letterSpacing: "0%",
               color: "#526176",
             }}
@@ -157,7 +157,7 @@ export function WarmUpSidebar({
         </div>
       ) : (
         <div
-          className="w-full max-w-[300px] rounded-[18px] p-[20px] flex flex-col gap-[8px]"
+          className="w-full max-w-[300px] rounded-[16px] p-3 sm:p-3.5 flex flex-col gap-[6px]"
           style={{ backgroundColor: "#EAF7EF" }}
         >
           <h4

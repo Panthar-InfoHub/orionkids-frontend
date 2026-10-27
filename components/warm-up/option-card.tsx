@@ -38,31 +38,31 @@ export function OptionCard({ option, isSelected, onSelect, layout = "grid-2" }: 
       <button
         type="button"
         onClick={() => onSelect(option.id)}
-        className={`relative flex flex-col items-center justify-center pt-3.5 pb-3 sm:pt-7 sm:pb-6 px-2.5 sm:px-4 rounded-[14px] sm:rounded-[20px] transition-all duration-200 text-center cursor-pointer select-none min-h-[130px] sm:min-h-[200px] w-full ${
+        className={`relative flex flex-col items-center justify-center pt-3 pb-2.5 sm:pt-5 sm:pb-4 px-2 sm:px-3 rounded-[14px] sm:rounded-[18px] transition-all duration-200 text-center cursor-pointer select-none min-h-[110px] sm:min-h-[150px] w-full ${
           isSelected
             ? "bg-[#F0E6FF] border-2 border-[#6739B7] shadow-[0_4px_16px_rgba(103,57,183,0.12)]"
             : "bg-white border border-[#E2E8F0] hover:border-[#CBD5E1] hover:shadow-sm"
         }`}
       >
         {/* Top-Right Radio Indicator */}
-        <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4">
+        <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
           <div
-            className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all ${
+            className={`w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center transition-all ${
               isSelected ? "border-2 border-[#6739B7] bg-white" : "border-2 border-[#E2E8F0] bg-white"
             }`}
           >
-            {isSelected && <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#6739B7]" />}
+            {isSelected && <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#6739B7]" />}
           </div>
         </div>
 
         {/* Expressive Face SVG */}
-        <div className="flex items-center justify-center my-0.5 sm:my-1 select-none">
-          {FaceComponent || <span className="text-4xl sm:text-5xl">{option.icon}</span>}
+        <div className="flex items-center justify-center my-0.5 select-none">
+          {FaceComponent || <span className="text-3xl sm:text-4xl">{option.icon}</span>}
         </div>
 
         {/* Label */}
         <span
-          className="text-[14px] sm:text-[17px] font-bold text-[#0A1D3D] mt-1.5 sm:mt-3"
+          className="text-[13px] sm:text-[15px] font-bold text-[#0A1D3D] mt-1 sm:mt-2"
           style={{ fontFamily: JAKARTA }}
         >
           {option.label}
@@ -76,17 +76,31 @@ export function OptionCard({ option, isSelected, onSelect, layout = "grid-2" }: 
       <button
         type="button"
         onClick={() => onSelect(option.id)}
-        className={`relative flex items-center justify-between p-3.5 sm:p-4 rounded-[16px] transition-all duration-200 text-left cursor-pointer select-none min-h-[58px] sm:min-h-[64px] w-full ${
+        className={`relative flex transition-all duration-200 cursor-pointer select-none w-full h-full ${
+          /* Mobile / tablet: clean horizontal row | Desktop (lg:): vertical card matching Figma */
+          "flex-row items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-[50px] sm:min-h-[54px] rounded-[14px]"
+        } lg:flex-col lg:items-center lg:justify-between lg:p-4 lg:min-h-[150px] lg:rounded-[18px] ${
           isSelected
             ? "bg-[#F0E6FF] border-2 border-[#6739B7] shadow-[0_4px_16px_rgba(103,57,183,0.15)]"
             : "bg-white border border-[#E2E8F0] hover:border-[#CBD5E1] hover:shadow-sm"
         }`}
       >
-        {/* Option Content: Icon beside text on all views */}
-        <div className="flex items-center gap-3 sm:gap-4 pr-3 min-w-0 flex-1">
+        {/* Top-Right Radio Indicator on Desktop */}
+        <div className="hidden lg:flex w-full justify-end">
+          <div
+            className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all ${
+              isSelected ? "border-2 border-[#6739B7] bg-white" : "border-2 border-[#D8DFE8] bg-white"
+            }`}
+          >
+            {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[#6739B7]" />}
+          </div>
+        </div>
+
+        {/* Content Container */}
+        <div className="flex items-center gap-2.5 sm:gap-3 pr-2 min-w-0 flex-1 lg:flex-col lg:items-center lg:justify-center lg:gap-2.5 lg:pr-0 lg:my-auto">
           {/* Icon Box */}
           <div
-            className={`w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] rounded-[12px] sm:rounded-[14px] flex items-center justify-center text-lg sm:text-xl shrink-0 transition-colors ${
+            className={`w-[34px] h-[34px] sm:w-[38px] sm:h-[38px] lg:w-[48px] lg:h-[48px] rounded-[10px] sm:rounded-[12px] lg:rounded-[14px] flex items-center justify-center text-base sm:text-lg lg:text-xl shrink-0 transition-colors ${
               isSelected ? "bg-[#FD9D03] text-[#0A1D3D]" : "bg-[#EAF6FF] text-[#00668A]"
             }`}
           >
@@ -95,20 +109,20 @@ export function OptionCard({ option, isSelected, onSelect, layout = "grid-2" }: 
 
           {/* Option Label */}
           <span
-            className="text-[15px] sm:text-[16px] font-bold text-[#0A1D3D] leading-snug"
+            className="text-[13px] sm:text-[14px] font-bold text-[#0A1D3D] leading-snug break-words min-w-0 text-left lg:text-center"
             style={{ fontFamily: JAKARTA }}
           >
             {option.label}
           </span>
         </div>
 
-        {/* Radio Indicator */}
+        {/* Radio Indicator on Mobile / Tablet */}
         <div
-          className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all ${
+          className={`lg:hidden w-5 h-5 rounded-full flex items-center justify-center shrink-0 ml-2 transition-all ${
             isSelected ? "border-2 border-[#6739B7] bg-white" : "border-2 border-[#D8DFE8] bg-white"
           }`}
         >
-          {isSelected && <div className="w-3 h-3 rounded-full bg-[#6739B7]" />}
+          {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[#6739B7]" />}
         </div>
       </button>
     );
@@ -119,16 +133,16 @@ export function OptionCard({ option, isSelected, onSelect, layout = "grid-2" }: 
     <button
       type="button"
       onClick={() => onSelect(option.id)}
-      className={`relative flex items-center justify-between p-3.5 sm:p-4 rounded-[16px] transition-all duration-200 text-left cursor-pointer select-none w-full min-h-[58px] sm:min-h-[64px] ${
+      className={`relative flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-2.5 rounded-[14px] transition-all duration-200 text-left cursor-pointer select-none w-full h-full min-h-[50px] sm:min-h-[54px] ${
         isSelected
           ? "bg-[#F0E6FF] border-2 border-[#6739B7] shadow-[0_2px_8px_rgba(103,57,183,0.12)]"
           : "bg-white border border-[#E2E8F0] hover:border-[#CBD5E1] hover:shadow-sm"
       }`}
     >
-      <div className="flex items-center gap-3 sm:gap-4 pr-3 min-w-0 flex-1">
+      <div className="flex items-center gap-2.5 sm:gap-3 pr-2 min-w-0 flex-1">
         {/* Icon Box */}
         <div
-          className={`w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] rounded-[12px] sm:rounded-[14px] flex items-center justify-center text-lg sm:text-xl shrink-0 transition-colors ${
+          className={`w-[34px] h-[34px] sm:w-[38px] sm:h-[38px] rounded-[10px] sm:rounded-[12px] flex items-center justify-center text-base sm:text-lg shrink-0 transition-colors ${
             isSelected ? "bg-[#FD9D03] text-[#0A1D3D]" : "bg-[#EAF6FF] text-[#00668A]"
           }`}
         >
@@ -137,7 +151,7 @@ export function OptionCard({ option, isSelected, onSelect, layout = "grid-2" }: 
 
         {/* Label */}
         <span
-          className="text-[15px] sm:text-[16px] font-bold text-[#0A1D3D] leading-snug"
+          className="text-[13px] sm:text-[14px] font-bold text-[#0A1D3D] leading-snug break-words min-w-0 flex-1 text-left"
           style={{
             fontFamily: JAKARTA,
             fontWeight: 700,
@@ -150,11 +164,11 @@ export function OptionCard({ option, isSelected, onSelect, layout = "grid-2" }: 
 
       {/* Right Radio Indicator */}
       <div
-        className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all ${
+        className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ml-2 transition-all ${
           isSelected ? "border-2 border-[#6739B7] bg-white" : "border-2 border-[#D8DFE8] bg-white"
         }`}
       >
-        {isSelected && <div className="w-3 h-3 rounded-full bg-[#6739B7]" />}
+        {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[#6739B7]" />}
       </div>
     </button>
   );

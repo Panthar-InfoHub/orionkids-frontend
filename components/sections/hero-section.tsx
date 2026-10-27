@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { SITE_CONFIG } from "@/lib/constants";
 
 export function HeroSection() {
   return (
@@ -108,18 +107,93 @@ export function HeroSection() {
               Cognitive evaluations and reflections are crucial. View the child beyond just a number, especially in how AI recognizes their unique abilities.
             </p>
 
-            {/* 3 Feature Badges in a Row */}
+            {/* 3 Feature Badges in a Row (Matching Reference) */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 xl:gap-3 mb-6">
-              {SITE_CONFIG.heroBadges.map((badge) => (
-                <div
-                  key={badge.text}
-                  className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full border-2 border-[#0A1D3D] text-[11px] sm:text-xs font-black text-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] ${badge.bg || "bg-white"
-                    } hover:scale-105 transition-transform cursor-default select-none`}
+              {/* Badge 1: Game-Based Activities */}
+              <div
+                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#E0F2FE] border-[1.5px] border-[#7DD3FC] text-[12px] sm:text-[13px] font-[700] text-[#0A1D3D] hover:bg-[#D5EEFD] transition-colors cursor-default select-none shadow-[0px_1px_2px_rgba(0,0,0,0.04)]"
+                style={{
+                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+                }}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="shrink-0"
+                  aria-hidden="true"
                 >
-                  <span className="text-sm">{badge.icon}</span>
-                  <span>{badge.text}</span>
-                </div>
-              ))}
+                  <path
+                    d="M6.8 5H17.2C19.85 5 22 7.15 22 9.8V14C22 16.21 20.21 18 18 18H16.5C15.82 18 15.18 17.65 14.8 17.08L14.2 16.17C13.82 15.6 13.18 15.25 12.5 15.25H11.5C10.82 15.25 10.18 15.6 9.8 16.17L9.2 17.08C8.82 17.65 8.18 18 7.5 18H6C3.79 18 2 16.21 2 14V9.8C2 7.15 4.15 5 6.8 5Z"
+                    fill="#0A1D3D"
+                    stroke="#0A1D3D"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="16" cy="11" r="0.9" fill="#E0F2FE" />
+                  <circle cx="18" cy="11" r="0.9" fill="#E0F2FE" />
+                  <path d="M6 11H8M7 10V12" stroke="#E0F2FE" strokeWidth="1.2" strokeLinecap="round" />
+                </svg>
+                <span>Game-Based Activities</span>
+              </div>
+
+              {/* Badge 2: AI-Assisted Insights */}
+              <div
+                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#E0F2FE] border-[1.5px] border-[#7DD3FC] text-[12px] sm:text-[13px] font-[700] text-[#0A1D3D] hover:bg-[#D5EEFD] transition-colors cursor-default select-none shadow-[0px_1px_2px_rgba(0,0,0,0.04)]"
+                style={{
+                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+                }}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="shrink-0"
+                  aria-hidden="true"
+                >
+                  <rect x="2" y="9.5" width="3.5" height="8.5" rx="1.5" fill="#38BDF8" stroke="#0A1D3D" strokeWidth="1.4" />
+                  <rect x="8.2" y="5.5" width="3.5" height="12.5" rx="1.5" fill="#0284C7" stroke="#0A1D3D" strokeWidth="1.4" />
+                  <rect x="14.5" y="2" width="3.5" height="16" rx="1.5" fill="#38BDF8" stroke="#0A1D3D" strokeWidth="1.4" />
+                </svg>
+                <span>AI-Assisted Insights</span>
+              </div>
+
+              {/* Badge 3: Personalized Growth Trails */}
+              <div
+                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#E0F2FE] border-[1.5px] border-[#7DD3FC] text-[12px] sm:text-[13px] font-[700] text-[#0A1D3D] hover:bg-[#D5EEFD] transition-colors cursor-default select-none shadow-[0px_1px_2px_rgba(0,0,0,0.04)]"
+                style={{
+                  fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+                }}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="shrink-0"
+                  aria-hidden="true"
+                >
+                  <path d="M10 18V10" stroke="#0A1D3D" strokeWidth="1.6" strokeLinecap="round" />
+                  <path
+                    d="M10 12C7.5 12 5.5 10 5.5 7.5C8 7.5 10 9.5 10 12Z"
+                    fill="#38BDF8"
+                    stroke="#0A1D3D"
+                    strokeWidth="1.4"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M10 10C12.5 10 14.5 8 14.5 5.5C12 5.5 10 7.5 10 10Z"
+                    fill="#22C55E"
+                    stroke="#0A1D3D"
+                    strokeWidth="1.4"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>Personalized Growth Trails</span>
+              </div>
             </div>
 
             {/* Bottom Action CTA Buttons */}
