@@ -34,8 +34,8 @@ export const SITE_CONFIG: SiteConfig = {
     { label: "Printables", href: "/printables" },
   ],
   heroBadges: [
-    { icon: "🎮", text: "100% Game-Based", bg: "bg-[#D8F3FF]" },
-    { icon: "🤖", text: "Gentle AI Coach", bg: "bg-[#EAF7EF]" },
-    { icon: "⭐", text: "Star Growth Trails", bg: "bg-[#EAF7EF]" },
+    { icon: "🎮", text: "Game-Based Activities", bg: "bg-[#E0F2FE]" },
+    { icon: "📊", text: "AI-Assisted Insights", bg: "bg-[#E0F2FE]" },
+    { icon: "🌱", text: "Personalized Growth Trails", bg: "bg-[#E0F2FE]" },
   ],
 };
