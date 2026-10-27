@@ -120,7 +120,7 @@ export function PrintableCardPreview({
         height={179}
         loading={priority ? "eager" : "lazy"}
         decoding="async"
-        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+        className="w-full h-full object-cover object-[center_25%] transition-transform duration-300 group-hover:scale-[1.04]"
       />
 
       {/* Top-Left Target Age Badge */}
@@ -183,7 +183,7 @@ export function PrintableCardTitle({
 }: PrintableCardTitleProps) {
   return (
     <h3
-      className={`text-sm sm:text-[15px] font-black text-[#0A1D3D] leading-snug line-clamp-1 group-hover:text-[#0D9488] transition-colors mb-1 ${JAKARTA} ${className}`}
+      className={`text-sm sm:text-[15px] font-black text-[#0A1D3D] leading-snug line-clamp-2 min-h-[2.4rem] group-hover:text-[#0D9488] transition-colors mb-1 ${JAKARTA} ${className}`}
     >
       {children}
     </h3>
@@ -204,7 +204,7 @@ export function PrintableCardDescription({
 }: PrintableCardDescriptionProps) {
   return (
     <p
-      className={`text-[11px] sm:text-xs text-[#526176] line-clamp-2 leading-relaxed mb-3 ${className}`}
+      className={`text-[11px] sm:text-xs text-[#526176] line-clamp-2 min-h-[2.25rem] leading-relaxed mb-3 ${className}`}
     >
       {children}
     </p>

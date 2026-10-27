@@ -224,9 +224,9 @@ export type ImageLayoutMode =
 
 /**
  * Decides the optimal layout mode based on image aspect ratio and content balance.
- * Uses two-column layout for all standard photography (square, portrait, and standard 3:2 / 4:3 photos)
- * so that faces and details are seen clearly without severe banner cropping.
- * Only genuinely wide panorama/cinematic images (>= 1.7:1) use the landscape banner.
+ * Uses two-column layout for all standard photography (16:9, 3:2, 4:3, square, and portrait)
+ * so that faces, teachers, children, and classroom materials are 100% visible with zero cropping.
+ * Only genuine ultra-panoramic illustrations (>= 2.2:1) use the landscape banner.
  */
 export function determineLayoutMode(
   imageMeta: LoadedImageMeta | null,
@@ -236,13 +236,13 @@ export function determineLayoutMode(
     return "text-only";
   }
 
-  // Only wide widescreen / panoramic images (>= 1.7:1) use landscape banner
-  if (imageMeta.aspectRatio >= 1.7) {
+  // Only genuinely ultra-wide panoramic illustrations (>= 2.2:1) use landscape banner
+  if (imageMeta.aspectRatio >= 2.2) {
     return "landscape-banner";
   }
 
-  // Standard photos (3:2, 4:3, square, portrait) look vastly better in two-column
-  // because the entire image is displayed with zero cropping alongside its text.
+  // All standard educational photos (16:9, 3:2, 4:3, square, portrait) look vastly better
+  // in two-column because the entire image is displayed with zero cropping alongside its text.
   if (alignmentPreference === "right") {
     return "two-column-right";
   }
@@ -548,32 +548,36 @@ export async function generatePrintablePdf({
     // Calculate natural image dimensions with full PROPORTIONAL FIT (CONTAIN)
     // Avoids cutting off faces, heads, or important details!
     const naturalAspect = imageMeta!.aspectRatio;
-    const cardHeight = 175;
+    const imgPad = 5;
+    const maxImgHeight = 165;
 
-    let imgW = imgColWidth - 8;
+    let imgW = imgColWidth - imgPad * 2;
     let imgH = imgW / naturalAspect;
 
-    if (imgH > cardHeight - 8) {
-      imgH = cardHeight - 8;
+    if (imgH > maxImgHeight) {
+      imgH = maxImgHeight;
       imgW = imgH * naturalAspect;
     }
 
-    const cardY = cursorY - cardHeight;
+    const cardActualWidth = imgW + imgPad * 2;
+    const cardActualHeight = imgH + imgPad * 2;
+    const cardX = imgX + (imgColWidth - cardActualWidth) / 2;
+    const cardY = cursorY - cardActualHeight;
 
     // Image Card Framing with soft clean backdrop
     page1.drawRectangle({
-      x: imgX,
+      x: cardX,
       y: cardY,
-      width: imgColWidth,
-      height: cardHeight,
+      width: cardActualWidth,
+      height: cardActualHeight,
       color: COLORS.cardBg,
       borderColor: COLORS.cardBorder,
       borderWidth: 1,
     });
 
     // Center image cleanly inside container with zero cropping
-    const drawImgX = imgX + (imgColWidth - imgW) / 2;
-    const drawImgY = cardY + (cardHeight - imgH) / 2;
+    const drawImgX = cardX + imgPad;
+    const drawImgY = cardY + imgPad;
 
     page1.drawImage(imageMeta!.embeddedImage, {
       x: drawImgX,
@@ -631,7 +635,7 @@ export async function generatePrintablePdf({
       COLORS.textDark
     );
 
-    textY -= 8;
+    textY -= 10;
 
     // Tags & Cognitive Skill Highlights
     const tags = printable.tags?.slice(0, 3) || [
@@ -677,7 +681,7 @@ export async function generatePrintablePdf({
 
         tagX += tagPillWidth + 6;
       }
-      textY -= 11;
+      textY -= 13;
     }
 
     // Companion Insight or Secondary Context Note
@@ -703,18 +707,21 @@ export async function generatePrintablePdf({
         11,
         COLORS.textMuted
       );
+      textY -= 8;
     }
 
     // Classroom Implementation Note at bottom of column
     page1.drawText("Target: Home & Classroom * Low-Ink Design * 15-20 Min", {
       x: textX,
-      y: cardY + 6,
+      y: textY,
       size: 7.5,
       font: fontOblique,
       color: COLORS.textLight,
     });
 
-    cursorY = cardY - SPACING.md;
+    // Safely advance cursorY past whichever column is taller
+    const bottomOfSection = Math.min(cardY, textY - 8);
+    cursorY = bottomOfSection - SPACING.md;
   } else if (layoutMode === "landscape-banner") {
     // =========================================================================
     // LAYOUT B: LANDSCAPE HERO BANNER (Wide Panoramic Image >= 1.7:1)
@@ -799,7 +806,7 @@ export async function generatePrintablePdf({
       COLORS.textDark
     );
 
-    cursorY -= 8;
+    cursorY -= 14;
 
     // Quick tags for landscape layout
     const tags = printable.tags?.slice(0, 4) || [];
@@ -830,9 +837,9 @@ export async function generatePrintablePdf({
 
         tagX += tagPillWidth + 6;
       }
-      cursorY -= 18;
+      cursorY -= 20;
     } else {
-      cursorY -= SPACING.sm;
+      cursorY -= SPACING.md;
     }
   } else {
     // =========================================================================

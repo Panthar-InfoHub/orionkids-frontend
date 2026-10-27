@@ -39,15 +39,16 @@ export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
     : `/OrionKids_Worksheets/OrionKids_01_Join_the_Stars_Orion.pdf`;
   const filename = `OrionKids-${item.slug}-Worksheet.pdf`;
 
-  // Resolves the exact PDF preview URL based on the active tab
+  // Resolves the exact PDF preview URL based on the active tab with cache-busting timestamp
   const getPreviewUrl = () => {
+    const timestamp = Date.now();
     if (activeTab === "page1") {
-      return `${previewEndpoint}#page=1&toolbar=0&navpanes=0`;
+      return `${previewEndpoint}&t=${timestamp}#page=1&toolbar=0&navpanes=0`;
     }
     if (activeTab === "page2") {
       return `${worksheetStaticPath}#toolbar=0&navpanes=0`;
     }
-    return `${previewEndpoint}#toolbar=0&navpanes=0`;
+    return `${previewEndpoint}&t=${timestamp}#toolbar=0&navpanes=0`;
   };
 
   const handleDownload = async () => {
@@ -82,7 +83,7 @@ export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
    * avoiding the broken web DOM print preview.
    */
   const handlePrintPreview = () => {
-    const printUrl = `${previewEndpoint}#view=FitH`;
+    const printUrl = `${previewEndpoint}&t=${Date.now()}#view=FitH`;
     window.open(printUrl, "_blank", "noopener,noreferrer");
   };
 
