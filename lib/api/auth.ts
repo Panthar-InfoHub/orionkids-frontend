@@ -1,5 +1,18 @@
 import { signOut as authSignOut } from "@/lib/auth-client";
 
+export interface ChildProfileData {
+  id?: string;
+  childName: string;
+  age: number;
+  language: string;
+  school?: string | null;
+  selectedClass: string;
+  studentId?: string | null;
+  parentEmail: string;
+  parentMobile: string;
+  isGuardian: boolean;
+}
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -8,6 +21,20 @@ export interface UserProfile {
   role: "USER" | "ADMIN";
   status: "PENDING" | "ACTIVE" | "RESTRICTED";
   restrictedReason: string | null;
+  onboardingSubmittedAt?: string | null;
+  childProfile?: ChildProfileData | null;
+}
+
+export interface OnboardingPayload {
+  childName: string;
+  age: number;
+  language: string;
+  school?: string;
+  selectedClass: string;
+  studentId?: string;
+  parentEmail: string;
+  parentMobile: string;
+  isGuardian: boolean;
 }
 
 export const API_BASE_URL =
@@ -59,6 +86,87 @@ export async function fetchCurrentUserProfile(): Promise<UserProfile | null> {
 }
 
 /**
+ * Submit child onboarding details to backend.
+ * Persists childProfile and marks user as having submitted onboarding.
+ */
+export async function submitOnboarding(payload: OnboardingPayload): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/api/onboarding`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok || !data?.success) {
+    const message =
+      data?.error?.message ||
+      (data?.error?.details
+        ? Object.values(data.error.details).join(", ")
+        : "Failed to submit onboarding. Please try again.");
+    throw new Error(message);
+  }
+}
+
+/**
+ * Single authoritative profile-to-destination decision function.
+ * Evaluates verified backend profile state and returns the correct URL path.
+ */
+export function getRouteForUserProfile(
+  profile: UserProfile | null,
+  fallbackRedirect?: string | null
+): string {
+  if (!profile) {
+    const redirectParam = fallbackRedirect ? `?redirect=${encodeURIComponent(fallbackRedirect)}` : "";
+    return `/login${redirectParam}`;
+  }
+
+  // 1. Restricted account
+  if (profile.status === "RESTRICTED") {
+    return "/access-denied";
+  }
+
+  // 2. Active Administrator
+  if (profile.role === "ADMIN" && profile.status === "ACTIVE") {
+    return "/";
+  }
+
+  // 3. Regular User (role === "USER" or non-admin):
+  // If user has not submitted onboarding yet, MUST complete onboarding first!
+  if (!profile.onboardingSubmittedAt) {
+    const redirectParam = fallbackRedirect && fallbackRedirect !== "/warm-up" && !fallbackRedirect.includes("onboarding")
+      ? `?redirect=${encodeURIComponent(fallbackRedirect)}`
+      : "";
+    return `/onboarding${redirectParam}`;
+  }
+
+  // 4. Onboarding submitted, pending administrator review
+  if (profile.status === "PENDING") {
+    return "/pending-approval";
+  }
+
+  // 5. Active regular user
+  if (fallbackRedirect && fallbackRedirect.startsWith("/") && !fallbackRedirect.startsWith("//")) {
+    // Avoid loop back to auth pages
+    if (
+      !fallbackRedirect.includes("/login") &&
+      !fallbackRedirect.includes("/pending-approval") &&
+      !fallbackRedirect.includes("/access-denied") &&
+      !fallbackRedirect.includes("/onboarding")
+    ) {
+      return fallbackRedirect;
+    }
+  }
+
+  // Default authenticated quest destination
+  return "/warm-up";
+}
+
+/**
  * Safely sign out the user and clear Better Auth database session.
  */
 export async function performSignOut(): Promise<void> {
@@ -70,3 +178,4 @@ export async function performSignOut(): Promise<void> {
     window.location.href = "/login";
   }
 }
+

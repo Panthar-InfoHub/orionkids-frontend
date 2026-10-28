@@ -10,6 +10,17 @@ export interface AdminUserItem {
   restrictedReason: string | null;
   reviewedAt: string | null;
   reviewedById: string | null;
+  onboardingSubmittedAt?: string | null;
+  childProfile?: {
+    childName: string;
+    age: number;
+    language: string;
+    school?: string | null;
+    selectedClass: string;
+    studentId?: string | null;
+    parentEmail: string;
+    parentMobile: string;
+  } | null;
   createdAt: string;
   updatedAt: string;
 }

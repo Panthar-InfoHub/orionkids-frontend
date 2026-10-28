@@ -65,7 +65,11 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
       // 4. Handle pending account
       if (profile.status === "PENDING") {
-        router.replace("/pending-approval");
+        if (!profile.onboardingSubmittedAt) {
+          router.replace("/onboarding");
+        } else {
+          router.replace("/pending-approval");
+        }
         return;
       }
 

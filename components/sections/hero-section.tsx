@@ -1,8 +1,34 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { fetchCurrentUserProfile, getRouteForUserProfile } from "@/lib/api/auth";
 
 export function HeroSection() {
+  const router = useRouter();
+  const [isRouting, setIsRouting] = useState(false);
+
+  const handleLaunchQuest = async () => {
+    setIsRouting(true);
+    try {
+      const profile = await fetchCurrentUserProfile();
+      if (!profile) {
+        // Guest -> send to login preserving /warm-up as intended destination
+        router.push("/login?redirect=%2Fwarm-up");
+        return;
+      }
+
+      // Authenticated -> use single authoritative profile-to-destination decision
+      const destination = getRouteForUserProfile(profile, "/warm-up");
+      router.push(destination);
+    } catch {
+      router.push("/login?redirect=%2Fwarm-up");
+    } finally {
+      setIsRouting(false);
+    }
+  };
   return (
     <section className="relative w-full bg-white min-h-[calc(100vh-103px)] flex flex-col justify-center pt-3 pb-8 lg:pt-4 lg:pb-10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -226,13 +252,22 @@ export function HeroSection() {
                 <span>🍿 Enjoy a Quick 2-Minute Adventure</span>
               </button>
 
-              {/* Right Button: Launch Free Quest! (Navigates to /onboarding) */}
-              <Link
-                href="/onboarding"
-                className="h-[48px] sm:h-[50px] xl:h-[52px] px-5 sm:px-6 xl:px-7 rounded-2xl bg-[#D8F3FF] text-[#0A1D3D] font-black text-xs sm:text-[13px] md:text-sm xl:text-[15px] whitespace-nowrap border-[2.5px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_6px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center gap-2 transition-all cursor-pointer select-none"
+              {/* Right Button: Launch Free Quest! (Lifecycle-aware routing) */}
+              <button
+                type="button"
+                onClick={handleLaunchQuest}
+                disabled={isRouting}
+                className="h-[48px] sm:h-[50px] xl:h-[52px] px-5 sm:px-6 xl:px-7 rounded-2xl bg-[#D8F3FF] text-[#0A1D3D] font-black text-xs sm:text-[13px] md:text-sm xl:text-[15px] whitespace-nowrap border-[2.5px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_6px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center gap-2 transition-all cursor-pointer select-none disabled:opacity-75"
               >
-                <span>🎮 Launch Free Quest! 🚀</span>
-              </Link>
+                {isRouting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-[#0A1D3D]" />
+                    <span>Launching Quest...</span>
+                  </>
+                ) : (
+                  <span>🎮 Launch Free Quest! 🚀</span>
+                )}
+              </button>
 
             </div>
 

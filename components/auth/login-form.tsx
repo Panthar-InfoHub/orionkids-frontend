@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, AlertCircle, ShieldCheck } from "lucide-react";
 import { signIn } from "@/lib/auth-client";
-import { fetchCurrentUserProfile } from "@/lib/api/auth";
+import { fetchCurrentUserProfile, getRouteForUserProfile } from "@/lib/api/auth";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -44,17 +44,8 @@ export default function LoginForm() {
       try {
         const profile = await fetchCurrentUserProfile();
         if (profile) {
-          if (profile.status === "RESTRICTED") {
-            router.replace("/access-denied");
-            return;
-          }
-          if (profile.status === "PENDING") {
-            router.replace("/pending-approval");
-            return;
-          }
-          // ACTIVE user
-          const returnTo = searchParams.get("redirect") || "/onboarding";
-          router.replace(returnTo);
+          const destination = getRouteForUserProfile(profile, searchParams.get("redirect"));
+          router.replace(destination);
           return;
         }
       } catch (err) {

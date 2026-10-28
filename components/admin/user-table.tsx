@@ -269,6 +269,11 @@ export function UserTable({
                           <p className="text-slate-400 text-[11px] truncate">
                             {user.email}
                           </p>
+                          {user.childProfile && (
+                            <p className="text-[10px] text-[#00838F] font-bold mt-0.5 truncate">
+                              👶 {user.childProfile.childName} · {user.childProfile.selectedClass} ({user.childProfile.age}y)
+                            </p>
+                          )}
                         </div>
                       </div>
                     </td>
@@ -294,10 +299,21 @@ export function UserTable({
                           <span>Active</span>
                         </span>
                       ) : user.status === "PENDING" ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-800 border border-amber-200">
-                          <Clock className="w-3 h-3 text-amber-600" />
-                          <span>Pending</span>
-                        </span>
+                        <div className="flex flex-col gap-1 items-start">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-800 border border-amber-200">
+                            <Clock className="w-3 h-3 text-amber-600" />
+                            <span>Pending</span>
+                          </span>
+                          {user.onboardingSubmittedAt ? (
+                            <span className="text-[10px] text-emerald-700 font-bold">
+                              ✓ Onboarded
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 font-medium">
+                              No Onboarding
+                            </span>
+                          )}
+                        </div>
                       ) : (
                         <div>
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 border border-rose-200">
