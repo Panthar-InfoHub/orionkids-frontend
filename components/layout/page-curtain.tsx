@@ -14,7 +14,7 @@ export function PageCurtain({ children, className = "" }: PageCurtainProps) {
   return (
     <div
       id="page-content-curtain"
-      className={`relative z-10 w-full bg-white shadow-[0_24px_48px_-12px_rgba(10,29,61,0.12)] will-change-[transform,box-shadow] ${className}`}
+      className={`relative z-10 w-full bg-white shadow-[0_24px_48px_-12px_rgba(10,29,61,0.12)] ${className}`}
     >
       {children}
     </div>

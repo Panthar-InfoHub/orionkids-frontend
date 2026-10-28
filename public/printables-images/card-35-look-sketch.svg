@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <rect width="800" height="600" fill="#F0FDFA" rx="32"/>
+  <g transform="translate(140, 120)">
+    <rect x="0" y="0" width="300" height="360" rx="16" fill="#FFFFFF" stroke="#0D9488" stroke-width="5"/>
+    <ellipse cx="0" cy="40" rx="12" ry="8" fill="#94A3B8" stroke="#0A1D3D" stroke-width="2"/>
+    <ellipse cx="0" cy="80" rx="12" ry="8" fill="#94A3B8" stroke="#0A1D3D" stroke-width="2"/>
+    <ellipse cx="0" cy="120" rx="12" ry="8" fill="#94A3B8" stroke="#0A1D3D" stroke-width="2"/>
+    <ellipse cx="0" cy="160" rx="12" ry="8" fill="#94A3B8" stroke="#0A1D3D" stroke-width="2"/>
+    <ellipse cx="0" cy="200" rx="12" ry="8" fill="#94A3B8" stroke="#0A1D3D" stroke-width="2"/>
+    <ellipse cx="0" cy="240" rx="12" ry="8" fill="#94A3B8" stroke="#0A1D3D" stroke-width="2"/>
+    <ellipse cx="0" cy="280" rx="12" ry="8" fill="#94A3B8" stroke="#0A1D3D" stroke-width="2"/>
+    <ellipse cx="0" cy="320" rx="12" ry="8" fill="#94A3B8" stroke="#0A1D3D" stroke-width="2"/>
+    <circle cx="150" cy="180" r="55" fill="#EF4444" stroke="#0A1D3D" stroke-width="3"/>
+    <path d="M 150 125 Q 160 100 170 95" stroke="#78350F" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="170" cy="105" rx="14" ry="7" fill="#22C55E" transform="rotate(-30 170 105)"/>
+    <text x="150" y="280" text-anchor="middle" font-family="monospace" font-size="14" font-weight="bold" fill="#0D9488">SKETCH #35: APPLE</text>
+  </g>
+
+  <g transform="translate(480, 160)">
+    <ellipse cx="100" cy="190" rx="70" ry="25" fill="#CBD5E1"/>
+    <circle cx="100" cy="150" r="50" fill="#DC2626"/>
+    <circle cx="85" cy="135" r="10" fill="#F87171" opacity="0.6"/>
+    
+    <g transform="translate(130, 200) rotate(45)">
+      <circle cx="0" cy="0" r="45" fill="#E0F2FE" stroke="#0A1D3D" stroke-width="6" opacity="0.8"/>
+      <rect x="-8" y="45" width="16" height="70" rx="6" fill="#F59E0B" stroke="#0A1D3D" stroke-width="3"/>
+      <line x1="-20" y1="-20" x2="20" y2="20" stroke="#FFF" stroke-width="4" stroke-linecap="round"/>
+    </g>
+  </g>
+  <text x="400" y="565" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="22" fill="#0D9488">LOOK &amp; SKETCH: OBSERVATIONAL ART</text>
+</svg>
