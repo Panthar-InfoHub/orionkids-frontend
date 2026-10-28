@@ -301,6 +301,7 @@ export async function submitStroopLevelResults(
     if (apiUrl) {
       const response = await fetch(`${apiUrl}/api/games/stroop/level-submit`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });

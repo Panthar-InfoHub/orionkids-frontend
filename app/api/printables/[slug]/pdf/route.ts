@@ -32,7 +32,7 @@ export async function GET(
       );
     }
 
-    // Generate the combined 2-Page PDF (Page 1: Blog Companion, Page 2: Authentic Worksheet)
+    // Generate the authentic 1-Page Worksheet PDF
     const pdfBuffer = await generatePrintablePdf({ printable });
 
     const safeFilename = `OrionKids-${printable.slug}-Worksheet.pdf`;

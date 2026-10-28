@@ -263,5 +263,56 @@ body {
   will-change: transform, filter;
 }
 
+/* ========================================================
+   Yu-Hsin Lin Layered Footer Reveal & Curtain Stacking
+   ======================================================== */
+
+#page-content-curtain,
+.page-content-curtain {
+  position: relative;
+  z-index: 10;
+  background-color: var(--background, #ffffff);
+  box-shadow: 0 24px 48px -12px rgba(10, 29, 61, 0.12);
+}
+
+/* Fallback for any content section inside main when not explicitly wrapped in PageCurtain */
+main > *:not(footer):not(#footer-section):not(#footer-reveal-container) {
+  position: relative;
+  z-index: 10;
+}
+
+/* Layered sticky reveal footer: sits underneath the page curtain */
+@utility orion-footer-sticky {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 0;
+  margin-top: 0;
+}
+
+@utility orion-footer-flow {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+.orion-footer-sticky {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 0;
+  margin-top: 0;
+}
+
+.orion-footer-flow {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+
+
 
 

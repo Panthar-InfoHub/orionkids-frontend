@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { WARM_UP_QUESTIONS } from "@/components/warm-up/warm-up-data";
 import { WarmUpHeader } from "@/components/warm-up/warm-up-header";
@@ -8,6 +8,7 @@ import { WarmUpSidebar } from "@/components/warm-up/warm-up-sidebar";
 import { OptionCard } from "@/components/warm-up/option-card";
 import { StroopIntroCard } from "@/components/warm-up/stroop-intro-card";
 import { submitWarmUpAnswers } from "@/lib/api/warmup";
+import { fetchCurrentUserProfile, getRouteForUserProfile } from "@/lib/api/auth";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const LORA = "var(--font-lora), 'Lora', Georgia, serif";
@@ -19,6 +20,33 @@ export default function WarmUpPage() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [isPauseModalOpen, setIsPauseModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(true);
+
+  useEffect(() => {
+    let isCancelled = false;
+    async function verifyQuestAccess() {
+      try {
+        const profile = await fetchCurrentUserProfile();
+        if (isCancelled) return;
+        if (!profile) {
+          router.replace("/login?redirect=/warm-up");
+          return;
+        }
+        const destination = getRouteForUserProfile(profile, "/warm-up");
+        if (destination !== "/warm-up") {
+          router.replace(destination);
+          return;
+        }
+        setIsVerifying(false);
+      } catch {
+        router.replace("/login?redirect=/warm-up");
+      }
+    }
+    verifyQuestAccess();
+    return () => {
+      isCancelled = true;
+    };
+  }, [router]);
 
   const totalSteps = WARM_UP_QUESTIONS.length;
   const currentQuestion = WARM_UP_QUESTIONS[currentStep];
@@ -63,6 +91,17 @@ export default function WarmUpPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (isVerifying) {
+    return (
+      <div className="min-h-screen bg-[#F0F6FA] flex flex-col items-center justify-center p-6">
+        <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center animate-pulse mb-3">
+          <span className="text-xl">🎮</span>
+        </div>
+        <p className="text-xs font-bold text-slate-500">Checking quest access permissions...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F0F6FA] flex flex-col justify-between selection:bg-[#FFE066] selection:text-[#0A1D3D]">

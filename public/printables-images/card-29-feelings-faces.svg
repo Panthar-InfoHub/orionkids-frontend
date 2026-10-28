@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <rect width="800" height="600" fill="#FFF1F2" rx="32"/>
+  <g transform="translate(240, 180)">
+    <circle cx="0" cy="0" r="75" fill="#FDE047" stroke="#CA8A04" stroke-width="6"/>
+    <polygon points="-30,-15 -25,-5 -15,-5 -22,2 -18,12 -30,6 -42,12 -38,2 -45,-5 -35,-5" fill="#854D0E"/>
+    <polygon points="30,-15 35,-5 45,-5 38,2 42,12 30,6 18,12 22,2 15,-5 25,-5" fill="#854D0E"/>
+    <path d="M -35 25 Q 0 65 35 25 Z" fill="#E11D48"/>
+    <path d="M -15 42 Q 0 35 15 42" fill="#FDA4AF"/>
+    <text x="0" y="110" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="18" fill="#854D0E">EXCITED</text>
+  </g>
+
+  <g transform="translate(560, 180)">
+    <circle cx="0" cy="0" r="75" fill="#93C5FD" stroke="#2563EB" stroke-width="6"/>
+    <circle cx="-30" cy="-10" r="14" fill="#1E3A8A"/>
+    <circle cx="-32" cy="-13" r="5" fill="#FFF"/>
+    <circle cx="30" cy="-10" r="22" fill="#1E3A8A"/>
+    <circle cx="28" cy="-14" r="7" fill="#FFF"/>
+    <path d="M 12 -42 Q 30 -55 48 -42" stroke="#1E3A8A" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="0" cy="35" r="14" fill="#1E3A8A"/>
+    <text x="0" y="110" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="18" fill="#1E3A8A">CURIOUS</text>
+  </g>
+
+  <g transform="translate(240, 400)">
+    <circle cx="0" cy="0" r="75" fill="#86EFAC" stroke="#16A34A" stroke-width="6"/>
+    <path d="M -45 -10 Q -30 -25 -15 -10" stroke="#14532D" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 15 -10 Q 30 -25 45 -10" stroke="#14532D" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M -30 20 Q 0 45 30 20" stroke="#14532D" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <circle cx="-45" cy="15" r="10" fill="#F472B6" opacity="0.6"/>
+    <circle cx="45" cy="15" r="10" fill="#F472B6" opacity="0.6"/>
+    <text x="0" y="110" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="18" fill="#14532D">PROUD</text>
+  </g>
+
+  <g transform="translate(560, 400)">
+    <circle cx="0" cy="0" r="75" fill="#DDD6FE" stroke="#7C3AED" stroke-width="6"/>
+    <path d="M -45 -5 Q -30 10 -15 -5" stroke="#5B21B6" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M 15 -5 Q 30 10 45 -5" stroke="#5B21B6" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M -20 25 Q 0 38 20 25" stroke="#5B21B6" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <text x="0" y="110" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="18" fill="#5B21B6">CALM</text>
+  </g>
+  <text x="400" y="565" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="22" fill="#E11D48">FEELINGS FACES: EMOTIONAL LITERACY</text>
+</svg>

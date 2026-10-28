@@ -14,7 +14,7 @@ export interface PrintableItem {
   pages: number;
   fileSize: string;
   downloadUrl: string;
-  previewType?: "maze" | "crossword" | "grid" | "scramble" | "doodle" | "tracker" | "math" | "bats" | "candy";
+  previewType?: "maze" | "crossword" | "grid" | "scramble" | "doodle" | "tracker" | "math" | "bats" | "candy" | "dots";
   cardImage?: string;
   image?: string;
   coverImage?: string;
@@ -37,6 +37,7 @@ export interface PrintableItem {
 
 export type PrintableCategoryType =
   | "All Printables (28)"
+  | "All Printables (36)"
   | "Puzzles & Crosswords"
   | "Coloring & Doodles"
   | "Thinking & Focus Mats"

@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Clock, RefreshCw, LogOut, ShieldAlert } from "lucide-react";
-import { fetchCurrentUserProfile, performSignOut, type UserProfile } from "@/lib/api/auth";
+import { fetchCurrentUserProfile, getRouteForUserProfile, performSignOut, type UserProfile } from "@/lib/api/auth";
 
 export default function PendingApprovalPage() {
   const router = useRouter();
@@ -23,13 +23,12 @@ export default function PendingApprovalPage() {
         return;
       }
       setProfile(user);
-      if (user.status === "ACTIVE") {
-        router.replace("/onboarding");
-      } else if (user.status === "RESTRICTED") {
-        router.replace("/access-denied");
-      } else {
-        setMessage("Account is still under review. Thank you for your patience!");
+      const destination = getRouteForUserProfile(user);
+      if (destination !== "/pending-approval") {
+        router.replace(destination);
+        return;
       }
+      setMessage("Account is still under review. Thank you for your patience!");
     } catch {
       setMessage("Could not check status at this time. Please try again shortly.");
     } finally {
@@ -78,7 +77,7 @@ export default function PendingApprovalPage() {
             <span>PENDING REVIEW</span>
           </div>
 
-          <h1 className="text-2xl sm:text-[28px] font-black text-[#0A1D3D] tracking-tight mb-3">
+          <h1 className="text-2xl sm:texnboardingt-[28px] font-black text-[#0A1D3D] tracking-tight mb-3">
             Account Under Review
           </h1>
 

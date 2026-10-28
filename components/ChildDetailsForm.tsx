@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, ChevronDown, Clock, HeartHandshake, Loader2, ArrowRight, School, Smile, Lock } from "lucide-react";
+import { Check, ChevronDown, Clock, HeartHandshake, Loader2, ArrowRight, School, Smile, Lock, AlertCircle } from "lucide-react";
+import { fetchCurrentUserProfile, submitOnboarding } from "@/lib/api/auth";
 
 const JAKARTA = "[font-family:var(--font-plus-jakarta),sans-serif]";
 
@@ -56,20 +57,140 @@ export default function ChildDetailsForm() {
   const [parentMobile, setParentMobile] = useState("");
   const [isGuardian, setIsGuardian] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerifyingAuth, setIsVerifyingAuth] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Authenticate and verify user state on mount
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function checkAuthAndPrefill() {
+      try {
+        const profile = await fetchCurrentUserProfile();
+
+        if (isCancelled) return;
+
+        if (!profile) {
+          router.replace("/login?redirect=/onboarding");
+          return;
+        }
+
+        if (profile.status === "RESTRICTED") {
+          router.replace("/access-denied");
+          return;
+        }
+
+        if (profile.role === "ADMIN" && profile.status === "ACTIVE") {
+          router.replace("/");
+          return;
+        }
+
+        // If the user has already submitted onboarding:
+        if (profile.onboardingSubmittedAt) {
+          if (profile.status === "PENDING") {
+            router.replace("/pending-approval");
+            return;
+          }
+          if (profile.status === "ACTIVE") {
+            router.replace("/warm-up");
+            return;
+          }
+        }
+
+        // Prefill available information from authenticated profile
+        if (profile.email && !parentEmail) {
+          setParentEmail(profile.email);
+        }
+
+        if (profile.childProfile) {
+          setChildName(profile.childProfile.childName || "");
+          setAge(profile.childProfile.age ? String(profile.childProfile.age) : "");
+          setLanguage(profile.childProfile.language || "");
+          setSchool(profile.childProfile.school || "");
+          setSelectedClass(profile.childProfile.selectedClass || "Classes 1");
+          setStudentId(profile.childProfile.studentId || "");
+          if (profile.childProfile.parentEmail) setParentEmail(profile.childProfile.parentEmail);
+          if (profile.childProfile.parentMobile) setParentMobile(profile.childProfile.parentMobile);
+          setIsGuardian(Boolean(profile.childProfile.isGuardian));
+        }
+
+        setIsVerifyingAuth(false);
+      } catch (err) {
+        console.error("Auth verification failed in ChildDetailsForm:", err);
+        if (!isCancelled) {
+          setIsVerifyingAuth(false);
+        }
+      }
+    }
+
+    checkAuthAndPrefill();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+
     const chosen = CLASSES.find((c) => c.label === selectedClass);
     if (chosen?.locked) {
       setLockedNotice("Please select an available class to continue.");
       return;
     }
+
+    const ageNum = parseInt(age, 10);
+    if (isNaN(ageNum) || ageNum < 1 || ageNum > 18) {
+      setErrorMessage("Please enter a valid child age between 1 and 18.");
+      return;
+    }
+
+    if (!language) {
+      setErrorMessage("Please select a preferred home language.");
+      return;
+    }
+
+    if (!isGuardian) {
+      setErrorMessage("Parent or guardian consent is required to create your child's profile.");
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      await submitOnboarding({
+        childName: childName.trim(),
+        age: ageNum,
+        language,
+        school: school.trim() || undefined,
+        selectedClass,
+        studentId: studentId.trim() || undefined,
+        parentEmail: parentEmail.trim(),
+        parentMobile: parentMobile.trim(),
+        isGuardian,
+      });
+
+      // After successful submission, redirect to pending approval
+      router.push("/pending-approval");
+    } catch (err) {
+      console.error("Failed to submit onboarding:", err);
+      setErrorMessage(
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred while saving onboarding details. Please try again."
+      );
       setIsLoading(false);
-      router.push("/warm-up");
-    }, 600);
+    }
   };
+
+  if (isVerifyingAuth) {
+    return (
+      <div className="w-full max-w-[824px] bg-white rounded-[24px] border border-[#E1E8F3] p-12 flex flex-col items-center justify-center min-h-[380px] shadow-[0_8px_30px_rgba(10,29,61,0.04)]">
+        <Loader2 className="w-8 h-8 text-[#00BCD4] animate-spin mb-3" />
+        <p className="text-xs font-bold text-slate-500">Verifying session & loading profile...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-[824px] bg-white rounded-[24px] border border-[#E1E8F3] shadow-[0_8px_30px_rgba(10,29,61,0.04)] p-6 sm:p-[36px] flex flex-col gap-[26px] select-none text-[#10345B]">
@@ -92,6 +213,13 @@ export default function ChildDetailsForm() {
       <p className="mt-2.5 mb-7 text-[13px] leading-5 text-[#4B5870]">
         Please fill in the details below. Fields marked optional can be left blank.
       </p>
+
+      {errorMessage && (
+        <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-start gap-2.5 animate-in fade-in">
+          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         {/* ============ 1. CHILD DETAILS ============ */}
