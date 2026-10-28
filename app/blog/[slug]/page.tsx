@@ -426,19 +426,23 @@ async function BlogPostContent({ params }: BlogPostPageProps) {
  * Renders the static instant shell (Navbar, ConstellationClub, FooterSection)
  * and streams the article content inside a Suspense boundary when params resolve.
  */
+import { PageCurtain } from "@/components/layout/page-curtain";
+
 export default function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <main className="min-h-screen flex flex-col bg-white selection:bg-[#FFE066] selection:text-[#0A1D3D]">
-      {/* 1. Global Navigation Bar (Part of Instant App Shell) */}
-      <Navbar />
+      <PageCurtain>
+        {/* 1. Global Navigation Bar (Part of Instant App Shell) */}
+        <Navbar />
 
-      {/* 2. Article Content (Streamed in via Suspense for Instant Navigation) */}
-      <Suspense fallback={<BlogPostSkeleton />}>
-        <BlogPostContent params={params} />
-      </Suspense>
+        {/* 2. Article Content (Streamed in via Suspense for Instant Navigation) */}
+        <Suspense fallback={<BlogPostSkeleton />}>
+          <BlogPostContent params={params} />
+        </Suspense>
 
-      {/* 3. Newsletter Subscription (Part of Instant App Shell) */}
-      <ConstellationClub />
+        {/* 3. Newsletter Subscription (Part of Instant App Shell) */}
+        <ConstellationClub />
+      </PageCurtain>
 
       {/* 4. Global Site Footer (Part of Instant App Shell) */}
       <FooterSection />

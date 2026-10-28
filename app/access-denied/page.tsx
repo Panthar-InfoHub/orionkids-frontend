@@ -4,20 +4,27 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ShieldAlert, LogOut, Mail } from "lucide-react";
-import { fetchCurrentUserProfile, performSignOut, type UserProfile } from "@/lib/api/auth";
+import { useRouter } from "next/navigation";
+import { fetchCurrentUserProfile, getRouteForUserProfile, performSignOut, type UserProfile } from "@/lib/api/auth";
 
 export default function AccessDeniedPage() {
+  const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     async function load() {
       const user = await fetchCurrentUserProfile();
-      if (user) {
-        setProfile(user);
+      if (!user) {
+        return;
       }
+      if (user.status !== "RESTRICTED") {
+        router.replace(getRouteForUserProfile(user));
+        return;
+      }
+      setProfile(user);
     }
     load();
-  }, []);
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between selection:bg-[#FFE066] selection:text-[#0A1D3D]">

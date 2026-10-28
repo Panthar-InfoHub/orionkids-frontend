@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <rect width="800" height="600" fill="#F0FDF4" rx="32"/>
+  <g transform="translate(400, 260)">
+    <ellipse cx="0" cy="130" rx="160" ry="40" fill="#CA8A04"/>
+    <rect x="-160" y="-30" width="320" height="160" fill="#EAB308" stroke="#A16207" stroke-width="6"/>
+    <ellipse cx="0" cy="-30" rx="160" ry="40" fill="#FEF08A" stroke="#A16207" stroke-width="6"/>
+    <line x1="-160" y1="40" x2="160" y2="40" stroke="#A16207" stroke-width="5"/>
+    <circle cx="-120" cy="40" r="5" fill="#713F12"/>
+    <circle cx="-60" cy="40" r="5" fill="#713F12"/>
+    <circle cx="0" cy="40" r="5" fill="#713F12"/>
+    <circle cx="60" cy="40" r="5" fill="#713F12"/>
+    <circle cx="120" cy="40" r="5" fill="#713F12"/>
+    <text x="0" y="95" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="20" fill="#713F12" letter-spacing="4">TIME CAPSULE: 2035</text>
+  </g>
+  
+  <g transform="translate(240, 150) rotate(-20)">
+    <rect x="0" y="0" width="160" height="70" rx="12" fill="#FEF3C7" stroke="#B45309" stroke-width="4"/>
+    <rect x="70" y="-4" width="20" height="78" fill="#EF4444"/>
+    <circle cx="80" cy="35" r="10" fill="#DC2626"/>
+  </g>
+
+  <g transform="translate(560, 140)">
+    <polygon points="0,0 50,20 0,40 -50,20" fill="#0A1D3D"/>
+    <rect x="-20" y="30" width="40" height="20" rx="5" fill="#0A1D3D"/>
+    <line x1="0" y1="20" x2="35" y2="45" stroke="#FBBF24" stroke-width="4"/>
+    <circle cx="35" cy="48" r="6" fill="#F59E0B"/>
+  </g>
+
+  <polygon points="160,340 167,358 185,358 171,370 176,388 160,378 144,388 149,370 135,358 153,358" fill="#FBBF24"/>
+  <polygon points="630,340 637,358 655,358 641,370 646,388 630,378 614,388 619,370 605,358 623,358" fill="#FBBF24"/>
+  <text x="400" y="565" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="22" fill="#059669">A LETTER TO FUTURE ME: TIME CAPSULE</text>
+</svg>

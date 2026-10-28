@@ -29,6 +29,7 @@ export async function submitWarmUpAnswers(
     if (apiUrl) {
       const response = await fetch(`${apiUrl}/api/warm-up/submit`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <rect width="800" height="600" fill="#FFF1F2" rx="32"/>
+  <path d="M 220 300 C 150 180 280 120 400 150 C 520 180 620 140 600 280 C 580 400 650 480 500 500 C 350 520 250 460 220 380 C 200 320 280 260 380 270 C 480 280 500 380 420 420 C 340 450 300 360 340 320 C 380 280 460 310 440 360" fill="none" stroke="#F43F5E" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 260 280 C 200 200 310 160 410 180 C 510 200 580 180 560 300 C 540 400 600 450 480 470 C 360 490 280 430 250 350" fill="none" stroke="#8B5CF6" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 280 320 C 230 240 330 200 420 210 C 510 220 540 300 500 380 C 460 430 380 410 320 350" fill="none" stroke="#06B6D4" stroke-width="8" stroke-linecap="round"/>
+  
+  <circle cx="360" cy="220" r="34" fill="#FFFFFF" stroke="#0A1D3D" stroke-width="5"/>
+  <circle cx="365" cy="220" r="14" fill="#0A1D3D"/>
+  <circle cx="362" cy="216" r="5" fill="#FFFFFF"/>
+  
+  <circle cx="440" cy="220" r="34" fill="#FFFFFF" stroke="#0A1D3D" stroke-width="5"/>
+  <circle cx="435" cy="220" r="14" fill="#0A1D3D"/>
+  <circle cx="432" cy="216" r="5" fill="#FFFFFF"/>
+
+  <path d="M 380 180 Q 360 120 340 130" stroke="#0A1D3D" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <circle cx="340" cy="130" r="12" fill="#FBBF24" stroke="#0A1D3D" stroke-width="3"/>
+  <path d="M 420 180 Q 440 120 460 130" stroke="#0A1D3D" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <circle cx="460" cy="130" r="12" fill="#FBBF24" stroke="#0A1D3D" stroke-width="3"/>
+
+  <path d="M 360 290 Q 400 340 440 290" fill="#0A1D3D" stroke="#0A1D3D" stroke-width="4"/>
+  <polygon points="380,290 390,305 400,290" fill="#FFF"/>
+  <polygon points="405,290 415,305 425,290" fill="#FFF"/>
+
+  <g transform="translate(620, 180) rotate(35)">
+    <rect x="0" y="0" width="35" height="130" rx="6" fill="#F43F5E" stroke="#0A1D3D" stroke-width="3"/>
+    <polygon points="0,0 35,0 17.5,-35" fill="#E11D48" stroke="#0A1D3D" stroke-width="3"/>
+    <text x="18" y="70" font-family="sans-serif" font-weight="900" font-size="12" fill="#FFF" transform="rotate(-90 18 70)">CRAYON</text>
+  </g>
+  <text x="400" y="565" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="22" fill="#E11D48">SCRIBBLE MAGIC: DIVERGENT CREATIVITY</text>
+</svg>

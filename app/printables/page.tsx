@@ -34,26 +34,30 @@ export const metadata: Metadata = {
  * - Ready for backend modifications (database / CMS API integration)
  * - Minimal client JS payload with focused interactive Client Components
  */
+import { PageCurtain } from "@/components/layout/page-curtain";
+
 export default async function PrintablesPage() {
   // Fetch printables dataset on the server
   const data = await getPrintablesData();
 
   return (
     <main className="min-h-screen flex flex-col bg-white selection:bg-[#FFD600] selection:text-[#1E293B]">
-      {/* 1. Printables Announcement Banner (Matching reference image: 100% FREE BRAIN-SPARKING...) */}
-      <AnnouncementBar
-        text="🍃 100% FREE BRAIN-SPARKING WORKSHEETS & CRAFTS ★ LOW-INK GUARANTEED"
-        href="#featured"
-        bg="bg-[#E6FAF0]"
-      />
+      <PageCurtain>
+        {/* 1. Printables Announcement Banner (Matching reference image: 100% FREE BRAIN-SPARKING...) */}
+        <AnnouncementBar
+          text="🍃 100% FREE BRAIN-SPARKING WORKSHEETS & CRAFTS ★ LOW-INK GUARANTEED"
+          href="#featured"
+          bg="bg-[#E6FAF0]"
+        />
 
-      {/* 2. Main Site Navbar with Active Route Highlighting */}
-      <Navbar />
+        {/* 2. Main Site Navbar with Active Route Highlighting */}
+        <Navbar />
 
-      {/* 3. Interactive Printables View (Hero, Featured, Spotlight, Grid, Low-Ink, Workbook) */}
-      <div className="flex-1">
-        <PrintablesView initialData={data} />
-      </div>
+        {/* 3. Interactive Printables View (Hero, Featured, Spotlight, Grid, Low-Ink, Workbook) */}
+        <div className="flex-1">
+          <PrintablesView initialData={data} />
+        </div>
+      </PageCurtain>
 
       {/* 4. Footer with Interactive Doodles & Brand Links */}
       <FooterSection />

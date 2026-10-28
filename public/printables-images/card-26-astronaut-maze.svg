@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <rect width="800" height="600" fill="#0B132B" rx="32"/>
+  <circle cx="650" cy="120" r="100" fill="#8B5CF6" opacity="0.2"/>
+  <circle cx="150" cy="450" r="80" fill="#06B6D4" opacity="0.2"/>
+  
+  <g transform="translate(400, 270)" fill="none" stroke="#38BDF8" stroke-width="5" stroke-linecap="round">
+    <path d="M -220 0 A 220 220 0 1 1 220 0 A 220 220 0 0 1 -180 126"/>
+    <path d="M -170 0 A 170 170 0 0 1 147 85 M 100 137 A 170 170 0 0 1 -170 0"/>
+    <path d="M 0 -120 A 120 120 0 1 1 -120 0 M -84 -84 A 120 120 0 0 1 0 -120"/>
+    <path d="M -70 0 A 70 70 0 1 1 0 70 M 50 50 A 70 70 0 0 1 -70 0"/>
+    <line x1="0" y1="-220" x2="0" y2="-170"/>
+    <line x1="170" y1="0" x2="120" y2="0"/>
+    <line x1="-120" y1="0" x2="-70" y2="0"/>
+    <line x1="0" y1="120" x2="0" y2="170"/>
+  </g>
+  
+  <g transform="translate(400, 270)">
+    <polygon points="0,-40 12,-12 40,-12 18,6 26,35 0,18 -26,35 -18,6 -40,-12 -12,-12" fill="#FFC72C" stroke="#F59E0B" stroke-width="4"/>
+    <circle cx="0" cy="0" r="10" fill="#FFF" opacity="0.8"/>
+  </g>
+
+  <g transform="translate(140, 120)">
+    <circle cx="40" cy="40" r="35" fill="#E2E8F0" stroke="#0284C7" stroke-width="4"/>
+    <ellipse cx="45" cy="40" rx="22" ry="18" fill="#FBBF24" stroke="#D97706" stroke-width="3"/>
+    <path d="M 35 32 Q 45 28 55 35" stroke="#FFF" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <rect x="20" y="70" width="40" height="45" rx="10" fill="#F8FAFC" stroke="#0284C7" stroke-width="4"/>
+    <rect x="8" y="75" width="12" height="35" rx="5" fill="#94A3B8"/>
+    <rect x="35" y="80" width="12" height="8" fill="#EF4444"/>
+  </g>
+  <text x="400" y="565" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="22" fill="#38BDF8">MAZE: ASTRONAUT'S PATH TO THE STAR</text>
+</svg>
