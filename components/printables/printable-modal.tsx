@@ -36,9 +36,16 @@ export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
   const downloadEndpoint = item.downloadUrl || `/api/printables/${item.slug}/pdf`;
   const filename = `OrionKids-${item.slug}-Worksheet.pdf`;
 
-  // Resolves the exact authentic 1-page worksheet PDF preview directly
+  // Resolves the exact PDF preview URL based on the active tab with cache-busting timestamp
   const getPreviewUrl = () => {
-    return `${worksheetStaticPath}#toolbar=0&navpanes=0`;
+    const timestamp = Date.now();
+    if (activeTab === "page1") {
+      return `${previewEndpoint}&t=${timestamp}#page=1&toolbar=0&navpanes=0`;
+    }
+    if (activeTab === "page2") {
+      return `${worksheetStaticPath}#toolbar=0&navpanes=0`;
+    }
+    return `${previewEndpoint}&t=${timestamp}#toolbar=0&navpanes=0`;
   };
 
   const handleDownload = async () => {
@@ -71,7 +78,7 @@ export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
    * Opens the authentic 1-page PDF directly in the browser's native PDF print preview viewer.
    */
   const handlePrintPreview = () => {
-    const printUrl = `${worksheetStaticPath}#view=FitH`;
+    const printUrl = `${previewEndpoint}&t=${Date.now()}#view=FitH`;
     window.open(printUrl, "_blank", "noopener,noreferrer");
   };
 
