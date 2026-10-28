@@ -13,7 +13,6 @@ import {
   ArrowRight,
   Loader2,
   ExternalLink,
-  Layers,
 } from "lucide-react";
 import { PrintableItem } from "@/types/printables";
 
@@ -26,28 +25,20 @@ interface PrintableModalProps {
 }
 
 export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
-  const [activeTab, setActiveTab] = useState<"page1" | "page2" | "both">("both");
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
 
   if (!isOpen || !item) return null;
 
-  const downloadEndpoint = item.downloadUrl || `/api/printables/${item.slug}/pdf`;
-  const previewEndpoint = `/api/printables/${item.slug}/pdf?preview=true`;
   const worksheetStaticPath = item.worksheetFile
     ? `/OrionKids_Worksheets/${item.worksheetFile}`
     : `/OrionKids_Worksheets/OrionKids_01_Join_the_Stars_Orion.pdf`;
+  const downloadEndpoint = item.downloadUrl || `/api/printables/${item.slug}/pdf`;
   const filename = `OrionKids-${item.slug}-Worksheet.pdf`;
 
-  // Resolves the exact PDF preview URL based on the active tab
+  // Resolves the exact authentic 1-page worksheet PDF preview directly
   const getPreviewUrl = () => {
-    if (activeTab === "page1") {
-      return `${previewEndpoint}#page=1&toolbar=0&navpanes=0`;
-    }
-    if (activeTab === "page2") {
-      return `${worksheetStaticPath}#toolbar=0&navpanes=0`;
-    }
-    return `${previewEndpoint}#toolbar=0&navpanes=0`;
+    return `${worksheetStaticPath}#toolbar=0&navpanes=0`;
   };
 
   const handleDownload = async () => {
@@ -70,19 +61,17 @@ export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
     } catch (err) {
       console.error("PDF download error:", err);
       // Fallback direct navigation
-      window.open(downloadEndpoint, "_blank");
+      window.open(worksheetStaticPath, "_blank");
     } finally {
       setIsDownloading(false);
     }
   };
 
   /**
-   * Opens the authentic PDF directly in the browser's native PDF print preview viewer.
-   * This guarantees 100% vector fidelity, accurate A4 pagination, and proper margins,
-   * avoiding the broken web DOM print preview.
+   * Opens the authentic 1-page PDF directly in the browser's native PDF print preview viewer.
    */
   const handlePrintPreview = () => {
-    const printUrl = `${previewEndpoint}#view=FitH`;
+    const printUrl = `${worksheetStaticPath}#view=FitH`;
     window.open(printUrl, "_blank", "noopener,noreferrer");
   };
 
@@ -120,42 +109,13 @@ export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
           </button>
         </div>
 
-        {/* Tab Switcher & Fullscreen Action */}
+        {/* Preview Header & Fullscreen Action */}
         <div className="flex items-center justify-between py-2.5 shrink-0 gap-2 flex-wrap">
-          <div className="flex items-center bg-slate-100 p-1 rounded-xl">
-            <button
-              onClick={() => setActiveTab("both")}
-              className={`px-3 py-1.5 text-xs font-black rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeTab === "both"
-                  ? "bg-white text-[#0A1D3D] shadow-xs"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5 text-[#0A1D3D]" />
-              <span>Full 2-Page PDF</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("page1")}
-              className={`px-3 py-1.5 text-xs font-black rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeTab === "page1"
-                  ? "bg-white text-[#0A1D3D] shadow-xs"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5 text-[#0284C7]" />
-              <span>Page 1: Companion</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("page2")}
-              className={`px-3 py-1.5 text-xs font-black rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeTab === "page2"
-                  ? "bg-white text-[#0A1D3D] shadow-xs"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-black text-[#0A1D3D] bg-slate-100 rounded-xl">
               <FileText className="w-3.5 h-3.5 text-[#059669]" />
-              <span>Page 2: Worksheet</span>
-            </button>
+              <span>Authentic Worksheet Preview (1-Page)</span>
+            </span>
           </div>
 
           <button
@@ -172,7 +132,7 @@ export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
         {/* Center Canvas: Interactive Live PDF Preview Frame */}
         <div className="relative flex-1 w-full bg-slate-100/90 rounded-2xl overflow-hidden border-2 border-slate-200 shadow-inner flex flex-col justify-center items-center">
           <iframe
-            key={`${item.slug}-${activeTab}`}
+            key={item.slug}
             src={getPreviewUrl()}
             className="w-full h-full rounded-2xl bg-white border-0"
             title={`${item.title} Real PDF Document Preview`}
@@ -198,7 +158,7 @@ export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
           )}
 
           <div className="flex items-center gap-2.5 w-full sm:w-auto">
-            {/* Primary Download 2-Page PDF CTA */}
+            {/* Primary Download 1-Page PDF CTA */}
             <button
               onClick={handleDownload}
               disabled={isDownloading}
@@ -217,7 +177,7 @@ export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
               ) : (
                 <>
                   <Download className="w-4 h-4 stroke-[2.4]" />
-                  <span>Download 2-Page PDF</span>
+                  <span>Download 1-Page PDF</span>
                 </>
               )}
             </button>

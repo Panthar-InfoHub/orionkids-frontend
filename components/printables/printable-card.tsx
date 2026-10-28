@@ -137,11 +137,11 @@ export function PrintableCardPreview({
         </div>
       )}
 
-      {/* Bottom Floating 2-Page Indicator Pill */}
+      {/* Bottom Floating 1-Page Indicator Pill */}
       <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#0A1D3D]/85 backdrop-blur-xs text-white text-[9px] font-bold tracking-tight shadow-xs">
           <Sparkles className="w-2.5 h-2.5 text-[#FFC72C]" />
-          <span>2-Page Companion PDF</span>
+          <span>1-Page Worksheet PDF</span>
         </span>
       </div>
     </div>
@@ -291,7 +291,7 @@ export function PrintableCardAction({
           e.stopPropagation();
           onClick?.();
         }}
-        title="Download combined 2-page PDF"
+        title="Download 1-page PDF"
         className={`${className} cursor-pointer`}
       >
         {content}

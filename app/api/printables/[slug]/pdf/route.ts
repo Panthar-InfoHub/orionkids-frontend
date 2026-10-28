@@ -32,7 +32,7 @@ export async function GET(
       );
     }
 
-    // Generate the combined 2-Page PDF (Page 1: Blog Companion, Page 2: Authentic Worksheet)
+    // Generate the authentic 1-Page Worksheet PDF
     const pdfBuffer = await generatePrintablePdf({ printable });
 
     const safeFilename = `OrionKids-${printable.slug}-Worksheet.pdf`;
@@ -47,7 +47,9 @@ export async function GET(
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `${dispositionType}; filename="${safeFilename}"`,
-        "Cache-Control": "public, max-age=86400, stale-while-revalidate=43200",
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
       },
     });
   } catch (error) {

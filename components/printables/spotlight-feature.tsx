@@ -166,15 +166,15 @@ export function SpotlightFeature({ item, onPrint }: SpotlightFeatureProps) {
 
             {/* PRINT & DOWNLOAD PREFERENCES */}
             <div className="w-full flex flex-col sm:flex-row gap-2.5">
-              {/* Primary Download 2-Page PDF CTA */}
+              {/* Primary Download 1-Page PDF CTA */}
               <a
                 href={item.downloadUrl || `/api/printables/${item.slug}/pdf`}
                 download={`OrionKids-${item.slug}-Worksheet.pdf`}
                 className={`flex-1 h-11 px-5 rounded-xl bg-[#FFC72C] hover:bg-[#FFD233] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none text-xs sm:text-sm font-black text-[#0A1D3D] transition-all cursor-pointer flex items-center justify-center gap-2 ${JAKARTA}`}
-                title="Download 2-Page Companion Guide + Worksheet"
+                title="Download 1-Page Worksheet PDF"
               >
                 <Download className="w-4 h-4 text-[#0A1D3D] stroke-[2.2]" />
-                <span>Download 2-Page PDF</span>
+                <span>Download 1-Page PDF</span>
               </a>
 
               {/* Secondary Print Preview Button */}

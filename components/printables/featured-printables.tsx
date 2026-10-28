@@ -187,7 +187,7 @@ export function FeaturedPrintables({
                       {item.ageRange}
                     </span>
                     <span className="text-[8px] font-semibold text-emerald-300 bg-emerald-950/60 px-1.5 py-0.2 rounded">
-                      2-Page PDF
+                      1-Page PDF
                     </span>
                   </div>
                   
@@ -198,9 +198,9 @@ export function FeaturedPrintables({
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
-                    title="Instant Download: Blog Companion + Activity Worksheet"
+                    title="Instant Download: Activity Worksheet PDF"
                     className="w-6 h-6 rounded-full bg-white text-[#0A1D3D] hover:bg-[#FFC72C] active:scale-90 flex items-center justify-center transition-all shadow-xs cursor-pointer z-10"
-                    aria-label={`Download ${item.title} 2-Page PDF`}
+                    aria-label={`Download ${item.title} 1-Page PDF`}
                   >
                     <Download className="w-3.5 h-3.5 stroke-[2.2]" />
                   </a>
