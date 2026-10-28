@@ -44,7 +44,7 @@ export function PrintablesGrid({
         </div>
 
         <span className="text-xs font-semibold text-[#64748B]">
-          Showing {visibleItems.length} of {totalCount || 28} printable worksheets
+          Showing {visibleItems.length} of {totalCount || 8} printable worksheets
         </span>
       </div>
 
