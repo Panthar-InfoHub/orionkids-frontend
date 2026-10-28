@@ -176,23 +176,9 @@ function DoodleCard({
   onClick: () => void;
 }) {
   return (
+    // Outer positioning wrapper: Strictly handles CSS coordinates and center alignment
     <div
-      ref={cardRef}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
-      onClick={onClick}
-      role={index === 0 ? "button" : undefined}
-      tabIndex={index === 0 ? 0 : undefined}
-      aria-label={index === 0 ? "Tap the star doodle to start your adventure" : spec.alt}
-      onKeyDown={(e) => {
-        if (index === 0 && (e.key === "Enter" || e.key === " ")) {
-          e.preventDefault();
-          onClick();
-        }
-      }}
-      className="absolute cursor-pointer pointer-events-auto filter hover:drop-shadow-md select-none will-change-transform"
+      className="absolute pointer-events-auto select-none"
       style={{
         left: `${(spec.x / STRIP_W) * 100}%`,
         top: `${(spec.y / STRIP_H) * 100}%`,
@@ -200,26 +186,48 @@ function DoodleCard({
         height: `${(spec.h / STRIP_H) * 100}%`,
         transform: "translate(-50%, -50%)",
         zIndex: spec.zIndex,
-        WebkitBackfaceVisibility: "hidden",
-        backfaceVisibility: "hidden",
-        WebkitTouchCallout: "none",
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={spec.src}
-        alt={spec.alt}
-        width={spec.w}
-        height={spec.h}
-        className="w-full h-full object-contain select-none pointer-events-none drop-shadow-xs"
+      {/* Inner animated element: Target of GSAP falling, bouncing, settling, hover & click */}
+      <div
+        ref={cardRef}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        onClick={onClick}
+        role={index === 0 ? "button" : undefined}
+        tabIndex={index === 0 ? 0 : undefined}
+        aria-label={index === 0 ? "Tap the star doodle to start your adventure" : spec.alt}
+        onKeyDown={(e) => {
+          if (index === 0 && (e.key === "Enter" || e.key === " ")) {
+            e.preventDefault();
+            onClick();
+          }
+        }}
+        className="w-full h-full cursor-pointer filter hover:drop-shadow-md select-none will-change-transform"
         style={{
-          WebkitUserSelect: "none",
-          userSelect: "none",
+          WebkitBackfaceVisibility: "hidden",
+          backfaceVisibility: "hidden",
           WebkitTouchCallout: "none",
         }}
-        loading="lazy"
-        decoding="async"
-      />
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={spec.src}
+          alt={spec.alt}
+          width={spec.w}
+          height={spec.h}
+          className="w-full h-full object-contain select-none pointer-events-none drop-shadow-xs"
+          style={{
+            WebkitUserSelect: "none",
+            userSelect: "none",
+            WebkitTouchCallout: "none",
+          }}
+          loading="eager"
+          decoding="async"
+        />
+      </div>
     </div>
   );
 }
@@ -248,100 +256,63 @@ const ArrowDiagonal = () => (
 );
 
 /* ------------------------------------------------------------------ */
-/*  Footer Component with Curtain Reveal & Falling Doodle Animation     */
+/*  Sticky Layered Reveal Footer with Falling Doodle Cards             */
 /* ------------------------------------------------------------------ */
 
 export function FooterSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLElement>(null);
   const desktopContainerRef = useRef<HTMLDivElement>(null);
   const mobileContainerRef = useRef<HTMLDivElement>(null);
   const desktopCardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const mobileCardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  // State machine values
-  const [isRevealed, setIsRevealed] = useState(false);
-  const [footerHeight, setFooterHeight] = useState<number>(0);
-  const [mounted, setMounted] = useState(false);
-  const [isReducedMotion, setIsReducedMotion] = useState(false);
-
-  // Synchronous refs for smooth 60fps scroll tracking without race conditions
-  const isRevealedRef = useRef(false);
+  // State & Stable Refs
+  const [isFlowMode, setIsFlowMode] = useState<boolean>(false);
+  const isFlowModeRef = useRef(false);
+  const isReducedMotionRef = useRef(false);
   const cardsLandedRef = useRef(false);
   const isAnimatingRef = useRef(false);
-  const lastScrollYRef = useRef(0);
   const tickingRef = useRef(false);
   const masterTimelineRef = useRef<gsap.core.Timeline | null>(null);
-  const revealTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const desktopTouchTimer = useRef<NodeJS.Timeout | null>(null);
   const mobileTouchTimer = useRef<NodeJS.Timeout | null>(null);
 
-  // Trigger reveal transition (waits 2 seconds before whole footer appears)
-  const triggerReveal = useCallback((immediate = false) => {
-    if (isRevealedRef.current || revealTimerRef.current) return;
-
-    if (immediate || isReducedMotion) {
-      isRevealedRef.current = true;
-      setIsRevealed(true);
-      return;
-    }
-
-    revealTimerRef.current = setTimeout(() => {
-      revealTimerRef.current = null;
-      isRevealedRef.current = true;
-      setIsRevealed(true);
-    }, 80);
-  }, [isReducedMotion]);
-
-  // Trigger conceal transition (when user scrolls far back up the page)
-  const triggerConceal = useCallback(() => {
-    if (revealTimerRef.current) {
-      clearTimeout(revealTimerRef.current);
-      revealTimerRef.current = null;
-    }
-    if (!isRevealedRef.current) return;
-    isRevealedRef.current = false;
-    setIsRevealed(false);
-    cardsLandedRef.current = false;
-    isAnimatingRef.current = false;
-    if (masterTimelineRef.current) {
-      masterTimelineRef.current.kill();
-      masterTimelineRef.current = null;
-    }
+  // Instantly place cards at resting layout
+  const resetCardsToResting = useCallback(() => {
+    desktopCardsRef.current.forEach((el) => {
+      if (!el) return;
+      gsap.set(el, {
+        x: 0,
+        y: 0,
+        rotation: 0,
+        scale: 1,
+        opacity: 1,
+        visibility: "visible",
+      });
+      el.dataset.landed = "true";
+    });
+    mobileCardsRef.current.forEach((el, i) => {
+      if (!el) return;
+      const baseRot = parseFloat(MOBILE_CARD_ROTATIONS[i] || "0");
+      gsap.set(el, {
+        x: 0,
+        y: 0,
+        rotation: baseRot,
+        scale: 1,
+        opacity: 1,
+        visibility: "visible",
+      });
+      el.dataset.landed = "true";
+    });
   }, []);
 
   // Play realistic paper-dropping animation
   const playFallingAnimation = useCallback(() => {
     if (cardsLandedRef.current || isAnimatingRef.current) return;
 
-    if (isReducedMotion) {
-      // Instantly position at resting layout with no motion
-      desktopCardsRef.current.forEach((el) => {
-        if (!el) return;
-        gsap.set(el, {
-          xPercent: -50,
-          yPercent: -50,
-          y: 0,
-          x: 0,
-          rotation: 0,
-          autoAlpha: 1,
-          scale: 1,
-        });
-        el.dataset.landed = "true";
-      });
-      mobileCardsRef.current.forEach((el, i) => {
-        if (!el) return;
-        const baseRot = parseFloat(MOBILE_CARD_ROTATIONS[i] || "0");
-        gsap.set(el, {
-          y: 0,
-          x: 0,
-          rotation: baseRot,
-          autoAlpha: 1,
-          scale: 1,
-        });
-        el.dataset.landed = "true";
-      });
+    if (isReducedMotionRef.current) {
+      resetCardsToResting();
       cardsLandedRef.current = true;
       return;
     }
@@ -354,10 +325,11 @@ export function FooterSection() {
     }
 
     const masterTl = gsap.timeline({
-      delay: 0.8,
+      delay: 0.1, // Prompt start as footer begins to be unveiled
       onComplete: () => {
         cardsLandedRef.current = true;
         isAnimatingRef.current = false;
+        resetCardsToResting();
       },
     });
     masterTimelineRef.current = masterTl;
@@ -375,31 +347,32 @@ export function FooterSection() {
         const scaledBounceH = physics.bounceHeight * responsiveScale;
         const scaledDriftX = physics.driftX * responsiveScale;
 
-        // 1. Initial airborne state
-        gsap.set(cardEl, {
-          xPercent: -50,
-          yPercent: -50,
-          y: scaledStartY,
-          x: scaledDriftX,
-          rotation: physics.startRot,
-          autoAlpha: 0,
-          scale: 1.05,
-        });
-
+        // Smooth drop animation on the inner element
         const cardTl = gsap.timeline();
 
-        // 2. Gravitational fall with air resistance drift
-        cardTl.to(cardEl, {
-          y: 0,
-          x: scaledDriftX * 0.15,
-          rotation: physics.bounceRot * 1.3,
-          scale: 1.0,
-          autoAlpha: 1,
-          duration: physics.dropDuration,
-          ease: "power2.in",
-        });
+        // 1. Initial fall from airborne position with drift & tumbling rotation
+        cardTl.fromTo(
+          cardEl,
+          {
+            y: scaledStartY,
+            x: scaledDriftX,
+            rotation: physics.startRot,
+            opacity: 0,
+            visibility: "visible",
+            scale: 1.05,
+          },
+          {
+            y: 0,
+            x: scaledDriftX * 0.15,
+            rotation: physics.bounceRot * 1.3,
+            scale: 1.0,
+            opacity: 1,
+            duration: physics.dropDuration,
+            ease: "power2.in",
+          }
+        );
 
-        // 3. Surface impact rebound bounce
+        // 2. Surface impact rebound bounce
         cardTl.to(cardEl, {
           y: scaledBounceH,
           x: 0,
@@ -408,7 +381,7 @@ export function FooterSection() {
           ease: "power2.out",
         });
 
-        // 4. Soft settle into exact final position
+        // 3. Soft settle into exact resting position
         cardTl.to(cardEl, {
           y: 0,
           rotation: 0,
@@ -438,25 +411,28 @@ export function FooterSection() {
         const scaledBounceH = physics.bounceHeight * mobileScale;
         const scaledDriftX = physics.driftX * mobileScale;
 
-        gsap.set(cardEl, {
-          y: scaledStartY,
-          x: scaledDriftX,
-          rotation: baseRot + physics.startRot,
-          autoAlpha: 0,
-          scale: 1.04,
-        });
-
         const cardTl = gsap.timeline();
 
-        cardTl.to(cardEl, {
-          y: 0,
-          x: scaledDriftX * 0.15,
-          rotation: baseRot + physics.bounceRot * 1.3,
-          scale: 1.0,
-          autoAlpha: 1,
-          duration: physics.dropDuration,
-          ease: "power2.in",
-        });
+        cardTl.fromTo(
+          cardEl,
+          {
+            y: scaledStartY,
+            x: scaledDriftX,
+            rotation: baseRot + physics.startRot,
+            opacity: 0,
+            visibility: "visible",
+            scale: 1.04,
+          },
+          {
+            y: 0,
+            x: scaledDriftX * 0.15,
+            rotation: baseRot + physics.bounceRot * 1.3,
+            scale: 1.0,
+            opacity: 1,
+            duration: physics.dropDuration,
+            ease: "power2.in",
+          }
+        );
 
         cardTl.to(cardEl, {
           y: scaledBounceH,
@@ -479,133 +455,199 @@ export function FooterSection() {
         masterTl.add(cardTl, physics.delay);
       });
     }
-  }, [isReducedMotion]);
+  }, [resetCardsToResting]);
 
-  // When revealed, play falling animation
-  useEffect(() => {
-    if (isRevealed) {
-      playFallingAnimation();
+  // Trigger conceal & reset when user scrolls up away from footer
+  const triggerConceal = useCallback(() => {
+    if (cardsLandedRef.current || isAnimatingRef.current) {
+      if (masterTimelineRef.current) {
+        masterTimelineRef.current.kill();
+        masterTimelineRef.current = null;
+      }
+      cardsLandedRef.current = false;
+      isAnimatingRef.current = false;
+      desktopCardsRef.current.forEach((el) => {
+        if (el) el.dataset.landed = "false";
+      });
+      mobileCardsRef.current.forEach((el) => {
+        if (el) el.dataset.landed = "false";
+      });
     }
-  }, [isRevealed, playFallingAnimation]);
+  }, []);
 
-  // Robust scroll state machine with hysteresis
-  const updateScrollState = useCallback(() => {
+  // Update scroll positioning, accessibility inert state, and animation triggers
+  const updateScrollAndReveal = useCallback(() => {
     if (typeof window === "undefined") return;
 
-    const currentScrollY = window.scrollY || window.pageYOffset;
-    const viewportHeight = window.innerHeight;
-    const docHeight = document.documentElement.scrollHeight;
+    const footer = footerRef.current;
+    if (!footer) return;
 
-    // Edge case 1: Page is shorter than the viewport
-    if (docHeight <= viewportHeight + 60) {
-      triggerReveal(true);
+    const innerH = window.innerHeight;
+    const fHeight = footer.offsetHeight;
+
+    // Check if footer is taller than viewport or if prefers-reduced-motion is active
+    const flow = isReducedMotionRef.current || (fHeight > 0 && fHeight > innerH);
+    if (flow !== isFlowModeRef.current) {
+      isFlowModeRef.current = flow;
+      setIsFlowMode(flow);
+    }
+
+    // Locate the page curtain element sitting above the footer
+    const curtain =
+      document.getElementById("page-content-curtain") ||
+      (footer.previousElementSibling as HTMLElement | null);
+
+    const docHeight = document.documentElement.scrollHeight;
+    const currentScrollY = window.scrollY || window.pageYOffset;
+
+    // Edge case: Short document where footer is immediately visible
+    if (docHeight <= innerH + 40) {
+      if ("inert" in footer) {
+        (footer as HTMLElement & { inert: boolean }).inert = false;
+      }
+      playFallingAnimation();
       return;
     }
 
-    // Edge case 3 & 4: At or near absolute bottom of document
-    const distanceToBottom = docHeight - (currentScrollY + viewportHeight);
-    const isAtBottom = distanceToBottom <= 25;
-
-    const container = containerRef.current;
-    if (!container) return;
-    const rect = container.getBoundingClientRect();
-
-    // Reveal zone: when top of footer enters the lower region of viewport
-    const inRevealZone = rect.top <= viewportHeight + 60 && rect.bottom >= 0;
-
-    const delta = currentScrollY - lastScrollYRef.current;
-    const DIRECTION_THRESHOLD = 8; // px threshold to eliminate micro-jitter
-
-    let direction: "up" | "down" | "none" = "none";
-    if (delta > DIRECTION_THRESHOLD) {
-      direction = "down";
-    } else if (delta < -DIRECTION_THRESHOLD) {
-      direction = "up";
-    }
-
-    if (Math.abs(delta) >= DIRECTION_THRESHOLD || isAtBottom || currentScrollY <= 10) {
-      lastScrollYRef.current = currentScrollY;
-    }
-
-    if (isAtBottom) {
-      // Bottom reached: smoothly reveal
-      triggerReveal();
-    } else if (inRevealZone) {
-      if (direction === "up") {
-        // Reached bottom area and scrolling upward: trigger smooth curtain reveal
-        triggerReveal();
+    if (!curtain) {
+      if ("inert" in footer) {
+        (footer as HTMLElement & { inert: boolean }).inert = false;
       }
-      // If scrolling downward, keep concealed under main content until upward scroll or bottom
-    } else {
-      // Scrolled far back up into the page: smoothly conceal and reset
-      if (rect.top > viewportHeight + 250) {
+      const footerRect = footer.getBoundingClientRect();
+      if (footerRect.top <= innerH) {
+        playFallingAnimation();
+      } else if (footerRect.top > innerH + 200) {
         triggerConceal();
       }
+      return;
     }
-  }, [triggerReveal, triggerConceal]);
 
-  // Setup lifecycle, resize observer, and scroll listeners
+    const curtainRect = curtain.getBoundingClientRect();
+    const paperEdge = curtainRect.bottom;
+    const galleryTop = footer.getBoundingClientRect().top;
+
+    // 1. Accessibility: Footer is inert only when it is strictly hidden under the paper curtain
+    const isInert = !flow && paperEdge > galleryTop + 2;
+    if ("inert" in footer) {
+      (footer as HTMLElement & { inert: boolean }).inert = isInert;
+    }
+
+    // 2. Trigger doodle animation as the curtain begins to reveal the footer
+    const isNearBottom = currentScrollY + innerH >= docHeight - 80;
+    const isRevealing = flow ? galleryTop <= innerH : paperEdge <= innerH + 120;
+
+    if (isRevealing || isNearBottom) {
+      playFallingAnimation();
+    } else if (flow ? galleryTop > innerH + 150 : paperEdge > innerH + 250) {
+      // User scrolled up away from footer: reset so that when they scroll down again, the drop animation replays!
+      triggerConceal();
+    }
+  }, [playFallingAnimation, triggerConceal]);
+
+  // Setup lifecycle, observers, and scroll listener
   useIsomorphicLayoutEffect(() => {
     if (typeof window === "undefined") return;
 
     const reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setIsReducedMotion(reducedQuery.matches);
+    isReducedMotionRef.current = reducedQuery.matches;
 
     const handleReducedMotionChange = (e: MediaQueryListEvent) => {
-      setIsReducedMotion(e.matches);
+      isReducedMotionRef.current = e.matches;
+      if (e.matches) {
+        resetCardsToResting();
+        cardsLandedRef.current = true;
+      }
     };
     reducedQuery.addEventListener("change", handleReducedMotionChange);
 
-    setMounted(true);
-    lastScrollYRef.current = window.scrollY || window.pageYOffset || 0;
+    // Initial check on mount
+    updateScrollAndReveal();
 
-    // Dynamically measure footer rendered height
-    const updateHeight = () => {
-      if (footerRef.current) {
-        setFooterHeight(footerRef.current.offsetHeight);
-      }
-    };
-    updateHeight();
-
+    // 1. ResizeObserver to keep scroll measurements in sync with DOM changes
     const resizeObserver = new ResizeObserver(() => {
-      updateHeight();
+      updateScrollAndReveal();
     });
     if (footerRef.current) {
       resizeObserver.observe(footerRef.current);
     }
+    const curtain = document.getElementById("page-content-curtain");
+    if (curtain) {
+      resizeObserver.observe(curtain);
+    }
 
-    // Passive, RAF-debounced scroll listener
+    // 2. IntersectionObserver for reliable viewport entry/exit
+    const intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            playFallingAnimation();
+          } else if (entry.boundingClientRect.top > window.innerHeight) {
+            // Footer scrolled away up out of viewport
+            triggerConceal();
+          }
+        });
+      },
+      { threshold: [0.05, 0.2] }
+    );
+    if (footerRef.current) intersectionObserver.observe(footerRef.current);
+    if (desktopContainerRef.current) intersectionObserver.observe(desktopContainerRef.current);
+    if (mobileContainerRef.current) intersectionObserver.observe(mobileContainerRef.current);
+
+    // 3. Passive, RAF-debounced scroll listener
     const onScroll = () => {
       if (!tickingRef.current) {
         requestAnimationFrame(() => {
-          updateScrollState();
+          updateScrollAndReveal();
           tickingRef.current = false;
         });
         tickingRef.current = true;
       }
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", updateHeight, { passive: true });
-    window.addEventListener("orientationchange", updateHeight, { passive: true });
+    const handleResize = () => {
+      updateScrollAndReveal();
+    };
 
-    // Initial check on mount
-    updateScrollState();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
+    window.addEventListener("orientationchange", handleResize, { passive: true });
+
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(updateScrollAndReveal);
+    }
+
+    // 4. Safety fallback: if footer ever enters viewport, guarantee cards are triggered and visible
+    const safetyCheck = setTimeout(() => {
+      const footer = footerRef.current;
+      if (footer) {
+        const rect = footer.getBoundingClientRect();
+        if (rect.top <= window.innerHeight && !cardsLandedRef.current && !isAnimatingRef.current) {
+          playFallingAnimation();
+        }
+      }
+    }, 2000);
 
     return () => {
-      if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
+      clearTimeout(safetyCheck);
       reducedQuery.removeEventListener("change", handleReducedMotionChange);
       resizeObserver.disconnect();
+      intersectionObserver.disconnect();
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", updateHeight);
-      window.removeEventListener("orientationchange", updateHeight);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
       if (desktopTouchTimer.current) clearTimeout(desktopTouchTimer.current);
       if (mobileTouchTimer.current) clearTimeout(mobileTouchTimer.current);
       if (masterTimelineRef.current) {
         masterTimelineRef.current.kill();
+        masterTimelineRef.current = null;
+      }
+      // Reset animating flag on unmount to prevent blocking on remount in React Strict Mode
+      isAnimatingRef.current = false;
+      if (!cardsLandedRef.current) {
+        resetCardsToResting();
       }
     };
-  }, [updateScrollState]);
+  }, [resetCardsToResting, updateScrollAndReveal, playFallingAnimation, triggerConceal]);
 
   // Subtle interactive hover & touch effects after cards have settled
   const handleDesktopEnter = (index: number) => {
@@ -686,7 +728,8 @@ export function FooterSection() {
 
   // Click interaction: Tap the star doodle (card 0) to celebrate with confetti
   const handleCardClick = (index: number, isStar: boolean) => {
-    const el = desktopCardsRef.current[index] || mobileCardsRef.current[index];
+    const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
+    const el = isDesktop ? desktopCardsRef.current[index] : mobileCardsRef.current[index];
     if (el) {
       gsap.to(el, {
         scale: 1.2,
@@ -712,205 +755,205 @@ export function FooterSection() {
   };
 
   return (
-    <div
-      ref={containerRef}
-      id="footer-reveal-container"
-      className="relative w-full overflow-hidden select-none"
+    <footer
+      ref={footerRef}
+      id="footer-section"
+      onFocusCapture={() => {
+        if ("inert" in (footerRef.current || {})) {
+          (footerRef.current as HTMLElement & { inert: boolean }).inert = false;
+        }
+      }}
+      className={`w-full bg-[#DAF5E9] text-[#0A1D3D] select-none pt-7 sm:pt-8 scroll-mt-16 ${
+        isFlowMode
+          ? "relative z-10 orion-footer-flow"
+          : "sticky bottom-0 left-0 z-0 orion-footer-sticky"
+      }`}
       style={{
-        minHeight: footerHeight > 0 ? `${footerHeight}px` : "auto",
+        position: isFlowMode ? "relative" : "sticky",
+        bottom: 0,
+        left: 0,
+        width: "100%",
+        zIndex: isFlowMode ? 10 : 0,
+        paddingBottom:
+          "max(1.5rem, calc(1.5rem + env(safe-area-inset-bottom, 0px)))",
+        boxShadow: "inset 0 10px 24px -10px rgba(10, 29, 61, 0.08)",
       }}
     >
-      {/* Subtle top curtain depth shadow */}
+      {/* Top subtle border sheet line */}
       <div
-        className="absolute top-0 left-0 right-0 h-4 pointer-events-none z-20 bg-gradient-to-b from-black/[0.05] to-transparent transition-opacity duration-300"
-        style={{ opacity: isRevealed ? 1 : 0 }}
+        className="w-full h-px bg-[#0A1D3D]/10 mb-2 pointer-events-none"
         aria-hidden="true"
       />
 
-      <footer
-        ref={footerRef}
-        id="footer-section"
-        onFocusCapture={() => triggerReveal(true)}
-        className="w-full bg-[#DAF5E9] text-[#0A1D3D] select-none pt-7 sm:pt-8 scroll-mt-16 will-change-transform"
-        style={{
-          paddingBottom:
-            "max(1.25rem, calc(1.25rem + env(safe-area-inset-bottom, 0px)))",
-          transform:
-            mounted && !isReducedMotion
-              ? isRevealed
-                ? "translateY(0%)"
-                : "translateY(100%)"
-              : "none",
-          transition:
-            mounted && !isReducedMotion
-              ? "transform 0.55s cubic-bezier(0.16, 1, 0.3, 1)"
-              : "none",
-          boxShadow: isRevealed
-            ? "0 -12px 32px -8px rgba(10, 29, 61, 0.07)"
-            : "none",
-        }}
-      >
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[44px]">
-          {/* ================= TOP: Tagline + Links matching Figma ================= */}
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-8">
-            {/* Left: Pill, Headline, Logo */}
-            <div className="flex flex-col items-start w-full lg:max-w-[850px]">
-              {/* Pill: • WHERE EVERY KIDS IS A STAR */}
-              <div
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#0A1D3D] text-[#0A1D3D] whitespace-nowrap uppercase text-xs font-bold"
-                style={{
-                  backgroundColor: "#DAF5E9",
-                  fontFamily: INTER,
-                  letterSpacing: "0.2px",
-                }}
-              >
-                <span className="w-2.5 h-2.5 rounded-full bg-[#E0D54F] shrink-0" />
-                <span>WHERE EVERY KIDS IS A STAR</span>
-              </div>
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[44px]">
+        {/* ================= TOP: Tagline + Links ================= */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-8">
+          {/* Left: Pill, Headline, Logo */}
+          <div className="flex flex-col items-start w-full lg:max-w-[850px]">
+            {/* Pill: • WHERE EVERY KIDS IS A STAR */}
+            <div
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#0A1D3D] text-[#0A1D3D] whitespace-nowrap uppercase text-xs font-bold"
+              style={{
+                backgroundColor: "#DAF5E9",
+                fontFamily: INTER,
+                letterSpacing: "0.2px",
+              }}
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-[#E0D54F] shrink-0" />
+              <span>WHERE EVERY KIDS IS A STAR</span>
+            </div>
 
-              {/* Headline matching reference image */}
-              <h2
-                className="mt-2.5 sm:mt-3 text-[#0A1D3D] font-extrabold text-xl sm:text-2xl lg:text-[30px] leading-snug tracking-tight"
-                style={{
-                  fontFamily: JAKARTA,
-                  fontWeight: 800,
-                  color: "#0A1D3D",
-                }}
-              >
-                <span className="block whitespace-normal lg:whitespace-nowrap">
-                  Before You Go, Doodle Something Fun!
-                </span>
-                <span className="block whitespace-normal lg:whitespace-nowrap">
-                  Tap The Star To Start Your Adventure.
-                </span>
-              </h2>
+            {/* Headline */}
+            <h2
+              className="mt-2.5 sm:mt-3 text-[#0A1D3D] font-extrabold text-xl sm:text-2xl lg:text-[30px] leading-snug tracking-tight"
+              style={{
+                fontFamily: JAKARTA,
+                fontWeight: 800,
+                color: "#0A1D3D",
+              }}
+            >
+              <span className="block whitespace-normal lg:whitespace-nowrap">
+                Before You Go, Doodle Something Fun!
+              </span>
+              <span className="block whitespace-normal lg:whitespace-nowrap">
+                Tap The Star To Start Your Adventure.
+              </span>
+            </h2>
 
-              {/* OrionKids Logo */}
-              <Link href="/" className="inline-block cursor-pointer">
-                <Image
-                  src={LOGO_SRC}
-                  alt="OrionKids — Where Every Kid Is a Star"
-                  width={125}
-                  height={60}
-                  unoptimized
-                  className="mt-3 sm:mt-4 w-[115px] sm:w-[125px] h-auto"
-                  style={{ width: "auto", height: "auto" }}
-                />
+            {/* OrionKids Logo */}
+            <Link href="/" className="inline-block cursor-pointer">
+              <Image
+                src={LOGO_SRC}
+                alt="OrionKids — Where Every Kid Is a Star"
+                width={125}
+                height={60}
+                unoptimized
+                className="mt-3 sm:mt-4 w-[115px] sm:w-[125px] h-auto"
+                style={{ width: "auto", height: "auto" }}
+              />
+            </Link>
+          </div>
+
+          {/* Right: Clean 2-column links */}
+          <nav
+            aria-label="Footer Navigation"
+            className="flex items-start gap-8 sm:gap-12 pt-1 lg:pt-2 shrink-0"
+            style={{ fontFamily: INTER }}
+          >
+            {/* Column 1: Main Pages */}
+            <div className="flex flex-col space-y-2 sm:space-y-2.5 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
+              <Link
+                href="/our-approach"
+                className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
+              >
+                OUR APPROACH
+              </Link>
+              <Link
+                href="/for-schools"
+                className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
+              >
+                FOR SCHOOL
+              </Link>
+              <Link
+                href="/for-parents"
+                className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
+              >
+                FOR PARENTS
+              </Link>
+              <Link
+                href="/about-us"
+                className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
+              >
+                ABOUT US
+              </Link>
+              <Link
+                href="/blog"
+                className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
+              >
+                BLOGS
               </Link>
             </div>
 
-            {/* Right: Clean 2-column links matching reference image */}
-            <nav
-              aria-label="Footer Navigation"
-              className="flex items-start gap-8 sm:gap-12 pt-1 lg:pt-2 shrink-0"
-              style={{ fontFamily: INTER }}
-            >
-              {/* Column 1: Main Pages (OUR APPROACH, FOR SCHOOL, FOR PARENTS, BLOGS) */}
-              <div className="flex flex-col space-y-2 sm:space-y-2.5 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
-                <Link
-                  href="/our-approach"
-                  className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
-                >
-                  OUR APPROACH
-                </Link>
-                <Link
-                  href="/for-schools"
-                  className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
-                >
-                  FOR SCHOOL
-                </Link>
-                <Link
-                  href="/for-parents"
-                  className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
-                >
-                  FOR PARENTS
-                </Link>
-                <Link
-                  href="/about-us"
-                  className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
-                >
-                  ABOUT US
-                </Link>
-                <Link
-                  href="/blog"
-                  className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
-                >
-                  BLOGS
-                </Link>
-              </div>
-
-              {/* Column 2: Social / External Links with ↗ (LINKEDIN, EMAIL, INSTAGRAM) */}
-              <div className="flex flex-col space-y-2 sm:space-y-2.5 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
-                <a
-                  href="https://linkedin.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase"
-                >
-                  <span>LINKEDIN</span>
-                  <ArrowDiagonal />
-                </a>
-                <a
-                  href="mailto:contact@orionkids.in"
-                  className="inline-flex items-center hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase"
-                >
-                  <span>EMAIL</span>
-                  <ArrowDiagonal />
-                </a>
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase"
-                >
-                  <span>INSTAGRAM</span>
-                  <ArrowDiagonal />
-                </a>
-              </div>
-            </nav>
-          </div>
-
-          {/* ================= DOODLE WALL: Fully responsive doodle gallery ================= */}
-          {/* Desktop & iPad (>=768px): Exact collage layout using CARDS coordinates with falling animation */}
-          <div className="hidden md:block relative w-full overflow-visible pb-2 pt-3 sm:pt-4 select-none">
-            <div
-              ref={desktopContainerRef}
-              className="relative w-full max-w-[1400px] mx-auto overflow-visible"
-              style={{
-                aspectRatio: `${STRIP_W} / ${STRIP_H}`,
-              }}
-              aria-label="Children's creative doodles gallery"
-            >
-              {CARDS.map((c, i) => (
-                <DoodleCard
-                  key={i}
-                  spec={c}
-                  index={i}
-                  cardRef={(el) => {
-                    desktopCardsRef.current[i] = el;
-                  }}
-                  onMouseEnter={() => handleDesktopEnter(i)}
-                  onMouseLeave={() => handleDesktopLeave(i)}
-                  onTouchStart={() => handleDesktopTouchStart(i)}
-                  onTouchEnd={() => handleDesktopTouchEnd(i)}
-                  onClick={() => handleCardClick(i, i === 0)}
-                />
-              ))}
+            {/* Column 2: Social / External Links with ↗ */}
+            <div className="flex flex-col space-y-2 sm:space-y-2.5 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase"
+              >
+                <span>LINKEDIN</span>
+                <ArrowDiagonal />
+              </a>
+              <a
+                href="mailto:contact@orionkids.in"
+                className="inline-flex items-center hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase"
+              >
+                <span>EMAIL</span>
+                <ArrowDiagonal />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase"
+              >
+                <span>INSTAGRAM</span>
+                <ArrowDiagonal />
+              </a>
             </div>
-          </div>
+          </nav>
+        </div>
 
-          {/* iPhone & Mobile (<768px): Centered wrapping flex layout with no horizontal overflow */}
+        {/* ================= DOODLE WALL: Fully responsive doodle gallery ================= */}
+        {/* Desktop & iPad (>=768px): Exact collage layout using CARDS coordinates with falling animation */}
+        <div className="hidden md:block relative w-full overflow-visible pb-2 pt-3 sm:pt-4 select-none">
           <div
-            ref={mobileContainerRef}
-            className="block md:hidden relative w-full overflow-visible pb-3 pt-3 select-none"
+            ref={desktopContainerRef}
+            className="relative w-full max-w-[1400px] mx-auto overflow-visible"
+            style={{
+              aspectRatio: `${STRIP_W} / ${STRIP_H}`,
+              minHeight: "220px",
+            }}
+            aria-label="Children's creative doodles gallery"
           >
-            <div
-              className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-2 sm:px-4 max-w-[680px] mx-auto"
-              aria-label="Children's creative doodles gallery mobile"
-            >
-              {CARDS.slice(0, 8).map((card, i) => (
+            {CARDS.map((c, i) => (
+              <DoodleCard
+                key={i}
+                spec={c}
+                index={i}
+                cardRef={(el) => {
+                  desktopCardsRef.current[i] = el;
+                }}
+                onMouseEnter={() => handleDesktopEnter(i)}
+                onMouseLeave={() => handleDesktopLeave(i)}
+                onTouchStart={() => handleDesktopTouchStart(i)}
+                onTouchEnd={() => handleDesktopTouchEnd(i)}
+                onClick={() => handleCardClick(i, i === 0)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* iPhone & Mobile (<768px): Centered wrapping flex layout with no horizontal overflow */}
+        <div
+          ref={mobileContainerRef}
+          className="block md:hidden relative w-full overflow-visible pb-3 pt-3 select-none"
+        >
+          <div
+            className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-2 sm:px-4 max-w-[680px] mx-auto"
+            aria-label="Children's creative doodles gallery mobile"
+          >
+            {CARDS.slice(0, 8).map((card, i) => (
+              <div
+                key={i}
+                className="relative shrink-0 select-none block"
+                style={{
+                  width: "clamp(64px, 20vw, 105px)",
+                  aspectRatio: `${card.w} / ${card.h}`,
+                }}
+              >
                 <div
-                  key={i}
                   ref={(el) => {
                     mobileCardsRef.current[i] = el;
                   }}
@@ -926,10 +969,8 @@ export function FooterSection() {
                       ? "Tap the star doodle to start your adventure"
                       : card.alt
                   }
-                  className="relative shrink-0 cursor-pointer select-none filter hover:drop-shadow-md will-change-transform block"
+                  className="w-full h-full cursor-pointer select-none filter hover:drop-shadow-md will-change-transform block"
                   style={{
-                    width: "clamp(64px, 20vw, 105px)",
-                    aspectRatio: `${card.w} / ${card.h}`,
                     transform: `rotate(${MOBILE_CARD_ROTATIONS[i] || "0deg"})`,
                     WebkitBackfaceVisibility: "hidden",
                     backfaceVisibility: "hidden",
@@ -948,29 +989,25 @@ export function FooterSection() {
                       userSelect: "none",
                       WebkitTouchCallout: "none",
                     }}
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
                   />
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ================= LEGAL ROW matching reference screenshot ================= */}
-          <div
-            className="mt-4 sm:mt-5 flex flex-col md:flex-row items-center justify-between gap-2 text-[10px] sm:text-[11px] text-[#0A1D3D] font-medium text-center md:text-left"
-            style={{ fontFamily: INTER }}
-          >
-            <span>© 2026 OrionKids Digital Solutions Pvt. Ltd.</span>
-            <span>
-              Design &amp; Development by PantharInfoHub Pvt. Ltd.
-            </span>
-            <span>
-              Copyright 2026 • All Rights Reserved
-            </span>
+              </div>
+            ))}
           </div>
         </div>
-      </footer>
-    </div>
+
+        {/* ================= LEGAL ROW ================= */}
+        <div
+          className="mt-4 sm:mt-5 flex flex-col md:flex-row items-center justify-between gap-2 text-[10px] sm:text-[11px] text-[#0A1D3D] font-medium text-center md:text-left"
+          style={{ fontFamily: INTER }}
+        >
+          <span>© 2026 OrionKids Digital Solutions Pvt. Ltd.</span>
+          <span>Design &amp; Development by PantharInfoHub Pvt. Ltd.</span>
+          <span>Copyright 2026 • All Rights Reserved</span>
+        </div>
+      </div>
+    </footer>
   );
 }

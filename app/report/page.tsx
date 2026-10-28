@@ -12,21 +12,25 @@ import { FooterSection } from "@/components/layout/footer-section";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
+import { PageCurtain } from "@/components/layout/page-curtain";
+
 export default function ReportPage() {
   return (
     <div
       className="min-h-screen bg-[#F8FAFCB2] text-[#0A1D3D] selection:bg-[#FFE066] selection:text-[#0A1D3D]"
       style={{ backgroundColor: "#F8FAFCB2" }}
     >
-      <ReportHeader />
-      <main className="max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 mb-12 sm:mb-16 flex flex-col gap-8 sm:gap-10 items-center">
-        <StudentProfileSection />
-        <SkillsGlanceSection />
-        <SuperpowersSection />
-        <GrowthPathwaysSection />
-        <EcosystemGrowthSection />
-        <HeartfeltNoteSection />
-      </main>
+      <PageCurtain className="bg-[#F8FAFC] pb-12">
+        <ReportHeader />
+        <main className="max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 flex flex-col gap-8 sm:gap-10 items-center">
+          <StudentProfileSection />
+          <SkillsGlanceSection />
+          <SuperpowersSection />
+          <GrowthPathwaysSection />
+          <EcosystemGrowthSection />
+          <HeartfeltNoteSection />
+        </main>
+      </PageCurtain>
       <FooterSection />
     </div>
   );

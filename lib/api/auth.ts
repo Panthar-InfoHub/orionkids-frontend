@@ -43,8 +43,17 @@ export async function fetchCurrentUserProfile(): Promise<UserProfile | null> {
     }
     return null;
   } catch (error) {
-    // Network failure (e.g. backend server is not running or CORS blocked)
-    console.warn("[auth] Failed to connect to backend /api/me:", error);
+    // Network failure (e.g. backend server is offline or unreachable)
+    if (process.env.NODE_ENV === "development") {
+      const errStr = error instanceof Error ? error.message : String(error);
+      if (errStr.includes("Failed to fetch") || errStr.includes("fetch failed")) {
+        console.debug(
+          `[auth] Backend at ${API_BASE_URL} is currently unreachable. Treating as guest session.`
+        );
+      } else {
+        console.warn("[auth] /api/me check error:", errStr);
+      }
+    }
     return null;
   }
 }

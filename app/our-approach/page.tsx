@@ -7,6 +7,8 @@ import { EthicalFoundationSection } from "@/components/our-approach/ethical-foun
 import { ApproachCtaSection } from "@/components/our-approach/approach-cta-section";
 import { FooterSection } from "@/components/layout/footer-section";
 
+import { PageCurtain } from "@/components/layout/page-curtain";
+
 export const metadata: Metadata = {
   title: "Our Approach | OrionKids",
   description:
@@ -16,12 +18,14 @@ export const metadata: Metadata = {
 export default function OurApproachPage() {
   return (
     <main className="min-h-screen flex flex-col bg-white selection:bg-[#FFE066] selection:text-[#0A1D3D]">
-      <Navbar />
-      <ApproachHeroSection />
-      <CycleSection />
-      <DimensionsSection />
-      <EthicalFoundationSection />
-      <ApproachCtaSection />
+      <PageCurtain>
+        <Navbar />
+        <ApproachHeroSection />
+        <CycleSection />
+        <DimensionsSection />
+        <EthicalFoundationSection />
+        <ApproachCtaSection />
+      </PageCurtain>
       <FooterSection />
     </main>
   );

@@ -7,6 +7,8 @@ import { FoundationalValuesSection } from "@/components/about-us/foundational-va
 import { ClosingCtaSection } from "@/components/about-us/closing-cta-section";
 import { FooterSection } from "@/components/layout/footer-section";
 
+import { PageCurtain } from "@/components/layout/page-curtain";
+
 export const metadata: Metadata = {
   title: "About Us | OrionKids",
   description:
@@ -16,25 +18,25 @@ export const metadata: Metadata = {
 export default function AboutUsPage() {
   return (
     <main className="min-h-screen flex flex-col bg-white selection:bg-[#FFE066] selection:text-[#0A1D3D]">
-   
+      <PageCurtain>
+        {/* 2. Main Navigation Bar */}
+        <Navbar />
 
-      {/* 2. Main Navigation Bar */}
-      <Navbar />
+        {/* 3. First Section: About Us Hero Section */}
+        <AboutHeroSection />
 
-      {/* 3. First Section: About Us Hero Section */}
-      <AboutHeroSection />
+        {/* 4. Second Section: Our Foundation Section */}
+        <AboutFoundationSection />
 
-      {/* 4. Second Section: Our Foundation Section */}
-      <AboutFoundationSection />
+        {/* 5. Third Section: Mission, Vision & Promise */}
+        <AboutMissionSection />
 
-      {/* 5. Third Section: Mission, Vision & Promise */}
-      <AboutMissionSection />
+        {/* 6. Fourth Section: Our Five Foundational Values */}
+        <FoundationalValuesSection />
 
-      {/* 6. Fourth Section: Our Five Foundational Values */}
-      <FoundationalValuesSection />
-
-      {/* 7. Fifth Section: Closing Call-to-Action Banner */}
-      <ClosingCtaSection />
+        {/* 7. Fifth Section: Closing Call-to-Action Banner */}
+        <ClosingCtaSection />
+      </PageCurtain>
 
       {/* 8. Footer Section */}
       <FooterSection />

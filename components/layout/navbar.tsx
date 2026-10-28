@@ -6,11 +6,54 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
+import { fetchCurrentUserProfile } from "@/lib/api/auth";
 
 export function Navbar() {
   const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Authoritative admin detection: requires valid Better Auth session + backend role === "ADMIN" + status === "ACTIVE"
+  const { data: session } = useSession();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function verifyAdminStatus() {
+      if (!session?.user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      try {
+        const profile = await fetchCurrentUserProfile();
+        if (!isCancelled) {
+          if (profile?.role === "ADMIN" && profile?.status === "ACTIVE") {
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(false);
+          }
+        }
+      } catch {
+        if (!isCancelled) {
+          setIsAdmin(false);
+        }
+      }
+    }
+
+    verifyAdminStatus();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [session]);
+
+  const navLinks = [
+    ...SITE_CONFIG.navLinks,
+    ...(isAdmin ? [{ label: "Dashboard", href: "/admin" }] : []),
+  ];
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -104,8 +147,11 @@ export function Navbar() {
             aria-label="Main Navigation"
             style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
           >
-            {SITE_CONFIG.navLinks.map((link) => {
-              const isActive = pathname === link.href;
+            {navLinks.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname === link.href || pathname.startsWith(`${link.href}/`);
               return (
                 <Link
                   key={link.label}
@@ -153,8 +199,11 @@ export function Navbar() {
             className="lg:hidden bg-white border-b-2 border-[#0A1D3D] px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top-4 duration-200"
             style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
           >
-            {SITE_CONFIG.navLinks.map((link) => {
-              const isActive = pathname === link.href;
+            {navLinks.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname === link.href || pathname.startsWith(`${link.href}/`);
               return (
                 <Link
                   key={link.label}
