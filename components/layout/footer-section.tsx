@@ -35,48 +35,48 @@ type DoodleSpec = {
   alt: string;
 };
 
-// Strip dimensions: Width 1400px, Height 300px for generous, high-visibility doodle cards
-const STRIP_W = 1400;
-const STRIP_H = 300;
+// Strip dimensions: Width 1440px, Height 345px for well-spaced, generous doodle cards with breathable gapping
+const STRIP_W = 1440;
+const STRIP_H = 345;
 
-// High-visibility vector doodle cards with enlarged dimensions and playful, layered polaroid collage spacing
+// High-visibility vector doodle cards with enlarged dimensions, balanced spatial distribution, and natural polaroid overlaps
 const CARDS: DoodleSpec[] = [
   // 1. Star doodle (rotated 90deg sideways, lower-left flush)
-  { src: "/svg/021.svg", x: 90, y: 215, w: 156, h: 122, zIndex: 1, alt: "Star doodle" },
+  { src: "/svg/021.svg", x: 88, y: 242, w: 175, h: 136, zIndex: 1, alt: "Star doodle" },
   // 2. Smiley face with flower bouquet (bottom row)
-  { src: "/svg/019.svg", x: 200, y: 205, w: 138, h: 130, zIndex: 2, alt: "Smiley and flower bouquet doodle" },
+  { src: "/svg/019.svg", x: 212, y: 236, w: 156, h: 150, zIndex: 2, alt: "Smiley and flower bouquet doodle" },
   // 3. Tilted swirl diamond (upper floating between cards 2 & 5)
-  { src: "/svg/018.svg", x: 230, y: 90, w: 185, h: 160, zIndex: 1, alt: "Abstract swirl doodle" },
+  { src: "/svg/018.svg", x: 260, y: 104, w: 205, h: 178, zIndex: 1, alt: "Abstract swirl doodle" },
   // 4. Boat / hat with red cross X (top row)
-  { src: "/svg/017.svg", x: 358, y: 92, w: 138, h: 152, zIndex: 1, alt: "Red cross boat doodle" },
+  { src: "/svg/017.svg", x: 402, y: 106, w: 156, h: 172, zIndex: 1, alt: "Red cross boat doodle" },
   // 5. Tent / triangle doodle (bottom row below card 4)
-  { src: "/svg/020.svg", x: 315, y: 205, w: 138, h: 140, zIndex: 2, alt: "Tent doodle" },
+  { src: "/svg/020.svg", x: 338, y: 238, w: 156, h: 158, zIndex: 2, alt: "Tent doodle" },
   // 6. YOCHI stick figures family (bottom row)
-  { src: "/svg/015.svg", x: 434, y: 205, w: 138, h: 140, zIndex: 2, alt: "YOCHI family stick figures doodle" },
+  { src: "/svg/015.svg", x: 466, y: 238, w: 156, h: 158, zIndex: 2, alt: "YOCHI family stick figures doodle" },
   // 7. YO! text doodle (top row)
-  { src: "/svg/013.svg", x: 520, y: 96, w: 138, h: 120, zIndex: 1, alt: "YO! doodle" },
+  { src: "/svg/013.svg", x: 572, y: 110, w: 156, h: 138, zIndex: 1, alt: "YO! doodle" },
   // 8. Walking smiling heart (bottom row below card 7)
-  { src: "/svg/016.svg", x: 545, y: 205, w: 138, h: 140, zIndex: 2, alt: "Walking smiling heart doodle" },
+  { src: "/svg/016.svg", x: 596, y: 238, w: 156, h: 158, zIndex: 2, alt: "Walking smiling heart doodle" },
   // 9. Hello :) doodle (rotated 90deg sideways, bottom row)
-  { src: "/svg/012.svg", x: 680, y: 215, w: 156, h: 122, zIndex: 2, alt: "Hello smiley doodle" },
+  { src: "/svg/012.svg", x: 742, y: 246, w: 175, h: 136, zIndex: 2, alt: "Hello smiley doodle" },
   // 10. WOW <3 TEH (top row next to flower)
-  { src: "/svg/007.svg", x: 800, y: 92, w: 140, h: 154, zIndex: 2, alt: "WOW love doodle" },
+  { src: "/svg/007.svg", x: 878, y: 108, w: 158, h: 174, zIndex: 2, alt: "WOW love doodle" },
   // 11. "hi, thanks for inspi" (bottom row below card 10)
-  { src: "/svg/011.svg", x: 795, y: 205, w: 138, h: 140, zIndex: 2, alt: "Inspirational thank you doodle" },
+  { src: "/svg/011.svg", x: 874, y: 238, w: 156, h: 158, zIndex: 2, alt: "Inspirational thank you doodle" },
   // 12. Circle / stone outline (bottom row next to card 11)
-  { src: "/svg/010.svg", x: 932, y: 205, w: 138, h: 140, zIndex: 2, alt: "Stone outline doodle" },
+  { src: "/svg/010.svg", x: 1014, y: 238, w: 156, h: 158, zIndex: 2, alt: "Stone outline doodle" },
   // 13. "SAYA LAWAT AKAN jkw" (top row, slightly tilted)
-  { src: "/svg/006.svg", x: 912, y: 92, w: 148, h: 160, zIndex: 3, alt: "Saya Lawat doodle" },
+  { src: "/svg/006.svg", x: 1004, y: 108, w: 164, h: 178, zIndex: 3, alt: "Saya Lawat doodle" },
   // 14. "Gilan" signature (top row, tilted)
-  { src: "/svg/005.svg", x: 1030, y: 104, w: 156, h: 166, zIndex: 4, alt: "Gilan signature doodle" },
+  { src: "/svg/005.svg", x: 1128, y: 118, w: 172, h: 184, zIndex: 4, alt: "Gilan signature doodle" },
   // 15. Red heart doodle (top row next to Gilan)
-  { src: "/svg/004.svg", x: 1145, y: 104, w: 138, h: 152, zIndex: 3, alt: "Red heart doodle" },
+  { src: "/svg/004.svg", x: 1248, y: 118, w: 156, h: 172, zIndex: 3, alt: "Red heart doodle" },
   // 16. "Bilal" signature (rotated 90deg sideways, bottom row)
-  { src: "/svg/009.svg", x: 1127, y: 215, w: 156, h: 122, zIndex: 2, alt: "Bilal signature doodle" },
+  { src: "/svg/009.svg", x: 1204, y: 246, w: 175, h: 136, zIndex: 2, alt: "Bilal signature doodle" },
   // 17. Tilted butterfly diamond (floating between cards 15 and 18)
-  { src: "/svg/001.svg", x: 1272, y: 80, w: 185, h: 184, zIndex: 3, alt: "Tilted butterfly doodle" },
+  { src: "/svg/001.svg", x: 1358, y: 96, w: 205, h: 205, zIndex: 3, alt: "Tilted butterfly doodle" },
   // 18. "Fener Bahçe" doodle (bottom row far right)
-  { src: "/svg/002.svg", x: 1290, y: 205, w: 134, h: 152, zIndex: 2, alt: "Fener Bahçe doodle" },
+  { src: "/svg/002.svg", x: 1356, y: 238, w: 150, h: 170, zIndex: 2, alt: "Fener Bahçe doodle" },
 ];
 
 // Gentle rotations for responsive grid on smaller screens
@@ -107,42 +107,42 @@ interface CardPhysics {
 }
 
 const DESKTOP_PHYSICS: CardPhysics[] = [
-  // 0. Star doodle (x: 90, y: 215)
-  { startY: -440, driftX: -20, startRot: 18, dropDuration: 0.60, bounceHeight: -14, bounceRot: -3, hoverTilt: 4, delay: 0.18 },
-  // 1. Smiley bouquet (x: 200, y: 205)
-  { startY: -420, driftX: 18, startRot: -16, dropDuration: 0.58, bounceHeight: -12, bounceRot: 2, hoverTilt: -3, delay: 0.42 },
-  // 2. Swirl diamond (x: 230, y: 90)
-  { startY: -340, driftX: -15, startRot: 24, dropDuration: 0.54, bounceHeight: -16, bounceRot: -4, hoverTilt: 5, delay: 0.05 },
-  // 3. Red cross boat (x: 358, y: 92)
-  { startY: -360, driftX: 22, startRot: -20, dropDuration: 0.58, bounceHeight: -13, bounceRot: 3, hoverTilt: -4, delay: 0.28 },
-  // 4. Tent doodle (x: 315, y: 205)
-  { startY: -450, driftX: -16, startRot: 14, dropDuration: 0.62, bounceHeight: -15, bounceRot: -2, hoverTilt: 3, delay: 0.50 },
-  // 5. YOCHI family (x: 434, y: 205)
-  { startY: -430, driftX: 14, startRot: -18, dropDuration: 0.58, bounceHeight: -11, bounceRot: 2.5, hoverTilt: -3, delay: 0.35 },
-  // 6. YO! text (x: 520, y: 96)
-  { startY: -350, driftX: -24, startRot: 22, dropDuration: 0.55, bounceHeight: -15, bounceRot: -3.5, hoverTilt: 4, delay: 0.12 },
-  // 7. Walking smiling heart (x: 545, y: 205)
-  { startY: -460, driftX: 20, startRot: -15, dropDuration: 0.62, bounceHeight: -14, bounceRot: 2, hoverTilt: -4, delay: 0.62 },
-  // 8. Hello :) (x: 680, y: 215)
-  { startY: -440, driftX: -18, startRot: 16, dropDuration: 0.60, bounceHeight: -12, bounceRot: -2.5, hoverTilt: 3, delay: 0.22 },
-  // 9. WOW <3 TEH (x: 800, y: 92)
-  { startY: -370, driftX: 16, startRot: -22, dropDuration: 0.56, bounceHeight: -16, bounceRot: 3.5, hoverTilt: -5, delay: 0.08 },
-  // 10. hi thanks for inspi (x: 795, y: 205)
-  { startY: -450, driftX: -22, startRot: 19, dropDuration: 0.64, bounceHeight: -13, bounceRot: -3, hoverTilt: 4, delay: 0.55 },
-  // 11. Circle outline (x: 932, y: 205)
-  { startY: -420, driftX: 15, startRot: -14, dropDuration: 0.57, bounceHeight: -11, bounceRot: 2, hoverTilt: -3, delay: 0.70 },
-  // 12. Saya Lawat (x: 912, y: 92)
-  { startY: -360, driftX: -18, startRot: 21, dropDuration: 0.55, bounceHeight: -15, bounceRot: -3, hoverTilt: 4, delay: 0.32 },
-  // 13. Gilan signature (x: 1030, y: 104)
-  { startY: -380, driftX: 25, startRot: -25, dropDuration: 0.60, bounceHeight: -17, bounceRot: 4, hoverTilt: -5, delay: 0.15 },
-  // 14. Red heart doodle (x: 1145, y: 104)
-  { startY: -350, driftX: -14, startRot: 17, dropDuration: 0.54, bounceHeight: -14, bounceRot: -2.5, hoverTilt: 3, delay: 0.48 },
-  // 15. Bilal signature (x: 1127, y: 215)
-  { startY: -460, driftX: 19, startRot: -19, dropDuration: 0.62, bounceHeight: -12, bounceRot: 3, hoverTilt: -4, delay: 0.66 },
-  // 16. Tilted butterfly (x: 1272, y: 80)
-  { startY: -340, driftX: -26, startRot: 26, dropDuration: 0.56, bounceHeight: -18, bounceRot: -4.5, hoverTilt: 5, delay: 0.25 },
-  // 17. Fener Bahçe (x: 1290, y: 205)
-  { startY: -430, driftX: 16, startRot: -16, dropDuration: 0.59, bounceHeight: -13, bounceRot: 2.5, hoverTilt: -3, delay: 0.76 },
+  // 0. Star doodle (x: 88, y: 242)
+  { startY: -460, driftX: -20, startRot: 18, dropDuration: 0.60, bounceHeight: -14, bounceRot: -3, hoverTilt: 4, delay: 0.18 },
+  // 1. Smiley bouquet (x: 212, y: 236)
+  { startY: -440, driftX: 18, startRot: -16, dropDuration: 0.58, bounceHeight: -12, bounceRot: 2, hoverTilt: -3, delay: 0.42 },
+  // 2. Swirl diamond (x: 260, y: 104)
+  { startY: -380, driftX: -15, startRot: 24, dropDuration: 0.54, bounceHeight: -16, bounceRot: -4, hoverTilt: 5, delay: 0.05 },
+  // 3. Red cross boat (x: 402, y: 106)
+  { startY: -390, driftX: 22, startRot: -20, dropDuration: 0.58, bounceHeight: -13, bounceRot: 3, hoverTilt: -4, delay: 0.28 },
+  // 4. Tent doodle (x: 338, y: 238)
+  { startY: -470, driftX: -16, startRot: 14, dropDuration: 0.62, bounceHeight: -15, bounceRot: -2, hoverTilt: 3, delay: 0.50 },
+  // 5. YOCHI family (x: 466, y: 238)
+  { startY: -450, driftX: 14, startRot: -18, dropDuration: 0.58, bounceHeight: -11, bounceRot: 2.5, hoverTilt: -3, delay: 0.35 },
+  // 6. YO! text (x: 572, y: 110)
+  { startY: -380, driftX: -24, startRot: 22, dropDuration: 0.55, bounceHeight: -15, bounceRot: -3.5, hoverTilt: 4, delay: 0.12 },
+  // 7. Walking smiling heart (x: 596, y: 238)
+  { startY: -480, driftX: 20, startRot: -15, dropDuration: 0.62, bounceHeight: -14, bounceRot: 2, hoverTilt: -4, delay: 0.62 },
+  // 8. Hello :) (x: 742, y: 246)
+  { startY: -460, driftX: -18, startRot: 16, dropDuration: 0.60, bounceHeight: -12, bounceRot: -2.5, hoverTilt: 3, delay: 0.22 },
+  // 9. WOW <3 TEH (x: 878, y: 108)
+  { startY: -390, driftX: 16, startRot: -22, dropDuration: 0.56, bounceHeight: -16, bounceRot: 3.5, hoverTilt: -5, delay: 0.08 },
+  // 10. hi thanks for inspi (x: 874, y: 238)
+  { startY: -470, driftX: -22, startRot: 19, dropDuration: 0.64, bounceHeight: -13, bounceRot: -3, hoverTilt: 4, delay: 0.55 },
+  // 11. Circle outline (x: 1014, y: 238)
+  { startY: -450, driftX: 15, startRot: -14, dropDuration: 0.57, bounceHeight: -11, bounceRot: 2, hoverTilt: -3, delay: 0.70 },
+  // 12. Saya Lawat (x: 1004, y: 108)
+  { startY: -390, driftX: -18, startRot: 21, dropDuration: 0.55, bounceHeight: -15, bounceRot: -3, hoverTilt: 4, delay: 0.32 },
+  // 13. Gilan signature (x: 1128, y: 118)
+  { startY: -410, driftX: 25, startRot: -25, dropDuration: 0.60, bounceHeight: -17, bounceRot: 4, hoverTilt: -5, delay: 0.15 },
+  // 14. Red heart doodle (x: 1248, y: 118)
+  { startY: -380, driftX: -14, startRot: 17, dropDuration: 0.54, bounceHeight: -14, bounceRot: -2.5, hoverTilt: 3, delay: 0.48 },
+  // 15. Bilal signature (x: 1204, y: 246)
+  { startY: -470, driftX: 19, startRot: -19, dropDuration: 0.62, bounceHeight: -12, bounceRot: 3, hoverTilt: -4, delay: 0.66 },
+  // 16. Tilted butterfly (x: 1358, y: 96)
+  { startY: -380, driftX: -26, startRot: 26, dropDuration: 0.56, bounceHeight: -18, bounceRot: -4.5, hoverTilt: 5, delay: 0.25 },
+  // 17. Fener Bahçe (x: 1356, y: 238)
+  { startY: -450, driftX: 16, startRot: -16, dropDuration: 0.59, bounceHeight: -13, bounceRot: 2.5, hoverTilt: -3, delay: 0.76 },
 ];
 
 const MOBILE_PHYSICS: CardPhysics[] = [
@@ -944,10 +944,10 @@ export function FooterSection() {
         <div className="hidden md:block relative w-full overflow-visible pb-2 pt-3 sm:pt-4 select-none">
           <div
             ref={desktopContainerRef}
-            className="relative w-full max-w-[1400px] mx-auto overflow-visible"
+            className="relative w-full max-w-[1440px] mx-auto overflow-visible"
             style={{
               aspectRatio: `${STRIP_W} / ${STRIP_H}`,
-              minHeight: "220px",
+              minHeight: "260px",
             }}
             aria-label="Children's creative doodles gallery"
           >
@@ -983,7 +983,7 @@ export function FooterSection() {
                 key={i}
                 className="relative shrink-0 select-none block"
                 style={{
-                  width: "clamp(64px, 20vw, 105px)",
+                  width: "clamp(76px, 22vw, 126px)",
                   aspectRatio: `${card.w} / ${card.h}`,
                 }}
               >

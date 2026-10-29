@@ -536,12 +536,12 @@ export function ForSchoolsHeroSection() {
                 NEP 2020–Based
               </span>
             </span>{" "}
-            Innovative Labs
+            Fun Brain Labs
           </h2>
 
           {/* 2-Column Grid for Screenshots 3 & 1 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch w-full max-w-[1240px] mx-auto">
-            {/* Left Card: Screenshot 3 (What exactly is the NEP 2020 Integrated School Lab?) */}
+            {/* Left Card: OrionKids NEP 2020 Brain Lab */}
             <div
               className="flex flex-col justify-between rounded-[24px] p-6 sm:p-8 bg-white transition-all duration-200"
               style={{
@@ -565,7 +565,7 @@ export function ForSchoolsHeroSection() {
                       color: "#0A1D3D",
                     }}
                   >
-                    What exactly is the NEP 2020 Integrated School Lab?
+                    What is the OrionKids NEP 2020 Brain Lab?
                   </h3>
                   <span
                     className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg select-none transition-transform group-hover:scale-105"
@@ -592,9 +592,9 @@ export function ForSchoolsHeroSection() {
                       color: "#475569",
                     }}
                   >
-                    It&apos;s a dedicated in-school program and lab space where your students learn{" "}
-                    <strong className="font-bold text-[#0A1D3D]">Brain Skool&apos;s whole-brain curriculum</strong>{" "}
-                    — Abacus, Vedic Maths, Coding, Robotics and more — delivered by your own trained staff, aligned with NEP 2020.
+                    It&apos;s an in-school cognitive discovery program where students explore{" "}
+                    <strong className="font-bold text-[#0A1D3D]">OrionKids&apos; play-based learning quests</strong>{" "}
+                    — strengthening working memory, pattern recognition, spatial reasoning, and creative problem solving — guided by teachers and aligned with NEP 2020 competency standards.
                   </p>
                 )}
               </div>
@@ -602,11 +602,11 @@ export function ForSchoolsHeroSection() {
               {/* Curriculum Skill Tags */}
               <div className="flex flex-wrap items-center gap-2 mt-6 pt-5 border-t border-[#F3F4F6]">
                 {[
-                  { label: "Abacus", icon: "🧮" },
-                  { label: "Vedic Maths", icon: "📐" },
-                  { label: "Coding", icon: "💻" },
-                  { label: "Robotics", icon: "🤖" },
-                  { label: "Whole-Brain Learning", icon: "🧠" },
+                  { label: "Working Memory", icon: "🧠" },
+                  { label: "Pattern Discovery", icon: "🔍" },
+                  { label: "Spatial Reasoning", icon: "🧩" },
+                  { label: "Creative Thinking", icon: "💡" },
+                  { label: "Focus & Attention", icon: "🎯" },
                 ].map((skill) => (
                   <span
                     key={skill.label}
@@ -628,7 +628,7 @@ export function ForSchoolsHeroSection() {
               </div>
             </div>
 
-            {/* Right Card: Screenshot 1 (📜 Meets NEP 2020 Requirements) */}
+            {/* Right Card: Meets NEP 2020 Requirements */}
             <div
               className="flex flex-col justify-between rounded-[24px] p-6 sm:p-8 text-white transition-all duration-200"
               style={{
@@ -666,7 +666,9 @@ export function ForSchoolsHeroSection() {
                     color: "rgba(255, 255, 255, 0.94)",
                   }}
                 >
-                  Our curriculum is built around understanding and innovation — matching India&apos;s National Education Policy 2020 focus on holistic, skill-based learning.
+                  OrionKids directly supports NEP 2020&apos;s mandate for{" "}
+                  <strong className="font-bold text-white">regular, formative, and competency-based assessment</strong>{" "}
+                  — moving beyond rote marks to help teachers understand each child&apos;s unique thinking strategies and potential.
                 </p>
               </div>
 
@@ -691,7 +693,7 @@ export function ForSchoolsHeroSection() {
                     color: "#FFD54F",
                   }}
                 >
-                  Join 100+ schools already running Brain Skool programs.
+                  Designed for Classes 1–8 • Play-Based, Non-Clinical & Teacher-Led.
                 </span>
               </div>
             </div>
