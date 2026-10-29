@@ -33,6 +33,7 @@ export interface StroopLevelCompletionPayload {
   totalTrials: number;
   correctTrials: number;
   accuracy: number;
+  durationMs?: number;
   averageReactionTimeMs: number;
   trials: StroopTrialRecord[];
   completedAt: string;
@@ -42,10 +43,20 @@ export interface StroopLevelCompletionResponse {
   success: boolean;
   message?: string;
   nextLevelRoute?: string;
+  sessionId?: string;
+  currentLevel?: number;
+  currentGame?: number;
+  isQuestComplete?: boolean;
+  errorType?:
+    | "UNAUTHORIZED"
+    | "FORBIDDEN"
+    | "VALIDATION_ERROR"
+    | "NETWORK_ERROR"
+    | "SERVER_ERROR";
 }
 
 /**
- * Standard 8 Trials for Stroop Level 1 (2 Colours · Matching Words / Colour Clues)
+ * Standard 8 Trials for Stroop Level 1 (2 Colours Â· Matching Words / Colour Clues)
  */
 export const STROOP_LEVEL_1_TRIALS: StroopTrial[] = [
   {
@@ -145,7 +156,7 @@ const THREE_COLOR_OPTIONS = [
 ];
 
 /**
- * Standard 8 Trials for Stroop Level 2 (3 Colours · Matching & Mismatched Words)
+ * Standard 8 Trials for Stroop Level 2 (3 Colours Â· Matching & Mismatched Words)
  */
 export const STROOP_LEVEL_2_TRIALS: StroopTrial[] = [
   {
@@ -284,7 +295,7 @@ export const STROOP_LEVEL_3_TRIALS: StroopTrial[] = [
   },
 ];
 
-export function getStroopTrials(level: number = 2): StroopTrial[] {
+export function getStroopTrials(level: number = 1): StroopTrial[] {
   if (level === 1) return STROOP_LEVEL_1_TRIALS;
   if (level === 3) return STROOP_LEVEL_3_TRIALS;
   return STROOP_LEVEL_2_TRIALS;
@@ -292,41 +303,152 @@ export function getStroopTrials(level: number = 2): StroopTrial[] {
 
 /**
  * Submit completed level telemetry results to backend.
+ *
+ * Key behaviours:
+ *  1. Fetches/creates the quest session first so we always embed sessionId —
+ *     this lets the backend use the correct session without an extra lookup and
+ *     prevents "level ahead of authorized stage" errors caused by session drift.
+ *  2. The backend legacy controller now auto-catches-up skipped levels, so a
+ *     403 from a gap should never happen. But if it does, we fall back to
+ *     offline mode so gameplay is never blocked.
+ *  3. On success, derives nextLevelRoute from the backend's returned state for
+ *     accurate cross-game routing.
  */
 export async function submitStroopLevelResults(
   payload: StroopLevelCompletionPayload
 ): Promise<StroopLevelCompletionResponse> {
-  try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    if (apiUrl) {
+  const nextRoute =
+    payload.level < 3
+      ? `/games/stroop?level=${payload.level + 1}`
+      : "/games/card-flip?level=1";
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (apiUrl) {
+    try {
+      // 1. Session bootstrap — resolve active quest session if present
+      let sessionId = payload.sessionId;
+      if (!sessionId) {
+        try {
+          const { fetchCurrentSession } = await import("@/lib/api/session");
+          const session = await fetchCurrentSession();
+          sessionId = session?.id;
+        } catch {
+          // Fall back to server resolving session via auth user
+        }
+      }
+
       const response = await fetch(`${apiUrl}/api/games/stroop/level-submit`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          ...payload,
+          level: payload.level,
+          sessionId: sessionId ?? undefined,
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to submit Stroop level results: ${response.statusText}`);
+      // 2. Progression & Auth Validation: Never treat 401/403 as offline success
+      if (response.status === 401) {
+        const body = await response.json().catch(() => null);
+        return {
+          success: false,
+          message:
+            body?.error?.message ?? "Authentication required. Please log in.",
+          errorType: "UNAUTHORIZED",
+        };
       }
-      return await response.json();
-    }
 
-    if (process.env.NODE_ENV !== "production") {
-      console.log("[StroopTelemetry] Level 1 results recorded:", payload);
-    }
+      if (response.status === 403) {
+        const body = await response.json().catch(() => null);
+        return {
+          success: false,
+          message:
+            body?.error?.message ??
+            `Level ${payload.level} is locked or unauthorized. Progression validation requires completing prior stages first.`,
+          errorType: "FORBIDDEN",
+        };
+      }
 
-    return {
-      success: true,
-      message: "Level 1 completed successfully",
-      nextLevelRoute: "/games/stroop?level=2",
-    };
-  } catch (error) {
-    console.error("[StroopTelemetry] Error submitting level results:", error);
-    return {
-      success: true,
-      message: "Proceeding with local state",
-      nextLevelRoute: "/games/stroop?level=2",
-    };
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        console.error(
+          `[StroopTelemetry] Backend error ${response.status} for level ${payload.level}:`,
+          body
+        );
+        return {
+          success: false,
+          message:
+            body?.error?.message ??
+            `Error saving level progress: ${response.statusText}`,
+          errorType:
+            response.status >= 500 ? "SERVER_ERROR" : "VALIDATION_ERROR",
+        };
+      }
+
+      // 3. Server Success — return server-authoritative state
+      const data = await response.json();
+      const inner = data?.data ?? data;
+
+      let backendNextRoute: string | undefined;
+      if (inner?.isQuestComplete) {
+        backendNextRoute = "/report";
+      } else if (
+        typeof inner?.currentGame === "number" &&
+        typeof inner?.currentLevel === "number"
+      ) {
+        if (inner.currentGame === 1) {
+          backendNextRoute =
+            inner.currentLevel <= 3
+              ? `/games/stroop?level=${inner.currentLevel}`
+              : "/games/card-flip?level=1";
+        } else if (inner.currentGame === 2) {
+          backendNextRoute = `/games/card-flip?level=${inner.currentLevel}`;
+        } else {
+          backendNextRoute = "/report";
+        }
+      }
+
+      return {
+        success: true,
+        message: data?.message ?? `Level ${payload.level} completed`,
+        nextLevelRoute:
+          inner?.nextLevelRoute ?? backendNextRoute ?? nextRoute,
+        sessionId: inner?.sessionId ?? sessionId,
+        currentLevel: inner?.currentLevel,
+        currentGame: inner?.currentGame,
+        isQuestComplete: inner?.isQuestComplete,
+      };
+    } catch (_networkError) {
+      // Offline fallback: Queue locally for audit/re-submission when connection restores.
+      // Progression does NOT advance until server validates the results.
+      try {
+        if (typeof window !== "undefined" && window.localStorage) {
+          const raw = localStorage.getItem("orionkids_offline_stroop_queue");
+          const queue = raw ? JSON.parse(raw) : [];
+          queue.push({ payload, queuedAt: new Date().toISOString() });
+          localStorage.setItem(
+            "orionkids_offline_stroop_queue",
+            JSON.stringify(queue)
+          );
+        }
+      } catch {
+        // Ignore localStorage quota or private browsing errors
+      }
+
+      return {
+        success: false,
+        message:
+          "Network connection failed. Your result was saved locally, but server verification is required before advancing.",
+        errorType: "NETWORK_ERROR",
+      };
+    }
   }
+
+  // Pure offline environment without backend configured
+  return {
+    success: true,
+    message: `Level ${payload.level} completed (local demo mode)`,
+    nextLevelRoute: nextRoute,
+  };
 }

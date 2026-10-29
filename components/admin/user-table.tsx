@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
+import Link from "next/link";
 import {
   Search,
   RefreshCw,
@@ -11,7 +12,10 @@ import {
   UserCheck,
   Info,
   Clock,
-  Sparkles,
+  Compass,
+  Copy,
+  Gamepad2,
+  Filter,
 } from "lucide-react";
 import type { AdminUserItem, AdminPaginationMeta } from "@/lib/api/admin";
 import { useAdmin } from "./admin-guard";
@@ -22,7 +26,11 @@ interface UserTableProps {
   meta: AdminPaginationMeta;
   isLoading: boolean;
   activeStatusFilter: "ALL" | "PENDING" | "ACTIVE" | "RESTRICTED";
+  activeRoleFilter: "ALL" | "USER" | "ADMIN";
+  searchQuery: string;
   onStatusFilterChange: (status: "ALL" | "PENDING" | "ACTIVE" | "RESTRICTED") => void;
+  onRoleFilterChange: (role: "ALL" | "USER" | "ADMIN") => void;
+  onSearchChange: (query: string) => void;
   onPageChange: (page: number) => void;
   onRefresh: () => Promise<void>;
   onUpdateStatus: (
@@ -36,28 +44,29 @@ export function UserTable({
   meta,
   isLoading,
   activeStatusFilter,
+  activeRoleFilter,
+  searchQuery,
   onStatusFilterChange,
+  onRoleFilterChange,
+  onSearchChange,
   onPageChange,
   onRefresh,
   onUpdateStatus,
 }: UserTableProps) {
   const { admin: currentAdmin } = useAdmin();
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState<AdminUserItem | null>(null);
   const [modalMode, setModalMode] = useState<"approve" | "restrict" | null>(null);
   const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Client-side instant filter on current page results
-  const filteredUsers = useMemo(() => {
-    if (!searchQuery.trim()) return users;
-    const q = searchQuery.toLowerCase().trim();
-    return users.filter(
-      (u) =>
-        u.name?.toLowerCase().includes(q) ||
-        u.email?.toLowerCase().includes(q) ||
-        u.id.toLowerCase().includes(q)
-    );
-  }, [users, searchQuery]);
+  const handleCopyId = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(id);
+    setCopiedId(id);
+    setTimeout(() => {
+      setCopiedId(null);
+    }, 2000);
+  };
 
   const handleOpenModal = (user: AdminUserItem, mode: "approve" | "restrict") => {
     setSelectedUser(user);
@@ -77,7 +86,7 @@ export function UserTable({
     setSuccessToast(
       payload.status === "ACTIVE"
         ? "User successfully approved and granted ACTIVE access."
-        : "User account restricted and all active sessions invalidated."
+        : "User account restricted and active sessions invalidated."
     );
     setTimeout(() => {
       setSuccessToast(null);
@@ -103,43 +112,69 @@ export function UserTable({
   return (
     <div className="w-full bg-white rounded-2xl border-2 border-[#0A1D3D] shadow-[4px_4px_0px_#0A1D3D] overflow-hidden">
       {/* Table Controls Topbar */}
-      <div className="p-4 sm:p-5 border-b border-slate-200 bg-slate-50/50 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* Status Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-          {(["ALL", "PENDING", "ACTIVE", "RESTRICTED"] as const).map((st) => {
-            const isSelected = activeStatusFilter === st;
-            return (
-              <button
-                key={st}
-                type="button"
-                onClick={() => onStatusFilterChange(st)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                  isSelected
-                    ? "bg-[#0A1D3D] text-white shadow-xs"
-                    : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
-                }`}
-              >
-                {st === "ALL"
-                  ? "All Users"
-                  : st === "PENDING"
-                  ? "Pending Review"
-                  : st === "ACTIVE"
-                  ? "Active"
-                  : "Restricted"}
-              </button>
-            );
-          })}
+      <div className="p-4 sm:p-5 border-b border-slate-200 bg-slate-50/50 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        {/* Filters Group */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Status Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {(["ALL", "PENDING", "ACTIVE", "RESTRICTED"] as const).map((st) => {
+              const isSelected = activeStatusFilter === st;
+              return (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => onStatusFilterChange(st)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-[#0A1D3D] text-white shadow-xs"
+                      : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
+                  }`}
+                >
+                  {st === "ALL"
+                    ? "All Accounts"
+                    : st === "PENDING"
+                    ? "Pending Review"
+                    : st === "ACTIVE"
+                    ? "Active"
+                    : "Restricted"}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="h-5 w-px bg-slate-300 hidden sm:block" />
+
+          {/* Role Filter Tabs */}
+          <div className="flex items-center gap-1 bg-slate-200/70 p-1 rounded-xl">
+            {(["ALL", "USER", "ADMIN"] as const).map((r) => {
+              const isSelected = activeRoleFilter === r;
+              return (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => onRoleFilterChange(r)}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-black transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-white text-[#0A1D3D] shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  {r === "ALL" ? "All Roles" : r}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Search & Refresh Bar */}
-        <div className="flex items-center gap-2.5 w-full lg:w-auto">
-          <div className="relative flex-1 sm:w-64">
+        <div className="flex items-center gap-2.5 w-full xl:w-auto">
+          <div className="relative flex-1 sm:w-72">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder="Search name or email..."
+              placeholder="Search name, email, or user ID..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => onSearchChange(e.target.value)}
               className="w-full text-xs rounded-xl border border-slate-200 bg-white pl-9 pr-3 py-2 text-slate-800 focus:outline-hidden focus:border-[#00BCD4] focus:ring-2 focus:ring-[#00BCD4]/20"
             />
           </div>
@@ -166,7 +201,7 @@ export function UserTable({
           <button
             type="button"
             onClick={() => setSuccessToast(null)}
-            className="text-emerald-600 hover:text-emerald-900 text-xs font-black"
+            className="text-emerald-600 hover:text-emerald-900 text-xs font-black cursor-pointer"
           >
             ✕
           </button>
@@ -181,9 +216,10 @@ export function UserTable({
               <th className="py-3 px-4 sm:px-6">User / Account</th>
               <th className="py-3 px-3">Role</th>
               <th className="py-3 px-3">Account Status</th>
-              <th className="py-3 px-3 hidden md:table-cell">Registered</th>
-              <th className="py-3 px-3 hidden lg:table-cell">Review Info</th>
-              <th className="py-3 px-4 sm:px-6 text-right">Administrative Actions</th>
+              <th className="py-3 px-3 hidden lg:table-cell">Child Profile</th>
+              <th className="py-3 px-3 hidden md:table-cell">Quests</th>
+              <th className="py-3 px-3 hidden xl:table-cell">Registered</th>
+              <th className="py-3 px-4 sm:px-6 text-right">Actions</th>
             </tr>
           </thead>
 
@@ -203,27 +239,28 @@ export function UserTable({
                   </td>
                   <td className="py-4 px-3"><div className="w-14 h-5 bg-slate-200 rounded-md" /></td>
                   <td className="py-4 px-3"><div className="w-20 h-5 bg-slate-200 rounded-full" /></td>
-                  <td className="py-4 px-3 hidden md:table-cell"><div className="w-24 h-3 bg-slate-200 rounded-sm" /></td>
                   <td className="py-4 px-3 hidden lg:table-cell"><div className="w-24 h-3 bg-slate-200 rounded-sm" /></td>
-                  <td className="py-4 px-4 sm:px-6 text-right"><div className="w-20 h-7 bg-slate-200 rounded-lg ml-auto" /></td>
+                  <td className="py-4 px-3 hidden md:table-cell"><div className="w-12 h-5 bg-slate-200 rounded-md" /></td>
+                  <td className="py-4 px-3 hidden xl:table-cell"><div className="w-20 h-3 bg-slate-200 rounded-sm" /></td>
+                  <td className="py-4 px-4 sm:px-6 text-right"><div className="w-24 h-7 bg-slate-200 rounded-lg ml-auto" /></td>
                 </tr>
               ))
-            ) : filteredUsers.length === 0 ? (
+            ) : users.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-12 text-center text-slate-500">
+                <td colSpan={7} className="py-12 text-center text-slate-500">
                   <div className="flex flex-col items-center justify-center">
                     <Info className="w-8 h-8 text-slate-300 mb-2" />
                     <p className="text-sm font-bold text-slate-700">No users found</p>
                     <p className="text-xs text-slate-400 mt-0.5">
                       {searchQuery
-                        ? "Try clearing your search query or switching status filters."
-                        : "No accounts match the selected status category."}
+                        ? `No users match "${searchQuery}". Try modifying your search or filter.`
+                        : "No accounts match the selected filters."}
                     </p>
                   </div>
                 </td>
               </tr>
             ) : (
-              filteredUsers.map((user) => {
+              users.map((user) => {
                 const isSelf = user.id === currentAdmin.id;
                 const initials = user.name
                   ? user.name
@@ -257,9 +294,13 @@ export function UserTable({
 
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-[#0A1D3D] truncate">
+                            <Link
+                              href={`/admin/users/${encodeURIComponent(user.id)}`}
+                              className="font-bold text-[#0A1D3D] hover:text-[#00838F] hover:underline truncate"
+                              title="Inspect User 360° Profile"
+                            >
                               {user.name}
-                            </span>
+                            </Link>
                             {isSelf && (
                               <span className="px-1.5 py-0.2 rounded-md bg-blue-50 text-blue-700 text-[9px] font-black uppercase">
                                 You
@@ -269,11 +310,23 @@ export function UserTable({
                           <p className="text-slate-400 text-[11px] truncate">
                             {user.email}
                           </p>
-                          {user.childProfile && (
-                            <p className="text-[10px] text-[#00838F] font-bold mt-0.5 truncate">
-                              👶 {user.childProfile.childName} · {user.childProfile.selectedClass} ({user.childProfile.age}y)
-                            </p>
-                          )}
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-[10px] text-slate-400 font-mono">
+                              ID: {user.id.slice(0, 10)}...
+                            </span>
+                            <button
+                              type="button"
+                              onClick={(e) => handleCopyId(e, user.id)}
+                              className="p-0.5 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                              title="Copy full User ID"
+                            >
+                              {copiedId === user.id ? (
+                                <Check className="w-3 h-3 text-emerald-600" />
+                              ) : (
+                                <Copy className="w-3 h-3" />
+                              )}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -321,7 +374,10 @@ export function UserTable({
                             <span>Restricted</span>
                           </span>
                           {user.restrictedReason && (
-                            <p className="text-[10px] text-rose-600 font-medium mt-1 line-clamp-1 max-w-[200px]" title={user.restrictedReason}>
+                            <p
+                              className="text-[10px] text-rose-600 font-medium mt-1 line-clamp-1 max-w-[180px]"
+                              title={user.restrictedReason}
+                            >
                               {user.restrictedReason}
                             </p>
                           )}
@@ -329,55 +385,76 @@ export function UserTable({
                       )}
                     </td>
 
-                    {/* Registered Date */}
-                    <td className="py-3.5 px-3 text-slate-500 text-[11px] hidden md:table-cell whitespace-nowrap">
-                      {formatDate(user.createdAt)}
-                    </td>
-
-                    {/* Review Info */}
-                    <td className="py-3.5 px-3 text-slate-500 text-[11px] hidden lg:table-cell whitespace-nowrap">
-                      {user.reviewedAt ? (
-                        <div>
-                          <span>{formatDate(user.reviewedAt)}</span>
+                    {/* Child Profile Column */}
+                    <td className="py-3.5 px-3 hidden lg:table-cell">
+                      {user.childProfile ? (
+                        <div className="min-w-0">
+                          <p className="font-bold text-[#0A1D3D] text-[11px] truncate">
+                            {user.childProfile.childName}
+                          </p>
+                          <p className="text-slate-400 text-[10px]">
+                            {user.childProfile.selectedClass} · {user.childProfile.age} yrs
+                          </p>
                         </div>
                       ) : (
-                        <span className="text-slate-300">Not reviewed</span>
+                        <span className="text-slate-300 text-[11px]">No profile</span>
                       )}
+                    </td>
+
+                    {/* Quest Sessions Count */}
+                    <td className="py-3.5 px-3 hidden md:table-cell">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                        <Gamepad2 className="w-3 h-3 text-slate-500" />
+                        <span>{user.questSessionCount ?? 0}</span>
+                      </span>
+                    </td>
+
+                    {/* Registered Date */}
+                    <td className="py-3.5 px-3 text-slate-500 text-[11px] hidden xl:table-cell whitespace-nowrap">
+                      {formatDate(user.createdAt)}
                     </td>
 
                     {/* Action Buttons */}
                     <td className="py-3.5 px-4 sm:px-6 text-right whitespace-nowrap">
-                      {isSelf ? (
-                        <span className="text-[11px] text-slate-400 font-semibold italic">
-                          Protected (Current Admin)
-                        </span>
-                      ) : (
-                        <div className="inline-flex items-center gap-1.5 justify-end">
-                          {user.status !== "ACTIVE" && (
-                            <button
-                              type="button"
-                              onClick={() => handleOpenModal(user, "approve")}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-black transition-colors cursor-pointer"
-                              title="Approve user account to ACTIVE"
-                            >
-                              <UserCheck className="w-3.5 h-3.5" />
-                              <span>Approve</span>
-                            </button>
-                          )}
+                      <div className="inline-flex items-center gap-1.5 justify-end">
+                        {/* 360° Detail View Button */}
+                        <Link
+                          href={`/admin/users/${encodeURIComponent(user.id)}`}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#0A1D3D] hover:bg-[#122b54] text-white text-xs font-black transition-colors shadow-xs"
+                          title="Inspect complete User 360° account, children, sessions and reports"
+                        >
+                          <Compass className="w-3.5 h-3.5 text-[#FFE066]" />
+                          <span>User 360°</span>
+                        </Link>
 
-                          {user.status !== "RESTRICTED" && (
-                            <button
-                              type="button"
-                              onClick={() => handleOpenModal(user, "restrict")}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300 text-xs font-black transition-colors cursor-pointer"
-                              title="Restrict user access with reason"
-                            >
-                              <ShieldAlert className="w-3.5 h-3.5" />
-                              <span>Restrict</span>
-                            </button>
-                          )}
-                        </div>
-                      )}
+                        {!isSelf && (
+                          <>
+                            {user.status !== "ACTIVE" && (
+                              <button
+                                type="button"
+                                onClick={() => handleOpenModal(user, "approve")}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-black transition-colors cursor-pointer"
+                                title="Approve user account to ACTIVE"
+                              >
+                                <UserCheck className="w-3.5 h-3.5" />
+                                <span className="hidden sm:inline">Approve</span>
+                              </button>
+                            )}
+
+                            {user.status !== "RESTRICTED" && (
+                              <button
+                                type="button"
+                                onClick={() => handleOpenModal(user, "restrict")}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300 text-xs font-black transition-colors cursor-pointer"
+                                title="Restrict user access with reason"
+                              >
+                                <ShieldAlert className="w-3.5 h-3.5" />
+                                <span className="hidden sm:inline">Restrict</span>
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );
@@ -390,8 +467,8 @@ export function UserTable({
       {/* Pagination Footer */}
       <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3">
         <span className="text-xs text-slate-500 font-medium">
-          Showing <strong className="text-slate-800">{filteredUsers.length}</strong> of{" "}
-          <strong className="text-slate-800">{meta.total}</strong> registered accounts
+          Showing <strong className="text-slate-800">{users.length}</strong> of{" "}
+          <strong className="text-slate-800">{meta.total}</strong> accounts
         </span>
 
         {meta.totalPages > 1 && (

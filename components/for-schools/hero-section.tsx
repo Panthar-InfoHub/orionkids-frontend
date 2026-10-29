@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 
 /* ------------------------------------------------------------------ */
@@ -14,6 +14,7 @@ const SPACE = "var(--font-space-grotesk), 'Space Grotesk', sans-serif";
 /* ------------------------------------------------------------------ */
 const FEATURE_PILLS = [
   { icon: "✅", text: "PLAY-BASED CLASSROOM OBSERVATIONS", bg: "#E8F9F0" },
+  { icon: "📜", text: "NEP 2020 ALIGNED", bg: "#E0EAFF" },
   { icon: "🛡️", text: "NOT A CLINICAL TOOL", bg: "#E8F9F0" },
   { icon: "✨", text: "TEACHER-LED SUPPORT", bg: "#E8F9F0" },
 ];
@@ -46,8 +47,10 @@ function BarsIcon() {
 /*  Hero Section Component                                              */
 /* ------------------------------------------------------------------ */
 export function ForSchoolsHeroSection() {
+  const [isLabOpen, setIsLabOpen] = useState(true);
+
   return (
-    <section className="relative w-full bg-white pt-6 pb-12 lg:pt-10 lg:pb-16 overflow-hidden">
+    <section className="relative w-full bg-white pt-6 pb-14 lg:pt-10 lg:pb-20 overflow-hidden">
       {/* Soft mint glow behind bottom-right of the card */}
       <div
         aria-hidden="true"
@@ -477,6 +480,221 @@ export function ForSchoolsHeroSection() {
                     Try picture cues
                   </span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= NEP 2020 INNOVATIVE LABS INTEGRATED BLOCK ================= */}
+        <div className="relative mt-14 lg:mt-20 pt-10 lg:pt-14 border-t border-[#F0E6FF] flex flex-col items-center">
+          {/* Eyebrow badge matching Screenshot 2 */}
+          <div
+            className="inline-flex items-center gap-2 rounded-full select-none mb-3.5 shadow-[2px_2px_0px_0px_#0A1D3D]"
+            style={{
+              height: "28px",
+              paddingLeft: "14px",
+              paddingRight: "14px",
+              backgroundColor: "#E0EAFF",
+              fontFamily: SPACE,
+              fontWeight: 700,
+              fontSize: "12px",
+              lineHeight: "16px",
+              letterSpacing: "0.6px",
+              textTransform: "uppercase",
+              color: "#1E5FBF",
+              border: "1.5px solid #0A1D3D",
+            }}
+          >
+            <span>🏛️</span>
+            <span>NEP 2020 FOR SCHOOLS</span>
+          </div>
+
+          {/* Heading matching Screenshot 2 */}
+          <h2
+            className="mb-8 sm:mb-10 text-center max-w-[840px] mx-auto"
+            style={{
+              fontFamily: JAKARTA,
+              fontWeight: 800,
+              color: "#0A1D3D",
+              fontSize: "clamp(26px, 3.5vw, 40px)",
+              lineHeight: "1.25",
+              letterSpacing: "-0.8px",
+            }}
+          >
+            Upgrade Your School With{" "}
+            <span className="relative inline-block">
+              <span
+                className="inline-flex items-center justify-center px-3.5 py-0.5 rounded-[12px]"
+                style={{
+                  backgroundColor: "#1E5FBF",
+                  color: "#FFFFFF",
+                  border: "2px solid #0A1D3D",
+                  boxShadow: "3px 4px 0px 0px #0A1D3D",
+                  transform: "rotate(-0.5deg)",
+                }}
+              >
+                NEP 2020–Based
+              </span>
+            </span>{" "}
+            Fun Brain Labs
+          </h2>
+
+          {/* 2-Column Grid for Screenshots 3 & 1 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch w-full max-w-[1240px] mx-auto">
+            {/* Left Card: OrionKids NEP 2020 Brain Lab */}
+            <div
+              className="flex flex-col justify-between rounded-[24px] p-6 sm:p-8 bg-white transition-all duration-200"
+              style={{
+                border: "2.5px solid #F59E0B",
+                boxShadow: "6px 6px 0px 0px #0A1D3D",
+              }}
+            >
+              <div>
+                {/* Header row with interactive toggle */}
+                <button
+                  type="button"
+                  onClick={() => setIsLabOpen(!isLabOpen)}
+                  className="w-full flex items-center justify-between text-left gap-3 group cursor-pointer"
+                >
+                  <h3
+                    style={{
+                      fontFamily: JAKARTA,
+                      fontWeight: 800,
+                      fontSize: "clamp(18px, 2vw, 22px)",
+                      lineHeight: "1.35",
+                      color: "#0A1D3D",
+                    }}
+                  >
+                    What is the OrionKids NEP 2020 Brain Lab?
+                  </h3>
+                  <span
+                    className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg select-none transition-transform group-hover:scale-105"
+                    style={{
+                      backgroundColor: "#FEF3C7",
+                      color: "#D97706",
+                      border: "1.5px solid #F59E0B",
+                    }}
+                    aria-label={isLabOpen ? "Collapse answer" : "Expand answer"}
+                  >
+                    {isLabOpen ? "—" : "+"}
+                  </span>
+                </button>
+
+                {/* Answer body */}
+                {isLabOpen && (
+                  <p
+                    className="mt-4"
+                    style={{
+                      fontFamily: JAKARTA,
+                      fontWeight: 500,
+                      fontSize: "15px",
+                      lineHeight: "1.7",
+                      color: "#475569",
+                    }}
+                  >
+                    It&apos;s an in-school cognitive discovery program where students explore{" "}
+                    <strong className="font-bold text-[#0A1D3D]">OrionKids&apos; play-based learning quests</strong>{" "}
+                    — strengthening working memory, pattern recognition, spatial reasoning, and creative problem solving — guided by teachers and aligned with NEP 2020 competency standards.
+                  </p>
+                )}
+              </div>
+
+              {/* Curriculum Skill Tags */}
+              <div className="flex flex-wrap items-center gap-2 mt-6 pt-5 border-t border-[#F3F4F6]">
+                {[
+                  { label: "Working Memory", icon: "🧠" },
+                  { label: "Pattern Discovery", icon: "🔍" },
+                  { label: "Spatial Reasoning", icon: "🧩" },
+                  { label: "Creative Thinking", icon: "💡" },
+                  { label: "Focus & Attention", icon: "🎯" },
+                ].map((skill) => (
+                  <span
+                    key={skill.label}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full select-none"
+                    style={{
+                      backgroundColor: "#FEF3C7",
+                      color: "#92400E",
+                      border: "1px solid #FDE68A",
+                      fontFamily: SPACE,
+                      fontWeight: 700,
+                      fontSize: "12px",
+                      lineHeight: "16px",
+                    }}
+                  >
+                    <span>{skill.icon}</span>
+                    <span>{skill.label}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Card: Meets NEP 2020 Requirements */}
+            <div
+              className="flex flex-col justify-between rounded-[24px] p-6 sm:p-8 text-white transition-all duration-200"
+              style={{
+                backgroundColor: "#1E5FBF",
+                border: "2.5px solid #0A1D3D",
+                boxShadow: "6px 6px 0px 0px #0A1D3D",
+              }}
+            >
+              <div>
+                {/* Title with Scroll Emoji */}
+                <div className="flex items-center gap-2.5 mb-4">
+                  <span className="text-2xl select-none" aria-hidden="true">
+                    📜
+                  </span>
+                  <h3
+                    style={{
+                      fontFamily: JAKARTA,
+                      fontWeight: 800,
+                      fontSize: "clamp(20px, 2.2vw, 24px)",
+                      lineHeight: "1.3",
+                      color: "#FFFFFF",
+                    }}
+                  >
+                    Meets NEP 2020 Requirements
+                  </h3>
+                </div>
+
+                {/* Paragraph */}
+                <p
+                  style={{
+                    fontFamily: JAKARTA,
+                    fontWeight: 500,
+                    fontSize: "16px",
+                    lineHeight: "1.65",
+                    color: "rgba(255, 255, 255, 0.94)",
+                  }}
+                >
+                  OrionKids directly supports NEP 2020&apos;s mandate for{" "}
+                  <strong className="font-bold text-white">regular, formative, and competency-based assessment</strong>{" "}
+                  — moving beyond rote marks to help teachers understand each child&apos;s unique thinking strategies and potential.
+                </p>
+              </div>
+
+              {/* Bottom Highlight Callout */}
+              <div
+                className="mt-6 flex items-center gap-3 p-4 rounded-[16px] select-none"
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.14)",
+                  border: "1.5px solid rgba(255, 255, 255, 0.28)",
+                  backdropFilter: "blur(4px)",
+                }}
+              >
+                <span className="text-xl shrink-0" aria-hidden="true">
+                  ⭐
+                </span>
+                <span
+                  style={{
+                    fontFamily: JAKARTA,
+                    fontWeight: 800,
+                    fontSize: "15px",
+                    lineHeight: "22px",
+                    color: "#FFD54F",
+                  }}
+                >
+                  Designed for Classes 1–5 • Play-Based, Non-Clinical & Teacher-Led.
+                </span>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import {
@@ -8,10 +8,8 @@ import {
   Printer,
   Download,
   Sparkles,
-  CheckCircle,
   BookOpen,
   ArrowRight,
-  Loader2,
   ExternalLink,
 } from "lucide-react";
 import { PrintableItem } from "@/types/printables";
@@ -25,13 +23,13 @@ interface PrintableModalProps {
 }
 
 export function PrintableModal({ item, isOpen, onClose }: PrintableModalProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Lock outer background scrolling while modal is open, and handle Escape key
   useEffect(() => {

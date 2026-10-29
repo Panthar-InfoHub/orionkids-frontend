@@ -37,6 +37,19 @@ export default function WarmUpPage() {
           router.replace(destination);
           return;
         }
+
+        // Check if player has already completed warm-up and is at a game stage
+        const { fetchResumeState } = await import("@/lib/api/session");
+        const resume = await fetchResumeState();
+        if (
+          resume.hasResumableQuest &&
+          resume.destination &&
+          resume.destination !== "/warm-up"
+        ) {
+          router.replace(resume.destination);
+          return;
+        }
+
         setIsVerifying(false);
       } catch {
         router.replace("/login?redirect=/warm-up");
