@@ -693,7 +693,7 @@ export function ForSchoolsHeroSection() {
                     color: "#FFD54F",
                   }}
                 >
-                  Designed for Classes 1–8 • Play-Based, Non-Clinical & Teacher-Led.
+                  Designed for Classes 1–5 • Play-Based, Non-Clinical & Teacher-Led.
                 </span>
               </div>
             </div>
