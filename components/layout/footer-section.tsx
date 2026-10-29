@@ -834,10 +834,10 @@ export function FooterSection() {
             </Link>
           </div>
 
-          {/* Right: Clean 2-column links */}
+          {/* Right: Clean 3-column links */}
           <nav
             aria-label="Footer Navigation"
-            className="flex items-start gap-8 sm:gap-12 pt-1 lg:pt-2 shrink-0"
+            className="flex flex-wrap items-start gap-6 sm:gap-10 lg:gap-12 pt-1 lg:pt-2 shrink-0"
             style={{ fontFamily: INTER }}
           >
             {/* Column 1: Main Pages */}
@@ -872,9 +872,43 @@ export function FooterSection() {
               >
                 BLOGS
               </Link>
+              <Link
+                href="/printables"
+                className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
+              >
+                PRINTABLES
+              </Link>
             </div>
 
-            {/* Column 2: Social / External Links with ↗ */}
+            {/* Column 2: Support & Legal */}
+            <div className="flex flex-col space-y-2 sm:space-y-2.5 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
+              <Link
+                href="#"
+                className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
+              >
+                HELP &amp; SUPPORT
+              </Link>
+              <Link
+                href="#"
+                className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
+              >
+                CONTACT US
+              </Link>
+              <Link
+                href="#"
+                className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
+              >
+                PRIVACY POLICY
+              </Link>
+              <Link
+                href="#"
+                className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
+              >
+                TERMS &amp; CONDITIONS
+              </Link>
+            </div>
+
+            {/* Column 3: Social / External Links with ↗ */}
             <div className="flex flex-col space-y-2 sm:space-y-2.5 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
               <a
                 href="https://linkedin.com"
@@ -1000,12 +1034,28 @@ export function FooterSection() {
 
         {/* ================= LEGAL ROW ================= */}
         <div
-          className="mt-4 sm:mt-5 flex flex-col md:flex-row items-center justify-between gap-2 text-[10px] sm:text-[11px] text-[#0A1D3D] font-medium text-center md:text-left"
+          className="mt-6 pt-4 border-t border-[#F0E6FF] flex flex-col md:flex-row items-center justify-between gap-3 text-[10px] sm:text-[11px] text-[#0A1D3D] font-medium text-center md:text-left"
           style={{ fontFamily: INTER }}
         >
           <span>© 2026 OrionKids Digital Solutions Pvt. Ltd.</span>
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[#526176]">
+            <Link href="#" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
+              Privacy Policy
+            </Link>
+            <span aria-hidden="true">•</span>
+            <Link href="#" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
+              Terms &amp; Conditions
+            </Link>
+            <span aria-hidden="true">•</span>
+            <Link href="#" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
+              Help &amp; Support
+            </Link>
+            <span aria-hidden="true">•</span>
+            <Link href="#" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
+              Contact Us
+            </Link>
+          </div>
           <span>Design &amp; Development by PantharInfoHub Pvt. Ltd.</span>
-          <span>Copyright 2026 • All Rights Reserved</span>
         </div>
       </div>
     </footer>
