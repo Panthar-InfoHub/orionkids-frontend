@@ -9,21 +9,22 @@ import {
   AlertTriangle,
   RefreshCw,
   Sparkles,
+  Baby,
+  Gamepad2,
+  CheckCircle2,
+  Hourglass,
 } from "lucide-react";
 import {
   fetchAdminUsers,
-  fetchAdminMetrics,
+  fetchAdminOverview,
   updateAdminUserStatus,
   type AdminUserItem,
   type AdminPaginationMeta,
-  type AdminMetrics,
+  type AdminOverviewResult,
 } from "@/lib/api/admin";
 import { UserTable } from "./user-table";
-import { useAdmin } from "./admin-guard";
 
 export function AdminDashboardView() {
-  const { admin } = useAdmin();
-
   // State
   const [users, setUsers] = useState<AdminUserItem[]>([]);
   const [meta, setMeta] = useState<AdminPaginationMeta>({
@@ -32,39 +33,59 @@ export function AdminDashboardView() {
     total: 0,
     totalPages: 1,
   });
-  const [metrics, setMetrics] = useState<AdminMetrics>({
-    total: 0,
-    pending: 0,
-    active: 0,
-    restricted: 0,
-  });
+  const [overview, setOverview] = useState<AdminOverviewResult | null>(null);
   const [activeStatusFilter, setActiveStatusFilter] = useState<
     "ALL" | "PENDING" | "ACTIVE" | "RESTRICTED"
   >("ALL");
+  const [activeRoleFilter, setActiveRoleFilter] = useState<
+    "ALL" | "USER" | "ADMIN"
+  >("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [isOverviewLoading, setIsOverviewLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Load metrics
-  const loadMetrics = useCallback(async () => {
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery.trim());
+      setCurrentPage(1); // Reset to page 1 on new search
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Load overview metrics
+  const loadOverview = useCallback(async () => {
+    setIsOverviewLoading(true);
     try {
-      const data = await fetchAdminMetrics();
-      setMetrics(data);
+      const data = await fetchAdminOverview();
+      setOverview(data);
     } catch (err) {
-      console.error("[AdminDashboard] Failed to fetch metrics:", err);
+      console.error("[AdminDashboard] Failed to fetch overview metrics:", err);
+    } finally {
+      setIsOverviewLoading(false);
     }
   }, []);
 
   // Load paginated users
   const loadUsers = useCallback(
-    async (pageToLoad: number, filterToUse: "ALL" | "PENDING" | "ACTIVE" | "RESTRICTED") => {
+    async (
+      pageToLoad: number,
+      statusFilter: "ALL" | "PENDING" | "ACTIVE" | "RESTRICTED",
+      roleFilter: "ALL" | "USER" | "ADMIN",
+      search: string
+    ) => {
       setIsLoading(true);
       setErrorMessage(null);
       try {
         const result = await fetchAdminUsers({
           page: pageToLoad,
           limit: 10,
-          status: filterToUse !== "ALL" ? filterToUse : undefined,
+          status: statusFilter !== "ALL" ? statusFilter : undefined,
+          role: roleFilter !== "ALL" ? roleFilter : undefined,
+          search: search || undefined,
         });
         setUsers(result.users);
         setMeta(result.meta);
@@ -82,14 +103,14 @@ export function AdminDashboardView() {
     []
   );
 
-  // Initial fetch and reload on page/filter changes
+  // Initial fetch and reload on page/filter/search changes
   useEffect(() => {
-    loadUsers(currentPage, activeStatusFilter);
-  }, [currentPage, activeStatusFilter, loadUsers]);
+    loadUsers(currentPage, activeStatusFilter, activeRoleFilter, debouncedSearch);
+  }, [currentPage, activeStatusFilter, activeRoleFilter, debouncedSearch, loadUsers]);
 
   useEffect(() => {
-    loadMetrics();
-  }, [loadMetrics]);
+    loadOverview();
+  }, [loadOverview]);
 
   // Status Filter Handlers
   const handleStatusFilterChange = (
@@ -99,14 +120,19 @@ export function AdminDashboardView() {
     setCurrentPage(1);
   };
 
+  const handleRoleFilterChange = (newRole: "ALL" | "USER" | "ADMIN") => {
+    setActiveRoleFilter(newRole);
+    setCurrentPage(1);
+  };
+
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
 
   const handleRefresh = async () => {
     await Promise.all([
-      loadUsers(currentPage, activeStatusFilter),
-      loadMetrics(),
+      loadUsers(currentPage, activeStatusFilter, activeRoleFilter, debouncedSearch),
+      loadOverview(),
     ]);
   };
 
@@ -118,8 +144,8 @@ export function AdminDashboardView() {
     await updateAdminUserStatus(userId, payload);
     // Reload both the table and the metrics
     await Promise.all([
-      loadUsers(currentPage, activeStatusFilter),
-      loadMetrics(),
+      loadUsers(currentPage, activeStatusFilter, activeRoleFilter, debouncedSearch),
+      loadOverview(),
     ]);
   };
 
@@ -130,35 +156,39 @@ export function AdminDashboardView() {
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFE066]/20 border border-[#0A1D3D] text-[#0A1D3D] text-[11px] font-black uppercase tracking-wider mb-2.5">
             <Sparkles className="w-3.5 h-3.5 text-[#0A1D3D]" />
-            <span>Governance & Access</span>
+            <span>Governance & Access · OrionKids Admin</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-[#0A1D3D] tracking-tight">
-            User Accounts & Security
+            User 360° Management & System Analytics
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Review user registrations, approve active explorers, and regulate account access.
+            Authoritative explorer governance, child accounts, quest telemetry, and cognitive reports.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-600 shadow-xs">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-bold">Authoritative API Active</span>
+            <span className="font-bold">Authoritative DB Synced</span>
           </div>
 
           <button
             type="button"
             onClick={handleRefresh}
-            disabled={isLoading}
+            disabled={isLoading || isOverviewLoading}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0A1D3D] hover:bg-[#122b54] text-white text-xs font-black transition-colors cursor-pointer shadow-xs disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`w-3.5 h-3.5 ${
+                isLoading || isOverviewLoading ? "animate-spin" : ""
+              }`}
+            />
             <span>Refresh</span>
           </button>
         </div>
       </div>
 
-      {/* Metrics Summary Cards */}
+      {/* Primary Account Metrics Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Accounts */}
         <div
@@ -177,8 +207,14 @@ export function AdminDashboardView() {
               <Users className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-black text-[#0A1D3D]">{metrics.total}</div>
-          <p className="text-[11px] text-slate-400 mt-1">All registered accounts</p>
+          <div className="text-3xl font-black text-[#0A1D3D]">
+            {overview?.accounts.total ?? meta.total}
+          </div>
+          <p className="text-[11px] text-slate-400 mt-1">
+            {overview
+              ? `${overview.accounts.regularUsers} users · ${overview.accounts.admins} admins`
+              : "All registered parent & admin accounts"}
+          </p>
         </div>
 
         {/* Pending Review */}
@@ -195,7 +231,7 @@ export function AdminDashboardView() {
               <span className="text-xs font-bold text-amber-800 uppercase tracking-wider">
                 Pending Review
               </span>
-              {metrics.pending > 0 && (
+              {(overview?.accounts.pending ?? 0) > 0 && (
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
               )}
             </div>
@@ -203,9 +239,11 @@ export function AdminDashboardView() {
               <Clock className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-black text-amber-900">{metrics.pending}</div>
+          <div className="text-3xl font-black text-amber-900">
+            {overview?.accounts.pending ?? 0}
+          </div>
           <p className="text-[11px] text-amber-700/80 mt-1">
-            {metrics.pending === 1 ? "1 account needs review" : `${metrics.pending} accounts need review`}
+            Submitted onboarding requiring approval
           </p>
         </div>
 
@@ -226,7 +264,9 @@ export function AdminDashboardView() {
               <UserCheck className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-black text-emerald-900">{metrics.active}</div>
+          <div className="text-3xl font-black text-emerald-900">
+            {overview?.accounts.active ?? 0}
+          </div>
           <p className="text-[11px] text-emerald-700/80 mt-1">Approved & active access</p>
         </div>
 
@@ -247,10 +287,73 @@ export function AdminDashboardView() {
               <ShieldAlert className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-black text-rose-900">{metrics.restricted}</div>
-          <p className="text-[11px] text-rose-700/80 mt-1">Sessions terminated</p>
+          <div className="text-3xl font-black text-rose-900">
+            {overview?.accounts.restricted ?? 0}
+          </div>
+          <p className="text-[11px] text-rose-700/80 mt-1">Terminated sessions</p>
         </div>
       </div>
+
+      {/* Secondary System Telemetry & Quest Activity Aggregates */}
+      {overview && (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+          <div className="flex items-center gap-3 p-2">
+            <div className="w-8 h-8 rounded-xl bg-cyan-50 text-[#00838F] flex items-center justify-center">
+              <Baby className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                Child Profiles
+              </p>
+              <p className="text-base font-black text-[#0A1D3D]">
+                {overview.children.total}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-2">
+            <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+              <Gamepad2 className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                Total Sessions
+              </p>
+              <p className="text-base font-black text-[#0A1D3D]">
+                {overview.sessions.total}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-2">
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                Completed Quests
+              </p>
+              <p className="text-base font-black text-emerald-800">
+                {overview.sessions.completed}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-2">
+            <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+              <Hourglass className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                In-Progress Quests
+              </p>
+              <p className="text-base font-black text-amber-800">
+                {overview.sessions.inProgress}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Error state if API call failed */}
       {errorMessage && (
@@ -278,7 +381,11 @@ export function AdminDashboardView() {
         meta={meta}
         isLoading={isLoading}
         activeStatusFilter={activeStatusFilter}
+        activeRoleFilter={activeRoleFilter}
+        searchQuery={searchQuery}
         onStatusFilterChange={handleStatusFilterChange}
+        onRoleFilterChange={handleRoleFilterChange}
+        onSearchChange={setSearchQuery}
         onPageChange={handlePageChange}
         onRefresh={handleRefresh}
         onUpdateStatus={handleUpdateStatus}

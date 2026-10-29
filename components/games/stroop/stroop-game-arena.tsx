@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   StroopTrial,
   StroopTrialRecord,
@@ -11,6 +12,9 @@ interface StroopGameArenaProps {
   trials: StroopTrial[];
   level?: number;
   initialTrialIndex?: number;
+  initialRecords?: StroopTrialRecord[];
+  sessionId?: string;
+  attemptId?: string;
   onLevelComplete?: (records: StroopTrialRecord[]) => void;
 }
 
@@ -18,28 +22,221 @@ const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 export function StroopGameArena({
   trials,
-  level = 2,
+  level = 1,
   initialTrialIndex,
+  initialRecords,
+  sessionId,
+  attemptId,
   onLevelComplete,
 }: StroopGameArenaProps) {
-  // Start on initialTrialIndex if provided, or index 2 (Word 3 of 8) for level 2 if default matches screenshot
+  const router = useRouter();
+  // Start on initialTrialIndex if provided, or index 0 for level 1
   const [currentTrialIdx, setCurrentTrialIdx] = useState(
-    initialTrialIndex !== undefined ? initialTrialIndex : level === 2 ? 2 : 0
+    initialTrialIndex !== undefined ? initialTrialIndex : 0
   );
-  const [records, setRecords] = useState<StroopTrialRecord[]>([]);
+  const [records, setRecords] = useState<StroopTrialRecord[]>(
+    initialRecords || []
+  );
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isLevelFinished, setIsLevelFinished] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(
+    sessionId || null
+  );
+  const [activeAttemptId, setActiveAttemptId] = useState<string | null>(
+    attemptId || null
+  );
+  const [submissionStatus, setSubmissionStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [nextLevelRoute, setNextLevelRoute] = useState<string | null>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  const isSubmitting = submissionStatus === "submitting";
 
   const trialStartTimeRef = useRef<number>(0);
   const currentTrial = trials[currentTrialIdx] || trials[0];
   const totalTrials = trials.length;
+
+  // Reset arena state whenever level changes or re-initialized
+  useEffect(() => {
+    setCurrentTrialIdx(initialTrialIndex !== undefined ? initialTrialIndex : 0);
+    setRecords(initialRecords || []);
+    setSelectedOption(null);
+    setIsLevelFinished(false);
+    setSubmissionStatus("idle");
+    setErrorMessage(null);
+    setNextLevelRoute(null);
+    setIsNavigating(false);
+  }, [level, initialTrialIndex, initialRecords]);
+
+  // Synchronize or resolve active quest session ID
+  useEffect(() => {
+    let isCancelled = false;
+
+    if (sessionId) {
+      setActiveSessionId(sessionId);
+      return;
+    }
+
+    async function initSession() {
+      try {
+        const { fetchCurrentSession } = await import("@/lib/api/session");
+        const session = await fetchCurrentSession();
+        if (!isCancelled && session?.id) {
+          setActiveSessionId(session.id);
+
+          // Check if session has already completed this level or prior level
+          const completedNums = new Set(
+            (session.completedLevels || []).map(
+              (l: { levelNumber?: number }) => l.levelNumber
+            )
+          );
+          const isPriorLevelCompleted =
+            level === 1 || completedNums.has(level - 1);
+
+          // Progression Security: Only redirect if user attempted to jump ahead to a locked stage
+          // without having completed prior stages
+          if (
+            session.status === "IN_PROGRESS" &&
+            session.currentGame === 1 &&
+            level > session.currentLevel &&
+            !isPriorLevelCompleted
+          ) {
+            router.replace(`/games/stroop?level=${session.currentLevel}`);
+          }
+        }
+      } catch {
+        // Fall back gracefully; submission will attempt resolution via cookie
+      }
+    }
+
+    initSession();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [sessionId, level, router]);
 
   // Initialize trial timer when a new trial appears
   useEffect(() => {
     trialStartTimeRef.current = performance.now();
     setSelectedOption(null);
   }, [currentTrialIdx]);
+
+  const submitResults = useCallback(
+    async (trialsToSubmit: StroopTrialRecord[]) => {
+      if (submissionStatus === "submitting") return;
+
+      setSubmissionStatus("submitting");
+      setErrorMessage(null);
+      try {
+        const correctCount = trialsToSubmit.filter((r) => r.isCorrect).length;
+        const avgRT =
+          trialsToSubmit.length > 0
+            ? Math.round(
+                trialsToSubmit.reduce((acc, cur) => acc + cur.reactionTimeMs, 0) /
+                  trialsToSubmit.length
+              )
+            : 0;
+        const totalDuration = trialsToSubmit.reduce(
+          (acc, cur) => acc + (cur.reactionTimeMs || 0),
+          0
+        );
+
+        const result = await submitStroopLevelResults({
+          gameId: "stroop",
+          sessionId: activeSessionId || undefined,
+          level,
+          totalTrials,
+          correctTrials: correctCount,
+          accuracy: Math.round((correctCount / totalTrials) * 100),
+          durationMs: totalDuration,
+          averageReactionTimeMs: avgRT,
+          trials: trialsToSubmit,
+          completedAt: new Date().toISOString(),
+        });
+
+        if (result.success) {
+          // Authoritative forward destination resolution: never route to completed level
+          const resolvedNextRoute =
+            result.nextLevelRoute &&
+            result.nextLevelRoute !== `/games/stroop?level=${level}`
+              ? result.nextLevelRoute
+              : level < 3
+              ? `/games/stroop?level=${level + 1}`
+              : "/games/card-flip?level=1";
+
+          setSubmissionStatus("success");
+          setNextLevelRoute(resolvedNextRoute);
+          if (result.sessionId) {
+            setActiveSessionId(result.sessionId);
+          }
+          if (onLevelComplete) {
+            onLevelComplete(trialsToSubmit);
+          }
+        } else {
+          setSubmissionStatus("error");
+          setErrorMessage(
+            result.message ||
+              "Failed to record level progress on the server. Please try again."
+          );
+        }
+      } catch (err: unknown) {
+        console.error("Error submitting level results:", err);
+        setSubmissionStatus("error");
+        setErrorMessage(
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred while saving your score."
+        );
+      }
+    },
+    [activeSessionId, level, onLevelComplete, submissionStatus, totalTrials]
+  );
+
+  // Initialize level attempt in the backend to enable checkpointing
+  useEffect(() => {
+    if (!activeSessionId || activeAttemptId || isLevelFinished) return;
+    let isCancelled = false;
+
+    async function initAttempt() {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        if (!apiUrl) return;
+        const res = await fetch(
+          `${apiUrl}/api/quest/sessions/${activeSessionId}/levels/start`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ gameKey: "stroop", levelNumber: level }),
+          }
+        );
+        if (res.ok && !isCancelled) {
+          const data = await res.json();
+          if (data?.data?.attemptId) {
+            setActiveAttemptId(data.data.attemptId);
+          }
+        } else if (res.status === 403 && !isCancelled) {
+          const errData = await res.json().catch(() => null);
+          const msg =
+            errData?.error?.message ||
+            `Level progression violation: Game 1 Level ${level} is locked.`;
+          setSubmissionStatus("error");
+          setErrorMessage(msg);
+          setIsLevelFinished(true);
+        }
+      } catch {
+        // Non-blocking; checkpointing is best-effort and final submission is authoritative
+      }
+    }
+
+    initAttempt();
+    return () => {
+      isCancelled = true;
+    };
+  }, [activeSessionId, activeAttemptId, isLevelFinished, level]);
 
   const handleSelectAnswer = useCallback(
     async (chosenOption: string) => {
@@ -66,40 +263,37 @@ export function StroopGameArena({
       // Advance after a brief micro-transition for natural gameplay feedback
       setTimeout(async () => {
         if (currentTrialIdx < totalTrials - 1) {
-          setCurrentTrialIdx((prev) => prev + 1);
+          const nextIdx = currentTrialIdx + 1;
+          setCurrentTrialIdx(nextIdx);
+
+          // Save in-game checkpoint if active session and attempt exist
+          if (activeSessionId && activeAttemptId) {
+            import("@/lib/api/session").then(({ saveAttemptCheckpoint }) => {
+              saveAttemptCheckpoint(activeSessionId, activeAttemptId, {
+                currentTrialIdx: nextIdx,
+                records: updatedRecords,
+                timestamp: new Date().toISOString(),
+              }).catch(() => {});
+            });
+          }
         } else {
           // Level finished
           setIsLevelFinished(true);
-          setIsSubmitting(true);
-          try {
-            const correctCount = updatedRecords.filter((r) => r.isCorrect).length;
-            const avgRT = Math.round(
-              updatedRecords.reduce((acc, cur) => acc + cur.reactionTimeMs, 0) / updatedRecords.length
-            );
-
-            await submitStroopLevelResults({
-              gameId: "stroop",
-              level,
-              totalTrials,
-              correctTrials: correctCount,
-              accuracy: Math.round((correctCount / totalTrials) * 100),
-              averageReactionTimeMs: avgRT,
-              trials: updatedRecords,
-              completedAt: new Date().toISOString(),
-            });
-
-            if (onLevelComplete) {
-              onLevelComplete(updatedRecords);
-            }
-          } catch (err) {
-            console.error("Error submitting level results:", err);
-          } finally {
-            setIsSubmitting(false);
-          }
+          await submitResults(updatedRecords);
         }
       }, 180);
     },
-    [currentTrial, currentTrialIdx, isLevelFinished, level, onLevelComplete, records, selectedOption, totalTrials]
+    [
+      activeAttemptId,
+      activeSessionId,
+      currentTrial,
+      currentTrialIdx,
+      isLevelFinished,
+      records,
+      selectedOption,
+      submitResults,
+      totalTrials,
+    ]
   );
 
   // Keyboard accessibility: 1, 2, 3 or Left, Down, Right arrow keys
@@ -307,37 +501,97 @@ export function StroopGameArena({
         {isLevelFinished ? (
           /* Level Completed Feedback State */
           <div className="py-6 flex flex-col items-center animate-in fade-in duration-300">
-            <div className="w-16 h-16 rounded-full bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-3xl mb-4">
-              🌟
+            <div
+              className={`w-16 h-16 rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-3xl mb-4 ${
+                submissionStatus === "error" ? "bg-[#FF5B5B]" : "bg-[#FFD028]"
+              }`}
+            >
+              {submissionStatus === "error" ? "⚠️" : "🌟"}
             </div>
             <h2
               className="text-[26px] sm:text-[30px] font-extrabold text-white mb-2"
               style={{ fontFamily: JAKARTA }}
             >
-              Level {level} Complete!
+              {submissionStatus === "error"
+                ? "Level Verification Required"
+                : `Level ${level} Complete!`}
             </h2>
             <p
-              className="text-[15px] text-[#E0D3F8] max-w-[420px] mb-6"
+              className="text-[15px] text-[#E0D3F8] max-w-[460px] mb-6 leading-relaxed"
               style={{ fontFamily: JAKARTA }}
             >
               {isSubmitting
                 ? "Saving your score to the star log..."
+                : submissionStatus === "error"
+                ? errorMessage
                 : `Awesome ink spotting! You got ${
                     records.filter((r) => r.isCorrect).length
                   } out of ${totalTrials} right.`}
             </p>
-            <button
-              type="button"
-              onClick={() => {
-                setCurrentTrialIdx(0);
-                setIsLevelFinished(false);
-                setRecords([]);
-              }}
-              className="inline-flex items-center justify-center px-8 py-3.5 rounded-full font-extrabold text-[15px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer"
-              style={{ fontFamily: JAKARTA }}
-            >
-              Play Again
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-3.5 mt-2">
+              {submissionStatus === "success" && nextLevelRoute && (
+                <button
+                  type="button"
+                  disabled={isSubmitting || isNavigating}
+                  onClick={() => {
+                    if (isNavigating) return;
+                    setIsNavigating(true);
+                    router.push(nextLevelRoute);
+                  }}
+                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-full font-extrabold text-[15px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  style={{ fontFamily: JAKARTA }}
+                >
+                  {isNavigating
+                    ? "Launching Next Challenge... 🚀"
+                    : level < 3
+                    ? `Next Level (${level + 1} of 3) 🚀`
+                    : "Next Game: Card Flip 🚀"}
+                </button>
+              )}
+
+              {submissionStatus === "error" && (
+                <>
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={() => submitResults(records)}
+                    className="inline-flex items-center justify-center px-8 py-3.5 rounded-full font-extrabold text-[15px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                    style={{ fontFamily: JAKARTA }}
+                  >
+                    {isSubmitting ? "Retrying..." : "Retry Submission 🔄"}
+                  </button>
+                  {level > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        router.push("/games/stroop?level=1");
+                      }}
+                      className="inline-flex items-center justify-center px-6 py-3.5 rounded-full font-bold text-[14px] text-white bg-white/20 hover:bg-white/30 border border-white/40 transition-colors cursor-pointer"
+                      style={{ fontFamily: JAKARTA }}
+                    >
+                      Go to Level 1 🎨
+                    </button>
+                  )}
+                </>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentTrialIdx(0);
+                  setIsLevelFinished(false);
+                  setRecords([]);
+                  setSubmissionStatus("idle");
+                  setErrorMessage(null);
+                  setNextLevelRoute(null);
+                  setIsNavigating(false);
+                }}
+                className="inline-flex items-center justify-center px-6 py-3.5 rounded-full font-bold text-[14px] text-white bg-white/10 hover:bg-white/20 border border-white/30 transition-colors cursor-pointer"
+                style={{ fontFamily: JAKARTA }}
+              >
+                Replay Level 🔄
+              </button>
+            </div>
           </div>
         ) : (
           /* Active Trial Display */

@@ -162,8 +162,8 @@ export function getRouteForUserProfile(
     }
   }
 
-  // Default authenticated quest destination
-  return "/warm-up";
+  // Default authenticated destination when no active quest is in progress
+  return "/";
 }
 
 /**

@@ -7,7 +7,6 @@ import {
   Menu,
   X,
   LayoutDashboard,
-  ShieldCheck,
   Users,
   LogOut,
   ChevronDown,
@@ -77,10 +76,7 @@ export function Navbar() {
     };
   }, [session]);
 
-  const navLinks = [
-    ...SITE_CONFIG.navLinks.map((l) => ({ ...l, isAdmin: false })),
-    ...(isAdmin ? [{ label: "Dashboard", href: "/admin", isAdmin: true }] : []),
-  ];
+  const navLinks = SITE_CONFIG.navLinks;
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -193,9 +189,6 @@ export function Navbar() {
                     lineHeight: "100%",
                   }}
                 >
-                  {link.isAdmin && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  )}
                   <span>{link.label}</span>
                 </Link>
               );
@@ -257,10 +250,10 @@ export function Navbar() {
                       </div>
                     </div>
 
-                    {/* Dashboard Section Options */}
+                    {/* Dashboard Option */}
                     <div className="py-2 px-1.5 space-y-0.5">
                       <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
-                        Dashboard Operations
+                        Admin Portal
                       </div>
 
                       <Link
@@ -269,50 +262,14 @@ export function Navbar() {
                         className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
                       >
                         <div className="w-8 h-8 rounded-lg bg-[#E0F7FA] text-[#00838F] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#00BCD4] group-hover:text-white transition-colors">
-                          <LayoutDashboard className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <span className="block text-xs font-black text-[#0A1D3D] group-hover:text-[#00BCD4] transition-colors">
-                            Admin Overview
-                          </span>
-                          <span className="block text-[11px] text-slate-400 font-medium leading-tight mt-0.5">
-                            Live metrics, registrations & activity
-                          </span>
-                        </div>
-                      </Link>
-
-                      <Link
-                        href="/admin"
-                        onClick={() => setAdminDropdownOpen(false)}
-                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-[#FFF9C4] text-[#F57F17] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#FFD028] group-hover:text-[#0A1D3D] transition-colors">
                           <Users className="w-4 h-4" />
                         </div>
                         <div>
                           <span className="block text-xs font-black text-[#0A1D3D] group-hover:text-[#00BCD4] transition-colors">
-                            User Management
+                            Admin Dashboard & Statistics
                           </span>
                           <span className="block text-[11px] text-slate-400 font-medium leading-tight mt-0.5">
-                            Approve, review & restrict user accounts
-                          </span>
-                        </div>
-                      </Link>
-
-                      <Link
-                        href="/admin"
-                        onClick={() => setAdminDropdownOpen(false)}
-                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#4CAF50] group-hover:text-white transition-colors">
-                          <ShieldCheck className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <span className="block text-xs font-black text-[#0A1D3D] group-hover:text-[#00BCD4] transition-colors">
-                            Control Center
-                          </span>
-                          <span className="block text-[11px] text-slate-400 font-medium leading-tight mt-0.5">
-                            Full administrative dashboard & controls
+                            Live user statistics, accounts & quest telemetry
                           </span>
                         </div>
                       </Link>
@@ -424,11 +381,6 @@ export function Navbar() {
                   }`}
                 >
                   <span>{link.label}</span>
-                  {link.isAdmin && (
-                    <span className="px-2 py-0.5 rounded-md bg-[#00BCD4]/10 text-[#00838F] text-[10px] font-black uppercase">
-                      Admin Access
-                    </span>
-                  )}
                 </Link>
               );
             })}
