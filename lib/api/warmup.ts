@@ -55,11 +55,10 @@ export async function submitWarmUpAnswers(
     };
   } catch (error) {
     console.error("[WarmUp] Error submitting answers:", error);
-    // Don't block the child in case of network issue in prototype stage
     return {
-      success: true,
-      message: "Proceeding with local state",
-      nextGameRoute: "/games/stroop",
+      success: false,
+      message: error instanceof Error ? error.message : "Failed to submit warm-up answers. Please retry.",
+      nextGameRoute: "/games/stroop?level=1",
     };
   }
 }

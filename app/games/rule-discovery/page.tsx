@@ -1,0 +1,56 @@
+import React, { Suspense } from "react";
+import type { Metadata } from "next";
+import { PlayJourneyHeader } from "@/components/games/play-journey-header";
+import { GameLevelHeader } from "@/components/games/game-level-header";
+import { GameLevelCallout } from "@/components/games/game-level-callout";
+import { RuleDiscoveryGameArena } from "@/components/games/rule-discovery/rule-discovery-game-arena";
+import { QUEST_GAMES_METADATA } from "@/lib/api/quest";
+
+export const metadata: Metadata = {
+  title: "Rule Discovery | OrionKids",
+  description: "Game 5 of 6: Cognitive flexibility and rule-shifting card sorting challenge.",
+};
+
+const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
+
+interface PageProps {
+  searchParams?: Promise<{ level?: string }>;
+}
+
+async function RuleDiscoveryContent({ searchParams }: PageProps) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const currentLevel = parseInt(resolvedParams.level || "1", 10) || 1;
+  const meta = QUEST_GAMES_METADATA["rule-discovery"];
+
+  return (
+    <>
+      <GameLevelHeader
+        title={meta.title}
+        subtitle={meta.subtitles[currentLevel] || `Level ${currentLevel}`}
+        currentLevel={currentLevel}
+        totalLevels={3}
+      />
+      <RuleDiscoveryGameArena key={`rule-arena-${currentLevel}`} level={currentLevel} />
+      <GameLevelCallout
+        primaryText={meta.callouts[currentLevel] || "Adapt and discover the changing cosmic rule."}
+        secondaryText="We'll help you move forward. You can take a break anytime you want."
+      />
+    </>
+  );
+}
+
+export default function RuleDiscoveryPage({ searchParams }: PageProps) {
+  return (
+    <div className="min-h-screen bg-[#F0F6FA] flex flex-col justify-between selection:bg-[#FFE066] selection:text-[#0A1D3D]">
+      <PlayJourneyHeader activeGameIndex={4} completedLevelsCount={12} totalLevelsCount={18} />
+      <main className="max-w-[1264px] w-full mx-auto px-4 sm:px-8 lg:px-0 py-4 sm:py-6 flex-1 flex flex-col gap-6">
+        <Suspense fallback={<div className="w-full min-h-[460px] flex items-center justify-center"><div className="w-12 h-12 rounded-full border-4 border-t-[#FFD028] animate-spin" /></div>}>
+          <RuleDiscoveryContent searchParams={searchParams} />
+        </Suspense>
+      </main>
+      <footer className="w-full border-t border-[#D8DFE8] py-4 text-center text-xs text-[#526176]" style={{ fontFamily: JAKARTA }}>
+        © 2026 OrionKids Digital Solutions Pvt. Ltd.
+      </footer>
+    </div>
+  );
+}

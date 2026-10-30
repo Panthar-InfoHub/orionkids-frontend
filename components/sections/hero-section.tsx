@@ -20,9 +20,17 @@ export function HeroSection() {
         return;
       }
 
-      // Authenticated -> use single authoritative profile-to-destination decision
+      // Authenticated -> check if user has an unfinished quest to resume
+      const { fetchResumeState } = await import("@/lib/api/session");
+      const resume = await fetchResumeState();
+      if (resume.hasResumableQuest && resume.destination) {
+        router.push(resume.destination);
+        return;
+      }
+
+      // No active quest -> start fresh questionnaire
       const destination = getRouteForUserProfile(profile, "/warm-up");
-      router.push(destination);
+      router.push(destination === "/" ? "/warm-up" : destination);
     } catch {
       router.push("/login?redirect=%2Fwarm-up");
     } finally {

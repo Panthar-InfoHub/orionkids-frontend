@@ -24,7 +24,7 @@ interface PageProps {
  */
 async function StroopGameContent({ searchParams }: PageProps) {
   const resolvedParams = searchParams ? await searchParams : {};
-  const currentLevel = parseInt(resolvedParams.level || "2", 10) || 2;
+  const currentLevel = parseInt(resolvedParams.level || "1", 10) || 1;
   const trials = getStroopTrials(currentLevel);
 
   const levelSubtitle =
@@ -53,6 +53,7 @@ async function StroopGameContent({ searchParams }: PageProps) {
 
       {/* Interactive Cosmic Game Arena (Client Component) */}
       <StroopGameArena
+        key={`stroop-arena-level-${currentLevel}`}
         trials={trials}
         level={currentLevel}
       />

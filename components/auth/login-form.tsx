@@ -44,7 +44,30 @@ export default function LoginForm() {
       try {
         const profile = await fetchCurrentUserProfile();
         if (profile) {
-          const destination = getRouteForUserProfile(profile, searchParams.get("redirect"));
+          const redirectParam = searchParams.get("redirect");
+
+          // Active regular user with completed onboarding: check for resumable quest
+          if (profile.status === "ACTIVE" && profile.onboardingSubmittedAt) {
+            if (
+              redirectParam &&
+              redirectParam.startsWith("/") &&
+              !redirectParam.includes("login") &&
+              !redirectParam.includes("onboarding")
+            ) {
+              router.replace(redirectParam);
+              return;
+            }
+
+            // Resume check: Does the player have an unfinished in-progress quest?
+            const { fetchResumeState } = await import("@/lib/api/session");
+            const resumeState = await fetchResumeState();
+            if (resumeState.hasResumableQuest && resumeState.destination) {
+              router.replace(resumeState.destination);
+              return;
+            }
+          }
+
+          const destination = getRouteForUserProfile(profile, redirectParam);
           router.replace(destination);
           return;
         }
