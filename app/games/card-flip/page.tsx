@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 interface PageProps {
-  searchParams?: Promise<{ level?: string }>;
+  searchParams?: Promise<{ level?: string; sessionId?: string; childId?: string }>;
 }
 
 async function CardFlipContent({ searchParams }: PageProps) {
@@ -39,8 +39,9 @@ async function CardFlipContent({ searchParams }: PageProps) {
       />
 
       <CardFlipGameArena
-        key={`card-flip-arena-level-${currentLevel}`}
+        key={`card-flip-arena-level-${currentLevel}-${resolvedParams.sessionId || "nosess"}`}
         level={currentLevel}
+        sessionId={resolvedParams.sessionId}
       />
 
       <GameLevelCallout

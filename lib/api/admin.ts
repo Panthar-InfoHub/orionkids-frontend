@@ -124,6 +124,40 @@ export interface AdminChildProfile {
   isGuardian: boolean;
   createdAt: string;
   updatedAt: string;
+  totalSessions?: number;
+  sessionStatus?: "IN_PROGRESS" | "COMPLETED" | "NOT_STARTED" | "ABANDONED";
+  completedLevels?: number;
+  latestActivityAt?: string;
+  hasReport?: boolean;
+  reportId?: string | null;
+}
+
+export interface AdminChildDetail {
+  id: string;
+  userId: string;
+  parentName: string;
+  parentEmail: string;
+  childName: string;
+  age: number;
+  language: string;
+  school: string | null;
+  selectedClass: string;
+  studentId: string | null;
+  parentMobile: string;
+  isGuardian: boolean;
+  createdAt: string;
+  updatedAt: string;
+  stats: {
+    totalSessions: number;
+    completedSessions: number;
+    inProgressSessions: number;
+    abandonedSessions: number;
+    completedLevels: number;
+    sessionStatus: "IN_PROGRESS" | "COMPLETED" | "NOT_STARTED" | "ABANDONED";
+    latestActivityAt: string;
+    hasReport: boolean;
+    reportId: string | null;
+  };
 }
 
 export interface AdminUserDetail {
@@ -153,6 +187,7 @@ export interface AdminUserDetail {
     completedSessions: number;
     inProgressSessions: number;
     abandonedSessions: number;
+    totalCompletedLevels?: number;
     latestActivityAt: string;
     latestSession: {
       id: string;
@@ -170,6 +205,8 @@ export interface AdminUserDetail {
 export interface AdminQuestSessionItem {
   id: string;
   userId: string;
+  childProfileId?: string | null;
+  childName?: string | null;
   status: "IN_PROGRESS" | "COMPLETED" | "ABANDONED";
   currentStage: string;
   currentGame: number;
@@ -568,6 +605,169 @@ export async function fetchAdminUserSessionReport(
 ): Promise<AdminSessionReportResult> {
   return requestAdminApi<AdminSessionReportResult>(
     `/api/admin/users/${encodeURIComponent(userId)}/quest-sessions/${encodeURIComponent(
+      sessionId
+    )}/report`
+  );
+}
+
+/**
+ * Fetch detailed single child profile information scoped to a parent.
+ */
+export async function fetchAdminChildDetail(
+  userId: string,
+  childProfileId: string
+): Promise<AdminChildDetail> {
+  return requestAdminApi<AdminChildDetail>(
+    `/api/admin/users/${encodeURIComponent(
+      userId
+    )}/children/${encodeURIComponent(childProfileId)}`
+  );
+}
+
+/**
+ * Fetch quest sessions strictly filtered by child profile ID.
+ */
+export async function fetchAdminChildQuestSessions(
+  userId: string,
+  childProfileId: string,
+  params: ListQuestSessionsParams = {}
+): Promise<ListQuestSessionsResult> {
+  const query = new URLSearchParams();
+  if (params.page) query.set("page", params.page.toString());
+  if (params.limit) query.set("limit", params.limit.toString());
+  if (params.status) query.set("status", params.status);
+
+  const endpoint = `/api/admin/users/${encodeURIComponent(
+    userId
+  )}/children/${encodeURIComponent(childProfileId)}/quest-sessions${
+    query.toString() ? `?${query.toString()}` : ""
+  }`;
+  const url = `${API_BASE_URL}${endpoint}`;
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+  } catch (err) {
+    throw new Error(
+      `Unable to connect to OrionKids backend service (${API_BASE_URL}). Please verify backend is running.`
+    );
+  }
+
+  const body = await res.json();
+
+  if (!res.ok || !body.success) {
+    const errorMsg =
+      body?.error?.message ||
+      `Failed to fetch child quest sessions (HTTP ${res.status})`;
+    throw new Error(errorMsg);
+  }
+
+  const envelope = body as ApiSuccessEnvelope<AdminQuestSessionItem[]>;
+  return {
+    sessions: envelope.data || [],
+    meta: envelope.meta || {
+      page: params.page || 1,
+      limit: params.limit || 10,
+      total: envelope.data?.length || 0,
+      totalPages: 1,
+    },
+  };
+}
+
+/**
+ * Fetch detailed single quest session breakdown for a child.
+ */
+export async function fetchAdminChildQuestSessionDetail(
+  userId: string,
+  childProfileId: string,
+  sessionId: string
+): Promise<AdminQuestSessionDetail> {
+  return requestAdminApi<AdminQuestSessionDetail>(
+    `/api/admin/users/${encodeURIComponent(
+      userId
+    )}/children/${encodeURIComponent(childProfileId)}/quest-sessions/${encodeURIComponent(
+      sessionId
+    )}`
+  );
+}
+
+/**
+ * Fetch level attempts and raw telemetry for a child quest session.
+ */
+export async function fetchAdminChildSessionAttempts(
+  userId: string,
+  childProfileId: string,
+  sessionId: string,
+  params: ListLevelAttemptsParams = {}
+): Promise<ListLevelAttemptsResult> {
+  const query = new URLSearchParams();
+  if (params.page) query.set("page", params.page.toString());
+  if (params.limit) query.set("limit", params.limit.toString());
+  if (params.gameKey) query.set("gameKey", params.gameKey);
+  if (params.levelNumber) query.set("levelNumber", params.levelNumber.toString());
+  if (params.status) query.set("status", params.status);
+
+  const endpoint = `/api/admin/users/${encodeURIComponent(
+    userId
+  )}/children/${encodeURIComponent(childProfileId)}/quest-sessions/${encodeURIComponent(
+    sessionId
+  )}/attempts${query.toString() ? `?${query.toString()}` : ""}`;
+  const url = `${API_BASE_URL}${endpoint}`;
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+  } catch (err) {
+    throw new Error(
+      `Unable to connect to OrionKids backend service (${API_BASE_URL}). Please verify backend is running.`
+    );
+  }
+
+  const body = await res.json();
+
+  if (!res.ok || !body.success) {
+    const errorMsg =
+      body?.error?.message ||
+      `Failed to fetch child level attempts (HTTP ${res.status})`;
+    throw new Error(errorMsg);
+  }
+
+  const envelope = body as ApiSuccessEnvelope<AdminLevelAttemptItem[]>;
+  return {
+    attempts: envelope.data || [],
+    meta: envelope.meta || {
+      page: params.page || 1,
+      limit: params.limit || 50,
+      total: envelope.data?.length || 0,
+      totalPages: 1,
+    },
+  };
+}
+
+/**
+ * Fetch saved quest assessment report for a child quest session.
+ */
+export async function fetchAdminChildSessionReport(
+  userId: string,
+  childProfileId: string,
+  sessionId: string
+): Promise<AdminSessionReportResult> {
+  return requestAdminApi<AdminSessionReportResult>(
+    `/api/admin/users/${encodeURIComponent(
+      userId
+    )}/children/${encodeURIComponent(childProfileId)}/quest-sessions/${encodeURIComponent(
       sessionId
     )}/report`
   );

@@ -10,6 +10,7 @@ import {
   Users,
   LogOut,
   ChevronDown,
+  Baby,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
@@ -27,6 +28,7 @@ export function Navbar() {
   const { data: session } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminUser, setAdminUser] = useState<UserProfile | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -53,6 +55,7 @@ export function Navbar() {
       try {
         const profile = await fetchCurrentUserProfile();
         if (!isCancelled) {
+          setCurrentUser(profile);
           if (profile?.role === "ADMIN" && profile?.status === "ACTIVE") {
             setIsAdmin(true);
             setAdminUser(profile);
@@ -63,6 +66,7 @@ export function Navbar() {
         }
       } catch {
         if (!isCancelled) {
+          setCurrentUser(null);
           setIsAdmin(false);
           setAdminUser(null);
         }
@@ -292,14 +296,33 @@ export function Navbar() {
                   </div>
                 )}
               </div>
+            ) : currentUser ? (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/dashboard"
+                  className="px-4 xl:px-5 h-[42px] rounded-[14px] bg-[#0A1D3D] hover:bg-[#122b54] text-white font-[800] text-[13px] xl:text-[14px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#FFE066] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer select-none"
+                  style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+                >
+                  <Baby className="w-4 h-4 text-[#00BCD4]" />
+                  <span>My Children</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => performSignOut()}
+                  className="p-2 text-slate-400 hover:text-rose-600 transition-colors"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
             ) : (
-              <button
-                type="button"
+              <Link
+                href="/login"
                 className="px-5 xl:px-6 h-[42px] rounded-[14px] bg-[#FFD028] hover:bg-[#FFC524] text-[#0A1D3D] font-[800] text-[13px] xl:text-[14px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center whitespace-nowrap cursor-pointer select-none"
                 style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
               >
-                <span>Contact Us</span>
-              </button>
+                <span>Sign In</span>
+              </Link>
             )}
           </div>
 
@@ -365,6 +388,35 @@ export function Navbar() {
                 </div>
               </div>
             )}
+            {/* If regular authenticated parent, show Parent Dashboard Card */}
+            {!isAdmin && currentUser && (
+              <div className="p-4 rounded-2xl bg-cyan-50 border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] mb-1">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-black text-[#0A1D3D]">Family Hub</span>
+                  <span className="text-[11px] text-slate-500 font-medium">{currentUser.email}</span>
+                </div>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full h-[40px] rounded-xl bg-[#0A1D3D] hover:bg-[#122b54] text-white font-[800] text-xs flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                >
+                  <Baby className="w-3.5 h-3.5 text-[#00BCD4]" />
+                  <span>Go to Family Dashboard</span>
+                </Link>
+                <div className="mt-2 pt-2 border-t border-cyan-100 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setMobileMenuOpen(false);
+                      await performSignOut();
+                    }}
+                    className="text-xs text-rose-600 font-bold hover:underline"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
 
             {navLinks.map((link) => {
               const isActive =
@@ -386,13 +438,15 @@ export function Navbar() {
             })}
 
             <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full h-[46px] rounded-[14px] bg-[#FFD028] hover:bg-[#FFC524] text-[#0A1D3D] font-[800] text-sm border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center cursor-pointer select-none"
-              >
-                <span>Contact Us</span>
-              </button>
+              {!currentUser && (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full h-[46px] rounded-[14px] bg-[#FFD028] hover:bg-[#FFC524] text-[#0A1D3D] font-[800] text-sm border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center cursor-pointer select-none"
+                >
+                  <span>Sign In</span>
+                </Link>
+              )}
             </div>
           </div>
         )}

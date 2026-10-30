@@ -230,9 +230,12 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
 
       if (result.success) {
         setSubmissionStatus("success");
-        const nextRoute =
+        let nextRoute =
           result.nextLevelRoute ||
           (level < 3 ? `/games/card-flip?level=${level + 1}` : "/games/pattern?level=1");
+        if (activeSessionId && !nextRoute.includes("sessionId=")) {
+          nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+        }
         setNextLevelRoute(nextRoute);
       } else {
         setSubmissionStatus("error");

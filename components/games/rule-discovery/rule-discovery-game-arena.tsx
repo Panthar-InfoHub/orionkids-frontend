@@ -32,7 +32,13 @@ const CARDS_TO_SORT: SortItem[] = [
   { id: 104, shape: "circle", color: "yellow", count: 2, label: "🟡 2 Yellow Circles" },
 ];
 
-export function RuleDiscoveryGameArena({ level = 1 }: { level?: number }) {
+export function RuleDiscoveryGameArena({
+  level = 1,
+  sessionId,
+}: {
+  level?: number;
+  sessionId?: string;
+}) {
   const router = useRouter();
   // Secret rule changes based on level:
   // Level 1: Match by Color
@@ -44,7 +50,7 @@ export function RuleDiscoveryGameArena({ level = 1 }: { level?: number }) {
   const [cardIdx, setCardIdx] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(sessionId || null);
   const [activeAttemptId, setActiveAttemptId] = useState<string | null>(null);
   const [submissionStatus, setSubmissionStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -55,6 +61,10 @@ export function RuleDiscoveryGameArena({ level = 1 }: { level?: number }) {
   useEffect(() => {
     let isCancelled = false;
     async function init() {
+      if (sessionId) {
+        setActiveSessionId(sessionId);
+        return;
+      }
       const session = await fetchCurrentSession();
       if (!isCancelled && session?.id) {
         setActiveSessionId(session.id);
@@ -62,7 +72,7 @@ export function RuleDiscoveryGameArena({ level = 1 }: { level?: number }) {
     }
     init();
     return () => { isCancelled = true; };
-  }, [level]);
+  }, [level, sessionId]);
 
   useEffect(() => {
     if (!activeSessionId || activeAttemptId) return;
@@ -125,10 +135,13 @@ export function RuleDiscoveryGameArena({ level = 1 }: { level?: number }) {
 
           if (result.success) {
             setSubmissionStatus("success");
-            setNextLevelRoute(
+            let nextRoute =
               result.nextLevelRoute ||
-                (level < 3 ? `/games/rule-discovery?level=${level + 1}` : "/games/story-sequencing?level=1")
-            );
+              (level < 3 ? `/games/rule-discovery?level=${level + 1}` : "/games/story-sequencing?level=1");
+            if (activeSessionId && !nextRoute.includes("sessionId=")) {
+              nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+            }
+            setNextLevelRoute(nextRoute);
           } else {
             setSubmissionStatus("error");
             setErrorMessage(result.error?.message || "Failed to record Rule Discovery results.");

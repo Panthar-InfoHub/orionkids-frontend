@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 interface PageProps {
-  searchParams?: Promise<{ level?: string }>;
+  searchParams?: Promise<{ level?: string; sessionId?: string; childId?: string }>;
 }
 
 async function RuleDiscoveryContent({ searchParams }: PageProps) {
@@ -30,7 +30,11 @@ async function RuleDiscoveryContent({ searchParams }: PageProps) {
         currentLevel={currentLevel}
         totalLevels={3}
       />
-      <RuleDiscoveryGameArena key={`rule-arena-${currentLevel}`} level={currentLevel} />
+      <RuleDiscoveryGameArena
+        key={`rule-arena-${currentLevel}-${resolvedParams.sessionId || "nosess"}`}
+        level={currentLevel}
+        sessionId={resolvedParams.sessionId}
+      />
       <GameLevelCallout
         primaryText={meta.callouts[currentLevel] || "Adapt and discover the changing cosmic rule."}
         secondaryText="We'll help you move forward. You can take a break anytime you want."

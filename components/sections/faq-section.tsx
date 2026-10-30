@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import { Plus } from "lucide-react";
 
 const FAQ_ITEMS = [
   {
@@ -34,6 +35,12 @@ const FAQ_ITEMS = [
 ];
 
 export function FaqSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggleFaq = (index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  };
+
   return (
     <section
       id="faq-section"
@@ -107,44 +114,73 @@ export function FaqSection() {
 
           {/* ================= RIGHT COLUMN (FAQ LIST) ================= */}
           <div className="lg:col-span-7 flex flex-col w-full max-w-[720px] lg:ml-auto">
-            {FAQ_ITEMS.map((item, index) => (
-              <div
-                key={index}
-                className={`flex flex-col text-left ${
-                  index !== FAQ_ITEMS.length - 1
-                    ? "border-b border-[#E2E8F0] pb-6 mb-6"
-                    : "pb-2"
-                }`}
-              >
-                {/* Question */}
-                <h3
-                  className="text-[#0A1D3D] mb-2"
-                  style={{
-                    fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
-                    fontWeight: 700,
-                    fontSize: "17px",
-                    lineHeight: "135%",
-                    letterSpacing: "0%",
-                  }}
+            {FAQ_ITEMS.map((item, index) => {
+              const isOpen = openIndex === index;
+              return (
+                <div
+                  key={index}
+                  className={`flex flex-col text-left ${
+                    index !== FAQ_ITEMS.length - 1
+                      ? "border-b border-[#E2E8F0] pb-6 mb-6"
+                      : "pb-2"
+                  }`}
                 >
-                  {item.question}
-                </h3>
+                  {/* Question Button */}
+                  <button
+                    type="button"
+                    onClick={() => toggleFaq(index)}
+                    aria-expanded={isOpen}
+                    className="w-full flex items-start gap-3.5 text-left cursor-pointer group focus:outline-none"
+                  >
+                    <span
+                      className="flex-shrink-0 mt-0.5 text-[#0A1D3D] transition-transform duration-300 ease-in-out"
+                      style={{
+                        transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
+                      }}
+                    >
+                      <Plus className="w-5 h-5 text-[#0A1D3D]" strokeWidth={2.2} />
+                    </span>
 
-                {/* Answer */}
-                <p
-                  className="text-[#526176]"
-                  style={{
-                    fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                    fontWeight: 400,
-                    fontSize: "14px",
-                    lineHeight: "160%",
-                    letterSpacing: "0%",
-                  }}
-                >
-                  {item.answer}
-                </p>
-              </div>
-            ))}
+                    <h3
+                      className="text-[#0A1D3D] group-hover:opacity-85 transition-opacity"
+                      style={{
+                        fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
+                        fontWeight: 700,
+                        fontSize: "17px",
+                        lineHeight: "135%",
+                        letterSpacing: "0%",
+                      }}
+                    >
+                      {item.question}
+                    </h3>
+                  </button>
+
+                  {/* Collapsible Answer */}
+                  <div
+                    className={`grid transition-all duration-300 ease-in-out ${
+                      isOpen
+                        ? "grid-rows-[1fr] opacity-100 mt-3"
+                        : "grid-rows-[0fr] opacity-0 mt-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden pl-[34px]">
+                      <p
+                        className="text-[#526176]"
+                        style={{
+                          fontFamily: "var(--font-inter), 'Inter', sans-serif",
+                          fontWeight: 400,
+                          fontSize: "14px",
+                          lineHeight: "160%",
+                          letterSpacing: "0%",
+                        }}
+                      >
+                        {item.answer}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
         </div>
