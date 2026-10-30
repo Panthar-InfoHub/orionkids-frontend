@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { AnimatedDartTarget } from "./animated-dart-target";
 
 export function EverydaySupportSection() {
   return (
@@ -118,13 +119,10 @@ export function EverydaySupportSection() {
             >
               <span className="inline-flex items-center gap-2 sm:gap-3">
                 <span>Turn Understanding</span>
-                <span className="inline-flex items-center justify-center align-middle relative w-12 h-12 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px] shrink-0 -my-2">
-                  <Image
-                    src="/svg/Target.svg"
-                    alt="Target bullseye"
-                    fill
-                    unoptimized
-                    className="object-contain"
+                <span className="inline-flex items-center justify-center align-middle relative w-12 h-12 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px] shrink-0 -my-2 overflow-visible">
+                  <AnimatedDartTarget
+                    className="w-full h-full"
+                    interactiveReplay={true}
                   />
                 </span>
               </span>
