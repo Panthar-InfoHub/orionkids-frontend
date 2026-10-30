@@ -50,8 +50,19 @@ const InfoIcon = () => (
   </svg>
 );
 
+import type { QuestReportData } from "@/lib/api/quest";
+
 /* ----------------------------- Component ---------------------------- */
-export function StudentProfileSection() {
+export function StudentProfileSection({ report }: { report?: QuestReportData | null }) {
+  const childName = report?.childName || "Ananya Verma";
+  const selectedClass = report?.selectedClass || "Class 1";
+  const age = report?.age || 6;
+  const school = report?.school;
+  const overallAcc = report?.overallAccuracy !== undefined ? Math.round(report.overallAccuracy) : 57;
+  const sessionDate = report?.generatedAt
+    ? new Date(report.generatedAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })
+    : "October 2026";
+
   return (
     <section
       className="relative w-full max-w-[1214px] min-h-[595px] mx-auto bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_30px_rgba(10,29,61,0.04)] p-6 lg:p-10 flex flex-col justify-between gap-8 select-none box-border"
@@ -89,7 +100,7 @@ export function StudentProfileSection() {
                 letterSpacing: "-0.75px",
               }}
             >
-              Ananya Verma
+              {childName}
             </h1>
 
             <span
@@ -101,8 +112,14 @@ export function StudentProfileSection() {
                 lineHeight: "14px",
               }}
             >
-              Class 1 • Grade Explorer
+              {selectedClass} • Grade Explorer
             </span>
+
+            {report?.childProfileId && (
+              <span className="font-mono text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md border border-slate-200">
+                Child ID: {report.childProfileId}
+              </span>
+            )}
           </div>
 
           <p
@@ -110,15 +127,23 @@ export function StudentProfileSection() {
             style={{ fontFamily: INTER, fontWeight: 400, fontSize: "14px", lineHeight: "20px" }}
           >
             <span>
-              Age: <strong className="font-semibold text-[#334155]">6 Years</strong>
+              Age: <strong className="font-semibold text-[#334155]">{age} Years</strong>
             </span>
             <span className="w-1 h-1 rounded-full bg-[#CBD5E1]" aria-hidden="true" />
             <span>
-              Session: <strong className="font-semibold text-[#334155]">October 2026</strong>
+              Session: <strong className="font-semibold text-[#334155]">{sessionDate}</strong>
             </span>
+            {school && (
+              <>
+                <span className="w-1 h-1 rounded-full bg-[#CBD5E1]" aria-hidden="true" />
+                <span>
+                  School: <strong className="font-semibold text-[#334155]">{school}</strong>
+                </span>
+              </>
+            )}
             <span className="w-1 h-1 rounded-full bg-[#CBD5E1]" aria-hidden="true" />
             <span>
-              Cohort: <strong className="font-semibold text-[#334155]">Class 1 Benchmark Group</strong>
+              Cohort: <strong className="font-semibold text-[#334155]">{selectedClass} Benchmark Group</strong>
             </span>
           </p>
 
@@ -145,7 +170,7 @@ export function StudentProfileSection() {
             <span>Overall Spark &amp; Development Profile</span>
           </div>
 
-          {/* 57th + Overall Percentile */}
+          {/* Overall Accuracy */}
           <div className="mt-0.5 flex items-baseline gap-2.5">
             <span
               className="text-[#0F172A] whitespace-nowrap"
@@ -157,8 +182,8 @@ export function StudentProfileSection() {
                 letterSpacing: "-1.5px",
               }}
             >
-              57
-              <span style={{ fontSize: "28px", letterSpacing: 0, color: "#0369A1" }}>th</span>
+              {overallAcc}
+              <span style={{ fontSize: "28px", letterSpacing: 0, color: "#0369A1" }}>%</span>
             </span>
 
             <div className="flex flex-col">
@@ -166,13 +191,13 @@ export function StudentProfileSection() {
                 className="text-[#1E293B]"
                 style={{ fontFamily: INTER, fontWeight: 600, fontSize: "14px", lineHeight: "20px" }}
               >
-                Overall Percentile
+                Overall Accuracy
               </span>
               <span
                 className="mt-1 text-[#64748B]"
                 style={{ fontFamily: INTER, fontWeight: 400, fontSize: "12px", lineHeight: "16px" }}
               >
-                Benchmark across Class 1 peers
+                Full 18-Level Quest Assessment
               </span>
             </div>
           </div>
@@ -183,7 +208,9 @@ export function StudentProfileSection() {
             style={{ fontFamily: INTER, fontWeight: 600, fontSize: "12px", lineHeight: "16px" }}
           >
             <span className="w-2 h-2 rounded-full bg-[#0284C7] shrink-0" />
-            <span>Steady &amp; Confident Growth Band (25th – 75th percentile)</span>
+            <span>
+              {overallAcc >= 80 ? "High Mastery & Focus Band" : overallAcc >= 60 ? "Steady Growth & Confident Band" : "Developing Exploration Band"}
+            </span>
           </span>
 
           {/* Narrative */}
@@ -191,7 +218,7 @@ export function StudentProfileSection() {
             className="mt-[15px] text-[#475569]"
             style={{ fontFamily: INTER, fontWeight: 400, fontSize: "14px", lineHeight: "22.75px" }}
           >
-            Ananya played six short interactive games measuring attention, memory, spatial reasoning, and rule-switching. She demonstrated exceptional focus and recall, with emerging strengths in pattern problem solving that will thrive through playful daily practice.
+            {childName} played six interactive cognitive games measuring attention, memory, spatial reasoning, and rule-switching. {childName} completed all 18 levels with {overallAcc}% overall accuracy, demonstrating active engagement and adaptable cognitive problem solving.
           </p>
 
           {/* Family note */}

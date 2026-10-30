@@ -5,9 +5,9 @@ import { User360DetailView } from "@/components/admin/user-detail/user-360-detai
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "User 360° Profile | OrionKids Admin",
+  title: "Parent Profile & Account Details | OrionKids Admin",
   description:
-    "Authoritative explorer governance, child accounts, quest telemetry, and cognitive reports.",
+    "Authoritative parent account governance, child profiles, quest telemetry, and cognitive reports.",
   robots: {
     index: false,
     follow: false,

@@ -281,3 +281,79 @@ export async function completeQuestLevel(
     nextLevelRoute: data.nextLevelRoute,
   };
 }
+
+export interface QuestReportData {
+  id: string;
+  questSessionId: string;
+  userId: string;
+  childProfileId: string | null;
+  childName: string;
+  age: number;
+  selectedClass: string;
+  school: string | null;
+  overallAccuracy: number;
+  totalDurationMs: number;
+  gameSummaries: Record<
+    string,
+    {
+      gameId: number;
+      gameKey: string;
+      levelsCompleted: number;
+      averageAccuracy: number | null;
+      averageReactionTimeMs: number | null;
+    }
+  >;
+  cognitiveFacets: Record<
+    string,
+    {
+      name: string;
+      score: number | null;
+      domain: string;
+    }
+  >;
+  growthObservations: Record<string, unknown>;
+  schemaVersion: number;
+  generatedAt: string;
+}
+
+/**
+ * Fetch authoritative cognitive assessment report for a completed quest session.
+ */
+export async function fetchQuestReport(
+  sessionId: string
+): Promise<{ success: boolean; report?: QuestReportData; message?: string; isInProgress?: boolean }> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) {
+    return { success: false, message: "Backend API URL not configured." };
+  }
+
+  try {
+    const res = await fetch(`${apiUrl}/api/quest/sessions/${sessionId}/report`, {
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+    });
+
+    const body = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      const errMsg = body?.error?.message || "Could not retrieve report.";
+      const isInProgress = errMsg.toLowerCase().includes("in progress");
+      return {
+        success: false,
+        message: errMsg,
+        isInProgress,
+      };
+    }
+
+    return {
+      success: true,
+      report: (body?.data || body) as QuestReportData,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: err instanceof Error ? err.message : "Failed to load report.",
+    };
+  }
+}

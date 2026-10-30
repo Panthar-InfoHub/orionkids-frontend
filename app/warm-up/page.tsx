@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { WARM_UP_QUESTIONS } from "@/components/warm-up/warm-up-data";
 import { WarmUpHeader } from "@/components/warm-up/warm-up-header";
 import { WarmUpSidebar } from "@/components/warm-up/warm-up-sidebar";
@@ -9,23 +9,33 @@ import { OptionCard } from "@/components/warm-up/option-card";
 import { StroopIntroCard } from "@/components/warm-up/stroop-intro-card";
 import { submitWarmUpAnswers } from "@/lib/api/warmup";
 import { fetchCurrentUserProfile, getRouteForUserProfile } from "@/lib/api/auth";
+import { setActiveChildId, getActiveChildId } from "@/lib/api/children";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const LORA = "var(--font-lora), 'Lora', Georgia, serif";
 
-export default function WarmUpPage() {
+function WarmUpContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const paramSessionId = searchParams.get("sessionId");
+  const paramChildId = searchParams.get("childId");
+
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [isPauseModalOpen, setIsPauseModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerifying, setIsVerifying] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let isCancelled = false;
     async function verifyQuestAccess() {
       try {
+        if (paramChildId) {
+          setActiveChildId(paramChildId);
+        }
+
         const profile = await fetchCurrentUserProfile();
         if (isCancelled) return;
         if (!profile) {
@@ -38,15 +48,22 @@ export default function WarmUpPage() {
           return;
         }
 
-        // Check if player has already completed warm-up and is at a game stage
-        const { fetchResumeState } = await import("@/lib/api/session");
-        const resume = await fetchResumeState();
-        if (
-          resume.hasResumableQuest &&
-          resume.destination &&
-          resume.destination !== "/warm-up"
-        ) {
-          router.replace(resume.destination);
+        const targetChildId = paramChildId || getActiveChildId() || undefined;
+        const { fetchCurrentSession } = await import("@/lib/api/session");
+        const currentSession = await fetchCurrentSession(targetChildId);
+
+        // If this specific session is already past warm-up, route forward
+        if (currentSession && currentSession.isWarmUpCompleted && currentSession.currentStage !== "WARM_UP") {
+          const gameMap: Record<number, string> = {
+            1: "stroop",
+            2: "card-flip",
+            3: "pattern",
+            4: "odd-one-out",
+            5: "rule-discovery",
+            6: "story-sequencing",
+          };
+          const gKey = gameMap[currentSession.currentGame] || "stroop";
+          router.replace(`/games/${gKey}?level=${currentSession.currentLevel}&sessionId=${currentSession.id}`);
           return;
         }
 
@@ -59,7 +76,7 @@ export default function WarmUpPage() {
     return () => {
       isCancelled = true;
     };
-  }, [router]);
+  }, [router, paramChildId, paramSessionId]);
 
   const totalSteps = WARM_UP_QUESTIONS.length;
   const currentQuestion = WARM_UP_QUESTIONS[currentStep];
@@ -85,22 +102,46 @@ export default function WarmUpPage() {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
     } else {
-      router.push("/login");
+      router.push("/dashboard");
     }
   };
 
   const handleStartStroopGame = async () => {
     setIsSubmitting(true);
+    setErrorMessage(null);
     try {
+      let resolvedSessionId = paramSessionId || undefined;
+      const targetChildId = paramChildId || getActiveChildId() || undefined;
+
+      if (!resolvedSessionId) {
+        const { fetchCurrentSession } = await import("@/lib/api/session");
+        const activeSess = await fetchCurrentSession(targetChildId);
+        resolvedSessionId = activeSess?.id;
+      }
+
       const response = await submitWarmUpAnswers({
+        sessionId: resolvedSessionId,
         answers,
         completedAt: new Date().toISOString(),
       });
-      router.push(response.nextGameRoute || "/games/stroop");
+
+      if (!response.success) {
+        throw new Error(response.message || "Failed to persist warm-up answers.");
+      }
+
+      const targetSessionId = response.sessionId || resolvedSessionId;
+      const destination = targetSessionId
+        ? `/games/stroop?level=1&sessionId=${encodeURIComponent(targetSessionId)}${paramChildId ? `&childId=${encodeURIComponent(paramChildId)}` : ""}`
+        : response.nextGameRoute || "/games/stroop?level=1";
+
+      router.push(destination);
     } catch (err) {
       console.error("Failed to submit warm-up answers:", err);
-      router.push("/games/stroop");
-    } finally {
+      setErrorMessage(
+        err instanceof Error
+          ? err.message
+          : "Could not save warm-up to the server. Please check your connection and retry."
+      );
       setIsSubmitting(false);
     }
   };
@@ -189,12 +230,26 @@ export default function WarmUpPage() {
 
         {/* Right Column: Question Card or Stroop Intro Screen */}
         {isCompleted ? (
-          <StroopIntroCard
-            onBack={() => setIsCompleted(false)}
-            onPause={() => setIsPauseModalOpen(true)}
-            onStartGame={handleStartStroopGame}
-            isLoading={isSubmitting}
-          />
+          <div className="w-full md:max-w-[916px] flex-1 flex flex-col gap-3">
+            {errorMessage && (
+              <div className="p-4 rounded-xl bg-rose-50 border-2 border-rose-200 text-rose-800 text-xs font-bold flex items-center justify-between">
+                <span>{errorMessage}</span>
+                <button
+                  type="button"
+                  onClick={() => handleStartStroopGame()}
+                  className="px-3 py-1 bg-rose-600 text-white rounded-lg hover:bg-rose-700 text-xs font-bold cursor-pointer"
+                >
+                  Retry Save
+                </button>
+              </div>
+            )}
+            <StroopIntroCard
+              onBack={() => setIsCompleted(false)}
+              onPause={() => setIsPauseModalOpen(true)}
+              onStartGame={handleStartStroopGame}
+              isLoading={isSubmitting}
+            />
+          </div>
         ) : (
           <div className="w-full md:max-w-[916px] flex-1 bg-white rounded-[20px] sm:rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_30px_rgba(10,29,61,0.03)] p-4 sm:p-5 lg:p-6 flex flex-col justify-between min-h-[440px] lg:min-h-[480px] gap-3 sm:gap-4">
             <div className="flex flex-col flex-1 h-full justify-between gap-3 sm:gap-4">
@@ -436,5 +491,22 @@ export default function WarmUpPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function WarmUpPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#F0F6FA] flex flex-col items-center justify-center p-6">
+          <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center animate-pulse mb-3">
+            <span className="text-xl">🎮</span>
+          </div>
+          <p className="text-xs font-bold text-slate-500">Loading warm-up session...</p>
+        </div>
+      }
+    >
+      <WarmUpContent />
+    </Suspense>
   );
 }

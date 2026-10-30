@@ -14,6 +14,7 @@ export interface WarmUpSubmissionResponse {
   success: boolean;
   message?: string;
   nextGameRoute?: string;
+  sessionId?: string;
 }
 
 /**
@@ -40,7 +41,14 @@ export async function submitWarmUpAnswers(
         throw new Error(`Failed to submit warm-up answers: ${response.statusText}`);
       }
 
-      return await response.json();
+      const resJson = await response.json();
+      const payloadData = resJson?.data || {};
+      return {
+        success: resJson.success ?? payloadData.success ?? true,
+        message: resJson.message || payloadData.message || "Warm-up saved successfully",
+        nextGameRoute: payloadData.nextGameRoute || resJson.nextGameRoute || "/games/stroop?level=1",
+        sessionId: payloadData.sessionId || resJson.sessionId || payload.sessionId,
+      };
     }
 
     // Default prototype behavior: log payload & resolve gracefully

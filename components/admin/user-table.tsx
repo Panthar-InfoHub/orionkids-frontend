@@ -16,6 +16,7 @@ import {
   Copy,
   Gamepad2,
   Filter,
+  Eye,
 } from "lucide-react";
 import type { AdminUserItem, AdminPaginationMeta } from "@/lib/api/admin";
 import { useAdmin } from "./admin-guard";
@@ -297,7 +298,7 @@ export function UserTable({
                             <Link
                               href={`/admin/users/${encodeURIComponent(user.id)}`}
                               className="font-bold text-[#0A1D3D] hover:text-[#00838F] hover:underline truncate"
-                              title="Inspect User 360° Profile"
+                              title="See details for this user"
                             >
                               {user.name}
                             </Link>
@@ -417,14 +418,14 @@ export function UserTable({
                     {/* Action Buttons */}
                     <td className="py-3.5 px-4 sm:px-6 text-right whitespace-nowrap">
                       <div className="inline-flex items-center gap-1.5 justify-end">
-                        {/* 360° Detail View Button */}
+                        {/* See Details Action Button */}
                         <Link
                           href={`/admin/users/${encodeURIComponent(user.id)}`}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#0A1D3D] hover:bg-[#122b54] text-white text-xs font-black transition-colors shadow-xs"
-                          title="Inspect complete User 360° account, children, sessions and reports"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0A1D3D] hover:bg-[#122b54] text-white text-xs font-black transition-colors shadow-xs"
+                          title="See details for this parent account and children"
                         >
-                          <Compass className="w-3.5 h-3.5 text-[#FFE066]" />
-                          <span>User 360°</span>
+                          <Eye className="w-3.5 h-3.5 text-[#FFE066]" />
+                          <span>See Details</span>
                         </Link>
 
                         {!isSelf && (

@@ -158,8 +158,9 @@ export function StroopGameArena({
         });
 
         if (result.success) {
+          const targetSession = result.sessionId || activeSessionId;
           // Authoritative forward destination resolution: never route to completed level
-          const resolvedNextRoute =
+          let resolvedNextRoute =
             result.nextLevelRoute &&
             result.nextLevelRoute !== `/games/stroop?level=${level}`
               ? result.nextLevelRoute
@@ -167,10 +168,14 @@ export function StroopGameArena({
               ? `/games/stroop?level=${level + 1}`
               : "/games/card-flip?level=1";
 
+          if (targetSession && !resolvedNextRoute.includes("sessionId=")) {
+            resolvedNextRoute += `${resolvedNextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(targetSession)}`;
+          }
+
           setSubmissionStatus("success");
           setNextLevelRoute(resolvedNextRoute);
-          if (result.sessionId) {
-            setActiveSessionId(result.sessionId);
+          if (targetSession) {
+            setActiveSessionId(targetSession);
           }
           if (onLevelComplete) {
             onLevelComplete(trialsToSubmit);

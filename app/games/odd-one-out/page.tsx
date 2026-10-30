@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 interface PageProps {
-  searchParams?: Promise<{ level?: string }>;
+  searchParams?: Promise<{ level?: string; sessionId?: string; childId?: string }>;
 }
 
 async function OddOneOutContent({ searchParams }: PageProps) {
@@ -30,7 +30,11 @@ async function OddOneOutContent({ searchParams }: PageProps) {
         currentLevel={currentLevel}
         totalLevels={3}
       />
-      <OddOneOutGameArena key={`odd-arena-${currentLevel}`} level={currentLevel} />
+      <OddOneOutGameArena
+        key={`odd-arena-${currentLevel}-${resolvedParams.sessionId || "nosess"}`}
+        level={currentLevel}
+        sessionId={resolvedParams.sessionId}
+      />
       <GameLevelCallout
         primaryText={meta.callouts[currentLevel] || "Find the anomaly in the group."}
         secondaryText="We'll help you move forward. You can take a break anytime you want."
