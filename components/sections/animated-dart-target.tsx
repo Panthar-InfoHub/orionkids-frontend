@@ -1,31 +1,21 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useId } from "react";
 
 interface AnimatedDartTargetProps {
   className?: string;
-  style?: React.CSSProperties;
-  /** Allow clicking the target to replay the entrance animation */
+  style?: React.CSSProperties;  
   interactiveReplay?: boolean;
 }
 
-/**
- * AnimatedDartTarget
- * 
- * High-performance, premium vector illustration and motion sequence:
- * - Stage A: Target entrance & initial scale-in
- * - Stage B: Diagonal dart entrance flight with natural easing & speed trail
- * - Stage C: Precision bullseye impact with target pulse, micro shaft-vibration, shockwave & sparks
- * - Stage D: Calming subtle floating idle loop
- * - Viewport intersection triggered (plays once when scrolled into view)
- * - Accessible: role="img", aria-label, <title>, <desc>
- * - prefers-reduced-motion respected
- */
+
 export function AnimatedDartTarget({
   className = "",
   style,
   interactiveReplay = true,
 }: AnimatedDartTargetProps) {
+  const reactId = useId();
+  const id = `dart_${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const containerRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(() => {
     if (typeof window !== "undefined") {
@@ -81,7 +71,6 @@ export function AnimatedDartTarget({
   const handleReplay = () => {
     if (!interactiveReplay || reducedMotion) return;
     setInView(false);
-    // Force a re-render tick to restart CSS animation keyframes
     requestAnimationFrame(() => {
       setReplayKey((k) => k + 1);
       setInView(true);
@@ -119,13 +108,13 @@ export function AnimatedDartTarget({
 
           <defs>
             {/* Ambient drop shadow for high contrast on dark navy background */}
-            <filter id="bullseye-shadow" x="-30%" y="-30%" width="160%" height="160%">
+            <filter id={`${id}-bullseye-shadow`} x="-30%" y="-30%" width="160%" height="160%">
               <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#000000" floodOpacity="0.45" />
               <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#000000" floodOpacity="0.3" />
             </filter>
 
             {/* Subtle glow filter for spark highlights */}
-            <filter id="spark-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id={`${id}-spark-glow`} x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
@@ -134,28 +123,28 @@ export function AnimatedDartTarget({
             </filter>
 
             {/* Red concentric ring gradient with rich warmth */}
-            <radialGradient id="ring-red" cx="42%" cy="42%" r="58%">
+            <radialGradient id={`${id}-ring-red`} cx="42%" cy="42%" r="58%">
               <stop offset="0%" stopColor="#FF4155" />
               <stop offset="68%" stopColor="#EF1A35" />
               <stop offset="100%" stopColor="#C70D24" />
             </radialGradient>
 
             {/* White concentric ring gradient with subtle highlights */}
-            <radialGradient id="ring-white" cx="42%" cy="42%" r="58%">
+            <radialGradient id={`${id}-ring-white`} cx="42%" cy="42%" r="58%">
               <stop offset="0%" stopColor="#FFFFFF" />
               <stop offset="85%" stopColor="#F8FAFC" />
               <stop offset="100%" stopColor="#E2E8F0" />
             </radialGradient>
 
             {/* Metallic steel gradient for needle and collars */}
-            <linearGradient id="dart-steel" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id={`${id}-dart-steel`} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#F1F5F9" />
               <stop offset="45%" stopColor="#94A3B8" />
               <stop offset="100%" stopColor="#475569" />
             </linearGradient>
 
             {/* Turquoise/cyan dart barrel gradient matching brand aesthetics */}
-            <linearGradient id="dart-barrel" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={`${id}-dart-barrel`} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#38BDF8" />
               <stop offset="35%" stopColor="#00B4D8" />
               <stop offset="80%" stopColor="#0284C7" />
@@ -163,24 +152,24 @@ export function AnimatedDartTarget({
             </linearGradient>
 
             {/* Aerodynamic flight fins gradients */}
-            <linearGradient id="fin-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id={`${id}-fin-top`} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#38BDF8" />
               <stop offset="40%" stopColor="#00A8E8" />
               <stop offset="100%" stopColor="#0077B6" />
             </linearGradient>
 
-            <linearGradient id="fin-bottom" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id={`${id}-fin-bottom`} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#0284C7" />
               <stop offset="100%" stopColor="#075985" />
             </linearGradient>
 
-            <linearGradient id="fin-center" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient id={`${id}-fin-center`} x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#7DD3FC" />
               <stop offset="100%" stopColor="#0284C7" />
             </linearGradient>
 
             {/* Speed motion trail gradient */}
-            <linearGradient id="motion-trail" x1="100%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={`${id}-motion-trail`} x1="100%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#38BDF8" stopOpacity="0" />
               <stop offset="40%" stopColor="#38BDF8" stopOpacity="0.3" />
               <stop offset="80%" stopColor="#7DD3FC" stopOpacity="0.75" />
@@ -198,18 +187,18 @@ export function AnimatedDartTarget({
               className={
                 inView && !reducedMotion ? "dart-target-pulse" : ""
               }
-              filter="url(#bullseye-shadow)"
+              filter={`url(#${id}-bullseye-shadow)`}
             >
               {/* Outer Red Ring (r=105) */}
-              <circle cx="150" cy="170" r="105" fill="url(#ring-red)" />
+              <circle cx="150" cy="170" r="105" fill={`url(#${id}-ring-red)`} />
               {/* White Ring 1 (r=84) */}
-              <circle cx="150" cy="170" r="84" fill="url(#ring-white)" />
+              <circle cx="150" cy="170" r="84" fill={`url(#${id}-ring-white)`} />
               {/* Red Ring 2 (r=63) */}
-              <circle cx="150" cy="170" r="63" fill="url(#ring-red)" />
+              <circle cx="150" cy="170" r="63" fill={`url(#${id}-ring-red)`} />
               {/* White Ring 2 (r=42) */}
-              <circle cx="150" cy="170" r="42" fill="url(#ring-white)" />
+              <circle cx="150" cy="170" r="42" fill={`url(#${id}-ring-white)`} />
               {/* Bullseye Center Red (r=21) */}
-              <circle cx="150" cy="170" r="21" fill="url(#ring-red)" />
+              <circle cx="150" cy="170" r="21" fill={`url(#${id}-ring-red)`} />
 
               {/* Cast Shadow under dart across target rings */}
               <path
@@ -228,14 +217,14 @@ export function AnimatedDartTarget({
             <g className="dart-trail-anim" pointerEvents="none">
               <path
                 d="M 320 62 L 150 170"
-                stroke="url(#motion-trail)"
+                stroke={`url(#${id}-motion-trail)`}
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeDasharray="160"
               />
               <path
                 d="M 305 45 L 165 135"
-                stroke="url(#motion-trail)"
+                stroke={`url(#${id}-motion-trail)`}
                 strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeDasharray="140"
@@ -243,7 +232,7 @@ export function AnimatedDartTarget({
               />
               <path
                 d="M 335 75 L 190 170"
-                stroke="url(#motion-trail)"
+                stroke={`url(#${id}-motion-trail)`}
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeDasharray="140"
@@ -268,12 +257,12 @@ export function AnimatedDartTarget({
             />
 
             {/* Sharp Needle Tip hitting dead-center (0, 0) */}
-            <polygon points="0,0 24,-1.8 24,1.8" fill="url(#dart-steel)" />
+            <polygon points="0,0 24,-1.8 24,1.8" fill={`url(#${id}-dart-steel)`} />
 
             {/* Stepped Metallic Collar */}
             <path
               d="M 24 -2 L 28 -3.2 L 36 -3.2 L 36 3.2 L 28 3.2 L 24 2 Z"
-              fill="url(#dart-steel)"
+              fill={`url(#${id}-dart-steel)`}
               stroke="#475569"
               strokeWidth="0.5"
             />
@@ -283,7 +272,7 @@ export function AnimatedDartTarget({
             {/* Contoured Aerodynamic Barrel */}
             <path
               d="M 36 -3.2 C 48 -6.5, 66 -6.5, 78 -3.8 L 78 3.8 C 66 6.5, 48 6.5, 36 3.2 Z"
-              fill="url(#dart-barrel)"
+              fill={`url(#${id}-dart-barrel)`}
             />
 
             {/* Sleek light reflection stripe & grip grooves */}
@@ -301,7 +290,7 @@ export function AnimatedDartTarget({
             <line x1="70" y1="-4.2" x2="70" y2="4.2" stroke="#0369A1" strokeWidth="0.8" opacity="0.6" />
 
             {/* Tail Stem */}
-            <rect x="78" y="-2.2" width="14" height="4.4" rx="0.8" fill="url(#dart-steel)" />
+            <rect x="78" y="-2.2" width="14" height="4.4" rx="0.8" fill={`url(#${id}-dart-steel)`} />
 
             {/* Back Perspective Fin (peeking from behind) */}
             <path
@@ -313,7 +302,7 @@ export function AnimatedDartTarget({
             {/* Bottom Fin with aerodynamic contour */}
             <path
               d="M 88 1.8 C 96 9, 105 18, 114 18 C 124 18, 132 16, 135 12 C 129 9, 126 5, 122 1.8 Z"
-              fill="url(#fin-bottom)"
+              fill={`url(#${id}-fin-bottom)`}
             />
             <path
               d="M 92 3 C 100 9, 108 15, 116 15"
@@ -326,7 +315,7 @@ export function AnimatedDartTarget({
             {/* Top Fin with vibrant turquoise gradient */}
             <path
               d="M 88 -1.8 C 96 -11, 104 -22, 114 -22 C 124 -22, 133 -19, 137 -14 C 130 -11, 126 -6, 121 -1.8 Z"
-              fill="url(#fin-top)"
+              fill={`url(#${id}-fin-top)`}
             />
             {/* Top Fin Aerodynamic Highlight Edge */}
             <path
@@ -341,7 +330,7 @@ export function AnimatedDartTarget({
             {/* Center Fin (3D perspective face) */}
             <path
               d="M 90 -1 C 99 -4.5, 115 -4.5, 128 -1.5 C 124 1.5, 115 3.5, 90 1.2 Z"
-              fill="url(#fin-center)"
+              fill={`url(#${id}-fin-center)`}
             />
             <path
               d="M 92 0 L 126 0"
@@ -371,7 +360,7 @@ export function AnimatedDartTarget({
               />
 
               {/* 4 Tasteful Spark Starlets */}
-              <g className="dart-sparks" filter="url(#spark-glow)" pointerEvents="none">
+              <g className="dart-sparks" filter={`url(#${id}-spark-glow)`} pointerEvents="none">
                 <path
                   d="M 150 148 L 151 154 L 157 155 L 151 156 L 150 162 L 149 156 L 143 155 L 149 154 Z"
                   fill="#FFF59D"
