@@ -88,12 +88,18 @@ const ODD_TRIALS: Record<number, OddTrial[]> = {
   ],
 };
 
-export function OddOneOutGameArena({ level = 1 }: { level?: number }) {
+export function OddOneOutGameArena({
+  level = 1,
+  sessionId,
+}: {
+  level?: number;
+  sessionId?: string;
+}) {
   const router = useRouter();
   const trials = ODD_TRIALS[level] || ODD_TRIALS[1];
   const [currentIdx, setCurrentIdx] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(sessionId || null);
   const [activeAttemptId, setActiveAttemptId] = useState<string | null>(null);
   const [submissionStatus, setSubmissionStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -104,6 +110,10 @@ export function OddOneOutGameArena({ level = 1 }: { level?: number }) {
   useEffect(() => {
     let isCancelled = false;
     async function init() {
+      if (sessionId) {
+        setActiveSessionId(sessionId);
+        return;
+      }
       const session = await fetchCurrentSession();
       if (!isCancelled && session?.id) {
         setActiveSessionId(session.id);
@@ -111,7 +121,7 @@ export function OddOneOutGameArena({ level = 1 }: { level?: number }) {
     }
     init();
     return () => { isCancelled = true; };
-  }, [level]);
+  }, [level, sessionId]);
 
   useEffect(() => {
     if (!activeSessionId || activeAttemptId) return;
@@ -162,10 +172,13 @@ export function OddOneOutGameArena({ level = 1 }: { level?: number }) {
 
         if (result.success) {
           setSubmissionStatus("success");
-          setNextLevelRoute(
+          let nextRoute =
             result.nextLevelRoute ||
-              (level < 3 ? `/games/odd-one-out?level=${level + 1}` : "/games/rule-discovery?level=1")
-          );
+            (level < 3 ? `/games/odd-one-out?level=${level + 1}` : "/games/rule-discovery?level=1");
+          if (activeSessionId && !nextRoute.includes("sessionId=")) {
+            nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+          }
+          setNextLevelRoute(nextRoute);
         } else {
           setSubmissionStatus("error");
           setErrorMessage(result.error?.message || "Failed to record Odd One Out results.");

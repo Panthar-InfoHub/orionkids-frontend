@@ -159,10 +159,10 @@ export function AdminDashboardView() {
             <span>Governance & Access · OrionKids Admin</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-[#0A1D3D] tracking-tight">
-            User 360° Management & System Analytics
+            User Management & System Analytics
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Authoritative explorer governance, child accounts, quest telemetry, and cognitive reports.
+            Authoritative user governance, child accounts, quest telemetry, and cognitive reports.
           </p>
         </div>
 
@@ -217,7 +217,7 @@ export function AdminDashboardView() {
           </p>
         </div>
 
-        {/* Pending Review */}
+        {/* Pending Review e*/}
         <div
           onClick={() => handleStatusFilterChange("PENDING")}
           className={`p-5 rounded-2xl border-2 transition-all cursor-pointer ${

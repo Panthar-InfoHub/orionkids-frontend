@@ -81,37 +81,18 @@ export default function ChildDetailsForm() {
         }
 
         if (profile.role === "ADMIN" && profile.status === "ACTIVE") {
-          router.replace("/");
+          router.replace("/admin");
           return;
         }
 
-        // If the user has already submitted onboarding:
-        if (profile.onboardingSubmittedAt) {
-          if (profile.status === "PENDING") {
-            router.replace("/pending-approval");
-            return;
-          }
-          if (profile.status === "ACTIVE") {
-            router.replace("/warm-up");
-            return;
-          }
-        }
-
-        // Prefill available information from authenticated profile
+        // Prefill ONLY parent contact information for convenience
+        // Keep child-specific fields fresh and blank for every new onboarding
         if (profile.email && !parentEmail) {
           setParentEmail(profile.email);
         }
 
-        if (profile.childProfile) {
-          setChildName(profile.childProfile.childName || "");
-          setAge(profile.childProfile.age ? String(profile.childProfile.age) : "");
-          setLanguage(profile.childProfile.language || "");
-          setSchool(profile.childProfile.school || "");
-          setSelectedClass(profile.childProfile.selectedClass || "Classes 1");
-          setStudentId(profile.childProfile.studentId || "");
-          if (profile.childProfile.parentEmail) setParentEmail(profile.childProfile.parentEmail);
-          if (profile.childProfile.parentMobile) setParentMobile(profile.childProfile.parentMobile);
-          setIsGuardian(Boolean(profile.childProfile.isGuardian));
+        if (profile.childProfile?.parentMobile && !parentMobile) {
+          setParentMobile(profile.childProfile.parentMobile);
         }
 
         setIsVerifyingAuth(false);
@@ -158,7 +139,12 @@ export default function ChildDetailsForm() {
 
     setIsLoading(true);
     try {
-      await submitOnboarding({
+      const idempotencyKey =
+        typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : `idem_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+      const result = await submitOnboarding({
         childName: childName.trim(),
         age: ageNum,
         language,
@@ -168,10 +154,29 @@ export default function ChildDetailsForm() {
         parentEmail: parentEmail.trim(),
         parentMobile: parentMobile.trim(),
         isGuardian,
+        idempotencyKey,
       });
 
-      // After successful submission, redirect to pending approval
-      router.push("/pending-approval");
+      // Save active child ID to client storage so quest sessions strictly target this child
+      if (result?.childProfile?.id) {
+        const { setActiveChildId } = await import("@/lib/api/children");
+        setActiveChildId(result.childProfile.id);
+      }
+
+      // If parent account is pending review, send to approval notice
+      if (result?.user?.status === "PENDING") {
+        router.push("/pending-approval");
+        return;
+      }
+
+      // Active parent: start or resume quest specifically for this child
+      const targetSessionId = result?.sessionId || result?.session?.id;
+      const targetChildId = result?.childProfile?.id;
+      const destination = targetSessionId
+        ? `/warm-up?sessionId=${encodeURIComponent(targetSessionId)}&childId=${encodeURIComponent(targetChildId || "")}`
+        : `/warm-up?childId=${encodeURIComponent(targetChildId || "")}`;
+
+      router.push(destination);
     } catch (err) {
       console.error("Failed to submit onboarding:", err);
       setErrorMessage(

@@ -130,6 +130,12 @@ export function QuestSessionsSection({
                         Session: {session.id}
                       </span>
 
+                      {session.childName && (
+                        <span className="px-2 py-0.5 rounded-md bg-[#FFE066] border border-[#0A1D3D] text-[11px] font-black text-[#0A1D3D]">
+                          Child: {session.childName}
+                        </span>
+                      )}
+
                       <button
                         type="button"
                         onClick={(e) => handleCopyId(e, session.id)}
@@ -204,6 +210,11 @@ export function QuestSessionsSection({
                     <div className="text-right text-[11px] text-slate-400 hidden sm:block">
                       <p>Started: {formatDate(session.startedAt)}</p>
                       <p>Last Active: {formatDate(session.lastActivityAt)}</p>
+                      {session.completedAt && (
+                        <p className="text-emerald-700 font-semibold">
+                          Completed: {formatDate(session.completedAt)}
+                        </p>
+                      )}
                     </div>
 
                     {session.hasReport && (

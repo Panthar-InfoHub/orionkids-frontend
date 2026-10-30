@@ -47,7 +47,13 @@ const STORY_MISSIONS: Record<number, { title: string; steps: StoryStep[] }> = {
   },
 };
 
-export function StorySequencingGameArena({ level = 1 }: { level?: number }) {
+export function StorySequencingGameArena({
+  level = 1,
+  sessionId,
+}: {
+  level?: number;
+  sessionId?: string;
+}) {
   const router = useRouter();
   const mission = STORY_MISSIONS[level] || STORY_MISSIONS[1];
 
@@ -57,7 +63,7 @@ export function StorySequencingGameArena({ level = 1 }: { level?: number }) {
     return list.sort(() => Math.random() - 0.5);
   });
   const [selectedOrder, setSelectedOrder] = useState<StoryStep[]>([]);
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(sessionId || null);
   const [activeAttemptId, setActiveAttemptId] = useState<string | null>(null);
   const [submissionStatus, setSubmissionStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -68,6 +74,10 @@ export function StorySequencingGameArena({ level = 1 }: { level?: number }) {
   useEffect(() => {
     let isCancelled = false;
     async function init() {
+      if (sessionId) {
+        setActiveSessionId(sessionId);
+        return;
+      }
       const session = await fetchCurrentSession();
       if (!isCancelled && session?.id) {
         setActiveSessionId(session.id);
@@ -75,7 +85,7 @@ export function StorySequencingGameArena({ level = 1 }: { level?: number }) {
     }
     init();
     return () => { isCancelled = true; };
-  }, [level]);
+  }, [level, sessionId]);
 
   useEffect(() => {
     if (!activeSessionId || activeAttemptId) return;
@@ -138,9 +148,12 @@ export function StorySequencingGameArena({ level = 1 }: { level?: number }) {
       if (result.success) {
         setSubmissionStatus("success");
         // If final level of story sequencing (Game 6 Level 3) -> routes to /report!
-        const nextRoute =
+        let nextRoute =
           result.nextLevelRoute ||
           (level < 3 ? `/games/story-sequencing?level=${level + 1}` : "/report");
+        if (activeSessionId && !nextRoute.includes("sessionId=")) {
+          nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+        }
         setNextLevelRoute(nextRoute);
       } else {
         setSubmissionStatus("error");

@@ -23,6 +23,7 @@ export interface UserProfile {
   restrictedReason: string | null;
   onboardingSubmittedAt?: string | null;
   childProfile?: ChildProfileData | null;
+  childProfiles?: ChildProfileData[];
 }
 
 export interface OnboardingPayload {
@@ -35,6 +36,19 @@ export interface OnboardingPayload {
   parentEmail: string;
   parentMobile: string;
   isGuardian: boolean;
+  idempotencyKey?: string;
+}
+
+export interface OnboardingResult {
+  user: UserProfile;
+  childProfile: ChildProfileData & { id: string };
+  session?: {
+    id: string;
+    childProfileId?: string;
+    status: string;
+    currentStage: string;
+  };
+  sessionId?: string;
 }
 
 export const API_BASE_URL =
@@ -89,14 +103,19 @@ export async function fetchCurrentUserProfile(): Promise<UserProfile | null> {
  * Submit child onboarding details to backend.
  * Persists childProfile and marks user as having submitted onboarding.
  */
-export async function submitOnboarding(payload: OnboardingPayload): Promise<void> {
+export async function submitOnboarding(payload: OnboardingPayload): Promise<OnboardingResult> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  if (payload.idempotencyKey) {
+    headers["x-idempotency-key"] = payload.idempotencyKey;
+  }
+
   const res = await fetch(`${API_BASE_URL}/api/onboarding`, {
     method: "POST",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 
@@ -110,6 +129,8 @@ export async function submitOnboarding(payload: OnboardingPayload): Promise<void
         : "Failed to submit onboarding. Please try again.");
     throw new Error(message);
   }
+
+  return data.data as OnboardingResult;
 }
 
 /**
@@ -132,10 +153,10 @@ export function getRouteForUserProfile(
 
   // 2. Active Administrator
   if (profile.role === "ADMIN" && profile.status === "ACTIVE") {
-    return "/";
+    return "/admin";
   }
 
-  // 3. Regular User (role === "USER" or non-admin):
+  // 3. Regular User:
   // If user has not submitted onboarding yet, MUST complete onboarding first!
   if (!profile.onboardingSubmittedAt) {
     const redirectParam = fallbackRedirect && fallbackRedirect !== "/warm-up" && !fallbackRedirect.includes("onboarding")
@@ -151,7 +172,6 @@ export function getRouteForUserProfile(
 
   // 5. Active regular user
   if (fallbackRedirect && fallbackRedirect.startsWith("/") && !fallbackRedirect.startsWith("//")) {
-    // Avoid loop back to auth pages
     if (
       !fallbackRedirect.includes("/login") &&
       !fallbackRedirect.includes("/pending-approval") &&
@@ -162,8 +182,8 @@ export function getRouteForUserProfile(
     }
   }
 
-  // Default authenticated destination when no active quest is in progress
-  return "/";
+  // Default authenticated destination for active parent is their Parent Dashboard
+  return "/dashboard";
 }
 
 /**

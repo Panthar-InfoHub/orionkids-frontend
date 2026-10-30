@@ -108,10 +108,59 @@ const TONES: Record<
 const TRACK =
   "linear-gradient(90deg, #F4E5BA 0%, #F4E5BA 25%, #BAE4F9 25%, #BAE4F9 75%, #B9EBDC 75%, #B9EBDC 100%)";
 
+import type { QuestReportData } from "@/lib/api/quest";
+
 /* ------------------------------------------------------------------ */
 /*  Component                                                           */
 /* ------------------------------------------------------------------ */
-export function SkillsGlanceSection() {
+export function SkillsGlanceSection({ report }: { report?: QuestReportData | null }) {
+  const dynamicSkills: Skill[] = report?.cognitiveFacets ? [
+    {
+      icon: "🎯",
+      tile: "#A7F3D0",
+      title: "Attention & Focus (Stroop)",
+      games: "Game 1: Stroop Colour-Word",
+      score: report.cognitiveFacets.focusInhibition?.score ?? 89,
+      badge: `${report.cognitiveFacets.focusInhibition?.score ?? 89}% Accuracy`,
+      percentile: `${report.cognitiveFacets.focusInhibition?.score ?? 89}th Percentile`,
+      tone: (report.cognitiveFacets.focusInhibition?.score ?? 89) >= 75 ? "strong" : "growth",
+      note: "Maintained focus and resisted colour-word interference across all 3 Stroop levels.",
+    },
+    {
+      icon: "🧩",
+      tile: "#D1FAE5",
+      title: "Visual Working Memory",
+      games: "Game 2: Cosmic Card Flip",
+      score: report.cognitiveFacets.workingMemory?.score ?? 84,
+      badge: `${report.cognitiveFacets.workingMemory?.score ?? 84}% Accuracy`,
+      percentile: `${report.cognitiveFacets.workingMemory?.score ?? 84}th Percentile`,
+      tone: (report.cognitiveFacets.workingMemory?.score ?? 84) >= 75 ? "strong" : "growth",
+      note: "Efficiently remembered card locations with minimal revisit errors across 4, 6, and 8 card pairs.",
+    },
+    {
+      icon: "🔍",
+      tile: "#FEF3C7",
+      title: "Pattern Reasoning & Spotting",
+      games: "Games 3 & 4: Pattern & Odd One Out",
+      score: Math.round(((report.cognitiveFacets.patternReasoning?.score ?? 70) + (report.cognitiveFacets.visualDiscrimination?.score ?? 70)) / 2),
+      badge: `${Math.round(((report.cognitiveFacets.patternReasoning?.score ?? 70) + (report.cognitiveFacets.visualDiscrimination?.score ?? 70)) / 2)}% Accuracy`,
+      percentile: `${Math.round(((report.cognitiveFacets.patternReasoning?.score ?? 70) + (report.cognitiveFacets.visualDiscrimination?.score ?? 70)) / 2)}th Percentile`,
+      tone: Math.round(((report.cognitiveFacets.patternReasoning?.score ?? 70) + (report.cognitiveFacets.visualDiscrimination?.score ?? 70)) / 2) >= 75 ? "strong" : "growth",
+      note: "Successfully extrapolated sequence rules and spotted anomalies in geometric formations.",
+    },
+    {
+      icon: "🔄",
+      tile: "#FEF3C7",
+      title: "Cognitive Flexibility & Sequencing",
+      games: "Games 5 & 6: Rule Discovery & Story",
+      score: Math.round(((report.cognitiveFacets.conceptualFlexibility?.score ?? 75) + (report.cognitiveFacets.temporalSequencing?.score ?? 75)) / 2),
+      badge: `${Math.round(((report.cognitiveFacets.conceptualFlexibility?.score ?? 75) + (report.cognitiveFacets.temporalSequencing?.score ?? 75)) / 2)}% Accuracy`,
+      percentile: `${Math.round(((report.cognitiveFacets.conceptualFlexibility?.score ?? 75) + (report.cognitiveFacets.temporalSequencing?.score ?? 75)) / 2)}th Percentile`,
+      tone: Math.round(((report.cognitiveFacets.conceptualFlexibility?.score ?? 75) + (report.cognitiveFacets.temporalSequencing?.score ?? 75)) / 2) >= 75 ? "strong" : "growth",
+      note: "Adapted quickly to shifting sorting rules and organized multi-step mission steps chronologically.",
+    },
+  ] : SKILLS;
+
   return (
     <section className="flex flex-col gap-4 w-full" style={{ fontFamily: INTER }}>
       {/* ================= Header row ================= */}
@@ -157,7 +206,7 @@ export function SkillsGlanceSection() {
 
       {/* ================= Cards ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {SKILLS.map((s) => {
+        {dynamicSkills.map((s) => {
           const t = TONES[s.tone];
           return (
             <article

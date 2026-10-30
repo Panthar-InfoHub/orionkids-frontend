@@ -247,69 +247,101 @@ export function UserOverviewSection({
       </div>
 
       {/* Aggregate Statistics Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {/* Child Profiles Count */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
               Child Profiles
             </span>
-            <div className="w-8 h-8 rounded-xl bg-cyan-100 text-[#00838F] flex items-center justify-center">
-              <Baby className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-cyan-100 text-[#00838F] flex items-center justify-center">
+              <Baby className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#0A1D3D]">
+          <div className="text-xl sm:text-2xl font-black text-[#0A1D3D]">
             {stats.childProfileCount}
           </div>
-          <p className="text-[11px] text-slate-400 mt-0.5">Associated child accounts</p>
+          <p className="text-[10px] text-slate-400 mt-0.5">Onboarded profiles</p>
         </div>
 
         {/* Total Quest Sessions */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
               Quest Sessions
             </span>
-            <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
-              <Gamepad2 className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
+              <Gamepad2 className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#0A1D3D]">
+          <div className="text-xl sm:text-2xl font-black text-[#0A1D3D]">
             {stats.totalSessions}
           </div>
-          <p className="text-[11px] text-slate-400 mt-0.5">Total sessions initialized</p>
+          <p className="text-[10px] text-slate-400 mt-0.5">All sessions initialized</p>
         </div>
 
         {/* Completed Quests */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Completed Quests
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+              Completed
             </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
-              <Sparkles className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+              <Sparkles className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-emerald-800">
+          <div className="text-xl sm:text-2xl font-black text-emerald-800">
             {stats.completedSessions}
           </div>
-          <p className="text-[11px] text-emerald-700/80 mt-0.5">Finished all 18 levels</p>
+          <p className="text-[10px] text-emerald-700/80 mt-0.5">Finished 18 levels</p>
         </div>
 
         {/* In-Progress Quests */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
               In Progress
             </span>
-            <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
-              <Clock className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+              <Clock className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-amber-800">
+          <div className="text-xl sm:text-2xl font-black text-amber-800">
             {stats.inProgressSessions}
           </div>
-          <p className="text-[11px] text-amber-700/80 mt-0.5">Active quest sessions</p>
+          <p className="text-[10px] text-amber-700/80 mt-0.5">Active quest sessions</p>
+        </div>
+
+        {/* Abandoned Quests */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+              Abandoned
+            </span>
+            <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
+              <ShieldAlert className="w-3.5 h-3.5" />
+            </div>
+          </div>
+          <div className="text-xl sm:text-2xl font-black text-slate-700">
+            {stats.abandonedSessions}
+          </div>
+          <p className="text-[10px] text-slate-400 mt-0.5">Unfinished sessions</p>
+        </div>
+
+        {/* Total Completed Levels */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+              Completed Levels
+            </span>
+            <div className="w-7 h-7 rounded-lg bg-[#FFE066] text-[#0A1D3D] flex items-center justify-center">
+              <Sparkles className="w-3.5 h-3.5" />
+            </div>
+          </div>
+          <div className="text-xl sm:text-2xl font-black text-[#0A1D3D]">
+            {stats.totalCompletedLevels ?? 0}
+          </div>
+          <p className="text-[10px] text-slate-400 mt-0.5">Actual aggregated levels</p>
         </div>
       </div>
 

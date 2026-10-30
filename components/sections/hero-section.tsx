@@ -15,24 +15,20 @@ export function HeroSection() {
     try {
       const profile = await fetchCurrentUserProfile();
       if (!profile) {
-        // Guest -> send to login preserving /warm-up as intended destination
-        router.push("/login?redirect=%2Fwarm-up");
+        // Guest -> send to login preserving /onboarding as intended destination
+        router.push("/login?redirect=%2Fonboarding");
         return;
       }
 
-      // Authenticated -> check if user has an unfinished quest to resume
-      const { fetchResumeState } = await import("@/lib/api/session");
-      const resume = await fetchResumeState();
-      if (resume.hasResumableQuest && resume.destination) {
-        router.push(resume.destination);
+      if (profile.status === "RESTRICTED") {
+        router.push("/access-denied");
         return;
       }
 
-      // No active quest -> start fresh questionnaire
-      const destination = getRouteForUserProfile(profile, "/warm-up");
-      router.push(destination === "/" ? "/warm-up" : destination);
+      // Every click on Launch Free Quest begins a new onboarding flow
+      router.push("/onboarding");
     } catch {
-      router.push("/login?redirect=%2Fwarm-up");
+      router.push("/login?redirect=%2Fonboarding");
     } finally {
       setIsRouting(false);
     }

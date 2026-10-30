@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 interface PageProps {
-  searchParams?: Promise<{ level?: string }>;
+  searchParams?: Promise<{ level?: string; sessionId?: string; childId?: string }>;
 }
 
 /**
@@ -53,9 +53,10 @@ async function StroopGameContent({ searchParams }: PageProps) {
 
       {/* Interactive Cosmic Game Arena (Client Component) */}
       <StroopGameArena
-        key={`stroop-arena-level-${currentLevel}`}
+        key={`stroop-arena-level-${currentLevel}-${resolvedParams.sessionId || "nosess"}`}
         trials={trials}
         level={currentLevel}
+        sessionId={resolvedParams.sessionId}
       />
 
       {/* Level Progression Callout Prompt (Server Component) */}
