@@ -56,9 +56,12 @@ function generateCards(level: number): CardItem[] {
     });
   });
 
-  // Deterministic-ish shuffle
+  // Truly deterministic seeded shuffle so SSR matches client hydration perfectly
+  let seed = level * 104729 + 17;
   for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    seed = (seed * 9301 + 49297) % 233280;
+    const rnd = seed / 233280;
+    const j = Math.floor(rnd * (i + 1));
     [deck[i], deck[j]] = [deck[j], deck[i]];
   }
 
@@ -83,9 +86,39 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [nextLevelRoute, setNextLevelRoute] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [lastMatchedPair, setLastMatchedPair] = useState<[number, number] | null>(null);
+  const [showMatchToast, setShowMatchToast] = useState(false);
+  const [introPhase, setIntroPhase] = useState<"deal" | "reveal" | "ready">("deal");
 
   const startTimeRef = useRef<number>(Date.now());
   const totalPairs = level === 1 ? 4 : level === 2 ? 6 : 8;
+
+ 
+  useEffect(() => {
+    setIntroPhase("deal");
+
+    // After deal animation lands (600ms), flip cards face-up to reveal
+    const revealTimer = setTimeout(() => {
+      setIntroPhase("reveal");
+    }, 600);
+
+    // After 2.4s sneak peek, flip cards back face-down
+    const flipBackTimer = setTimeout(() => {
+      setIntroPhase("deal");
+    }, 3000);
+
+    // Once flip-back completes (600ms transition), mark as ready to play
+    const readyTimer = setTimeout(() => {
+      setIntroPhase("ready");
+      startTimeRef.current = Date.now();
+    }, 3650);
+
+    return () => {
+      clearTimeout(revealTimer);
+      clearTimeout(flipBackTimer);
+      clearTimeout(readyTimer);
+    };
+  }, [level]);
 
   // Session bootstrap & stage validation
   useEffect(() => {
@@ -151,7 +184,13 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
   }, [activeSessionId, activeAttemptId, level]);
 
   const handleCardClick = (index: number) => {
-    if (isLocked || cards[index].isFlipped || cards[index].isMatched || submissionStatus === "error") {
+    if (
+      isLocked ||
+      introPhase !== "ready" ||
+      cards[index].isFlipped ||
+      cards[index].isMatched ||
+      submissionStatus === "error"
+    ) {
       return;
     }
 
@@ -177,6 +216,13 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         setCards(newCards);
         setFlippedIndices([]);
         setIsLocked(false);
+        setLastMatchedPair([firstIdx, secondIdx]);
+        setShowMatchToast(true);
+        setTimeout(() => {
+          setShowMatchToast(false);
+          setLastMatchedPair(null);
+        }, 1100);
+
         const newMatched = matchedCount + 1;
         setMatchedCount(newMatched);
 
@@ -191,7 +237,10 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
 
         // Completion check
         if (newMatched === totalPairs) {
-          handleLevelFinished(moves + 1);
+          setIsLocked(true);
+          setTimeout(() => {
+            handleLevelFinished(moves + 1);
+          }, 2000);
         }
       } else {
         // No match -> flip back after 900ms
@@ -317,11 +366,25 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
           </div>
         ) : (
           /* Active Gameplay Arena */
-          <div className="w-full flex flex-col items-center gap-6">
+          <div className="w-full flex flex-col items-center gap-5 relative">
+            {/* Pairs & Moves Header */}
             <div className="flex items-center justify-between w-full max-w-[560px] px-2 text-white/90 text-sm font-bold">
               <span>Pairs: {matchedCount} / {totalPairs}</span>
               <span>Moves: {moves}</span>
             </div>
+
+            {/* Notification Banner: Initial Sneak Peek & Match Toast */}
+            {introPhase === "reveal" ? (
+              <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-[#FFD028] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] font-extrabold text-[13px] sm:text-[14px] select-none animate-in fade-in duration-200">
+                <span className="text-lg animate-bounce">👀</span>
+                <span>Memorize the cards! Flipping soon...</span>
+              </div>
+            ) : showMatchToast ? (
+              <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-[#FFD028] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] font-extrabold text-[14px] select-none animate-celebration-pop">
+                <span className="text-xl animate-bounce">🌟</span>
+                <span>Stellar Match! Cosmic Pair Found! 🎯</span>
+              </div>
+            ) : null}
 
             <div
               className={`grid gap-3 sm:gap-4 w-full max-w-[620px] justify-center ${
@@ -332,31 +395,53 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
                   : "grid-cols-4"
               }`}
             >
-              {cards.map((card, idx) => (
-                <button
-                  key={card.id}
-                  type="button"
-                  onClick={() => handleCardClick(idx)}
-                  className={`w-[70px] h-[85px] sm:w-[95px] sm:h-[115px] rounded-[16px] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] flex items-center justify-center transition-all duration-300 transform cursor-pointer ${
-                    card.isFlipped || card.isMatched
-                      ? "bg-white scale-100"
-                      : "bg-[#230C4D] hover:-translate-y-1 hover:bg-[#2C1060] scale-95"
-                  }`}
-                  style={{
-                    backgroundColor: card.isFlipped || card.isMatched ? card.color : undefined,
-                  }}
-                >
-                  {card.isFlipped || card.isMatched ? (
-                    <span className="text-3xl sm:text-4xl filter drop-shadow-md animate-in zoom-in-75 duration-200">
-                      {card.symbol}
-                    </span>
-                  ) : (
-                    <span className="text-2xl sm:text-3xl text-[#FFD028] opacity-70">
-                      ★
-                    </span>
-                  )}
-                </button>
-              ))}
+              {cards.map((card, idx) => {
+                const isFlipped = introPhase === "reveal" || card.isFlipped || card.isMatched;
+                const isRecentlyMatched =
+                  lastMatchedPair !== null &&
+                  (lastMatchedPair[0] === idx || lastMatchedPair[1] === idx);
+
+                return (
+                  <div
+                    key={card.id}
+                    className="perspective-1000 animate-card-deal"
+                    style={{ animationDelay: `${idx * 55}ms` }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => handleCardClick(idx)}
+                      disabled={isFlipped || isLocked || introPhase !== "ready"}
+                      className={`relative w-[70px] h-[85px] sm:w-[95px] sm:h-[115px] rounded-[16px] transition-transform duration-500 preserve-3d cursor-pointer select-none ${
+                        isFlipped
+                          ? "[transform:rotateY(180deg)]"
+                          : "hover:-translate-y-1 hover:shadow-lg"
+                      } ${
+                        isRecentlyMatched ? "animate-match-celebration" : ""
+                      }`}
+                    >
+                      {/* Back Face (Unflipped - Dark Cosmic Star Pattern) */}
+                      <div className="absolute inset-0 w-full h-full rounded-[16px] bg-[#230C4D] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] flex items-center justify-center backface-hidden">
+                        <span className="text-2xl sm:text-3xl text-[#FFD028] opacity-75 drop-shadow-[0_0_6px_rgba(255,208,40,0.5)]">
+                          ★
+                        </span>
+                      </div>
+
+                      {/* Front Face (Flipped - Bright Symbol & Colour with Clean UI Matching Border & Shadow) */}
+                      <div
+                        className="absolute inset-0 w-full h-full rounded-[16px] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] flex items-center justify-center backface-hidden [transform:rotateY(180deg)]"
+                        style={{ backgroundColor: card.color }}
+                      >
+                        <span className="text-3xl sm:text-4xl filter drop-shadow-md select-none">
+                          {card.symbol}
+                        </span>
+                        {card.isMatched && (
+                          <span className="absolute top-1 right-1.5 text-xs">✨</span>
+                        )}
+                      </div>
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

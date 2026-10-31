@@ -135,18 +135,46 @@ export function StroopGameArena({
         const avgRT =
           trialsToSubmit.length > 0
             ? Math.round(
-                trialsToSubmit.reduce((acc, cur) => acc + cur.reactionTimeMs, 0) /
-                  trialsToSubmit.length
-              )
+              trialsToSubmit.reduce((acc, cur) => acc + cur.reactionTimeMs, 0) /
+              trialsToSubmit.length
+            )
             : 0;
         const totalDuration = trialsToSubmit.reduce(
           (acc, cur) => acc + (cur.reactionTimeMs || 0),
           0
         );
 
+        let currentSession = activeSessionId;
+        if (!currentSession) {
+          try {
+            const { fetchCurrentSession } = await import("@/lib/api/session");
+            const sess = await fetchCurrentSession();
+            if (sess?.id) {
+              currentSession = sess.id;
+              setActiveSessionId(sess.id);
+            }
+          } catch {
+            // Non-blocking fallback
+          }
+        }
+
+        // If no authenticated session exists (guest/preview mode), advance smoothly like other games
+        if (!currentSession) {
+          const nextRoute =
+            level < 3
+              ? `/games/stroop?level=${level + 1}`
+              : "/games/card-flip?level=1";
+          setSubmissionStatus("success");
+          setNextLevelRoute(nextRoute);
+          if (onLevelComplete) {
+            onLevelComplete(trialsToSubmit);
+          }
+          return;
+        }
+
         const result = await submitStroopLevelResults({
           gameId: "stroop",
-          sessionId: activeSessionId || undefined,
+          sessionId: currentSession,
           level,
           totalTrials,
           correctTrials: correctCount,
@@ -158,15 +186,15 @@ export function StroopGameArena({
         });
 
         if (result.success) {
-          const targetSession = result.sessionId || activeSessionId;
+          const targetSession = result.sessionId || currentSession;
           // Authoritative forward destination resolution: never route to completed level
           let resolvedNextRoute =
             result.nextLevelRoute &&
-            result.nextLevelRoute !== `/games/stroop?level=${level}`
+              result.nextLevelRoute !== `/games/stroop?level=${level}`
               ? result.nextLevelRoute
               : level < 3
-              ? `/games/stroop?level=${level + 1}`
-              : "/games/card-flip?level=1";
+                ? `/games/stroop?level=${level + 1}`
+                : "/games/card-flip?level=1";
 
           if (targetSession && !resolvedNextRoute.includes("sessionId=")) {
             resolvedNextRoute += `${resolvedNextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(targetSession)}`;
@@ -180,11 +208,23 @@ export function StroopGameArena({
           if (onLevelComplete) {
             onLevelComplete(trialsToSubmit);
           }
+        } else if (result.errorType === "UNAUTHORIZED") {
+          // Unauthenticated or guest mode: allow player to progress smoothly without being blocked
+          const nextRoute =
+            level < 3
+              ? `/games/stroop?level=${level + 1}`
+              : "/games/card-flip?level=1";
+          setSubmissionStatus("success");
+          setNextLevelRoute(nextRoute);
+          if (onLevelComplete) {
+            onLevelComplete(trialsToSubmit);
+          }
+          return;
         } else {
           setSubmissionStatus("error");
           setErrorMessage(
             result.message ||
-              "Failed to record level progress on the server. Please try again."
+            "Failed to record level progress on the server. Please try again."
           );
         }
       } catch (err: unknown) {
@@ -265,9 +305,12 @@ export function StroopGameArena({
       const updatedRecords = [...records, newRecord];
       setRecords(updatedRecords);
 
+      const isLastTrial = currentTrialIdx >= totalTrials - 1;
+      const holdDuration = isLastTrial ? 2200 : 750;
+
       // Advance after a brief micro-transition for natural gameplay feedback
       setTimeout(async () => {
-        if (currentTrialIdx < totalTrials - 1) {
+        if (!isLastTrial) {
           const nextIdx = currentTrialIdx + 1;
           setCurrentTrialIdx(nextIdx);
 
@@ -278,7 +321,7 @@ export function StroopGameArena({
                 currentTrialIdx: nextIdx,
                 records: updatedRecords,
                 timestamp: new Date().toISOString(),
-              }).catch(() => {});
+              }).catch(() => { });
             });
           }
         } else {
@@ -286,7 +329,7 @@ export function StroopGameArena({
           setIsLevelFinished(true);
           await submitResults(updatedRecords);
         }
-      }, 180);
+      }, holdDuration);
     },
     [
       activeAttemptId,
@@ -322,8 +365,8 @@ export function StroopGameArena({
     level === 1
       ? "🎨 2 Colours · Matching Words"
       : level === 2
-      ? "🎨 3 Colours · Matching & Mismatched Words"
-      : "⚡ 3 Colours · Speed Challenge";
+        ? "🎨 3 Colours · Matching & Mismatched Words"
+        : "⚡ 3 Colours · Speed Challenge";
 
   return (
     <div className="w-full rounded-[28px] overflow-hidden relative border-2 border-[#0A1D3D] shadow-2xl min-h-[540px] p-5 sm:p-8 md:p-10 flex flex-col justify-between items-center text-center select-none bg-[#1C093D]">
@@ -507,9 +550,8 @@ export function StroopGameArena({
           /* Level Completed Feedback State */
           <div className="py-6 flex flex-col items-center animate-in fade-in duration-300">
             <div
-              className={`w-16 h-16 rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-3xl mb-4 ${
-                submissionStatus === "error" ? "bg-[#FF5B5B]" : "bg-[#FFD028]"
-              }`}
+              className={`w-16 h-16 rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-3xl mb-4 ${submissionStatus === "error" ? "bg-[#FF5B5B]" : "bg-[#FFD028]"
+                }`}
             >
               {submissionStatus === "error" ? "⚠️" : "🌟"}
             </div>
@@ -528,9 +570,8 @@ export function StroopGameArena({
               {isSubmitting
                 ? "Saving your score to the star log..."
                 : submissionStatus === "error"
-                ? errorMessage
-                : `Awesome ink spotting! You got ${
-                    records.filter((r) => r.isCorrect).length
+                  ? errorMessage
+                  : `Awesome ink spotting! You got ${records.filter((r) => r.isCorrect).length
                   } out of ${totalTrials} right.`}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3.5 mt-2">
@@ -549,8 +590,8 @@ export function StroopGameArena({
                   {isNavigating
                     ? "Launching Next Challenge... 🚀"
                     : level < 3
-                    ? `Next Level (${level + 1} of 3) 🚀`
-                    : "Next Game: Card Flip 🚀"}
+                      ? `Next Level (${level + 1} of 3) 🚀`
+                      : "Next Game: Card Flip 🚀"}
                 </button>
               )}
 
@@ -565,6 +606,23 @@ export function StroopGameArena({
                   >
                     {isSubmitting ? "Retrying..." : "Retry Submission 🔄"}
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSubmissionStatus("success");
+                      setNextLevelRoute(
+                        level < 3
+                          ? `/games/stroop?level=${level + 1}`
+                          : "/games/card-flip?level=1"
+                      );
+                    }}
+                    className="inline-flex items-center justify-center px-6 py-3.5 rounded-full font-extrabold text-[14px] text-[#0A1D3D] bg-[#65DCAA] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer"
+                    style={{ fontFamily: JAKARTA }}
+                  >
+                    Continue as Guest 🚀
+                  </button>
+
                   {level > 1 && (
                     <button
                       type="button"
@@ -601,18 +659,42 @@ export function StroopGameArena({
         ) : (
           /* Active Trial Display */
           <>
-            {/* Pill prompt inside card */}
-            <div
-              className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-white text-[#0A1D3D] font-extrabold text-[13px] shadow-sm select-none"
-              style={{ fontFamily: JAKARTA }}
-            >
-              <span>🤔</span>
-              <span>What colour is the INK?</span>
-            </div>
+            {/* Cosmic Mascot Companion Pill (Expressive Reaction for Class 1-4) */}
+            {selectedOption === null ? (
+              <div
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white text-[#0A1D3D] font-extrabold text-[13px] sm:text-[14px] shadow-sm select-none transition-all duration-200"
+                style={{ fontFamily: JAKARTA }}
+              >
+                <span className="text-base animate-bounce">🤔</span>
+                <span>What colour is the INK?</span>
+              </div>
+            ) : selectedOption.toLowerCase() === currentTrial.inkName.toLowerCase() ? (
+              <div
+                className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-[#10B981] text-white font-extrabold text-[14px] sm:text-[15px] shadow-lg shadow-emerald-500/40 select-none animate-celebration-pop"
+                style={{ fontFamily: JAKARTA }}
+              >
+                <span className="text-2xl animate-bounce">🌟</span>
+                <span>Spot on! Super Focus! 🎯</span>
+                <span className="text-[11px] bg-white/30 text-white px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+                  +1 Star
+                </span>
+              </div>
+            ) : (
+              <div
+                className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-[#F59E0B] text-[#1E1035] font-extrabold text-[14px] sm:text-[15px] shadow-lg shadow-amber-500/40 select-none animate-celebration-pop"
+                style={{ fontFamily: JAKARTA }}
+              >
+                <span className="text-2xl animate-wobble">🙈</span>
+                <span>Tricky Word! Look at ink, not word 🎨</span>
+              </div>
+            )}
 
-            {/* Big Stimulus Word */}
+            {/* Big Stimulus Word (Drops from above with playful space bounce) */}
             <div
-              className="my-3 font-extrabold text-[62px] sm:text-[76px] tracking-[2px] transition-all duration-150 select-none drop-shadow-md"
+              key={currentTrialIdx}
+              className={`my-3 font-extrabold text-[62px] sm:text-[76px] tracking-[2px] select-none drop-shadow-md animate-word-drop transition-transform duration-200 ${
+                selectedOption !== null ? "scale-95 opacity-85" : ""
+              }`}
               style={{
                 fontFamily: JAKARTA,
                 color: currentTrial.inkColor,
@@ -621,20 +703,38 @@ export function StroopGameArena({
               {currentTrial.word}
             </div>
 
-            {/* Three Large Response Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 my-4 w-full max-w-[620px]">
+            {/* Response Buttons: Exactly Centered when 2 options (Level 1), 3-col Grid when 3 options (Levels 2-3) */}
+            <div
+              className={`my-4 w-full mx-auto ${
+                currentTrial.options.length === 2
+                  ? "flex flex-wrap items-center justify-center gap-4 sm:gap-6 max-w-[520px]"
+                  : "grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 max-w-[620px]"
+              }`}
+            >
               {currentTrial.options.map((option) => {
                 const isSelected = selectedOption === option.label;
+                const isOptionCorrect = option.label.toLowerCase() === currentTrial.inkName.toLowerCase();
+                const isChosenCorrect = selectedOption !== null && isSelected && isOptionCorrect;
+                const isChosenWrong = selectedOption !== null && isSelected && !isOptionCorrect;
+
                 return (
                   <button
                     key={option.label}
                     type="button"
                     onClick={() => handleSelectAnswer(option.label)}
                     disabled={selectedOption !== null}
-                    className={`h-[58px] sm:h-[62px] px-6 rounded-[16px] bg-white border-2 border-[#0A1D3D] flex items-center justify-center gap-3 transition-all cursor-pointer shadow-[2.5px_2.5px_0px_#0A1D3D] ${
-                      isSelected
-                        ? "scale-[0.97] bg-slate-100"
-                        : "hover:-translate-y-1 hover:shadow-[3.5px_3.5px_0px_#0A1D3D] active:translate-y-0"
+                    className={`h-[58px] sm:h-[62px] px-6 rounded-[16px] flex items-center justify-center gap-3 transition-all cursor-pointer relative overflow-hidden select-none ${
+                      currentTrial.options.length === 2 ? "w-full sm:w-[220px]" : ""
+                    } ${
+                      isChosenCorrect
+                        ? "bg-[#EEFBF3] border-[2.5px] border-[#10B981] shadow-[3px_3px_0px_#059669] scale-105 animate-bounce-pop text-[#065F46]"
+                        : isChosenWrong
+                        ? "bg-[#FFF1F2] border-[2.5px] border-[#F43F5E] shadow-[3px_3px_0px_#BE123C] scale-100 animate-wobble text-[#9F1239]"
+                        : isSelected
+                        ? "scale-[0.97] bg-slate-100 border-2 border-[#0A1D3D]"
+                        : selectedOption !== null
+                        ? "opacity-50 scale-95 bg-white border-2 border-[#0A1D3D]"
+                        : "bg-white border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] hover:-translate-y-1 hover:shadow-[3.5px_3.5px_0px_#0A1D3D] active:translate-y-0"
                     }`}
                   >
                     <span
@@ -646,11 +746,17 @@ export function StroopGameArena({
                         fontFamily: JAKARTA,
                         fontWeight: 800,
                         fontSize: "17px",
-                        color: "#0A1D3D",
+                        color: isChosenCorrect ? "#065F46" : isChosenWrong ? "#9F1239" : "#0A1D3D",
                       }}
                     >
                       {option.label}
                     </span>
+                    {isChosenCorrect && (
+                      <span className="text-xl animate-in zoom-in-50 duration-200">🌟</span>
+                    )}
+                    {isChosenWrong && (
+                      <span className="text-xl animate-in zoom-in-50 duration-200">💫</span>
+                    )}
                   </button>
                 );
               })}

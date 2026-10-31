@@ -304,7 +304,7 @@ export function Navbar() {
                   style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
                 >
                   <Baby className="w-4 h-4 text-[#00BCD4]" />
-                  <span>My Children</span>
+                  <span>Dashboard</span>
                 </Link>
                 <button
                   type="button"
@@ -392,7 +392,7 @@ export function Navbar() {
             {!isAdmin && currentUser && (
               <div className="p-4 rounded-2xl bg-cyan-50 border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] mb-1">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-black text-[#0A1D3D]">Family Hub</span>
+                  {/* <span className="text-xs font-black text-[#0A1D3D]">Family Hub</span> */}
                   <span className="text-[11px] text-slate-500 font-medium">{currentUser.email}</span>
                 </div>
                 <Link
@@ -401,7 +401,7 @@ export function Navbar() {
                   className="w-full h-[40px] rounded-xl bg-[#0A1D3D] hover:bg-[#122b54] text-white font-[800] text-xs flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
                   <Baby className="w-3.5 h-3.5 text-[#00BCD4]" />
-                  <span>Go to Family Dashboard</span>
+                  <span>Dashboard</span>
                 </Link>
                 <div className="mt-2 pt-2 border-t border-cyan-100 flex justify-end">
                   <button

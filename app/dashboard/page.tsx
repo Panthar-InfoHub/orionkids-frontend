@@ -8,7 +8,6 @@ import {
   Gamepad2,
   Sparkles,
   Clock,
-  Plus,
   RefreshCw,
   LogOut,
   ChevronRight,
@@ -16,11 +15,11 @@ import {
   Award,
   AlertCircle,
   Loader2,
+  ArrowLeft,
 } from "lucide-react";
 import { fetchCurrentUserProfile, performSignOut, type UserProfile } from "@/lib/api/auth";
 import { fetchChildren, type ChildWithStats } from "@/lib/api/children";
 import { ChildCard } from "@/components/dashboard/child-card";
-import { AddChildModal } from "@/components/dashboard/add-child-modal";
 import { PageCurtain } from "@/components/layout/page-curtain";
 import { FooterSection } from "@/components/layout/footer-section";
 
@@ -32,7 +31,6 @@ export default function ParentDashboardPage() {
   const [children, setChildren] = useState<ChildWithStats[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const loadDashboardData = useCallback(async () => {
@@ -70,12 +68,6 @@ export default function ParentDashboardPage() {
     loadDashboardData();
   };
 
-  const handleChildCreated = (newChild: ChildWithStats) => {
-    setChildren((prev) => [...prev, newChild]);
-    // Optionally open fresh quest for newly created child
-    setIsAddModalOpen(false);
-  };
-
   // Aggregate statistics across all children
   const totalChildProfiles = children.length;
   const totalSessions = children.reduce(
@@ -99,7 +91,7 @@ export default function ParentDashboardPage() {
       <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6 text-center">
         <Loader2 className="w-10 h-10 text-[#00BCD4] animate-spin mb-4" />
         <h2 className="text-lg font-black text-[#0A1D3D]" style={{ fontFamily: JAKARTA }}>
-          Loading Your Family Quests...
+          Loading Your Quests...
         </h2>
         <p className="text-xs text-slate-500 font-medium mt-1">
           Fetching children learning profiles and quest progression.
@@ -117,13 +109,28 @@ export default function ParentDashboardPage() {
         {/* Navigation Bar */}
         <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Link href="/" className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5 sm:gap-3.5">
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== "undefined" && window.history.length > 1) {
+                    router.back();
+                  } else {
+                    router.push("/");
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 hover:text-[#0A1D3D] text-xs font-bold transition-all shadow-xs cursor-pointer select-none"
+                title="Go back"
+              >
+                <ArrowLeft className="w-4 h-4 text-slate-500" />
+                <span>Back</span>
+              </button>
+
+              <div className="h-5 w-px bg-slate-200 hidden sm:block" />
+
+              <Link href="/" className="flex items-center gap-2" title="OrionKids Home">
                 <span className="text-xl sm:text-2xl font-black text-[#0A1D3D] tracking-tight" style={{ fontFamily: JAKARTA }}>
                   Orion<span className="text-[#00BCD4]">Kids</span>
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-[#E0F2FE] border border-[#BAE6FD] text-[10px] font-black text-[#0369A1] uppercase">
-                  Family Hub
                 </span>
               </Link>
             </div>
@@ -178,16 +185,6 @@ export default function ParentDashboardPage() {
               >
                 <span>🎮 Launch Free Quest! 🚀</span>
               </Link>
-
-              <button
-                type="button"
-                onClick={() => setIsAddModalOpen(true)}
-                className="h-12 sm:h-13 px-5 rounded-2xl bg-[#4FDDA6] hover:bg-[#3ec491] text-[#0A1D3D] font-black text-xs sm:text-sm border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                style={{ fontFamily: JAKARTA }}
-              >
-                <Plus className="w-4 h-4 stroke-[3]" />
-                <span>Add Child Profile</span>
-              </button>
             </div>
           </div>
 
@@ -201,12 +198,12 @@ export default function ParentDashboardPage() {
           {/* Parent-Level Aggregated Analytics Grid */}
           <section aria-label="Family Analytics">
             <h2 className="text-sm font-black text-slate-400 uppercase tracking-wider mb-3">
-              Family Learning Metrics
+              Learning Metrics
             </h2>
 
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
               {/* Total Child Profiles */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-white border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D]">
+              {/* <div className="p-4 sm:p-5 rounded-2xl bg-white border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D]">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                     Children
@@ -221,7 +218,7 @@ export default function ParentDashboardPage() {
                 <p className="text-[10px] text-slate-400 font-medium mt-0.5">
                   Registered profiles
                 </p>
-              </div>
+              </div> */}
 
               {/* Total Quest Sessions */}
               <div className="p-4 sm:p-5 rounded-2xl bg-white border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D]">
@@ -302,7 +299,7 @@ export default function ParentDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-[#0A1D3D]" style={{ fontFamily: JAKARTA }}>
-                  My Children Profiles ({children.length})
+                  Quests Profiles ({children.length})
                 </h2>
                 <p className="text-xs text-slate-500 font-medium mt-0.5">
                   Each card represents a distinct child profile record with independent quest telemetry.
@@ -313,7 +310,7 @@ export default function ParentDashboardPage() {
                 href="/onboarding"
                 className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-[#00838F] hover:text-[#0A1D3D] transition-colors"
               >
-                <span>+ Launch New Child Quest</span>
+                {/* <span>+ Launch New Child Quest</span> */}
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -350,17 +347,6 @@ export default function ParentDashboardPage() {
             )}
           </section>
         </main>
-
-        {/* Modal to Add Another Child */}
-        {profile?.email && (
-          <AddChildModal
-            isOpen={isAddModalOpen}
-            onClose={() => setIsAddModalOpen(false)}
-            onChildCreated={handleChildCreated}
-            parentEmail={profile.email}
-            parentMobileDefault={profile.childProfile?.parentMobile || ""}
-          />
-        )}
       </PageCurtain>
 
       <FooterSection />

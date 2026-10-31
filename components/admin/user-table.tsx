@@ -27,10 +27,8 @@ interface UserTableProps {
   meta: AdminPaginationMeta;
   isLoading: boolean;
   activeStatusFilter: "ALL" | "PENDING" | "ACTIVE" | "RESTRICTED";
-  activeRoleFilter: "ALL" | "USER" | "ADMIN";
   searchQuery: string;
   onStatusFilterChange: (status: "ALL" | "PENDING" | "ACTIVE" | "RESTRICTED") => void;
-  onRoleFilterChange: (role: "ALL" | "USER" | "ADMIN") => void;
   onSearchChange: (query: string) => void;
   onPageChange: (page: number) => void;
   onRefresh: () => Promise<void>;
@@ -45,10 +43,8 @@ export function UserTable({
   meta,
   isLoading,
   activeStatusFilter,
-  activeRoleFilter,
   searchQuery,
   onStatusFilterChange,
-  onRoleFilterChange,
   onSearchChange,
   onPageChange,
   onRefresh,
@@ -138,29 +134,6 @@ export function UserTable({
                     : st === "ACTIVE"
                     ? "Active"
                     : "Restricted"}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="h-5 w-px bg-slate-300 hidden sm:block" />
-
-          {/* Role Filter Tabs */}
-          <div className="flex items-center gap-1 bg-slate-200/70 p-1 rounded-xl">
-            {(["ALL", "USER", "ADMIN"] as const).map((r) => {
-              const isSelected = activeRoleFilter === r;
-              return (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => onRoleFilterChange(r)}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-black transition-all cursor-pointer ${
-                    isSelected
-                      ? "bg-white text-[#0A1D3D] shadow-xs"
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  {r === "ALL" ? "All Roles" : r}
                 </button>
               );
             })}
