@@ -209,9 +209,17 @@ export function StroopGameArena({
             onLevelComplete(trialsToSubmit);
           }
         } else if (result.errorType === "UNAUTHORIZED") {
-          // Allow progression even if auth cookie expired
-          setSubmissionStatus("error");
-          setErrorMessage("Please log in to save your game score to your account, or continue as a guest.");
+          // Unauthenticated or guest mode: allow player to progress smoothly without being blocked
+          const nextRoute =
+            level < 3
+              ? `/games/stroop?level=${level + 1}`
+              : "/games/card-flip?level=1";
+          setSubmissionStatus("success");
+          setNextLevelRoute(nextRoute);
+          if (onLevelComplete) {
+            onLevelComplete(trialsToSubmit);
+          }
+          return;
         } else {
           setSubmissionStatus("error");
           setErrorMessage(
@@ -697,7 +705,7 @@ export function StroopGameArena({
 
             {/* Response Buttons: Exactly Centered when 2 options (Level 1), 3-col Grid when 3 options (Levels 2-3) */}
             <div
-              className={`my-4 w-full ${
+              className={`my-4 w-full mx-auto ${
                 currentTrial.options.length === 2
                   ? "flex flex-wrap items-center justify-center gap-4 sm:gap-6 max-w-[520px]"
                   : "grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 max-w-[620px]"
