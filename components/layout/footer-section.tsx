@@ -33,7 +33,15 @@ type DoodleSpec = {
   h: number; // display height in 300px coordinate space
   zIndex: number;
   alt: string;
+  vb: [number, number]; // SVG viewBox width, height
+  label: [number, number, number]; // "Anonymous" ink center x, y (viewBox units) and rotation (deg)
 };
+
+// "Anonymous" is rendered as real text instead of outlined SVG paths so the
+// browser can hint it. Semibold Inter keeps its strokes a full pixel wide at
+// small sizes, matching the rest of the footer text
+const LABEL_FONT_SIZE = 11.8; // viewBox units, ink spans ~68 of the 80-unit frame width
+const LABEL_FONT_WEIGHT = 600;
 
 // Strip dimensions: Width 1440px, Height 345px for well-spaced, generous doodle cards with breathable gapping
 const STRIP_W = 1440;
@@ -42,42 +50,73 @@ const STRIP_H = 345;
 // High-visibility vector doodle cards with enlarged dimensions, balanced spatial distribution, and natural polaroid overlaps
 const CARDS: DoodleSpec[] = [
   // 1. Star doodle (rotated 90deg sideways, lower-left flush)
-  { src: "/svg/021.svg", x: 88, y: 242, w: 175, h: 136, zIndex: 1, alt: "Star doodle" },
+  { src: "/svg/021.svg", x: 88, y: 242, w: 175, h: 136, zIndex: 1, alt: "Star doodle", vb: [110, 95], label: [26.18, 50.76, 90] },
   // 2. Smiley face with flower bouquet (bottom row)
-  { src: "/svg/019.svg", x: 212, y: 236, w: 156, h: 150, zIndex: 2, alt: "Smiley and flower bouquet doodle" },
+  { src: "/svg/019.svg", x: 212, y: 236, w: 156, h: 150, zIndex: 2, alt: "Smiley and flower bouquet doodle", vb: [108, 109], label: [53.74, 79.82, 0] },
   // 3. Tilted swirl diamond (upper floating between cards 2 & 5)
-  { src: "/svg/018.svg", x: 260, y: 104, w: 205, h: 178, zIndex: 1, alt: "Abstract swirl doodle" },
+  { src: "/svg/018.svg", x: 260, y: 104, w: 205, h: 178, zIndex: 1, alt: "Abstract swirl doodle", vb: [149, 150], label: [88.3, 89.59, -39.61] },
   // 4. Boat / hat with red cross X (top row)
-  { src: "/svg/017.svg", x: 402, y: 106, w: 156, h: 172, zIndex: 1, alt: "Red cross boat doodle" },
+  { src: "/svg/017.svg", x: 402, y: 106, w: 156, h: 172, zIndex: 1, alt: "Red cross boat doodle", vb: [109, 121], label: [53.77, 79.86, 0] },
   // 5. Tent / triangle doodle (bottom row below card 4)
-  { src: "/svg/020.svg", x: 338, y: 238, w: 156, h: 158, zIndex: 2, alt: "Tent doodle" },
+  { src: "/svg/020.svg", x: 338, y: 238, w: 156, h: 158, zIndex: 2, alt: "Tent doodle", vb: [108, 109], label: [53.74, 79.82, 0] },
   // 6. YOCHI stick figures family (bottom row)
-  { src: "/svg/015.svg", x: 466, y: 238, w: 156, h: 158, zIndex: 2, alt: "YOCHI family stick figures doodle" },
+  { src: "/svg/015.svg", x: 466, y: 238, w: 156, h: 158, zIndex: 2, alt: "YOCHI family stick figures doodle", vb: [109, 110], label: [53.9, 79.93, 0] },
   // 7. YO! text doodle (top row)
-  { src: "/svg/013.svg", x: 572, y: 110, w: 156, h: 138, zIndex: 1, alt: "YO! doodle" },
+  { src: "/svg/013.svg", x: 572, y: 110, w: 156, h: 138, zIndex: 1, alt: "YO! doodle", vb: [109, 121], label: [53.79, 79.89, 0] },
   // 8. Walking smiling heart (bottom row below card 7)
-  { src: "/svg/016.svg", x: 596, y: 238, w: 156, h: 158, zIndex: 2, alt: "Walking smiling heart doodle" },
+  { src: "/svg/016.svg", x: 596, y: 238, w: 156, h: 158, zIndex: 2, alt: "Walking smiling heart doodle", vb: [109, 110], label: [53.78, 79.87, 0] },
   // 9. Hello :) doodle (rotated 90deg sideways, bottom row)
-  { src: "/svg/012.svg", x: 742, y: 246, w: 175, h: 136, zIndex: 2, alt: "Hello smiley doodle" },
-  // 10. WOW <3 TEH (top row next to flower)
-  { src: "/svg/007.svg", x: 878, y: 108, w: 158, h: 174, zIndex: 3, alt: "WOW love doodle" },
+  { src: "/svg/012.svg", x: 742, y: 246, w: 175, h: 136, zIndex: 2, alt: "Hello smiley doodle", vb: [121, 95], label: [37.2, 50.74, 90] },
+  // 10. WOW <3 TEH (top row next to flower); frame tilt of -1.56deg kept level so the text stays crisp
+  { src: "/svg/007.svg", x: 878, y: 108, w: 158, h: 174, zIndex: 3, alt: "WOW love doodle", vb: [111, 123], label: [55.64, 81.18, 0] },
   // 11. "hi, thanks for inspi" (bottom row below card 10)
-  { src: "/svg/011.svg", x: 874, y: 238, w: 156, h: 158, zIndex: 2, alt: "Inspirational thank you doodle" },
+  { src: "/svg/011.svg", x: 874, y: 238, w: 156, h: 158, zIndex: 2, alt: "Inspirational thank you doodle", vb: [108, 109], label: [53.74, 79.81, 0] },
   // 12. Circle / stone outline (bottom row next to card 11)
-  { src: "/svg/010.svg", x: 1014, y: 238, w: 156, h: 158, zIndex: 2, alt: "Stone outline doodle" },
+  { src: "/svg/010.svg", x: 1014, y: 238, w: 156, h: 158, zIndex: 2, alt: "Stone outline doodle", vb: [109, 110], label: [53.83, 80.19, 0] },
   // 13. "SAYA LAWAT AKAN Anonymous" (top row, slightly tilted)
-  { src: "/svg/006.svg", x: 1012, y: 108, w: 164, h: 178, zIndex: 2, alt: "Saya Lawat doodle" },
+  { src: "/svg/006.svg", x: 1012, y: 108, w: 164, h: 178, zIndex: 2, alt: "Saya Lawat doodle", vb: [122, 132], label: [56.85, 85.14, 8.92] },
   // 14. "Gilan" signature (top row, tilted)
-  { src: "/svg/005.svg", x: 1128, y: 118, w: 172, h: 184, zIndex: 4, alt: "Gilan signature doodle" },
+  { src: "/svg/005.svg", x: 1128, y: 118, w: 172, h: 184, zIndex: 4, alt: "Gilan signature doodle", vb: [129, 138], label: [69.86, 87.73, -14.83] },
   // 15. Red heart doodle (top row next to Gilan)
-  { src: "/svg/004.svg", x: 1248, y: 118, w: 156, h: 172, zIndex: 3, alt: "Red heart doodle" },
+  { src: "/svg/004.svg", x: 1248, y: 118, w: 156, h: 172, zIndex: 3, alt: "Red heart doodle", vb: [109, 121], label: [53.9, 79.93, 0] },
   // 16. "Bilal" signature (rotated 90deg sideways, bottom row)
-  { src: "/svg/009.svg", x: 1204, y: 246, w: 175, h: 136, zIndex: 2, alt: "Bilal signature doodle" },
+  { src: "/svg/009.svg", x: 1204, y: 246, w: 175, h: 136, zIndex: 2, alt: "Bilal signature doodle", vb: [121, 95], label: [37.25, 50.88, 90] },
   // 17. Tilted butterfly diamond (floating between cards 15 and 18)
-  { src: "/svg/001.svg", x: 1358, y: 96, w: 205, h: 205, zIndex: 3, alt: "Tilted butterfly doodle" },
+  { src: "/svg/001.svg", x: 1358, y: 96, w: 205, h: 205, zIndex: 3, alt: "Tilted butterfly doodle", vb: [150, 149], label: [91.83, 86.57, -48.71] },
   // 18. "Fener Bahçe" doodle (bottom row far right)
-  { src: "/svg/002.svg", x: 1356, y: 238, w: 150, h: 170, zIndex: 2, alt: "Fener Bahçe doodle" },
+  { src: "/svg/002.svg", x: 1356, y: 238, w: 150, h: 170, zIndex: 2, alt: "Fener Bahçe doodle", vb: [95, 110], label: [53.75, 79.83, 0] },
 ];
+
+// Places the "Anonymous" label where the SVG drew it, inside a card box of
+// spec.w x spec.h that shows the SVG with object-contain
+function DoodleLabel({ spec }: { spec: DoodleSpec }) {
+  const [vbW, vbH] = spec.vb;
+  const [cx, cy, rot] = spec.label;
+  const scale = Math.min(spec.w / vbW, spec.h / vbH);
+  const offsetX = (spec.w - vbW * scale) / 2;
+  const offsetY = (spec.h - vbH * scale) / 2;
+
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute whitespace-nowrap pointer-events-none select-none"
+      style={{
+        left: `${((offsetX + cx * scale) / spec.w) * 100}%`,
+        top: `${((offsetY + cy * scale) / spec.h) * 100}%`,
+        // cqw is relative to the card box width (the @container element)
+        fontSize: `${((LABEL_FONT_SIZE * scale) / spec.w) * 100}cqw`,
+        fontFamily: INTER,
+        fontWeight: LABEL_FONT_WEIGHT,
+        lineHeight: 1,
+        color: "#0A1D3D",
+        // Center the ink (not the line box) on the anchor point: Inter's ink sits ~0.1em low
+        transform: `translate(-50%, -50%) rotate(${rot}deg) translateY(-0.1em)`,
+      }}
+    >
+      Anonymous
+    </span>
+  );
+}
 
 // Gentle rotations for responsive grid on smaller screens
 const MOBILE_CARD_ROTATIONS = [
@@ -145,6 +184,13 @@ const DESKTOP_PHYSICS: CardPhysics[] = [
   { startY: -450, driftX: 16, startRot: -16, dropDuration: 0.59, bounceHeight: -13, bounceRot: 2.5, hoverTilt: -3, delay: 0.76 },
 ];
 
+// Drop GSAP's inline transform once a card is at rest so the browser
+// re-rasterizes it at its final size instead of reusing a mid-animation bitmap
+function settleCard(el: HTMLDivElement, baseRot = 0) {
+  gsap.set(el, { clearProps: "transform" });
+  if (baseRot) el.style.transform = `rotate(${baseRot}deg)`;
+}
+
 const MOBILE_PHYSICS: CardPhysics[] = [
   { startY: -280, driftX: -12, startRot: 14, dropDuration: 0.52, bounceHeight: -10, bounceRot: -2, hoverTilt: 3, delay: 0.05 },
   { startY: -310, driftX: 10, startRot: -12, dropDuration: 0.54, bounceHeight: -8, bounceRot: 2, hoverTilt: -3, delay: 0.18 },
@@ -180,11 +226,11 @@ function DoodleCard({
     <div
       className="absolute pointer-events-auto select-none"
       style={{
-        left: `${(spec.x / STRIP_W) * 100}%`,
-        top: `${(spec.y / STRIP_H) * 100}%`,
+        // Top-left corner derived from the center coords (no translate(-50%) half-pixel offsets)
+        left: `${((spec.x - spec.w / 2) / STRIP_W) * 100}%`,
+        top: `${((spec.y - spec.h / 2) / STRIP_H) * 100}%`,
         width: `${(spec.w / STRIP_W) * 100}%`,
         height: `${(spec.h / STRIP_H) * 100}%`,
-        transform: "translate(-50%, -50%)",
         zIndex: spec.zIndex,
       }}
     >
@@ -205,10 +251,8 @@ function DoodleCard({
             onClick();
           }
         }}
-        className="w-full h-full cursor-pointer filter hover:drop-shadow-md select-none will-change-transform"
+        className="@container relative w-full h-full cursor-pointer hover:drop-shadow-md select-none"
         style={{
-          WebkitBackfaceVisibility: "hidden",
-          backfaceVisibility: "hidden",
           WebkitTouchCallout: "none",
         }}
       >
@@ -218,7 +262,7 @@ function DoodleCard({
           alt={spec.alt}
           width={spec.w}
           height={spec.h}
-          className="w-full h-full object-contain select-none pointer-events-none drop-shadow-xs"
+          className="w-full h-full object-contain select-none pointer-events-none"
           style={{
             WebkitUserSelect: "none",
             userSelect: "none",
@@ -227,6 +271,7 @@ function DoodleCard({
           loading="eager"
           decoding="async"
         />
+        <DoodleLabel spec={spec} />
       </div>
     </div>
   );
@@ -282,27 +327,15 @@ export function FooterSection() {
   const resetCardsToResting = useCallback(() => {
     desktopCardsRef.current.forEach((el) => {
       if (!el) return;
-      gsap.set(el, {
-        x: 0,
-        y: 0,
-        rotation: 0,
-        scale: 1,
-        opacity: 1,
-        visibility: "visible",
-      });
+      gsap.set(el, { opacity: 1, visibility: "visible" });
+      settleCard(el);
       el.dataset.landed = "true";
     });
     mobileCardsRef.current.forEach((el, i) => {
       if (!el) return;
       const baseRot = parseFloat(MOBILE_CARD_ROTATIONS[i] || "0");
-      gsap.set(el, {
-        x: 0,
-        y: 0,
-        rotation: baseRot,
-        scale: 1,
-        opacity: 1,
-        visibility: "visible",
-      });
+      gsap.set(el, { opacity: 1, visibility: "visible" });
+      settleCard(el, baseRot);
       el.dataset.landed = "true";
     });
   }, []);
@@ -388,6 +421,7 @@ export function FooterSection() {
           duration: 0.22,
           ease: "power1.inOut",
           onComplete: () => {
+            settleCard(cardEl);
             cardEl.dataset.landed = "true";
           },
         });
@@ -448,6 +482,7 @@ export function FooterSection() {
           duration: 0.20,
           ease: "power1.inOut",
           onComplete: () => {
+            settleCard(cardEl, baseRot);
             cardEl.dataset.landed = "true";
           },
         });
@@ -672,6 +707,7 @@ export function FooterSection() {
       duration: 0.22,
       ease: "power2.out",
       overwrite: "auto",
+      onComplete: () => settleCard(el),
     });
   };
 
@@ -711,6 +747,7 @@ export function FooterSection() {
       duration: 0.22,
       ease: "power2.out",
       overwrite: "auto",
+      onComplete: () => settleCard(el, baseRot),
     });
   };
 
@@ -883,25 +920,25 @@ export function FooterSection() {
             {/* Column 2: Support & Legal */}
             <div className="flex flex-col space-y-2 sm:space-y-2.5 text-[#0A1D3D] text-xs sm:text-[13px] font-bold tracking-tight">
               <Link
-                href="#"
+                href="/help-support"
                 className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
               >
                 HELP &amp; SUPPORT
               </Link>
               <Link
-                href="#"
+                href="/contact-us"
                 className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
               >
                 CONTACT US
               </Link>
               <Link
-                href="#"
+                href="/privacy-policy"
                 className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
               >
                 PRIVACY POLICY
               </Link>
               <Link
-                href="#"
+                href="/terms-and-conditions"
                 className="hover:text-[#00BCD4] transition-colors whitespace-nowrap uppercase cursor-pointer"
               >
                 TERMS &amp; CONDITIONS
@@ -1003,11 +1040,9 @@ export function FooterSection() {
                       ? "Tap the star doodle to start your adventure"
                       : card.alt
                   }
-                  className="w-full h-full cursor-pointer select-none filter hover:drop-shadow-md will-change-transform block"
+                  className="@container relative w-full h-full cursor-pointer select-none hover:drop-shadow-md block"
                   style={{
                     transform: `rotate(${MOBILE_CARD_ROTATIONS[i] || "0deg"})`,
-                    WebkitBackfaceVisibility: "hidden",
-                    backfaceVisibility: "hidden",
                     WebkitTouchCallout: "none",
                   }}
                 >
@@ -1017,7 +1052,7 @@ export function FooterSection() {
                     alt={card.alt}
                     width={card.w}
                     height={card.h}
-                    className="w-full h-full object-contain select-none pointer-events-none drop-shadow-xs"
+                    className="w-full h-full object-contain select-none pointer-events-none"
                     style={{
                       WebkitUserSelect: "none",
                       userSelect: "none",
@@ -1026,6 +1061,7 @@ export function FooterSection() {
                     loading="eager"
                     decoding="async"
                   />
+                  <DoodleLabel spec={card} />
                 </div>
               </div>
             ))}
@@ -1039,19 +1075,19 @@ export function FooterSection() {
         >
           <span>© 2026 OrionKids Digital Solutions Pvt. Ltd.</span>
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[#526176]">
-            <Link href="#" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
+            <Link href="/privacy-policy" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
               Privacy Policy
             </Link>
             <span aria-hidden="true">•</span>
-            <Link href="#" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
+            <Link href="/terms-and-conditions" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
               Terms &amp; Conditions
             </Link>
             <span aria-hidden="true">•</span>
-            <Link href="#" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
+            <Link href="/help-support" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
               Help &amp; Support
             </Link>
             <span aria-hidden="true">•</span>
-            <Link href="#" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
+            <Link href="/contact-us" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
               Contact Us
             </Link>
           </div>
