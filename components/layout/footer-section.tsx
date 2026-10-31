@@ -60,13 +60,13 @@ const CARDS: DoodleSpec[] = [
   // 9. Hello :) doodle (rotated 90deg sideways, bottom row)
   { src: "/svg/012.svg", x: 742, y: 246, w: 175, h: 136, zIndex: 2, alt: "Hello smiley doodle" },
   // 10. WOW <3 TEH (top row next to flower)
-  { src: "/svg/007.svg", x: 878, y: 108, w: 158, h: 174, zIndex: 2, alt: "WOW love doodle" },
+  { src: "/svg/007.svg", x: 878, y: 108, w: 158, h: 174, zIndex: 3, alt: "WOW love doodle" },
   // 11. "hi, thanks for inspi" (bottom row below card 10)
   { src: "/svg/011.svg", x: 874, y: 238, w: 156, h: 158, zIndex: 2, alt: "Inspirational thank you doodle" },
   // 12. Circle / stone outline (bottom row next to card 11)
   { src: "/svg/010.svg", x: 1014, y: 238, w: 156, h: 158, zIndex: 2, alt: "Stone outline doodle" },
-  // 13. "SAYA LAWAT AKAN jkw" (top row, slightly tilted)
-  { src: "/svg/006.svg", x: 1004, y: 108, w: 164, h: 178, zIndex: 3, alt: "Saya Lawat doodle" },
+  // 13. "SAYA LAWAT AKAN Anonymous" (top row, slightly tilted)
+  { src: "/svg/006.svg", x: 1012, y: 108, w: 164, h: 178, zIndex: 2, alt: "Saya Lawat doodle" },
   // 14. "Gilan" signature (top row, tilted)
   { src: "/svg/005.svg", x: 1128, y: 118, w: 172, h: 184, zIndex: 4, alt: "Gilan signature doodle" },
   // 15. Red heart doodle (top row next to Gilan)
@@ -485,8 +485,8 @@ export function FooterSection() {
     const innerH = window.innerHeight;
     const fHeight = footer.offsetHeight;
 
-    // Check if footer is taller than viewport or if prefers-reduced-motion is active
-    const flow = isReducedMotionRef.current || (fHeight > 0 && fHeight > innerH);
+    // Footer stays sticky beneath the sliding page curtain unless prefers-reduced-motion is active
+    const flow = isReducedMotionRef.current;
     if (flow !== isFlowModeRef.current) {
       isFlowModeRef.current = flow;
       setIsFlowMode(flow);
