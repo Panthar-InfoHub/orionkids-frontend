@@ -105,6 +105,10 @@ export function OddOneOutGameArena({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [nextLevelRoute, setNextLevelRoute] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
+  const [isSlidingOut, setIsSlidingOut] = useState(false);
+  const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string; isCorrect: boolean } | null>(null);
   const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
@@ -139,8 +143,27 @@ export function OddOneOutGameArena({
     return () => { isCancelled = true; };
   }, [activeSessionId, activeAttemptId, level]);
 
-  const handleSelectItem = async (isOdd: boolean) => {
-    if (submissionStatus !== "idle") return;
+  const handleSelectItem = async (itemIdx: number, isOdd: boolean) => {
+    if (submissionStatus !== "idle" || isLocked) return;
+    setIsLocked(true);
+    setSelectedIdx(itemIdx);
+
+    const isLastTrial = currentIdx + 1 >= trials.length;
+
+    if (isOdd) {
+      setFeedbackBanner({
+        icon: "🛸",
+        text: "CORRECT! Odd item beamed away! +1 🌟",
+        isCorrect: true,
+      });
+    } else {
+      setFeedbackBanner({
+        icon: "❌",
+        text: "Ye toh group ka dost hai! Alag wala dhoondho 🔍",
+        isCorrect: false,
+      });
+    }
+
     const newCorrect = isOdd ? correctCount + 1 : correctCount;
     setCorrectCount(newCorrect);
 
@@ -152,42 +175,56 @@ export function OddOneOutGameArena({
       });
     }
 
-    if (currentIdx + 1 < trials.length) {
-      setCurrentIdx((i) => i + 1);
-    } else {
-      setSubmissionStatus("submitting");
-      const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
-      const accuracy = Math.round((newCorrect / trials.length) * 100);
+    // Hold duration: 2200ms on final challenge, 1350ms on interim challenges
+    const holdDuration = isLastTrial ? 2200 : 1350;
+    setTimeout(async () => {
+      // Carousel Slide-Out to left before new challenge slides in from right
+      setIsSlidingOut(true);
 
-      if (activeSessionId) {
-        const result = await completeQuestLevel(activeSessionId, {
-          gameKey: "odd-one-out",
-          levelNumber: level,
-          totalTrials: trials.length,
-          correctTrials: newCorrect,
-          accuracy,
-          durationMs,
-          completedAt: new Date().toISOString(),
-        });
+      setTimeout(async () => {
+        setSelectedIdx(null);
+        setFeedbackBanner(null);
+        setIsLocked(false);
+        setIsSlidingOut(false);
 
-        if (result.success) {
-          setSubmissionStatus("success");
-          let nextRoute =
-            result.nextLevelRoute ||
-            (level < 3 ? `/games/odd-one-out?level=${level + 1}` : "/games/rule-discovery?level=1");
-          if (activeSessionId && !nextRoute.includes("sessionId=")) {
-            nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
-          }
-          setNextLevelRoute(nextRoute);
+        if (!isLastTrial) {
+          setCurrentIdx((i) => i + 1);
         } else {
-          setSubmissionStatus("error");
-          setErrorMessage(result.error?.message || "Failed to record Odd One Out results.");
+          setSubmissionStatus("submitting");
+          const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
+          const accuracy = Math.round((newCorrect / trials.length) * 100);
+
+          if (activeSessionId) {
+            const result = await completeQuestLevel(activeSessionId, {
+              gameKey: "odd-one-out",
+              levelNumber: level,
+              totalTrials: trials.length,
+              correctTrials: newCorrect,
+              accuracy,
+              durationMs,
+              completedAt: new Date().toISOString(),
+            });
+
+            if (result.success) {
+              setSubmissionStatus("success");
+              let nextRoute =
+                result.nextLevelRoute ||
+                (level < 3 ? `/games/odd-one-out?level=${level + 1}` : "/games/rule-discovery?level=1");
+              if (activeSessionId && !nextRoute.includes("sessionId=")) {
+                nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+              }
+              setNextLevelRoute(nextRoute);
+            } else {
+              setSubmissionStatus("error");
+              setErrorMessage(result.error?.message || "Failed to record Odd One Out results.");
+            }
+          } else {
+            setSubmissionStatus("success");
+            setNextLevelRoute(level < 3 ? `/games/odd-one-out?level=${level + 1}` : "/games/rule-discovery?level=1");
+          }
         }
-      } else {
-        setSubmissionStatus("success");
-        setNextLevelRoute(level < 3 ? `/games/odd-one-out?level=${level + 1}` : "/games/rule-discovery?level=1");
-      }
-    }
+      }, 350);
+    }, holdDuration);
   };
 
   const currentTrial = trials[currentIdx];
@@ -195,7 +232,7 @@ export function OddOneOutGameArena({
 
   return (
     <div className="w-full flex flex-col items-center select-none">
-      <div className="relative z-10 w-full max-w-[840px] my-auto py-8 px-6 sm:px-12 rounded-[24px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center min-h-[460px]">
+      <div className="relative z-10 w-full max-w-[840px] my-auto py-8 px-6 sm:px-12 rounded-[24px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center min-h-[460px] overflow-hidden">
         {isFinished ? (
           <div className="py-6 flex flex-col items-center animate-in fade-in duration-300">
             <div
@@ -208,6 +245,7 @@ export function OddOneOutGameArena({
             <h2 className="text-[26px] sm:text-[30px] font-extrabold text-white mb-2" style={{ fontFamily: JAKARTA }}>
               {submissionStatus === "error" ? "Level Verification Required" : `Odd One Out Level ${level} Complete!`}
             </h2>
+
             <p className="text-[15px] text-[#E0D3F8] max-w-[460px] mb-6 text-center leading-relaxed" style={{ fontFamily: JAKARTA }}>
               {submissionStatus === "submitting"
                 ? "Recording your categorization score..."
@@ -236,29 +274,95 @@ export function OddOneOutGameArena({
             )}
           </div>
         ) : (
-          <div className="w-full flex flex-col items-center gap-8">
+          <div className="w-full flex flex-col items-center gap-7">
             <div className="flex items-center justify-between w-full max-w-[560px] text-white/90 text-sm font-bold">
               <span>Challenge {currentIdx + 1} of {trials.length}</span>
               <span>Score: {correctCount}</span>
             </div>
 
-            <p className="text-white text-base font-extrabold text-center">
-              Tap the symbol that doesn&apos;t belong in this group!
-            </p>
+            {/* Notification / Feedback Banner */}
+            {feedbackBanner ? (
+              <div
+                className={`inline-flex items-center gap-2.5 px-6 py-2 rounded-full font-extrabold text-[14px] sm:text-[15px] shadow-lg select-none animate-celebration-pop border-2 border-[#0A1D3D] ${
+                  feedbackBanner.isCorrect
+                    ? "bg-[#10B981] text-white shadow-[0_0_18px_rgba(16,185,129,0.5)]"
+                    : "bg-[#FFE4E6] text-[#9F1239] shadow-[0_0_18px_rgba(244,63,94,0.4)]"
+                }`}
+                style={{ fontFamily: JAKARTA }}
+              >
+                <span className="text-xl animate-bounce">{feedbackBanner.icon}</span>
+                <span>{feedbackBanner.text}</span>
+              </div>
+            ) : (
+              <p className="text-white text-base font-extrabold text-center">
+                Tap the symbol that doesn&apos;t belong in this group!
+              </p>
+            )}
 
-            {/* Items Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-[620px] justify-center">
-              {currentTrial.items.map((item, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => handleSelectItem(item.isOdd)}
-                  className="h-32 rounded-[20px] bg-white border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-1.5 hover:bg-[#FFF8D6] transition-all flex flex-col items-center justify-center gap-2 cursor-pointer p-3"
-                >
-                  <span className="text-4xl">{item.symbol}</span>
-                  <span className="text-xs font-bold text-[#0A1D3D]">{item.label}</span>
-                </button>
-              ))}
+            {/* Items Grid with Carousel Slide Transitions & Alien Abduction Effect */}
+            <div
+              key={currentIdx}
+              className={`grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-[620px] justify-center ${
+                isSlidingOut ? "animate-slide-out-left" : ""
+              }`}
+            >
+              {currentTrial.items.map((item, idx) => {
+                const isSelected = selectedIdx === idx;
+                const isOddSelected = selectedIdx !== null && currentTrial.items[selectedIdx]?.isOdd;
+                const isCorrectChosen = isSelected && item.isOdd;
+                const isWrongChosen = isSelected && !item.isOdd;
+                const isOtherWhileCorrect = isOddSelected && !isSelected;
+                const showOddReveal = selectedIdx !== null && !isOddSelected && item.isOdd;
+
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    disabled={isLocked}
+                    onClick={() => handleSelectItem(idx, item.isOdd)}
+                    style={{ animationDelay: `${idx * 75}ms` }}
+                    className={`relative h-32 rounded-[20px] border-2 transition-all flex flex-col items-center justify-center gap-2 p-3 animate-shape-slide-right select-none ${
+                      isCorrectChosen
+                        ? "animate-alien-beam-up bg-[#EEFBF3] border-[#10B981] text-[#065F46] z-20"
+                        : isWrongChosen
+                        ? "animate-wobble bg-[#FFF1F2] border-[#F43F5E] shadow-[3px_3px_0px_#BE123C] text-[#9F1239]"
+                        : isOtherWhileCorrect
+                        ? "opacity-35 scale-95 bg-white/70 border-[#0A1D3D]"
+                        : showOddReveal
+                        ? "bg-[#FFF8D6] border-[#FFD028] shadow-[3px_3px_0px_#D97706] scale-102"
+                        : isLocked
+                        ? "opacity-50 cursor-not-allowed bg-white border-[#0A1D3D]"
+                        : "bg-white border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-1.5 hover:rotate-1 hover:bg-[#FFF8D6] active:scale-95 cursor-pointer"
+                    }`}
+                  >
+                    <span className={`text-4xl transition-transform ${isCorrectChosen ? "animate-pulse" : ""}`}>
+                      {item.symbol}
+                    </span>
+                    <span className="text-xs font-bold text-[#0A1D3D]">{item.label}</span>
+
+                    {/* Alien Beam-Up Overlays */}
+                    {isCorrectChosen && (
+                      <>
+                        <span className="absolute -top-3.5 -right-2 text-2xl animate-bounce">🛸</span>
+                        <span className="absolute -bottom-2 -left-2 text-base animate-pulse">✨</span>
+                        <span className="absolute inset-0 rounded-[20px] bg-[#10B981]/15 animate-pulse pointer-events-none" />
+                      </>
+                    )}
+
+                    {/* Wrong Jelly Wobble Overlay */}
+                    {isWrongChosen && (
+                      <span className="absolute -top-2 -right-2 text-xl animate-in zoom-in-75">❌</span>
+                    )}
+
+                    {/* Gentle Clue on Wrong */}
+                    {showOddReveal && (
+                      <span className="absolute -top-2 -right-2 text-xs bg-[#FFD028] text-[#0A1D3D] px-2 py-0.5 rounded-full font-black border border-[#0A1D3D] shadow-sm animate-bounce">
+                        Odd One! 💡
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

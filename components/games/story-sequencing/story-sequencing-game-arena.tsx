@@ -69,6 +69,9 @@ export function StorySequencingGameArena({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [nextLevelRoute, setNextLevelRoute] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [stepResults, setStepResults] = useState<Record<number, boolean> | null>(null);
+  const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string; isCorrect: boolean } | null>(null);
   const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
@@ -104,7 +107,7 @@ export function StorySequencingGameArena({
   }, [activeSessionId, activeAttemptId, level]);
 
   const handlePickStep = (step: StoryStep) => {
-    if (selectedOrder.some((s) => s.id === step.id)) return;
+    if (isVerifying || selectedOrder.some((s) => s.id === step.id)) return;
     const newSelected = [...selectedOrder, step];
     setSelectedOrder(newSelected);
 
@@ -117,52 +120,72 @@ export function StorySequencingGameArena({
   };
 
   const handleResetOrder = () => {
+    if (isVerifying) return;
     setSelectedOrder([]);
+    setStepResults(null);
+    setFeedbackBanner(null);
   };
 
   const handleVerifyStory = async () => {
-    if (selectedOrder.length !== mission.steps.length) return;
-    setSubmissionStatus("submitting");
+    if (selectedOrder.length !== mission.steps.length || isVerifying) return;
+    setIsVerifying(true);
 
     // Check correctness of chronological sequence
     let correctCount = 0;
+    const results: Record<number, boolean> = {};
     selectedOrder.forEach((step, idx) => {
-      if (step.order === idx + 1) correctCount++;
+      const isCorrect = step.order === idx + 1;
+      results[step.id] = isCorrect;
+      if (isCorrect) correctCount++;
     });
 
     const isPerfect = correctCount === mission.steps.length;
-    const accuracy = Math.round((correctCount / mission.steps.length) * 100);
-    const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
+    setStepResults(results);
+    setFeedbackBanner({
+      icon: isPerfect ? "✅" : "💡",
+      text: isPerfect
+        ? "PERFECT STORY! All events placed in order! 🌟"
+        : `Story Check: ${correctCount} of ${mission.steps.length} events in order!`,
+      isCorrect: isPerfect,
+    });
 
-    if (activeSessionId) {
-      const result = await completeQuestLevel(activeSessionId, {
-        gameKey: "story-sequencing",
-        levelNumber: level,
-        totalTrials: mission.steps.length,
-        correctTrials: correctCount,
-        accuracy,
-        durationMs,
-        completedAt: new Date().toISOString(),
-      });
+    // Hold visual feedback for 2200ms so child sees which cards are right/wrong!
+    setTimeout(async () => {
+      setSubmissionStatus("submitting");
+      const accuracy = Math.round((correctCount / mission.steps.length) * 100);
+      const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
 
-      if (result.success) {
-        setSubmissionStatus("success");
-        // If final level of story sequencing (Game 6 Level 3) -> routes to /report!
-        let nextRoute =
-          result.nextLevelRoute ||
-          (level < 3 ? `/games/story-sequencing?level=${level + 1}` : "/report");
-        if (activeSessionId && !nextRoute.includes("sessionId=")) {
-          nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+      if (activeSessionId) {
+        const result = await completeQuestLevel(activeSessionId, {
+          gameKey: "story-sequencing",
+          levelNumber: level,
+          totalTrials: mission.steps.length,
+          correctTrials: correctCount,
+          accuracy,
+          durationMs,
+          completedAt: new Date().toISOString(),
+        });
+
+        if (result.success) {
+          setSubmissionStatus("success");
+          // If final level of story sequencing (Game 6 Level 3) -> routes to homepage!
+          let nextRoute =
+            result.nextLevelRoute && !result.nextLevelRoute.includes("report")
+              ? result.nextLevelRoute
+              : (level < 3 ? `/games/story-sequencing?level=${level + 1}` : "/");
+          if (activeSessionId && level < 3 && !nextRoute.includes("sessionId=")) {
+            nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+          }
+          setNextLevelRoute(nextRoute);
+        } else {
+          setSubmissionStatus("error");
+          setErrorMessage(result.error?.message || "Failed to record Story Sequencing results.");
         }
-        setNextLevelRoute(nextRoute);
       } else {
-        setSubmissionStatus("error");
-        setErrorMessage(result.error?.message || "Failed to record Story Sequencing results.");
+        setSubmissionStatus("success");
+        setNextLevelRoute(level < 3 ? `/games/story-sequencing?level=${level + 1}` : "/");
       }
-    } else {
-      setSubmissionStatus("success");
-      setNextLevelRoute(level < 3 ? `/games/story-sequencing?level=${level + 1}` : "/report");
-    }
+    }, 2200);
   };
 
   const isAllPicked = selectedOrder.length === mission.steps.length;
@@ -183,14 +206,15 @@ export function StorySequencingGameArena({
               {submissionStatus === "error"
                 ? "Level Verification Required"
                 : level === 3
-                ? "Quest Completed! All 18 Levels Mastered! 🎓"
+                ? "Thank You For Playing The Game 🎉"
                 : `Story Sequencing Level ${level} Complete!`}
             </h2>
+
             <p className="text-[15px] text-[#E0D3F8] max-w-[460px] mb-6 text-center leading-relaxed" style={{ fontFamily: JAKARTA }}>
               {submissionStatus === "error"
                 ? errorMessage
                 : level === 3
-                ? "Congratulations Explorer! You have completed all six cognitive games. Your comprehensive report is ready."
+                ? "Congratulations Explorer! You have completed all 18 levels across all six cognitive games."
                 : "Terrific narrative logic! You arranged the space exploration steps in sequence."}
             </p>
             {submissionStatus === "success" && nextLevelRoute && (
@@ -209,15 +233,29 @@ export function StorySequencingGameArena({
                   ? "Loading... 🚀"
                   : level < 3
                   ? `Next Level (${level + 1} of 3) 🚀`
-                  : "View Assessment Report 📊"}
+                  : "Back to Home 🏠"}
               </button>
             )}
           </div>
         ) : (
           <div className="w-full flex flex-col items-center gap-6">
-            <h3 className="text-white text-base font-extrabold text-center">
-              Tap the mission events in the order they happen (1st to last):
-            </h3>
+            {feedbackBanner ? (
+              <div
+                className={`inline-flex items-center gap-2.5 px-6 py-2 rounded-full font-extrabold text-[14px] sm:text-[15px] shadow-lg select-none animate-celebration-pop border-2 border-[#0A1D3D] ${
+                  feedbackBanner.isCorrect
+                    ? "bg-[#10B981] text-white shadow-[0_0_18px_rgba(16,185,129,0.5)]"
+                    : "bg-[#FFE4E6] text-[#9F1239] shadow-[0_0_18px_rgba(244,63,94,0.4)]"
+                }`}
+                style={{ fontFamily: JAKARTA }}
+              >
+                <span className="text-xl animate-bounce">{feedbackBanner.icon}</span>
+                <span>{feedbackBanner.text}</span>
+              </div>
+            ) : (
+              <h3 className="text-white text-base font-extrabold text-center">
+                Tap the mission events in the order they happen (1st to last):
+              </h3>
+            )}
 
             {/* Sequence Slots */}
             <div className="flex flex-col gap-2 w-full max-w-[560px]">
@@ -228,18 +266,42 @@ export function StorySequencingGameArena({
                     Tap the cards below to build your story...
                   </span>
                 ) : (
-                  selectedOrder.map((step, idx) => (
-                    <div
-                      key={step.id}
-                      className="flex items-center gap-3 p-2.5 rounded-[12px] bg-white text-[#0A1D3D] font-bold text-xs sm:text-sm animate-in fade-in"
-                    >
-                      <span className="w-6 h-6 rounded-full bg-[#FFD028] text-[#0A1D3D] flex items-center justify-center font-extrabold text-xs">
-                        {idx + 1}
-                      </span>
-                      <span className="text-xl">{step.icon}</span>
-                      <span className="flex-1">{step.text}</span>
-                    </div>
-                  ))
+                  selectedOrder.map((step, idx) => {
+                    const isEvaluated = stepResults !== null;
+                    const isStepRight = stepResults?.[step.id];
+
+                    return (
+                      <div
+                        key={step.id}
+                        className={`flex items-center gap-3 p-2.5 rounded-[12px] font-bold text-xs sm:text-sm border-2 transition-all ${
+                          !isEvaluated
+                            ? "bg-white text-[#0A1D3D] border-[#0A1D3D]"
+                            : isStepRight
+                            ? "bg-[#EEFBF3] text-[#065F46] border-[#10B981] shadow-[2px_2px_0px_#059669]"
+                            : "bg-[#FFF1F2] text-[#9F1239] border-[#F43F5E] shadow-[2px_2px_0px_#BE123C]"
+                        }`}
+                      >
+                        <span
+                          className={`w-6 h-6 rounded-full flex items-center justify-center font-extrabold text-xs ${
+                            !isEvaluated
+                              ? "bg-[#FFD028] text-[#0A1D3D]"
+                              : isStepRight
+                              ? "bg-[#10B981] text-white"
+                              : "bg-[#F43F5E] text-white"
+                          }`}
+                        >
+                          {idx + 1}
+                        </span>
+                        <span className="text-xl">{step.icon}</span>
+                        <span className="flex-1">{step.text}</span>
+                        {isEvaluated && (
+                          <span className="text-base font-bold">
+                            {isStepRight ? "✅" : "❌"}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>

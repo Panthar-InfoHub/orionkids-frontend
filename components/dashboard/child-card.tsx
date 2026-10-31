@@ -16,6 +16,7 @@ import {
   Edit2,
   Loader2,
   ArrowRight,
+  Download,
 } from "lucide-react";
 import type { ChildWithStats } from "@/lib/api/children";
 import { startChildQuest } from "@/lib/api/session";
@@ -44,6 +45,8 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
     hasReport: false,
     latestActivityAt: child.updatedAt || child.createdAt,
   };
+
+  const isAllLevelsCompleted = stats.completedQuests > 0 || stats.completedLevelsCount >= 18;
 
   const handleQuestAction = async () => {
     setIsStartingQuest(true);
@@ -218,8 +221,18 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
 
       {/* Action Buttons Row */}
       <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-        {/* Primary Play/Resume Button */}
-        {stats.hasInProgressQuest ? (
+        {/* Primary Action Button */}
+        {isAllLevelsCompleted ? (
+          <button
+            type="button"
+            className="flex-1 h-11 px-4 rounded-xl bg-[#FFD028] hover:bg-[#ffc524] text-[#0A1D3D] font-black text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            style={{ fontFamily: JAKARTA }}
+            title="Download Your Report"
+          >
+            <Download className="w-4 h-4 text-[#0A1D3D]" />
+            <span>Download Your Report</span>
+          </button>
+        ) : stats.hasInProgressQuest ? (
           <button
             type="button"
             onClick={handleQuestAction}
@@ -247,9 +260,7 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
             ) : (
               <Play className="w-4 h-4 fill-[#0A1D3D]" />
             )}
-            <span>
-              {stats.completedQuests > 0 ? "Play Quest Again" : "Start Quest"}
-            </span>
+            <span>Start Quest</span>
           </button>
         )}
 
@@ -262,8 +273,8 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
           <span>Progress</span>
         </Link>
 
-        {/* View Reports Button if reports exist */}
-        {stats.hasReport && (
+        {/* View Reports Button if reports exist and quest is not all completed */}
+        {stats.hasReport && !isAllLevelsCompleted && (
           <Link
             href={`/dashboard/children/${encodeURIComponent(child.id)}?tab=reports`}
             className="h-11 px-3.5 rounded-xl bg-[#EDE4FF] hover:bg-[#e2d5ff] text-[#4338CA] font-bold text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] flex items-center justify-center gap-1.5 transition-all hover:-translate-y-0.5 active:translate-y-0"

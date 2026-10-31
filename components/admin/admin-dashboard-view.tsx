@@ -37,9 +37,6 @@ export function AdminDashboardView() {
   const [activeStatusFilter, setActiveStatusFilter] = useState<
     "ALL" | "PENDING" | "ACTIVE" | "RESTRICTED"
   >("ALL");
-  const [activeRoleFilter, setActiveRoleFilter] = useState<
-    "ALL" | "USER" | "ADMIN"
-  >("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -74,7 +71,6 @@ export function AdminDashboardView() {
     async (
       pageToLoad: number,
       statusFilter: "ALL" | "PENDING" | "ACTIVE" | "RESTRICTED",
-      roleFilter: "ALL" | "USER" | "ADMIN",
       search: string
     ) => {
       setIsLoading(true);
@@ -84,7 +80,6 @@ export function AdminDashboardView() {
           page: pageToLoad,
           limit: 10,
           status: statusFilter !== "ALL" ? statusFilter : undefined,
-          role: roleFilter !== "ALL" ? roleFilter : undefined,
           search: search || undefined,
         });
         setUsers(result.users);
@@ -105,8 +100,8 @@ export function AdminDashboardView() {
 
   // Initial fetch and reload on page/filter/search changes
   useEffect(() => {
-    loadUsers(currentPage, activeStatusFilter, activeRoleFilter, debouncedSearch);
-  }, [currentPage, activeStatusFilter, activeRoleFilter, debouncedSearch, loadUsers]);
+    loadUsers(currentPage, activeStatusFilter, debouncedSearch);
+  }, [currentPage, activeStatusFilter, debouncedSearch, loadUsers]);
 
   useEffect(() => {
     loadOverview();
@@ -120,18 +115,13 @@ export function AdminDashboardView() {
     setCurrentPage(1);
   };
 
-  const handleRoleFilterChange = (newRole: "ALL" | "USER" | "ADMIN") => {
-    setActiveRoleFilter(newRole);
-    setCurrentPage(1);
-  };
-
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
 
   const handleRefresh = async () => {
     await Promise.all([
-      loadUsers(currentPage, activeStatusFilter, activeRoleFilter, debouncedSearch),
+      loadUsers(currentPage, activeStatusFilter, debouncedSearch),
       loadOverview(),
     ]);
   };
@@ -144,7 +134,7 @@ export function AdminDashboardView() {
     await updateAdminUserStatus(userId, payload);
     // Reload both the table and the metrics
     await Promise.all([
-      loadUsers(currentPage, activeStatusFilter, activeRoleFilter, debouncedSearch),
+      loadUsers(currentPage, activeStatusFilter, debouncedSearch),
       loadOverview(),
     ]);
   };
@@ -381,10 +371,8 @@ export function AdminDashboardView() {
         meta={meta}
         isLoading={isLoading}
         activeStatusFilter={activeStatusFilter}
-        activeRoleFilter={activeRoleFilter}
         searchQuery={searchQuery}
         onStatusFilterChange={handleStatusFilterChange}
-        onRoleFilterChange={handleRoleFilterChange}
         onSearchChange={setSearchQuery}
         onPageChange={handlePageChange}
         onRefresh={handleRefresh}

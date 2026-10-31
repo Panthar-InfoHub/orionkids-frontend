@@ -54,7 +54,7 @@ export function HeroSection() {
               }}
             >
               <span className="text-xs leading-none shrink-0">⚡</span>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] sm:text-[12px] font-[800] tracking-[0.3px] sm:tracking-[0.5px] uppercase leading-tight sm:leading-none text-[#0A1D3D]">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11.5px] sm:text-[12px] font-[800] tracking-[0.3px] sm:tracking-[0.5px] uppercase leading-tight sm:leading-none text-[#0A1D3D]">
                 <span>SUPER-POWERS FOR KIDS · CLASSES 1–4</span>
                 <span className="whitespace-nowrap">⭐ 100% KID TESTED!</span>
               </div>
@@ -118,7 +118,7 @@ export function HeroSection() {
             <div className="flex items-center gap-2 mb-2">
               <span className="w-4 h-[3px] bg-[#FF7A00] rounded-full shrink-0"></span>
               <span
-                className="text-[11px] font-[700] uppercase tracking-[1.4px] leading-none text-[#526176]"
+                className="text-[12.5px] sm:text-[12px] xl:text-[13px] font-[700] uppercase tracking-[1.4px] leading-none text-[#526176]"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
@@ -129,7 +129,7 @@ export function HeroSection() {
 
             {/* Descriptive Paragraph */}
             <p
-              className="text-[14px] sm:text-[15px] xl:text-[16px] font-[400] text-[#526176] leading-[160%] tracking-[0%] max-w-xl mb-5"
+              className="text-[15px] sm:text-[15px] xl:text-[16px] font-[400] text-[#526176] leading-[160%] tracking-[0%] max-w-xl mb-5"
               style={{
                 fontFamily: "var(--font-inter), 'Inter', sans-serif",
               }}
@@ -141,7 +141,7 @@ export function HeroSection() {
             <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 xl:gap-3 mb-6">
               {/* Badge 1: Game-Based Activities */}
               <div
-                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#E0F2FE] border-[1.5px] border-[#7DD3FC] text-[12px] sm:text-[13px] font-[700] text-[#0A1D3D] hover:bg-[#D5EEFD] transition-colors cursor-default select-none shadow-[0px_1px_2px_rgba(0,0,0,0.04)]"
+                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-[#E0F2FE] border-[1.5px] border-[#7DD3FC] text-[13px] sm:text-[13px] xl:text-[14px] font-[700] text-[#0A1D3D] hover:bg-[#D5EEFD] transition-colors cursor-default select-none shadow-[0px_1px_2px_rgba(0,0,0,0.04)]"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
@@ -171,7 +171,7 @@ export function HeroSection() {
 
               {/* Badge 2: AI-Assisted Insights */}
               <div
-                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#E0F2FE] border-[1.5px] border-[#7DD3FC] text-[12px] sm:text-[13px] font-[700] text-[#0A1D3D] hover:bg-[#D5EEFD] transition-colors cursor-default select-none shadow-[0px_1px_2px_rgba(0,0,0,0.04)]"
+                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-[#E0F2FE] border-[1.5px] border-[#7DD3FC] text-[13px] sm:text-[13px] xl:text-[14px] font-[700] text-[#0A1D3D] hover:bg-[#D5EEFD] transition-colors cursor-default select-none shadow-[0px_1px_2px_rgba(0,0,0,0.04)]"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
@@ -193,7 +193,7 @@ export function HeroSection() {
 
               {/* Badge 3: Personalized Growth Trails */}
               <div
-                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#E0F2FE] border-[1.5px] border-[#7DD3FC] text-[12px] sm:text-[13px] font-[700] text-[#0A1D3D] hover:bg-[#D5EEFD] transition-colors cursor-default select-none shadow-[0px_1px_2px_rgba(0,0,0,0.04)]"
+                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-[#E0F2FE] border-[1.5px] border-[#7DD3FC] text-[13px] sm:text-[13px] xl:text-[14px] font-[700] text-[#0A1D3D] hover:bg-[#D5EEFD] transition-colors cursor-default select-none shadow-[0px_1px_2px_rgba(0,0,0,0.04)]"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}
@@ -227,11 +227,12 @@ export function HeroSection() {
             </div>
 
             {/* Bottom Action CTA Buttons */}
-            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 xl:gap-3.5 w-full">
+            <div className="flex flex-col sm:flex-row sm:flex-nowrap items-stretch sm:items-center gap-3 xl:gap-3.5 w-full">
 
               {/* Left Button: Enjoy a Quick 2-Minute Adventure */}
               <button
-                className="h-[48px] sm:h-[50px] xl:h-[52px] px-4 sm:px-5 xl:px-6 rounded-2xl bg-white text-[#0A1D3D] font-black text-xs sm:text-[13px] md:text-sm xl:text-[15px] whitespace-nowrap border-[2.5px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_6px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center gap-2 sm:gap-2.5 transition-all cursor-pointer select-none"
+                type="button"
+                className="h-[48px] sm:h-[50px] xl:h-[52px] px-4 sm:px-4 md:px-5 xl:px-6 rounded-2xl bg-white text-[#0A1D3D] font-black text-sm sm:text-[13px] md:text-sm xl:text-[15px] whitespace-nowrap border-[2.5px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_6px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center gap-2 sm:gap-2.5 transition-all cursor-pointer select-none shrink-0"
               >
                 {/* Circular play icon matching exact Figma specs */}
                 <div className="w-[22px] h-[22px] xl:w-[24px] xl:h-[24px] rounded-full border-[2px] border-[#0A1D3D] bg-[#D8F3FF] flex items-center justify-center shrink-0 pt-[1px] pb-[2px] select-none">
@@ -261,7 +262,7 @@ export function HeroSection() {
                 type="button"
                 onClick={handleLaunchQuest}
                 disabled={isRouting}
-                className="h-[48px] sm:h-[50px] xl:h-[52px] px-5 sm:px-6 xl:px-7 rounded-2xl bg-[#D8F3FF] text-[#0A1D3D] font-black text-xs sm:text-[13px] md:text-sm xl:text-[15px] whitespace-nowrap border-[2.5px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_6px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center gap-2 transition-all cursor-pointer select-none disabled:opacity-75"
+                className="h-[48px] sm:h-[50px] xl:h-[52px] min-w-full sm:min-w-[195px] xl:min-w-[215px] px-4 sm:px-4 md:px-5 xl:px-6 rounded-2xl bg-[#D8F3FF] text-[#0A1D3D] font-black text-sm sm:text-[13px] md:text-sm xl:text-[15px] whitespace-nowrap border-[2.5px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_6px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center gap-2 transition-all cursor-pointer select-none disabled:opacity-75 shrink-0"
               >
                 {isRouting ? (
                   <>

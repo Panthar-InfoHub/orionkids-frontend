@@ -56,6 +56,7 @@ export function RuleDiscoveryGameArena({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [nextLevelRoute, setNextLevelRoute] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
   const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
@@ -91,7 +92,8 @@ export function RuleDiscoveryGameArena({
   }, [activeSessionId, activeAttemptId, level]);
 
   const handleSelectBucket = async (bucket: typeof TARGET_BUCKETS[0]) => {
-    if (submissionStatus !== "idle") return;
+    if (submissionStatus !== "idle" || isLocked) return;
+    setIsLocked(true);
     const currentCard = CARDS_TO_SORT[cardIdx];
 
     const isMatch =
@@ -101,9 +103,11 @@ export function RuleDiscoveryGameArena({
         ? bucket.shape === currentCard.shape
         : bucket.count === currentCard.count;
 
+    const isLastTrial = cardIdx + 1 >= CARDS_TO_SORT.length;
+
     const newCorrect = isMatch ? correctCount + 1 : correctCount;
     setCorrectCount(newCorrect);
-    setFeedback(isMatch ? "✨ Rule Matched!" : "❌ Try another attribute!");
+    setFeedback(isMatch ? "✨ Rule Matched! +1 🌟" : "❌ Try another attribute!");
 
     if (activeSessionId && activeAttemptId) {
       saveQuestCheckpoint(activeSessionId, activeAttemptId, {
@@ -113,9 +117,11 @@ export function RuleDiscoveryGameArena({
       });
     }
 
+    const holdDuration = isLastTrial ? 2200 : 1200;
     setTimeout(async () => {
       setFeedback(null);
-      if (cardIdx + 1 < CARDS_TO_SORT.length) {
+      setIsLocked(false);
+      if (!isLastTrial) {
         setCardIdx((i) => i + 1);
       } else {
         setSubmissionStatus("submitting");
@@ -151,7 +157,7 @@ export function RuleDiscoveryGameArena({
           setNextLevelRoute(level < 3 ? `/games/rule-discovery?level=${level + 1}` : "/games/story-sequencing?level=1");
         }
       }
-    }, 600);
+    }, holdDuration);
   };
 
   const isFinished = cardIdx >= CARDS_TO_SORT.length || submissionStatus === "success" || submissionStatus === "error";
@@ -171,6 +177,7 @@ export function RuleDiscoveryGameArena({
             <h2 className="text-[26px] sm:text-[30px] font-extrabold text-white mb-2" style={{ fontFamily: JAKARTA }}>
               {submissionStatus === "error" ? "Level Verification Required" : `Rule Discovery Level ${level} Complete!`}
             </h2>
+
             <p className="text-[15px] text-[#E0D3F8] max-w-[460px] mb-6 text-center leading-relaxed" style={{ fontFamily: JAKARTA }}>
               {submissionStatus === "submitting"
                 ? "Recording your cognitive flexibility score..."
