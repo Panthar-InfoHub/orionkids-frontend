@@ -8,19 +8,19 @@ import {
 
 export const PRINTABLE_GRADES: PrintableGradeMeta[] = [
   { id: "All Grades", label: "All Grades", ageRange: "All Ages" },
-  { id: "Pre-K & K (Ages 4-5)", label: "Pre-K & K (Ages 4-5)", ageRange: "Ages 4-5" },
-  { id: "Class 1-2 (Ages 6-7)", label: "Class 1-2 (Ages 6-7)", ageRange: "Ages 6-7" },
-  { id: "Class 3-4 (Ages 8-9)", label: "Class 3-4 (Ages 8-9)", ageRange: "Ages 8-9" },
-  { id: "Class 5+ (Ages 10+)", label: "Class 5+ (Ages 10+)", ageRange: "Ages 10+" },
+  { id: "Pre-K & K (Ages 4-5)", label: "Pre-K & K (4-5)", ageRange: "Ages 4-5" },
+  { id: "Class 1-2 (Ages 6-7)", label: "Class 1-2 (6-7)", ageRange: "Ages 6-7" },
+  { id: "Class 3-4 (Ages 8-9)", label: "Class 3-4 (8-9)", ageRange: "Ages 8-9" },
+  { id: "Class 5+ (Ages 10+)", label: "Class 5+ (10+)", ageRange: "Ages 10+" },
 ];
 
 export const PRINTABLE_CATEGORIES: PrintableCategoryMeta[] = [
-  { id: "All Printables (36)", label: "All Printables (36)", icon: "⭐", count: 36 },
-  { id: "Puzzles & Crosswords", label: "Puzzles & Crosswords", icon: "🧩", count: 7 },
-  { id: "Coloring & Doodles", label: "Coloring & Doodles", icon: "🎨", count: 11 },
-  { id: "Thinking & Focus Mats", label: "Thinking & Focus Mats", icon: "🧠", count: 10 },
-  { id: "Cut & Fold Crafts", label: "Cut & Fold Crafts", icon: "✂️", count: 6 },
-  { id: "Teacher Organizers", label: "Teacher Organizers", icon: "🎒", count: 2 },
+  { id: "All Printables (36)", label: "All (36)", icon: "⭐", count: 36 },
+  { id: "Puzzles & Crosswords", label: "Puzzles", icon: "🧩", count: 7 },
+  { id: "Coloring & Doodles", label: "Coloring", icon: "🎨", count: 11 },
+  { id: "Thinking & Focus Mats", label: "Focus Mats", icon: "🧠", count: 10 },
+  { id: "Cut & Fold Crafts", label: "Crafts", icon: "✂️", count: 6 },
+  { id: "Teacher Organizers", label: "Organizers", icon: "🎒", count: 2 },
 ];
 
 export const SPOTLIGHT_PRINTABLE: PrintableItem = {

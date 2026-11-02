@@ -52,7 +52,7 @@ const STEPS = [
     numColor: "#0A1D3D",
     category: "ACTION",
     title: "Plan a Next Step",
-    description: "Utilize a picture prompt or hands-on activity to share simple insights with families.",
+    description: "Utilize a picture prompt or hands on activity to share simple insights with families.",
     pillIcon: "📁",
     pillText: "Practical Ideas",
   },
@@ -101,7 +101,7 @@ export function ForSchoolsStepsSection() {
               color: NAVY,
             }}
           >
-            Bring OrionKids into Your School
+            Bring OrionKids Into Your School
           </h2>
 
           {/* Subtitle Description */}

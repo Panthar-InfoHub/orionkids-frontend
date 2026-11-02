@@ -78,14 +78,14 @@ export default function CardFlipPage({ searchParams }: PageProps) {
         totalLevelsCount={18}
       />
 
-      <main className="max-w-[1264px] w-full mx-auto px-4 sm:px-8 lg:px-0 py-4 sm:py-6 flex-1 flex flex-col gap-6">
+      <main className="max-w-[1264px] w-full mx-auto px-4 sm:px-6 lg:px-0 py-1.5 sm:py-2 flex-1 flex flex-col gap-2 sm:gap-2.5 justify-center">
         <Suspense fallback={<CardFlipSkeleton />}>
           <CardFlipContent searchParams={searchParams} />
         </Suspense>
       </main>
 
-      <footer className="w-full border-t border-[#D8DFE8] bg-transparent mt-8">
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[88px] py-[22px] min-h-[58px] flex flex-col sm:flex-row items-center justify-between gap-3">
+      <footer className="w-full border-t border-[#D8DFE8] bg-transparent mt-1">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[88px] py-1.5 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p
             style={{
               fontFamily: JAKARTA,

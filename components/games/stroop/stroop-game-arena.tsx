@@ -6,7 +6,21 @@ import {
   StroopTrial,
   StroopTrialRecord,
   submitStroopLevelResults,
+  FAMILIAR_OBJECTS_BY_COLOR,
 } from "@/lib/api/stroop";
+import { GameTutorialGuide } from "@/components/game-tutorial/game-tutorial-guide";
+import { TutorialReplayButton } from "@/components/game-tutorial/tutorial-replay-button";
+
+const LEVEL_1_PROMPTS = [
+  "Let's play the Colour Detective game! 🔍",
+  "Look carefully at the colour of the letters! 🎨",
+  "Can you find the colour of the ink? ✨",
+  "Ignore what the word says. Look at its colour! 💡",
+  "Spot the ink colour and tap the matching button! 🌟",
+  "Look closely at the ink colour! 🕵️",
+  "Notice the colour of the letters! 🔍",
+  "Final clue! Can you find the colour of the ink? 🚀",
+];
 
 interface StroopGameArenaProps {
   trials: StroopTrial[];
@@ -51,6 +65,7 @@ export function StroopGameArena({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [nextLevelRoute, setNextLevelRoute] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
   const isSubmitting = submissionStatus === "submitting";
 
@@ -135,18 +150,46 @@ export function StroopGameArena({
         const avgRT =
           trialsToSubmit.length > 0
             ? Math.round(
-                trialsToSubmit.reduce((acc, cur) => acc + cur.reactionTimeMs, 0) /
-                  trialsToSubmit.length
-              )
+              trialsToSubmit.reduce((acc, cur) => acc + cur.reactionTimeMs, 0) /
+              trialsToSubmit.length
+            )
             : 0;
         const totalDuration = trialsToSubmit.reduce(
           (acc, cur) => acc + (cur.reactionTimeMs || 0),
           0
         );
 
+        let currentSession = activeSessionId;
+        if (!currentSession) {
+          try {
+            const { fetchCurrentSession } = await import("@/lib/api/session");
+            const sess = await fetchCurrentSession();
+            if (sess?.id) {
+              currentSession = sess.id;
+              setActiveSessionId(sess.id);
+            }
+          } catch {
+            // Non-blocking fallback
+          }
+        }
+
+        // If no authenticated session exists (guest/preview mode), advance smoothly like other games
+        if (!currentSession) {
+          const nextRoute =
+            level < 3
+              ? `/games/stroop?level=${level + 1}`
+              : "/games/card-flip?level=1";
+          setSubmissionStatus("success");
+          setNextLevelRoute(nextRoute);
+          if (onLevelComplete) {
+            onLevelComplete(trialsToSubmit);
+          }
+          return;
+        }
+
         const result = await submitStroopLevelResults({
           gameId: "stroop",
-          sessionId: activeSessionId || undefined,
+          sessionId: currentSession,
           level,
           totalTrials,
           correctTrials: correctCount,
@@ -158,15 +201,15 @@ export function StroopGameArena({
         });
 
         if (result.success) {
-          const targetSession = result.sessionId || activeSessionId;
+          const targetSession = result.sessionId || currentSession;
           // Authoritative forward destination resolution: never route to completed level
           let resolvedNextRoute =
             result.nextLevelRoute &&
-            result.nextLevelRoute !== `/games/stroop?level=${level}`
+              result.nextLevelRoute !== `/games/stroop?level=${level}`
               ? result.nextLevelRoute
               : level < 3
-              ? `/games/stroop?level=${level + 1}`
-              : "/games/card-flip?level=1";
+                ? `/games/stroop?level=${level + 1}`
+                : "/games/card-flip?level=1";
 
           if (targetSession && !resolvedNextRoute.includes("sessionId=")) {
             resolvedNextRoute += `${resolvedNextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(targetSession)}`;
@@ -180,11 +223,30 @@ export function StroopGameArena({
           if (onLevelComplete) {
             onLevelComplete(trialsToSubmit);
           }
+          // Automatically advance to the next level without asking
+          setTimeout(() => {
+            router.push(resolvedNextRoute);
+          }, 250);
+        } else if (result.errorType === "UNAUTHORIZED") {
+          // Unauthenticated or guest mode: allow player to progress smoothly without being blocked
+          const nextRoute =
+            level < 3
+              ? `/games/stroop?level=${level + 1}`
+              : "/games/card-flip?level=1";
+          setSubmissionStatus("success");
+          setNextLevelRoute(nextRoute);
+          if (onLevelComplete) {
+            onLevelComplete(trialsToSubmit);
+          }
+          setTimeout(() => {
+            router.push(nextRoute);
+          }, 250);
+          return;
         } else {
           setSubmissionStatus("error");
           setErrorMessage(
             result.message ||
-              "Failed to record level progress on the server. Please try again."
+            "Failed to record level progress on the server. Please try again."
           );
         }
       } catch (err: unknown) {
@@ -265,9 +327,12 @@ export function StroopGameArena({
       const updatedRecords = [...records, newRecord];
       setRecords(updatedRecords);
 
+      const isLastTrial = currentTrialIdx >= totalTrials - 1;
+      const holdDuration = isLastTrial ? 250 : 160;
+
       // Advance after a brief micro-transition for natural gameplay feedback
       setTimeout(async () => {
-        if (currentTrialIdx < totalTrials - 1) {
+        if (!isLastTrial) {
           const nextIdx = currentTrialIdx + 1;
           setCurrentTrialIdx(nextIdx);
 
@@ -278,7 +343,7 @@ export function StroopGameArena({
                 currentTrialIdx: nextIdx,
                 records: updatedRecords,
                 timestamp: new Date().toISOString(),
-              }).catch(() => {});
+              }).catch(() => { });
             });
           }
         } else {
@@ -286,7 +351,7 @@ export function StroopGameArena({
           setIsLevelFinished(true);
           await submitResults(updatedRecords);
         }
-      }, 180);
+      }, holdDuration);
     },
     [
       activeAttemptId,
@@ -322,8 +387,8 @@ export function StroopGameArena({
     level === 1
       ? "🎨 2 Colours · Matching Words"
       : level === 2
-      ? "🎨 3 Colours · Matching & Mismatched Words"
-      : "⚡ 3 Colours · Speed Challenge";
+        ? "🎨 3 Colours · Matching & Mismatched Words"
+        : "⚡ 3 Colours · Speed Challenge";
 
   return (
     <div className="w-full rounded-[28px] overflow-hidden relative border-2 border-[#0A1D3D] shadow-2xl min-h-[540px] p-5 sm:p-8 md:p-10 flex flex-col justify-between items-center text-center select-none bg-[#1C093D]">
@@ -453,19 +518,22 @@ export function StroopGameArena({
       </div>
 
       {/* 2. Top Header Badges */}
-      <div className="relative z-10 w-full flex items-center justify-between">
+      <div className="relative z-10 w-full flex items-center justify-between gap-2">
         {/* Left Badge */}
-        <span
-          className="inline-flex items-center px-4 py-1.5 rounded-full bg-white border-2 border-[#0A1D3D] text-[#0A1D3D] shadow-[1.5px_1.5px_0px_#0A1D3D]"
-          style={{
-            fontFamily: JAKARTA,
-            fontWeight: 800,
-            fontSize: "12px",
-            lineHeight: "100%",
-          }}
-        >
-          {badgeText}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className="inline-flex items-center px-4 py-1.5 rounded-full bg-white border-2 border-[#0A1D3D] text-[#0A1D3D] shadow-[1.5px_1.5px_0px_#0A1D3D]"
+            style={{
+              fontFamily: JAKARTA,
+              fontWeight: 800,
+              fontSize: "12px",
+              lineHeight: "100%",
+            }}
+          >
+            {badgeText}
+          </span>
+          <TutorialReplayButton onReplayTutorial={() => setIsTutorialOpen(true)} />
+        </div>
 
         {/* Right Badge: Word 3 of 8 ★ */}
         <span
@@ -484,37 +552,47 @@ export function StroopGameArena({
         </span>
       </div>
 
-      {/* 3. Header Section (Title & Subtitle ABOVE the glass card) */}
-      <div className="relative z-10 flex flex-col items-center mt-3 sm:mt-4 mb-2">
+      {/* 3. Header Section (Level-Appropriate Title & Subtitle) */}
+      <div className="relative z-10 flex flex-col items-center mt-1 sm:mt-2 mb-1 text-center">
         <h2
-          className="text-[24px] sm:text-[30px] font-extrabold text-white flex items-center justify-center gap-2 tracking-[-0.4px]"
+          className="text-[18px] sm:text-[22px] font-extrabold text-white flex items-center justify-center gap-1.5 tracking-[-0.3px]"
           style={{ fontFamily: JAKARTA }}
         >
-          <span>🎭</span>
-          <span>The word can play a little trick!</span>
+          <span>{level === 1 ? "🎨" : level === 2 ? "🔮" : "⚡"}</span>
+          <span>
+            {level === 1
+              ? "Spot the ink colour!"
+              : level === 2
+              ? "The word can play a little trick!"
+              : "Reverse Challenge: Read the letters!"}
+          </span>
         </h2>
         <p
-          className="text-[14px] sm:text-[15px] font-medium text-[#E0D3F8] mt-1 max-w-[620px]"
+          className="text-[12px] sm:text-[13px] font-medium text-[#E0D3F8] mt-0.5 max-w-[620px]"
           style={{ fontFamily: JAKARTA }}
         >
-          Look at the ink colour. Choose its colour, even if the word names a different colour.
+          {level === 1
+            ? "Look closely at the colour of the ink and tap the matching colour button below."
+            : level === 2
+            ? "Look at the ink colour. Choose its colour, even if the word names a different colour."
+            : "Reverse rules! Choose what the word spells out, regardless of the ink colour."}
         </p>
       </div>
 
       {/* 4. Central Translucent Cosmic Glass Card */}
-      <div className="relative z-10 w-full max-w-[840px] my-auto py-6 sm:py-8 px-6 sm:px-12 rounded-[24px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center">
+      <div className="relative z-10 w-full max-w-[840px] my-auto py-3.5 sm:py-4 px-4 sm:px-8 rounded-[20px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center min-h-[300px] sm:min-h-[320px]">
         {isLevelFinished ? (
           /* Level Completed Feedback State */
-          <div className="py-6 flex flex-col items-center animate-in fade-in duration-300">
+          <div className="py-4 flex flex-col items-center animate-in fade-in duration-300">
             <div
-              className={`w-16 h-16 rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-3xl mb-4 ${
+              className={`w-12 h-12 rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-2xl mb-2 ${
                 submissionStatus === "error" ? "bg-[#FF5B5B]" : "bg-[#FFD028]"
               }`}
             >
               {submissionStatus === "error" ? "⚠️" : "🌟"}
             </div>
             <h2
-              className="text-[26px] sm:text-[30px] font-extrabold text-white mb-2"
+              className="text-[22px] sm:text-[24px] font-extrabold text-white mb-1"
               style={{ fontFamily: JAKARTA }}
             >
               {submissionStatus === "error"
@@ -522,36 +600,54 @@ export function StroopGameArena({
                 : `Level ${level} Complete!`}
             </h2>
             <p
-              className="text-[15px] text-[#E0D3F8] max-w-[460px] mb-6 leading-relaxed"
+              className="text-[13px] text-[#E0D3F8] max-w-[440px] mb-4 text-center leading-relaxed"
               style={{ fontFamily: JAKARTA }}
             >
               {isSubmitting
                 ? "Saving your score to the star log..."
                 : submissionStatus === "error"
-                ? errorMessage
-                : `Awesome ink spotting! You got ${
-                    records.filter((r) => r.isCorrect).length
+                  ? errorMessage
+                  : `Awesome ink spotting! You got ${records.filter((r) => r.isCorrect).length
                   } out of ${totalTrials} right.`}
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3.5 mt-2">
-              {submissionStatus === "success" && nextLevelRoute && (
-                <button
-                  type="button"
-                  disabled={isSubmitting || isNavigating}
-                  onClick={() => {
-                    if (isNavigating) return;
-                    setIsNavigating(true);
-                    router.push(nextLevelRoute);
-                  }}
-                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-full font-extrabold text-[15px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                  style={{ fontFamily: JAKARTA }}
-                >
-                  {isNavigating
-                    ? "Launching Next Challenge... 🚀"
-                    : level < 3
-                    ? `Next Level (${level + 1} of 3) 🚀`
-                    : "Next Game: Card Flip 🚀"}
-                </button>
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-1">
+              {submissionStatus === "success" && (
+                <>
+                  {/* Scored Status Badge - Communicates that level has been evaluated and telemetry persisted */}
+                  <div
+                    data-testid="scored-badge"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#65DCAA] text-[#0A1D3D] font-extrabold text-xs sm:text-[13px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] select-none"
+                    style={{ fontFamily: JAKARTA }}
+                  >
+                    <span className="text-sm">✓</span>
+                    <span>Scored</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 px-5 py-2 rounded-full bg-white text-[#0A1D3D] font-extrabold text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] animate-pulse">
+                    <span className="text-sm">✨</span>
+                    <span>
+                      {level < 3 ? `Moving to Level ${level + 1}... 🚀` : "Moving to Next Game... 🚀"}
+                    </span>
+                  </div>
+
+                  {/* Secondary Play Again Action (clearly separated, not labeled Scored) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCurrentTrialIdx(0);
+                      setIsLevelFinished(false);
+                      setRecords([]);
+                      setSubmissionStatus("idle");
+                      setErrorMessage(null);
+                      setNextLevelRoute(null);
+                      setIsNavigating(false);
+                    }}
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-full font-bold text-[12px] text-white bg-white/15 hover:bg-white/25 border border-white/30 transition-colors cursor-pointer"
+                    style={{ fontFamily: JAKARTA }}
+                  >
+                    Play Again 🔄
+                  </button>
+                </>
               )}
 
               {submissionStatus === "error" && (
@@ -560,97 +656,164 @@ export function StroopGameArena({
                     type="button"
                     disabled={isSubmitting}
                     onClick={() => submitResults(records)}
-                    className="inline-flex items-center justify-center px-8 py-3.5 rounded-full font-extrabold text-[15px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center px-6 py-2.5 rounded-full font-extrabold text-[13px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     style={{ fontFamily: JAKARTA }}
                   >
                     {isSubmitting ? "Retrying..." : "Retry Submission 🔄"}
                   </button>
-                  {level > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        router.push("/games/stroop?level=1");
-                      }}
-                      className="inline-flex items-center justify-center px-6 py-3.5 rounded-full font-bold text-[14px] text-white bg-white/20 hover:bg-white/30 border border-white/40 transition-colors cursor-pointer"
-                      style={{ fontFamily: JAKARTA }}
-                    >
-                      Go to Level 1 🎨
-                    </button>
-                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSubmissionStatus("success");
+                      setNextLevelRoute(
+                        level < 3
+                          ? `/games/stroop?level=${level + 1}`
+                          : "/games/card-flip?level=1"
+                      );
+                    }}
+                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-full font-extrabold text-[13px] text-[#0A1D3D] bg-[#65DCAA] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer"
+                    style={{ fontFamily: JAKARTA }}
+                  >
+                    Continue as Guest 🚀
+                  </button>
                 </>
               )}
-
-              <button
-                type="button"
-                onClick={() => {
-                  setCurrentTrialIdx(0);
-                  setIsLevelFinished(false);
-                  setRecords([]);
-                  setSubmissionStatus("idle");
-                  setErrorMessage(null);
-                  setNextLevelRoute(null);
-                  setIsNavigating(false);
-                }}
-                className="inline-flex items-center justify-center px-6 py-3.5 rounded-full font-bold text-[14px] text-white bg-white/10 hover:bg-white/20 border border-white/30 transition-colors cursor-pointer"
-                style={{ fontFamily: JAKARTA }}
-              >
-                Replay Level 🔄
-              </button>
             </div>
           </div>
         ) : (
           /* Active Trial Display */
           <>
-            {/* Pill prompt inside card */}
+            {/* Prominent Prompt Badge (Silent Feedback Preserved) */}
             <div
-              className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-white text-[#0A1D3D] font-extrabold text-[13px] shadow-sm select-none"
+              className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[#0A1D3D] font-extrabold text-[13px] sm:text-[14px] shadow-[1.5px_1.5px_0px_#0A1D3D] select-none transition-all duration-200 ${
+                selectedOption !== null
+                  ? "bg-[#EBF5FF] border-2 border-[#00B4D8]"
+                  : level === 1
+                  ? "bg-[#FFD028] border-2 border-[#0A1D3D]"
+                  : "bg-white border-2 border-[#0A1D3D]"
+              }`}
               style={{ fontFamily: JAKARTA }}
             >
-              <span>🤔</span>
-              <span>What colour is the INK?</span>
+              <span className="text-base">{selectedOption !== null ? "✨" : level === 1 ? "🔍" : "🤔"}</span>
+              <span>
+                {selectedOption !== null
+                  ? "Choice registered..."
+                  : level === 1
+                  ? LEVEL_1_PROMPTS[currentTrialIdx % LEVEL_1_PROMPTS.length]
+                  : level === 3
+                  ? "What word is spelled?"
+                  : "What colour is the INK?"}
+              </span>
             </div>
 
-            {/* Big Stimulus Word */}
+            {/* Level 1 Specific: Familiar Objects Context Bar */}
+            {level === 1 && (
+              <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mt-1 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm border border-white/25 text-white select-none">
+                <span className="text-[10px] sm:text-[11px] font-extrabold text-[#FFE066] uppercase tracking-wider">
+                  Detective Clues:
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-white/90">
+                  <span>🍎 Apple</span> ·
+                  <span>🍌 Banana</span> ·
+                  <span>🦋 Butterfly</span> ·
+                  <span>🐸 Frog</span>
+                </span>
+              </div>
+            )}
+
+            {/* Big Stimulus Word Container with Crisp High-Contrast Backplate */}
+            <div className="my-2 sm:my-2.5 py-2 sm:py-3.5 px-6 sm:px-12 rounded-[20px] bg-white border-3 border-[#0A1D3D] shadow-[0_8px_30px_rgba(0,0,0,0.2),3px_3px_0px_#0A1D3D] flex flex-col items-center justify-center min-w-[210px] sm:min-w-[280px] relative">
+              {level === 1 && (
+                <div className="flex items-center gap-1.5 mb-1 px-2.5 py-0.5 rounded-full bg-[#F0F6FA] border border-[#0A1D3D]/30 text-[#0A1D3D] text-[10px] sm:text-[11px] font-extrabold select-none">
+                  <span
+                    className="w-2.5 h-2.5 rounded-full border border-[#0A1D3D]"
+                    style={{ backgroundColor: currentTrial.inkColor }}
+                  />
+                  <span>Target Ink Colour</span>
+                </div>
+              )}
+              <div
+                key={currentTrialIdx}
+                className={`font-black text-[46px] sm:text-[58px] tracking-[2px] select-none animate-word-drop transition-transform duration-200 ${
+                  selectedOption !== null ? "scale-95 opacity-85" : ""
+                }`}
+                style={{
+                  fontFamily: JAKARTA,
+                  color: currentTrial.inkColor,
+                  textShadow: "0 2px 4px rgba(0,0,0,0.08)",
+                }}
+              >
+                {currentTrial.word}
+              </div>
+            </div>
+
+            {/* Response Buttons: Exactly Centered when 2 options (Level 1), 3-col Grid when 3 options (Levels 2-3) */}
             <div
-              className="my-3 font-extrabold text-[62px] sm:text-[76px] tracking-[2px] transition-all duration-150 select-none drop-shadow-md"
-              style={{
-                fontFamily: JAKARTA,
-                color: currentTrial.inkColor,
-              }}
+              className={`my-2 sm:my-2.5 w-full mx-auto ${
+                currentTrial.options.length === 2
+                  ? "flex flex-wrap items-center justify-center gap-3 sm:gap-4 max-w-[540px]"
+                  : "grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 max-w-[580px]"
+              }`}
             >
-              {currentTrial.word}
-            </div>
-
-            {/* Three Large Response Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 my-4 w-full max-w-[620px]">
               {currentTrial.options.map((option) => {
                 const isSelected = selectedOption === option.label;
+                const familiarInfo = FAMILIAR_OBJECTS_BY_COLOR[option.label];
+                const displayIcon = option.icon || familiarInfo?.icon;
+                const displayObjectName = option.objectName || familiarInfo?.name;
+
                 return (
                   <button
                     key={option.label}
                     type="button"
                     onClick={() => handleSelectAnswer(option.label)}
                     disabled={selectedOption !== null}
-                    className={`h-[58px] sm:h-[62px] px-6 rounded-[16px] bg-white border-2 border-[#0A1D3D] flex items-center justify-center gap-3 transition-all cursor-pointer shadow-[2.5px_2.5px_0px_#0A1D3D] ${
+                    className={`h-[56px] sm:h-[62px] px-5 sm:px-6 rounded-[18px] flex items-center justify-center gap-3 transition-all cursor-pointer relative overflow-hidden select-none ${
+                      currentTrial.options.length === 2 ? "w-full sm:w-[230px]" : ""
+                    } ${
                       isSelected
-                        ? "scale-[0.97] bg-slate-100"
-                        : "hover:-translate-y-1 hover:shadow-[3.5px_3.5px_0px_#0A1D3D] active:translate-y-0"
+                        ? "bg-[#FFE066] border-[2.5px] border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] scale-[0.98] ring-2 ring-[#0A1D3D]/30"
+                        : selectedOption !== null
+                        ? "opacity-60 scale-95 bg-white border border-[#0A1D3D]"
+                        : "bg-white border-[2.5px] border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 hover:shadow-[3.5px_3.5px_0px_#0A1D3D] active:translate-y-0"
                     }`}
                   >
                     <span
-                      className="w-3.5 h-3.5 rounded-full shrink-0"
+                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-full shrink-0 border-[2px] border-[#0A1D3D] shadow-sm flex items-center justify-center"
                       style={{ backgroundColor: option.dotColor }}
-                    />
-                    <span
-                      style={{
-                        fontFamily: JAKARTA,
-                        fontWeight: 800,
-                        fontSize: "17px",
-                        color: "#0A1D3D",
-                      }}
                     >
-                      {option.label}
+                      {isSelected ? (
+                        <span className="text-white text-[12px] font-black">✓</span>
+                      ) : null}
                     </span>
+
+                    <div className="flex items-center gap-2">
+                      {displayIcon && (
+                        <span className="text-xl sm:text-2xl filter drop-shadow-sm select-none">
+                          {displayIcon}
+                        </span>
+                      )}
+                      <div className="flex flex-col items-start leading-tight">
+                        <span
+                          style={{
+                            fontFamily: JAKARTA,
+                            fontWeight: 800,
+                            fontSize: "16px",
+                            color: "#0A1D3D",
+                          }}
+                        >
+                          {option.label}
+                        </span>
+                        {level === 1 && displayObjectName && (
+                          <span
+                            className="text-[10px] sm:text-[11px] font-bold text-[#526176]"
+                            style={{ fontFamily: JAKARTA }}
+                          >
+                            {displayObjectName.replace(option.label, "").trim() || displayObjectName}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </button>
                 );
               })}
@@ -658,10 +821,14 @@ export function StroopGameArena({
 
             {/* Sub-note inside card */}
             <p
-              className="text-[13px] text-[#D8CCF0] mt-1"
+              className="text-[12px] sm:text-[13px] text-[#E0D3F8] font-bold mt-0.5"
               style={{ fontFamily: JAKARTA }}
             >
-              ✨ A fresh look for every new word
+              {level === 1
+                ? "🎨 Match the colour of the ink — ignore what the letters spell!"
+                : level === 3
+                ? "⚡ Read the letters of the word quickly!"
+                : "✨ Look at the ink colour, not what the word says"}
             </p>
           </>
         )}
@@ -669,6 +836,15 @@ export function StroopGameArena({
 
       {/* Spacer for bottom balance */}
       <div className="h-1" />
+
+      {/* In-Game Animated Tutorial Guide Modal */}
+      <GameTutorialGuide
+        gameKey="stroop"
+        level={level}
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+        onComplete={() => setIsTutorialOpen(false)}
+      />
     </div>
   );
 }

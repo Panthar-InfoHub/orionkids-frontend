@@ -3,18 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 
-/**
- * Measured from the Figma screenshot (shown at 0.6x), values in Figma px.
- *
- * Card      : 896 x 594, radius 24, bg #0E213C, hard shadow 8px 8px 0 #00B4C6, no border
- *             padding top 36 / x 56 / bottom 32
- * Rhythm    : pill(24) -28- headline(40/48) -8- subtitle(15/24) -24- row1 -22- row2 -27- CTA(60) -32- note
- * Fields    : 48 tall, radius 12, two columns 382 wide with a 20px gap
- * Cat gif   : ~88px, horizontally centred, sitting ON the top edge of the card (not inside it)
- * Dart      : 152 x 128, 62px above the card top and 88px beyond its right edge
- *
- * Gif / dart sizes use `cqw` (1% of the card width) so they scale with the card.
- */
+
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const SPACE = "var(--font-space-grotesk), 'Space Grotesk', sans-serif";
@@ -120,7 +109,7 @@ export function ForParentsMissionCtaSection() {
 
           {/* Headline: 40 / 48 */}
           <h2
-            className="mx-auto mb-2 max-w-[800px]"
+            className="mx-auto mb-2 max-w-[820px]"
             style={{
               fontFamily: JAKARTA,
               fontWeight: 800,
@@ -130,8 +119,8 @@ export function ForParentsMissionCtaSection() {
               color: "#FEF9EE",
             }}
           >
-            Ready to discover what makes your child
-            <br className="hidden sm:block" /> shine?
+            Ready To Discover What Makes{" "}
+            <span className="whitespace-nowrap">Your Child Shine?</span>
           </h2>
 
           {/* Subtitle */}

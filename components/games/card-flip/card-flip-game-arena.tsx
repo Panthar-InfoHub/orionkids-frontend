@@ -9,6 +9,8 @@ import {
   QUEST_GAMES_METADATA,
 } from "@/lib/api/quest";
 import { fetchCurrentSession } from "@/lib/api/session";
+import { GameTutorialGuide } from "@/components/game-tutorial/game-tutorial-guide";
+import { TutorialReplayButton } from "@/components/game-tutorial/tutorial-replay-button";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
@@ -56,9 +58,12 @@ function generateCards(level: number): CardItem[] {
     });
   });
 
-  // Deterministic-ish shuffle
+  // Truly deterministic seeded shuffle so SSR matches client hydration perfectly
+  let seed = level * 104729 + 17;
   for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    seed = (seed * 9301 + 49297) % 233280;
+    const rnd = seed / 233280;
+    const j = Math.floor(rnd * (i + 1));
     [deck[i], deck[j]] = [deck[j], deck[i]];
   }
 
@@ -83,9 +88,44 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [nextLevelRoute, setNextLevelRoute] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [lastMatchedPair, setLastMatchedPair] = useState<[number, number] | null>(null);
+  const [showMatchToast, setShowMatchToast] = useState(false);
+  const [showTiredModal, setShowTiredModal] = useState(false);
+  const [hasPromptedTired, setHasPromptedTired] = useState(false);
+  const [introPhase, setIntroPhase] = useState<"deal" | "reveal" | "ready">("deal");
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
   const startTimeRef = useRef<number>(Date.now());
   const totalPairs = level === 1 ? 4 : level === 2 ? 6 : 8;
+
+ 
+  useEffect(() => {
+    setShowTiredModal(false);
+    setHasPromptedTired(false);
+    setIntroPhase("deal");
+
+    // Fast deal animation lands (100ms), flip cards face-up to reveal
+    const revealTimer = setTimeout(() => {
+      setIntroPhase("reveal");
+    }, 100);
+
+    // Fast sneak peek (750ms), flip cards back face-down
+    const flipBackTimer = setTimeout(() => {
+      setIntroPhase("deal");
+    }, 850);
+
+    // Ready to play in 1050ms total (instead of 3650ms)
+    const readyTimer = setTimeout(() => {
+      setIntroPhase("ready");
+      startTimeRef.current = Date.now();
+    }, 1050);
+
+    return () => {
+      clearTimeout(revealTimer);
+      clearTimeout(flipBackTimer);
+      clearTimeout(readyTimer);
+    };
+  }, [level]);
 
   // Session bootstrap & stage validation
   useEffect(() => {
@@ -151,7 +191,14 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
   }, [activeSessionId, activeAttemptId, level]);
 
   const handleCardClick = (index: number) => {
-    if (isLocked || cards[index].isFlipped || cards[index].isMatched || submissionStatus === "error") {
+    if (
+      isLocked ||
+      showTiredModal ||
+      introPhase !== "ready" ||
+      cards[index].isFlipped ||
+      cards[index].isMatched ||
+      submissionStatus === "error"
+    ) {
       return;
     }
 
@@ -164,7 +211,8 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
 
     if (newFlipped.length === 2) {
       setIsLocked(true);
-      setMoves((m) => m + 1);
+      const nextMoves = moves + 1;
+      setMoves(nextMoves);
 
       const [firstIdx, secondIdx] = newFlipped;
       const firstCard = newCards[firstIdx];
@@ -177,6 +225,13 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         setCards(newCards);
         setFlippedIndices([]);
         setIsLocked(false);
+        setLastMatchedPair([firstIdx, secondIdx]);
+        setShowMatchToast(true);
+        setTimeout(() => {
+          setShowMatchToast(false);
+          setLastMatchedPair(null);
+        }, 500);
+
         const newMatched = matchedCount + 1;
         setMatchedCount(newMatched);
 
@@ -184,46 +239,79 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         if (activeSessionId && activeAttemptId) {
           saveQuestCheckpoint(activeSessionId, activeAttemptId, {
             matchedPairs: newMatched,
-            totalMoves: moves + 1,
+            totalMoves: nextMoves,
             timestamp: new Date().toISOString(),
           });
         }
 
         // Completion check
         if (newMatched === totalPairs) {
-          handleLevelFinished(moves + 1);
+          setIsLocked(true);
+          setTimeout(() => {
+            handleLevelFinished(nextMoves);
+          }, 300);
+        } else if (nextMoves > 4 && !hasPromptedTired) {
+          // If moves > 4, prompt "Are you tired?"
+          setHasPromptedTired(true);
+          setTimeout(() => {
+            setShowTiredModal(true);
+          }, 350);
         }
       } else {
-        // No match -> flip back after 900ms
+        // No match -> quick flip back after 450ms
         setTimeout(() => {
           newCards[firstIdx].isFlipped = false;
           newCards[secondIdx].isFlipped = false;
           setCards([...newCards]);
           setFlippedIndices([]);
           setIsLocked(false);
-        }, 900);
+
+          // Check if moves > 4 and tired modal should trigger
+          if (nextMoves > 4 && !hasPromptedTired) {
+            setHasPromptedTired(true);
+            setTimeout(() => {
+              setShowTiredModal(true);
+            }, 100);
+          }
+        }, 450);
       }
     }
   };
 
-  const handleLevelFinished = async (finalMoves: number) => {
+  const handleSkipToNextLevelFromTired = async () => {
+    setShowTiredModal(false);
+    setIsLocked(true);
+    await handleLevelFinished(moves, true);
+  };
+
+  const handleContinuePlayingFromTired = () => {
+    setShowTiredModal(false);
+    setIsLocked(false);
+  };
+
+  const handleLevelFinished = async (finalMoves: number, isTiredSkip: boolean = false) => {
     setSubmissionStatus("submitting");
     const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
     // Accuracy based on moves vs optimal pairs
-    const accuracy = Math.min(100, Math.round((totalPairs / Math.max(totalPairs, finalMoves)) * 100));
+    const accuracy = isTiredSkip
+      ? Math.max(50, Math.round((Math.max(1, matchedCount) / Math.max(totalPairs, finalMoves)) * 100))
+      : Math.min(100, Math.round((totalPairs / Math.max(totalPairs, finalMoves)) * 100));
+
+    const correctPairs = isTiredSkip ? Math.max(1, matchedCount) : totalPairs;
 
     if (activeSessionId) {
       const result = await completeQuestLevel(activeSessionId, {
         gameKey: "card-flip",
         levelNumber: level,
         totalTrials: totalPairs,
-        correctTrials: totalPairs,
+        correctTrials: correctPairs,
         accuracy,
         durationMs,
         averageReactionTimeMs: Math.round(durationMs / Math.max(1, finalMoves)),
         metrics: {
           totalMoves: finalMoves,
           optimalPairs: totalPairs,
+          skippedViaTiredPrompt: isTiredSkip,
         },
         completedAt: new Date().toISOString(),
       });
@@ -237,14 +325,23 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
           nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
         }
         setNextLevelRoute(nextRoute);
+
+        // Auto-advance to next level immediately without asking
+        setTimeout(() => {
+          router.push(nextRoute);
+        }, 300);
       } else {
         setSubmissionStatus("error");
         setErrorMessage(result.error?.message || "Failed to record card flip progress on the server.");
       }
     } else {
-      // Offline fallback
+      // Offline fallback: auto-advance
       setSubmissionStatus("success");
-      setNextLevelRoute(level < 3 ? `/games/card-flip?level=${level + 1}` : "/games/pattern?level=1");
+      const nextRoute = level < 3 ? `/games/card-flip?level=${level + 1}` : "/games/pattern?level=1";
+      setNextLevelRoute(nextRoute);
+      setTimeout(() => {
+        router.push(nextRoute);
+      }, 300);
     }
   };
 
@@ -252,19 +349,27 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
 
   return (
     <div className="w-full flex flex-col items-center select-none">
-      <div className="relative z-10 w-full max-w-[840px] my-auto py-6 sm:py-8 px-6 sm:px-12 rounded-[24px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center min-h-[460px]">
+      {/* Level Tutorial Guide */}
+      <GameTutorialGuide
+        gameKey="card-flip"
+        level={level}
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+      />
+
+      <div className="relative z-10 w-full max-w-[840px] my-auto py-3.5 sm:py-4 px-4 sm:px-8 rounded-[20px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center min-h-[320px] sm:min-h-[340px]">
         {isComplete || submissionStatus === "error" ? (
-          /* Completion or Error Modal */
-          <div className="py-6 flex flex-col items-center animate-in fade-in duration-300">
+          /* Completion or Error Transition */
+          <div className="py-4 flex flex-col items-center animate-in fade-in duration-300">
             <div
-              className={`w-16 h-16 rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-3xl mb-4 ${
+              className={`w-12 h-12 rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-2xl mb-2 ${
                 submissionStatus === "error" ? "bg-[#FF5B5B]" : "bg-[#FFD028]"
               }`}
             >
               {submissionStatus === "error" ? "⚠️" : "🌟"}
             </div>
             <h2
-              className="text-[26px] sm:text-[30px] font-extrabold text-white mb-2"
+              className="text-[22px] sm:text-[24px] font-extrabold text-white mb-1"
               style={{ fontFamily: JAKARTA }}
             >
               {submissionStatus === "error"
@@ -272,7 +377,7 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
                 : `Card Flip Level ${level} Complete!`}
             </h2>
             <p
-              className="text-[15px] text-[#E0D3F8] max-w-[460px] mb-6 text-center leading-relaxed"
+              className="text-[13px] text-[#E0D3F8] max-w-[440px] mb-4 text-center leading-relaxed"
               style={{ fontFamily: JAKARTA }}
             >
               {submissionStatus === "submitting"
@@ -282,32 +387,32 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
                 : `Stellar memory! You matched all ${totalPairs} cosmic pairs in ${moves} moves.`}
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-3.5 mt-2">
-              {submissionStatus === "success" && nextLevelRoute && (
-                <button
-                  type="button"
-                  disabled={isNavigating}
-                  onClick={() => {
-                    if (isNavigating) return;
-                    setIsNavigating(true);
-                    router.push(nextLevelRoute);
-                  }}
-                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-full font-extrabold text-[15px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer"
-                  style={{ fontFamily: JAKARTA }}
-                >
-                  {isNavigating
-                    ? "Launching Next Challenge... 🚀"
-                    : level < 3
-                    ? `Next Level (${level + 1} of 3) 🚀`
-                    : "Next Game: Pattern Recognition 🚀"}
-                </button>
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-1">
+              {submissionStatus === "success" && (
+                <>
+                  <div
+                    data-testid="scored-badge"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#65DCAA] text-[#0A1D3D] font-extrabold text-xs sm:text-[13px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] select-none"
+                    style={{ fontFamily: JAKARTA }}
+                  >
+                    <span className="text-sm">✓</span>
+                    <span>Scored</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 px-5 py-2 rounded-full bg-white text-[#0A1D3D] font-extrabold text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] animate-pulse">
+                    <span className="text-sm">✨</span>
+                    <span>
+                      {level < 3 ? `Moving to Level ${level + 1}... 🚀` : "Moving to Next Game... 🚀"}
+                    </span>
+                  </div>
+                </>
               )}
 
               {submissionStatus === "error" && (
                 <button
                   type="button"
                   onClick={() => router.push(`/games/card-flip?level=1`)}
-                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-full font-extrabold text-[15px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer"
+                  className="inline-flex items-center justify-center px-6 py-2.5 rounded-full font-extrabold text-[13px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer"
                   style={{ fontFamily: JAKARTA }}
                 >
                   Go to Level 1 🎨
@@ -317,14 +422,26 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
           </div>
         ) : (
           /* Active Gameplay Arena */
-          <div className="w-full flex flex-col items-center gap-6">
-            <div className="flex items-center justify-between w-full max-w-[560px] px-2 text-white/90 text-sm font-bold">
-              <span>Pairs: {matchedCount} / {totalPairs}</span>
+          <div className="w-full flex flex-col items-center gap-3 sm:gap-3.5 relative">
+            {/* Pairs & Moves Header */}
+            <div className="flex items-center justify-between w-full max-w-[580px] px-2 text-white/90 text-xs sm:text-sm font-bold">
+              <div className="flex items-center gap-2.5">
+                <span>Pairs: {matchedCount} / {totalPairs}</span>
+                <TutorialReplayButton onReplayTutorial={() => setIsTutorialOpen(true)} />
+              </div>
               <span>Moves: {moves}</span>
             </div>
 
+            {/* Notification Banner: Initial Sneak Peek */}
+            {introPhase === "reveal" && (
+              <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-[#FFD028] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] font-extrabold text-xs sm:text-[13px] select-none animate-in fade-in duration-200">
+                <span className="text-base animate-bounce">👀</span>
+                <span>Memorize the cards! Flipping soon...</span>
+              </div>
+            )}
+
             <div
-              className={`grid gap-3 sm:gap-4 w-full max-w-[620px] justify-center ${
+              className={`grid gap-2 sm:gap-3 w-full max-w-[580px] justify-center ${
                 totalPairs === 4
                   ? "grid-cols-4"
                   : totalPairs === 6
@@ -332,35 +449,122 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
                   : "grid-cols-4"
               }`}
             >
-              {cards.map((card, idx) => (
-                <button
-                  key={card.id}
-                  type="button"
-                  onClick={() => handleCardClick(idx)}
-                  className={`w-[70px] h-[85px] sm:w-[95px] sm:h-[115px] rounded-[16px] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] flex items-center justify-center transition-all duration-300 transform cursor-pointer ${
-                    card.isFlipped || card.isMatched
-                      ? "bg-white scale-100"
-                      : "bg-[#230C4D] hover:-translate-y-1 hover:bg-[#2C1060] scale-95"
-                  }`}
-                  style={{
-                    backgroundColor: card.isFlipped || card.isMatched ? card.color : undefined,
-                  }}
-                >
-                  {card.isFlipped || card.isMatched ? (
-                    <span className="text-3xl sm:text-4xl filter drop-shadow-md animate-in zoom-in-75 duration-200">
-                      {card.symbol}
-                    </span>
-                  ) : (
-                    <span className="text-2xl sm:text-3xl text-[#FFD028] opacity-70">
-                      ★
-                    </span>
-                  )}
-                </button>
-              ))}
+              {cards.map((card, idx) => {
+                const isFlipped = introPhase === "reveal" || card.isFlipped || card.isMatched;
+                const isRecentlyMatched =
+                  lastMatchedPair !== null &&
+                  (lastMatchedPair[0] === idx || lastMatchedPair[1] === idx);
+
+                return (
+                  <div
+                    key={card.id}
+                    className="perspective-1000 animate-card-deal"
+                    style={{ animationDelay: `${idx * 45}ms` }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => handleCardClick(idx)}
+                      disabled={isFlipped || isLocked || introPhase !== "ready"}
+                      className={`relative w-[62px] h-[76px] sm:w-[82px] sm:h-[98px] rounded-[14px] transition-transform duration-500 preserve-3d cursor-pointer select-none ${
+                        isFlipped
+                          ? "[transform:rotateY(180deg)]"
+                          : "hover:-translate-y-0.5 hover:shadow-lg"
+                      } ${
+                        isRecentlyMatched ? "animate-match-celebration" : ""
+                      }`}
+                    >
+                      {/* Back Face (Unflipped - Dark Cosmic Star Pattern) */}
+                      <div className="absolute inset-0 w-full h-full rounded-[14px] bg-[#230C4D] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center backface-hidden">
+                        <span className="text-xl sm:text-2xl text-[#FFD028] opacity-75 drop-shadow-[0_0_6px_rgba(255,208,40,0.5)]">
+                          ★
+                        </span>
+                      </div>
+
+                      {/* Front Face (Flipped - Bright Symbol & Colour with Clean UI Matching Border & Shadow) */}
+                      <div
+                        className="absolute inset-0 w-full h-full rounded-[14px] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center backface-hidden [transform:rotateY(180deg)]"
+                        style={{ backgroundColor: card.color }}
+                      >
+                        <span className="text-2xl sm:text-3xl filter drop-shadow-md select-none">
+                          {card.symbol}
+                        </span>
+                        {card.isMatched && (
+                          <span className="absolute top-1 right-1 text-[10px]">✨</span>
+                        )}
+                      </div>
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
       </div>
+
+      {/* In-Game Animated Tutorial Guide Modal */}
+      <GameTutorialGuide
+        gameKey="card-flip"
+        level={level}
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+        onComplete={() => setIsTutorialOpen(false)}
+      />
+
+      {/* "Are you tired?" Modal when moves > 4 */}
+      {showTiredModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="tired-modal-title"
+          className="fixed inset-0 z-50 bg-[#0A1D3D]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+        >
+          <div className="relative w-full max-w-[420px] rounded-[24px] bg-white border-3 border-[#0A1D3D] shadow-[6px_6px_0px_#0A1D3D] p-6 sm:p-7 flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+            {/* Friendly Sleeping / Relaxed Mascot Icon */}
+            <div className="w-16 h-16 rounded-full bg-[#FFE066] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-3xl mb-3">
+              😴
+            </div>
+
+            <h3
+              id="tired-modal-title"
+              className="text-[22px] sm:text-[24px] font-extrabold text-[#0A1D3D] mb-1.5"
+              style={{ fontFamily: JAKARTA }}
+            >
+              Are you tired?
+            </h3>
+
+            <p
+              className="text-[13px] sm:text-[14px] text-[#526176] font-medium leading-relaxed max-w-[320px] mb-6"
+              style={{ fontFamily: JAKARTA }}
+            >
+              You&apos;ve made {moves} moves! Would you like to move forward to the next level or keep playing?
+            </p>
+
+            <div className="w-full flex flex-col gap-2.5">
+              {/* Option 1: Yes, move to next level */}
+              <button
+                type="button"
+                onClick={handleSkipToNextLevelFromTired}
+                className="w-full py-3 px-5 rounded-full font-extrabold text-[15px] bg-[#FFD028] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer flex items-center justify-center gap-2"
+                style={{ fontFamily: JAKARTA }}
+              >
+                <span>Yes, next level</span>
+                <span>🚀</span>
+              </button>
+
+              {/* Option 2: No, continue playing */}
+              <button
+                type="button"
+                onClick={handleContinuePlayingFromTired}
+                className="w-full py-2.5 px-5 rounded-full font-bold text-[14px] bg-[#F0F6FA] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:bg-white hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer flex items-center justify-center gap-2"
+                style={{ fontFamily: JAKARTA }}
+              >
+                <span>No, keep playing!</span>
+                <span>💪</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

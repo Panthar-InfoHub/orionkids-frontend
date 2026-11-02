@@ -221,7 +221,7 @@ export function ApproachHeroSection() {
               </span>
 
               <span
-                className="inline-flex items-center gap-2 h-10 px-3.5 rounded-[10px] border-2 bg-[#14B887] -rotate-3 shadow-[3px_3px_0_#0F172A]"
+                className="inline-flex items-center gap-2 h-10 px-3.5 rounded-[10px] border-2 bg-[#BAE6FD] -rotate-3 shadow-[3px_3px_0_#0F172A]"
                 style={{
                   borderColor: INK,
                   fontFamily: JAKARTA,

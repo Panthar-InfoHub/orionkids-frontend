@@ -167,8 +167,8 @@ export function SchoolPilotCtaSection() {
                   style={{
                     fontFamily: JAKARTA,
                     fontWeight: 800,
-                    lineHeight: "108%",
-                    letterSpacing: "-0.04em",
+                    lineHeight: "120%",
+                    letterSpacing: "-0.03em",
                   }}
                 >
                   Bring Playful
@@ -180,7 +180,7 @@ export function SchoolPilotCtaSection() {
 
                 {/* Paragraph */}
                 <p
-                  className="mt-1.5 max-w-[358px] text-[#B9C7E4]"
+                  className="mt-6 sm:mt-8 max-w-[358px] text-[#B9C7E4]"
                   style={{
                     fontFamily: JAKARTA,
                     fontWeight: 500,
@@ -236,7 +236,7 @@ export function SchoolPilotCtaSection() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                Request an Educator Pilot Kit
+                Request An Educator Pilot Kit
               </h3>
 
               {/* 2 x 2 fields */}
@@ -332,7 +332,7 @@ export function SchoolPilotCtaSection() {
                   boxShadow: "4px 4px 0 0 #0E1C32",
                 }}
               >
-                Request a School Walkthrough 📅
+                Request a School Walkthrough &nbsp; &nbsp;📅
               </button>
             </form>
           </div>

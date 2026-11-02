@@ -853,7 +853,7 @@ export function FooterSection() {
                 Before You Go, Doodle Something Fun!
               </span>
               <span className="block whitespace-normal lg:whitespace-nowrap">
-                Tap The Star To Start Your Adventure.
+                Tap The Star To Start Your Adventure
               </span>
             </h2>
 

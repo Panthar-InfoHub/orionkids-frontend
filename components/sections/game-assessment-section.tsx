@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { QuestPreviewContainer } from "@/components/quest-preview/quest-preview-container";
 
 const CHECKLIST_ITEMS = [
   "Simple, age-appropriate instructions",
@@ -34,87 +35,7 @@ export function GameAssessmentSection() {
 
           {/* ================= LEFT COLUMN: GAME TABLET CARD ================= */}
           <div className="w-full min-w-0 max-w-[620px] lg:flex-[1.25] relative">
-
-            {/* Peach backplate */}
-            <div className="relative z-10 w-full bg-[#FCE5DE] rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-[0_20px_50px_rgba(15,23,42,0.06)] border border-white/60">
-
-              {/* Inner white card */}
-              <div className="w-full bg-white rounded-t-[28px] sm:rounded-t-[36px] rounded-b-[22px] sm:rounded-b-[28px] p-4 sm:p-6 lg:p-7 flex flex-col justify-between shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
-
-                {/* Header bar */}
-                <div className="flex items-center justify-between gap-3 pb-3 sm:pb-3.5">
-                  <span
-                    className="text-[#0A1D3D] text-base sm:text-[18px] font-extrabold leading-none"
-                    style={{ fontFamily: JAKARTA }}
-                  >
-                    OrionKids Games 🎮
-                  </span>
-                  <button
-                    type="button"
-                    className="flex items-center gap-1.5 text-xs sm:text-[13px] text-[#526176] hover:text-[#0A1D3D] transition-colors cursor-pointer shrink-0"
-                    style={{ fontFamily: INTER }}
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                    </svg>
-                    <span>Listen</span>
-                  </button>
-                </div>
-
-                {/* Game screen */}
-                <div className="relative w-full aspect-[16/10.2] my-2 sm:my-3 rounded-[16px] sm:rounded-[22px] overflow-hidden border-2 sm:border-[2.5px] border-[#00B4D8] bg-slate-900 shadow-sm">
-                  <Image
-                    src={encodeURI("/images/bernard creek.png")}
-                    alt="Bernard of the Creek Part 2 Game Preview"
-                    fill
-                    unoptimized
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 608px"
-                    priority
-                  />
-                </div>
-
-                {/* Footer bar */}
-                <div className="flex items-center justify-between pt-3 sm:pt-4 gap-3 flex-wrap">
-                  <p
-                    className="text-[#0A1D3D] text-[13px] sm:text-[13.5px] font-medium leading-snug flex-1 min-w-[180px]"
-                    style={{ fontFamily: INTER }}
-                  >
-                    Keep exploring. You&apos;re finding the pattern 🌟
-                  </p>
-
-                  <Link
-                    href="/warm-up"
-                    className="inline-flex items-center justify-center gap-1.5 px-6 h-[40px] bg-[#FFD243] hover:bg-[#FBC02D] text-[#0A1D3D] rounded-full hover:scale-105 active:scale-95 transition-all cursor-pointer font-extrabold text-[13px]"
-                    style={{ fontFamily: JAKARTA }}
-                  >
-                    <span>Continue</span>
-                    <span className="text-sm font-bold">→</span>
-                  </Link>
-                </div>
-              </div>
-
-              {/* Disclaimer strip */}
-              <div className="py-2.5 sm:py-3 px-4 text-center">
-                <p
-                  className="text-[#64748B] text-[11px] sm:text-[12px] font-medium leading-normal"
-                  style={{ fontFamily: INTER }}
-                >
-                  Conceptual Game Preview · Illustrative Activity, Not A Live Assessment
-                </p>
-              </div>
-            </div>
+            <QuestPreviewContainer />
           </div>
 
           {/* ================= RIGHT COLUMN: FEATURES & BADGE ================= */}
@@ -163,9 +84,9 @@ export function GameAssessmentSection() {
                 letterSpacing: "-0.03em",
               }}
             >
-              Assessment that
+              Assessment That
               <br />
-              <span>feels like play</span>
+              <span>Feels Like Play</span>
             </h2>
 
             {/* Subtitle */}

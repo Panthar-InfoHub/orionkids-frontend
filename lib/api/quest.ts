@@ -249,6 +249,8 @@ export async function completeQuestLevel(
     };
   }
 
+  import("./session").then(({ invalidateSessionCache }) => invalidateSessionCache()).catch(() => {});
+
   const res = await fetch(`${apiUrl}/api/quest/sessions/${sessionId}/levels/complete`, {
     method: "POST",
     credentials: "include",

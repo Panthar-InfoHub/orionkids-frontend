@@ -126,7 +126,7 @@ export function EverydaySupportSection() {
                   />
                 </span>
               </span>
-              <span>Into Everyday Support.</span>
+              <span>Into Everyday Support</span>
             </h2>
 
             {/* Subtitle Description */}

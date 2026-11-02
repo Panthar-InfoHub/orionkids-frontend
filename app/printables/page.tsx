@@ -6,34 +6,27 @@ import { PrintablesView } from "@/components/printables/printables-view";
 import { getPrintablesData } from "@/lib/api/printables";
 
 export const metadata: Metadata = {
-  title: "Hands-On Printables for Curious Minds | OrionKids",
+  title: "Hands On Printables for Curious Minds | OrionKids",
   description:
-    "Screen-free cognitive worksheets, tactile activity mats, and daily adventures curated, classroom-organized and graded by neuroscience and child specialists. Instant PDF printouts.",
+    "Screen free cognitive worksheets, tactile activity mats, and daily adventures curated, classroom-organized and graded by neuroscience and child specialists. Instant PDF printouts.",
   keywords: [
     "OrionKids printables",
     "kids worksheets",
     "cognitive activity sheets",
-    "screen-free learning",
+    "screen free learning",
     "math riddles",
     "spatial mazes",
     "classroom printouts",
   ],
   openGraph: {
-    title: "Hands-On Printables for Curious Minds | OrionKids",
+    title: "Hands On Printables for Curious Minds | OrionKids",
     description:
       "Screen-free cognitive worksheets, tactile activity mats, and daily adventures curated for classes 1–4.",
     images: ["/images/Child exploring a tablet.png"],
   },
 };
 
-/**
- * PrintablesPage - React Server Component (RSC)
- * 
- * - Server-side data fetching via getPrintablesData()
- * - Instant SEO and fast First Contentful Paint (FCP)
- * - Ready for backend modifications (database / CMS API integration)
- * - Minimal client JS payload with focused interactive Client Components
- */
+
 import { PageCurtain } from "@/components/layout/page-curtain";
 
 export default async function PrintablesPage() {

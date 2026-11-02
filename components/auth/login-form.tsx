@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, AlertCircle, ShieldCheck } from "lucide-react";
 import { signIn } from "@/lib/auth-client";
@@ -10,8 +9,6 @@ import { fetchCurrentUserProfile, getRouteForUserProfile } from "@/lib/api/auth"
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [role, setRole] = useState<"parent" | "school">("parent");
-  const [agreeTerms, setAgreeTerms] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isCheckingSession, setIsCheckingSession] = useState(true);
@@ -42,17 +39,21 @@ export default function LoginForm() {
     // Check if the user is already signed in
     async function checkExistingAuth() {
       try {
-        const profile = await fetchCurrentUserProfile();
-        if (profile) {
+        const { fetchRegistrationStatus } = await import("@/lib/api/registration");
+        const regStatus = await fetchRegistrationStatus();
+
+        if (regStatus) {
           const redirectParam = searchParams.get("redirect");
 
           // Active regular user with completed onboarding: check for resumable quest
-          if (profile.status === "ACTIVE" && profile.onboardingSubmittedAt) {
+          if (regStatus.accountStatus === "ACTIVE" && regStatus.onboardingCompleted) {
             if (
               redirectParam &&
               redirectParam.startsWith("/") &&
               !redirectParam.includes("login") &&
-              !redirectParam.includes("onboarding")
+              !redirectParam.includes("onboarding") &&
+              !redirectParam.includes("terms") &&
+              !redirectParam.includes("access-")
             ) {
               router.replace(redirectParam);
               return;
@@ -67,6 +68,13 @@ export default function LoginForm() {
             }
           }
 
+          router.replace(regStatus.destination);
+          return;
+        }
+
+        const profile = await fetchCurrentUserProfile();
+        if (profile) {
+          const redirectParam = searchParams.get("redirect");
           const destination = getRouteForUserProfile(profile, redirectParam);
           router.replace(destination);
           return;
@@ -83,15 +91,9 @@ export default function LoginForm() {
 
   const handleGoogleSignIn = async () => {
     setErrorMessage("");
-
-    if (!agreeTerms) {
-      setErrorMessage("Please accept the terms and guidelines to continue.");
-      return;
-    }
-
     setIsLoading(true);
     try {
-      const returnUrl = searchParams.get("redirect") || "/onboarding";
+      const returnUrl = searchParams.get("redirect") || "/terms-and-conditions";
       const frontendOrigin =
         typeof window !== "undefined"
           ? window.location.origin
@@ -135,37 +137,11 @@ export default function LoginForm() {
       </div>
 
       <h2 className="text-2xl sm:text-[28px] font-black text-[#0A1D3D] tracking-tight mb-2">
-        Welcome to OrionKids
+        Welcome To OrionKids
       </h2>
       <p className="text-xs sm:text-[13px] text-slate-500 mb-6 leading-relaxed">
         Sign in to manage your child&apos;s fun brain quests, games, and learning journey reports.
       </p>
-
-      {/* Role Toggle */}
-      <div className="flex bg-[#F1F5F9] p-1 rounded-xl mb-6 border border-slate-200">
-        <button
-          type="button"
-          onClick={() => setRole("parent")}
-          className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all cursor-pointer ${
-            role === "parent"
-              ? "bg-white text-[#0A1D3D] shadow-sm border border-slate-200"
-              : "text-slate-500 hover:text-[#0A1D3D]"
-          }`}
-        >
-          👨‍👩‍👧 Parent Portal
-        </button>
-        <button
-          type="button"
-          onClick={() => setRole("school")}
-          className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all cursor-pointer ${
-            role === "school"
-              ? "bg-white text-[#0A1D3D] shadow-sm border border-slate-200"
-              : "text-slate-500 hover:text-[#0A1D3D]"
-          }`}
-        >
-          🏫 School / Educator
-        </button>
-      </div>
 
       {/* Error Message */}
       {errorMessage && (
@@ -175,28 +151,10 @@ export default function LoginForm() {
         </div>
       )}
 
-      {/* Agreement / Disclaimer Box */}
-      <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 mb-6">
-        <label className="flex items-start gap-2.5 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={agreeTerms}
-            onChange={(e) => setAgreeTerms(e.target.checked)}
-            className="mt-0.5 w-4 h-4 rounded border-slate-300 text-[#00BCD4] focus:ring-[#00BCD4] cursor-pointer"
-          />
-          <span className="text-[11px] text-slate-600 leading-snug">
-            I state I am this child&apos;s parent or educator. I agree to OrionKids using Google authentication to verify my account.{" "}
-            <Link href="/about-us" className="text-[#00BCD4] hover:underline font-semibold">
-              Read our privacy commitment.
-            </Link>
-          </span>
-        </label>
-      </div>
-
       {/* Google OAuth Button */}
       <button
         type="button"
-        disabled={isLoading || !agreeTerms}
+        disabled={isLoading}
         onClick={handleGoogleSignIn}
         className="w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-50 active:scale-[0.99] border-2 border-slate-200 text-[#0A1D3D] font-black text-sm sm:text-base shadow-[0_3px_12px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.09)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group"
       >

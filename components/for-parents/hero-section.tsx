@@ -3,18 +3,6 @@
 import React from "react";
 import Link from "next/link";
 
-/**
- * Measured from the Figma screenshot (frame 1440 wide, 100% zoom, shown at 1.25x).
- * Every number is in Figma px (what Dev Mode shows).
- *
- *   content frame        left 88 / right 104, 1440 max width
- *   section              top padding 59 (headline starts here)
- *   headline             60px / line-height 115% (~69px pitch)
- *   yellow badge         border 3, rotate -1deg, 2 lines, right padding 48
- *   card                 446 x 352, border 3, radius 24, hard shadow 8px
- *   card top             46px lower than the headline top
- *   card inner           padding 18  ->  header 40 / box1 84 / box2 102 / footer 20
- */
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 const SPACE = "var(--font-space-grotesk), 'Space Grotesk', sans-serif";
@@ -62,7 +50,7 @@ export function ForParentsHeroSection() {
               }}
             >
               <span className="block">Understand Your Child,</span>
-              <span className="block">One Game at a Time.</span>
+              <span className="block">One Game At A Time</span>
               <span className="relative mt-2.5 sm:mt-3 inline-block max-w-full">
                 <span
                   className="inline-flex max-w-full items-center justify-center rounded-[14px] sm:rounded-[16px] border-[2.5px] sm:border-[3px] px-3.5 sm:px-5 py-1.5 sm:py-2 text-[clamp(17px,2.2vw,28px)] font-extrabold tracking-tight"
@@ -74,24 +62,21 @@ export function ForParentsHeroSection() {
                     boxShadow: `3px 3px 0px 0px ${NAVY}`,
                   }}
                 >
-                  Less Guesswork. More Meaningful Conversations.
+                  Less Guesswork. More Meaningful Conversations
                 </span>
               </span>
             </h1>
 
             {/* Description */}
             <p
-              className="mb-7 max-w-[560px] text-[#4E4633] text-[15px] sm:text-[16px] leading-[26px] sm:leading-[28px]"
+              className="mb-7 max-w-[500px] text-[#4E4633] text-[15px] sm:text-[16px] leading-[24px] sm:leading-[26px]"
               style={{
                 fontFamily: JAKARTA,
                 fontWeight: 500,
                 letterSpacing: "0px",
               }}
             >
-              Every child has their own way of learning, exploring, and solving problems. OrionKids
-              turns playful games into easy-to-understand insights that help you discover your
-              child&apos;s strengths, notice learning patterns, and start more meaningful
-              conversations at home.
+              OrionKids turns playful games into easy-to-understand insights that celebrate your child&apos;s strengths and spark meaningful conversations at home.
             </p>
 
             {/* Action CTA Buttons */}
@@ -161,7 +146,7 @@ export function ForParentsHeroSection() {
                         color: NAVY,
                       }}
                     >
-                      Aarav&apos;s Game Section Session
+                      Aarav&apos;s Play Session
                     </h3>
                     <p
                       className="truncate"
@@ -174,7 +159,7 @@ export function ForParentsHeroSection() {
                         color: "#374151",
                       }}
                     >
-                      Age 8 • Played in Game Section • Yesterday 4:15 PM
+                      Age 8 • Brain Lab Quest • Yesterday 4:15 PM
                     </p>
                   </div>
                 </div>
@@ -194,8 +179,8 @@ export function ForParentsHeroSection() {
                 </span>
               </div>
 
-              {/* Box 1: Star strength (84px tall) */}
-              <div className="mb-[13px] rounded-[14px] border border-[#8FD3E3] bg-[#E8F5EC] px-3 pb-[11px] pt-[13px]">
+              {/* Box 1: Star strength */}
+              <div className="mb-[13px] rounded-[14px] border border-[#8FD3E3] bg-[#E8F5EC] px-3.5 pb-[12px] pt-[12px]">
                 <div
                   className="mb-[7px] flex items-center gap-[7px]"
                   style={{
@@ -232,14 +217,13 @@ export function ForParentsHeroSection() {
                     color: "#1F2937",
                   }}
                 >
-                  While playing the Space Maze in our Game Section, Aarav found creative shortcuts to
-                  crack multi-step puzzles with high focus!
+                  Aarav found creative shortcuts to solve multi-step space mazes with high focus and curiosity.
                 </p>
               </div>
 
-              {/* Box 2: In-Game Observation (102px tall) */}
-              <div className="rounded-[14px] border-[1.5px] border-[#12B5CB] bg-white px-3 pb-3 pt-[11px]">
-                <div className="mb-[5px] flex items-center justify-between gap-2">
+              {/* Box 2: In-Game Observation */}
+              <div className="rounded-[14px] border-[1.5px] border-[#12B5CB] bg-white px-3.5 pb-[13px] pt-[12px]">
+                <div className="mb-[7px] flex items-center justify-between gap-2">
                   <div
                     className="flex min-w-0 items-center gap-1.5"
                     style={{
@@ -252,7 +236,7 @@ export function ForParentsHeroSection() {
                     }}
                   >
                     <span className="shrink-0 text-[11px] leading-none">🎮</span>
-                    <span className="truncate">GAME SECTION PLAY HIGHLIGHT</span>
+                    <span className="truncate">PLAY HIGHLIGHT</span>
                   </div>
                   <span
                     className="inline-flex h-[19px] shrink-0 select-none items-center whitespace-nowrap rounded-[4px] px-[6px]"
@@ -271,31 +255,16 @@ export function ForParentsHeroSection() {
                 </div>
 
                 <p
-                  className="mb-[6px]"
                   style={{
                     fontFamily: INTER,
                     fontWeight: 400,
                     fontSize: "13px",
-                    lineHeight: "16px",
+                    lineHeight: "18px",
                     letterSpacing: "-0.01em",
                     color: NAVY,
                   }}
                 >
-                  In the Time-Warp mini-game, he mastered the reverse sequence challenge:{" "}
-                  <em>&quot;If a clock ran backwards, what would happen to breakfast?&quot;</em>
-                </p>
-                <p
-                  className="italic"
-                  style={{
-                    fontFamily: INTER,
-                    fontWeight: 400,
-                    fontSize: "10px",
-                    lineHeight: "14px",
-                    letterSpacing: "-0.01em",
-                    color: "#4B5563",
-                  }}
-                >
-                  💡 Observed during game play — demonstrates natural temporal reasoning.
+                  Mastered reverse sequencing challenges, demonstrating natural temporal reasoning and quick pattern discovery.
                 </p>
               </div>
 
