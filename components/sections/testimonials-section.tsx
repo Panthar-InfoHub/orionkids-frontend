@@ -188,6 +188,8 @@ export function TestimonialsSection() {
               fontWeight: 800,
               fontSize: "clamp(34px, 4.5vw, 48px)",
               lineHeight: "100%",
+              
+              
             }}
           >
             Loved By Leaders And

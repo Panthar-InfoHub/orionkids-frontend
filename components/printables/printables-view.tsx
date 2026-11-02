@@ -20,8 +20,9 @@ interface PrintablesViewProps {
 }
 
 export function PrintablesView({ initialData }: PrintablesViewProps) {
+  const allCategoryDefault = initialData.categories[0]?.id || "All Printables (36)";
   const [activeGrade, setActiveGrade] = useState<PrintableGradeLevel>("All Grades");
-  const [activeCategory, setActiveCategory] = useState<PrintableCategoryType>("All Printables (28)");
+  const [activeCategory, setActiveCategory] = useState<PrintableCategoryType>(allCategoryDefault);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPrintable, setSelectedPrintable] = useState<PrintableItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,7 +49,7 @@ export function PrintablesView({ initialData }: PrintablesViewProps) {
       );
     }
 
-    if (activeCategory !== "All Printables (28)") {
+    if (!activeCategory.startsWith("All Printables")) {
       result = result.filter((item) => item.category === activeCategory);
     }
 
@@ -62,7 +63,7 @@ export function PrintablesView({ initialData }: PrintablesViewProps) {
 
   const handleResetFilters = () => {
     setActiveGrade("All Grades");
-    setActiveCategory("All Printables (28)");
+    setActiveCategory(allCategoryDefault);
     setSearchQuery("");
   };
 

@@ -97,7 +97,7 @@ export function ForSchoolsDemoTaskSection() {
               color: "#0A1D3D",
             }}
           >
-            <span>Explore a Playful &ldquo;Rule Discovery&rdquo; Task</span>
+            <span>Explore A Playful &ldquo;Rule Discovery&rdquo; Task</span>
             <span className="text-2xl select-none" aria-hidden="true">
               🧠
             </span>

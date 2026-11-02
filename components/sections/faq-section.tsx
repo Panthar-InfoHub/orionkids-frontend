@@ -81,7 +81,7 @@ export function FaqSection() {
             >
               A Little Clarity,
               <br />
-              Before You Begin.
+              Before You Begin
             </h2>
 
             {/* Subtext Paragraph */}

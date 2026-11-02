@@ -123,9 +123,9 @@ export function ForSchoolsHeroSection() {
                     Constellation
                   </span>
                 </span>{" "}
-                <span>of</span>
+                <span>Of</span>
                 <br />
-                <span>Potential.</span>
+                <span>Potential</span>
               </h1>
 
               {/* Waving Robot (robo5.png) matching Figma placement */}
@@ -511,7 +511,7 @@ export function ForSchoolsHeroSection() {
 
           {/* Heading matching Screenshot 2 */}
           <h2
-            className="mb-8 sm:mb-10 text-center max-w-[840px] mx-auto"
+            className="mb-8 sm:mb-10 text-center max-w-[840px] mx-auto flex flex-col items-center gap-2 sm:gap-2.5"
             style={{
               fontFamily: JAKARTA,
               fontWeight: 800,
@@ -521,22 +521,24 @@ export function ForSchoolsHeroSection() {
               letterSpacing: "-0.8px",
             }}
           >
-            Upgrade Your School With{" "}
-            <span className="relative inline-block">
-              <span
-                className="inline-flex items-center justify-center px-3.5 py-0.5 rounded-[12px]"
-                style={{
-                  backgroundColor: "#1E5FBF",
-                  color: "#FFFFFF",
-                  border: "2px solid #0A1D3D",
-                  boxShadow: "3px 4px 0px 0px #0A1D3D",
-                  transform: "rotate(-0.5deg)",
-                }}
-              >
-                NEP 2020–Based
+            <span>Upgrade Your School With</span>
+            <span className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1">
+              <span className="relative inline-block">
+                <span
+                  className="inline-flex items-center justify-center px-3.5 py-0.5 rounded-[12px]"
+                  style={{
+                    backgroundColor: "#1E5FBF",
+                    color: "#FFFFFF",
+                    border: "2px solid #0A1D3D",
+                    boxShadow: "3px 4px 0px 0px #0A1D3D",
+                    transform: "rotate(-0.5deg)",
+                  }}
+                >
+                  NEP 2020–Based
+                </span>
               </span>
-            </span>{" "}
-            Fun Brain Labs
+              <span>Fun Brain Labs</span>
+            </span>
           </h2>
 
           {/* 2-Column Grid for Screenshots 3 & 1 */}

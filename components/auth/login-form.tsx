@@ -126,7 +126,7 @@ export default function LoginForm() {
       </div>
 
       <h2 className="text-2xl sm:text-[28px] font-black text-[#0A1D3D] tracking-tight mb-2">
-        Welcome to OrionKids
+        Welcome To OrionKids
       </h2>
       <p className="text-xs sm:text-[13px] text-slate-500 mb-6 leading-relaxed">
         Sign in to manage your child&apos;s fun brain quests, games, and learning journey reports.

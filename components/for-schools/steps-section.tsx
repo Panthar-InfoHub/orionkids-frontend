@@ -98,7 +98,7 @@ export function ForSchoolsStepsSection() {
               color: "#0A1D3D",
             }}
           >
-            Bring OrionKids into Your School
+            Bring OrionKids Into Your School
           </h2>
 
           {/* Subtitle Description */}

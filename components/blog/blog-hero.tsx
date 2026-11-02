@@ -37,9 +37,9 @@ export function BlogHero({
 
       {/* Hero Headline */}
       <h1 className="text-2xl sm:text-4xl lg:text-[44px] font-black text-[#0D1829] tracking-tight leading-[1.2] mb-3">
-        Big Ideas for{" "}
+        Big Ideas For{" "}
         <span className="text-[#FFC700] relative inline-block">
-          Growing Minds.
+          Growing Minds
           {/* Vibrant turquoise wavy underline */}
           <svg
             className="absolute -bottom-2 left-0 w-full h-3 text-[#00E5FF] pointer-events-none"
@@ -58,7 +58,7 @@ export function BlogHero({
         </span>
         <br />
         <span className="text-[#5850EC] font-extrabold inline-block mt-1">
-          (And Fun Ways to Support Them!)
+          (And Fun Ways To Support Them!)
         </span>
       </h1>
 

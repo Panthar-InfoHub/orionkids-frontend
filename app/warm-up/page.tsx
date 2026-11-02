@@ -181,21 +181,21 @@ function WarmUpContent() {
           title={
             isCompleted ? (
               <>
-                You’re ready
+                You’re Ready
                 <br />
-                for a little play!
+                For A Little Play!
               </>
             ) : isLastStep ? (
               <>
-                Tell us what
+                Tell Us What
                 <br />
-                feels like you.
+                Feels Like You
               </>
             ) : (
               <>
                 Let’s Get To
                 <br />
-                Know You.
+                Know You
               </>
             )
           }

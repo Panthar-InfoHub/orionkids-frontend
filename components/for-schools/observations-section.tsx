@@ -151,7 +151,7 @@ export function ForSchoolsObservationsSection() {
               color: "#0E1C32",
             }}
           >
-            <span>Turn Classroom Observation into</span>
+            <span>Turn Classroom Observation Into</span>
 
             {/* "Everyday Support" Dark Badge */}
             <span className="inline-block mt-2">

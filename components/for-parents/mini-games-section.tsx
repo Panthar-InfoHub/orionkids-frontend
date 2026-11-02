@@ -154,7 +154,7 @@ export function ForParentsMiniGamesSection() {
               <span className="text-sm select-none" aria-hidden="true">
                 ✪
               </span>
-              <span>6 MINI-GAMES • ZERO INTIMIDATION</span>
+              <span>6 MINI GAMES • ZERO INTIMIDATION</span>
             </div>
 
             {/* Main Headline */}
@@ -168,8 +168,8 @@ export function ForParentsMiniGamesSection() {
                 color: "#0A1D3D",
               }}
             >
-              <span className="block lg:whitespace-nowrap">No two constellations are the same.</span>
-              <span className="block lg:whitespace-nowrap">Neither are two learners.</span>
+              <span className="block lg:whitespace-nowrap">No Two Constellations Are The Same</span>
+              <span className="block lg:whitespace-nowrap">Neither Are Two Learners</span>
             </h2>
           </div>
 
@@ -185,7 +185,7 @@ export function ForParentsMiniGamesSection() {
                 color: "#0A1D3D",
               }}
             >
-              OrionKids explores how children approach uncertainty, synthesize stories, and pivot strategies across playful mini-adventures.
+              OrionKids explores how children approach uncertainty, synthesize stories, and pivot strategies across playful mini adventures.
             </p>
           </div>
         </div>

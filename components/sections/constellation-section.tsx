@@ -143,11 +143,11 @@ export function ConstellationSection() {
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
             >
-              No Two Constellations Are
+              No Two Constellations
               <br />
-              The Same.
+              Are The Same
               <br />
-              Neither Are Two Learners.
+              Neither Are Two Learners
             </h2>
 
             {/* "THAT'S THE WHOLE POINT" Pink Badge Button */}

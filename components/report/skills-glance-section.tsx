@@ -176,7 +176,7 @@ export function SkillsGlanceSection({ report }: { report?: QuestReportData | nul
                 letterSpacing: "-0.6px",
               }}
             >
-              Skills at a Glance
+              Skills At A Glance
             </h2>
             <span
               className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#E2E8F0] text-[#334155] font-bold"

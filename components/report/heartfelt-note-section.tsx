@@ -32,7 +32,7 @@ export function HeartfeltNoteSection() {
           letterSpacing: "-0.4px",
         }}
       >
-        A Heartfelt Note for Ananya’s Family
+        A Heartfelt Note For Ananya’s Family
       </h2>
 
       {/* Body */}
