@@ -18,6 +18,9 @@ export function StroopIntroCard({
   onStartGame,
   isLoading = false,
 }: StroopIntroCardProps) {
+  const [practiceAnswer, setPracticeAnswer] = React.useState<string | null>(null);
+  const [hintVisible, setHintVisible] = React.useState(true);
+
   return (
     <div className="w-full md:max-w-[916px] flex-1 bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_30px_rgba(10,29,61,0.03)] p-6 sm:p-[32px] flex flex-col justify-between min-h-[660px] gap-[24px]">
       <div className="flex flex-col h-full justify-between gap-[24px]">
@@ -96,50 +99,77 @@ export function StroopIntroCard({
             RED
           </div>
 
-          {/* Two Sample Option Chips */}
+          {/* Interactive Option Chips */}
           <div className="flex items-center justify-center gap-4 mb-4 select-none">
             {/* Red Option Chip */}
-            <div className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-white border border-[#D8DFE8] shadow-[0_2px_4px_rgba(10,29,61,0.04)]">
+            <button
+              type="button"
+              onClick={() => {
+                setPracticeAnswer("Red");
+                setHintVisible(false);
+              }}
+              className={`relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full border transition-all cursor-pointer select-none ${
+                practiceAnswer === "Red"
+                  ? "bg-emerald-50 border-emerald-500 shadow-[2px_2px_0_0_#10B981] scale-105"
+                  : "bg-white hover:bg-slate-50 border-[#D8DFE8] shadow-[0_2px_4px_rgba(10,29,61,0.04)] hover:-translate-y-0.5 active:translate-y-0"
+              } ${hintVisible && practiceAnswer === null ? "ring-3 ring-[#FFE066] ring-offset-2 animate-pulse" : ""}`}
+            >
               <span className="w-3 h-3 rounded-full bg-[#E04F5F] shrink-0" />
               <span
                 style={{
                   fontFamily: JAKARTA,
                   fontWeight: 700,
                   fontSize: "14px",
-                  color: "#0A1D3D",
+                  color: practiceAnswer === "Red" ? "#065F46" : "#0A1D3D",
                 }}
               >
                 Red
               </span>
-            </div>
+              {practiceAnswer === "Red" && <span>🌟</span>}
+            </button>
 
             {/* Blue Option Chip */}
-            <div className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-white border border-[#D8DFE8] shadow-[0_2px_4px_rgba(10,29,61,0.04)]">
+            <button
+              type="button"
+              onClick={() => {
+                setPracticeAnswer("Blue");
+                setHintVisible(false);
+              }}
+              className={`inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full border transition-all cursor-pointer select-none ${
+                practiceAnswer === "Blue"
+                  ? "bg-rose-50 border-rose-400 shadow-[2px_2px_0_0_#F43F5E] animate-wobble"
+                  : "bg-white hover:bg-slate-50 border-[#D8DFE8] shadow-[0_2px_4px_rgba(10,29,61,0.04)] hover:-translate-y-0.5 active:translate-y-0"
+              }`}
+            >
               <span className="w-3 h-3 rounded-full bg-[#2563EB] shrink-0" />
               <span
                 style={{
                   fontFamily: JAKARTA,
                   fontWeight: 700,
                   fontSize: "14px",
-                  color: "#0A1D3D",
+                  color: practiceAnswer === "Blue" ? "#9F1239" : "#0A1D3D",
                 }}
               >
                 Blue
               </span>
-            </div>
+            </button>
           </div>
 
-          {/* Footnote inside preview box */}
+          {/* Feedback or Footnote */}
           <p
             style={{
               fontFamily: JAKARTA,
-              fontWeight: 400,
+              fontWeight: 600,
               fontSize: "13px",
               lineHeight: "140%",
-              color: "#526176",
+              color: practiceAnswer === "Red" ? "#059669" : practiceAnswer === "Blue" ? "#D97706" : "#526176",
             }}
           >
-            Practice preview · Instructions come first.
+            {practiceAnswer === "Red"
+              ? "🌟 Spot on! The word is RED and the ink is RED!"
+              : practiceAnswer === "Blue"
+              ? "🙈 Remember: Spot the ink colour!"
+              : "Practice preview · Tap an answer to try."}
           </p>
         </div>
 

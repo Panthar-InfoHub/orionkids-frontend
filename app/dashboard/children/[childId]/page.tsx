@@ -91,7 +91,7 @@ function ChildDetailContent({ params }: PageProps) {
   }, [loadData]);
 
   const handleQuestAction = async () => {
-    if (!child) return;
+    if (!child || isStartingQuest) return;
     setIsStartingQuest(true);
     try {
       const { destination } = await startChildQuest(child.id);
