@@ -57,8 +57,8 @@ export function ClosingCtaSection() {
                 letterSpacing: "-0.5px",
               }}
             >
-              Whether you are a parent, an educator, a school leader or a
-              researcher, we would love to hear from you.
+              Whether You Are A Parent, An Educator, A School Leader Or A
+              Researcher, We Would Love To Hear From You
             </h2>
 
             <p

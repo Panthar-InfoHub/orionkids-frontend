@@ -114,7 +114,7 @@ export function CycleSection() {
             className="text-[32px] sm:text-[40px] lg:text-[44px] font-[800] text-[#0A1D3D] leading-[1.12] tracking-[-1.2px]"
             style={{ fontFamily: JAKARTA }}
           >
-            How the five steps work together
+            How The Five Steps Work Together
           </h2>
 
           {/* Subtitle */}

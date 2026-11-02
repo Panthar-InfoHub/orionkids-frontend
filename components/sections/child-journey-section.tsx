@@ -334,7 +334,7 @@ export function ChildJourneySection() {
                       fontSize: "15.84px",
                     }}
                   >
-                    Play the actual game. 🧠
+                    Play the actual game🧠
                   </h3>
                   <p
                     className="text-[#526176] leading-[160%]"
@@ -377,7 +377,7 @@ export function ChildJourneySection() {
                       fontSize: "15.84px",
                     }}
                   >
-                    Report sent to parents &amp; Teacher. ⭐
+                    Report sent to parents &amp; Teacher ⭐
                   </h3>
                   <p
                     className="text-[#526176] leading-[160%]"
@@ -539,7 +539,7 @@ export function ChildJourneySection() {
                     className="text-[#0A1D3D] text-[15px] sm:text-[16px] font-[800] leading-snug"
                     style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
                   >
-                    Play the actual game. 🧠
+                    Play the actual game 🧠
                   </h3>
                   <p
                     className="text-[#526176] text-xs sm:text-[13px] leading-relaxed"
@@ -600,7 +600,7 @@ export function ChildJourneySection() {
                     className="text-[#0A1D3D] text-[15px] sm:text-[16px] font-[800] leading-snug"
                     style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
                   >
-                    Report sent to parents &amp; Teacher. ⭐
+                    Report sent to parents &amp; Teacher⭐
                   </h3>
                   <p
                     className="text-[#526176] text-xs sm:text-[13px] leading-relaxed"

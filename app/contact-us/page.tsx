@@ -9,11 +9,11 @@ export const metadata: Metadata = {
 // TODO: placeholder content, replace with final copy and contact details
 const SECTIONS: InfoSection[] = [
   {
-    heading: "General enquiries",
+    heading: "General Enquiries",
     paragraphs: ["Email: contact@orionkids.in", "We usually reply within two working days."],
   },
   {
-    heading: "Schools and partnerships",
+    heading: "Schools And Partnerships",
     paragraphs: [
       "Interested in running OrionKids at your school? Email schools@orionkids.in and we will set up a call.",
     ],
@@ -28,7 +28,7 @@ export default function ContactUsPage() {
   return (
     <InfoPage
       eyebrow="Contact Us"
-      title="We'd love to hear from you"
+      title="We'd Love To Hear From You"
       intro="Questions, feedback or partnership ideas: reach out and our team will get back to you. This page is a placeholder and will be updated soon."
       sections={SECTIONS}
     />

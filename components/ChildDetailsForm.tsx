@@ -214,7 +214,7 @@ export default function ChildDetailsForm() {
       <h2
         className={`mt-3 text-[24px] sm:text-[28px] leading-[34px] font-extrabold tracking-[-0.02em] text-[#0B2A5B] ${JAKARTA}`}
       >
-        A little about your child
+        A Little About Your Child
       </h2>
       <p className="mt-2.5 mb-7 text-[13px] leading-5 text-[#4B5870]">
         Please fill in the details below. Fields marked optional can be left blank.

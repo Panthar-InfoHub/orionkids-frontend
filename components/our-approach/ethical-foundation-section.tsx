@@ -82,15 +82,15 @@ export function EthicalFoundationSection() {
 
           {/* Heading */}
           <h2
-            className="mt-[29px] text-white text-[30px] sm:text-[40px] xl:text-[44px] leading-[1.15]"
+            className="mt-[29px] text-white text-[30px] sm:text-[40px] xl:text-[44px] leading-[1.15] text-center"
             style={{ fontFamily: JAKARTA, fontWeight: 800, letterSpacing: "-0.03em" }}
           >
-            Built to be used{" "}
+            Built To Be Used{" "}
             <span
               className="underline decoration-[#FF6B4A] decoration-[3px] sm:decoration-4 underline-offset-[10px]"
               style={{ color: GOLD }}
             >
-              responsibly.
+              Responsibly
             </span>
           </h2>
 

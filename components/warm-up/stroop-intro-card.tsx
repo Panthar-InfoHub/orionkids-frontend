@@ -52,7 +52,7 @@ export function StroopIntroCard({
               color: "#0A1D3D",
             }}
           >
-            Stroop colour-word
+            Stroop Colour-Word
           </h2>
 
           {/* Subtitle: Level 1 · Spot the ink colour */}

@@ -60,8 +60,7 @@ export function AboutHeroSection() {
                 letterSpacing: "-0.033em",
               }}
             >
-              Built around one simple belief
-              <span style={{ color: CORAL }}>.</span>
+              Built Around One Simple Belief
             </h1>
 
             {/* Sub-headline */}
@@ -69,7 +68,7 @@ export function AboutHeroSection() {
               className="mt-[22px] max-w-[668px] text-[#1B204A] text-[19px] sm:text-[22px] xl:text-[24px] leading-[1.35] sm:leading-8"
               style={{ fontFamily: JAKARTA, fontWeight: 600 }}
             >
-              Every child learns, thinks and responds to the world in their own way.
+              Every Child Learns, Thinks And Responds To The World In Their Own Way
             </h2>
 
             {/* Body */}

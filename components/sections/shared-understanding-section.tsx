@@ -167,7 +167,7 @@ export function SharedUnderstandingSection() {
               className="text-2xl sm:text-3xl lg:text-[38px] font-[800] text-[#0A1D3D] tracking-[-0.8px] flex items-center gap-2.5"
               style={{ fontFamily: JAKARTA, lineHeight: "115%" }}
             >
-              <span>One Child. A Shared Understanding</span>
+              <span>One Child, A Shared Understanding</span>
               <span className="text-2xl lg:text-3xl">🤝</span>
             </h2>
 
@@ -241,7 +241,7 @@ export function SharedUnderstandingSection() {
                 className="inline-flex items-center gap-1.5 h-[30px] px-3 bg-white text-[#0A1D3D] text-[13px] font-bold rounded-full border-2 border-[#0A1D3D] hover:scale-105 active:scale-95 transition-transform cursor-pointer self-start shrink-0 whitespace-nowrap"
                 style={{ fontFamily: JAKARTA }}
               >
-                <span>Explore OrionKids for schools</span>
+                <span>Explore OrionKids For Schools</span>
                 <span className="text-xs">→</span>
               </button>
             </div>
@@ -297,7 +297,7 @@ export function SharedUnderstandingSection() {
                 className="inline-flex items-center gap-1.5 h-[30px] px-3 bg-white text-[#0A1D3D] text-[13px] font-bold rounded-full border-2 border-[#0A1D3D] hover:scale-105 active:scale-95 transition-transform cursor-pointer self-start shrink-0 whitespace-nowrap"
                 style={{ fontFamily: JAKARTA }}
               >
-                <span>Explore OrionKids for parents</span>
+                <span>Explore OrionKids For Parents</span>
                 <span className="text-xs">→</span>
               </button>
             </div>

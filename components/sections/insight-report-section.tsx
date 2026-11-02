@@ -133,7 +133,7 @@ export function InsightReportSection() {
             >
               Every Child Is A<br />
               Constellation<br />
-              Of Potential. 🌟
+              Of Potential 🌟
             </h2>
 
             <p
@@ -147,7 +147,7 @@ export function InsightReportSection() {
             >
               The OrionKids Insight Report maps strengths,
               <br className="hidden sm:block" /> areas that need support, and progress into one
-              <br className="hidden sm:block" /> readable learning profile — no rankings, no labels.
+              <br className="hidden sm:block" /> readable learning profile no rankings, no labels.
             </p>
 
             {/* Callout: 446 wide, radius 16, 2px #FFD54F border, padding 16, gap 8 */}
@@ -177,7 +177,7 @@ export function InsightReportSection() {
               >
                 AI observes patterns in game performance over time.
                 <br className="hidden sm:block" /> Teachers and parents connect those insights to everyday
-                <br className="hidden sm:block" /> learning — not a fixed label.
+                <br className="hidden sm:block" /> learning not a fixed label.
               </p>
             </div>
 

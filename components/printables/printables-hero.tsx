@@ -67,7 +67,7 @@ export function PrintablesHero({
           <h1
             className={`text-[24px] sm:text-[32px] lg:text-[38px] font-black text-[#0A1D3D] leading-[1.18] tracking-[-0.8px] mb-2.5 ${JAKARTA}`}
           >
-            Hands–On Printables for{" "}
+            Hands On Printables For{" "}
             <span className="relative inline-block text-[#FFC72C]">
               Curious Minds
               {/* Green Underline Accent matching mockup */}
@@ -77,9 +77,8 @@ export function PrintablesHero({
 
           {/* Lede Subtitle */}
           <p className="text-[13px] sm:text-[14px] text-[#475569] max-w-2xl leading-relaxed font-normal mb-4 sm:mb-5">
-            Screen-free cognitive crosswords, tactile activity mats, coloring adventures, and classroom
-            organizers designed by neurodevelopment specialists. Instant PDF printouts that require zero
-            preparation and respect your printer ink.
+            Screen free cognitive crosswords, tactile activity mats, coloring adventures, and classroom
+            organizers designed by specialists. Instant PDF printouts that require zero preparation.
           </p>
 
           {/* Search & Filter Bar */}
@@ -112,7 +111,7 @@ export function PrintablesHero({
           {/* SELECT GRADE / AGE LEVEL Row */}
           <div className="w-full mb-3">
             <span className="block text-[9px] font-extrabold uppercase tracking-widest text-[#64748B] mb-1.5">
-              SELECT GRADE / AGE LEVEL
+              Select Grade / Age Level
             </span>
             <div className="flex items-center flex-wrap gap-1.5">
               {grades.map((grade) => {

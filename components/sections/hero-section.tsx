@@ -62,7 +62,7 @@ export function HeroSection() {
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
             >
-              <span>Stronger Thinking.</span>
+              <span>Stronger Thinking</span>
 
               <div className="relative mt-[4px] flex flex-col items-start">
                 {/* Yellow Badge: Brighter (Figma: 254x72, 16px radius, 4px border, 1deg rotate, #FFD54F) */}
@@ -74,23 +74,70 @@ export function HeroSection() {
 
                 <div className="relative z-[3] -mt-[10px] sm:-mt-[14px] inline-flex items-center justify-center px-[10px] sm:px-[12px] py-[2px] bg-[#0A1D3D] text-white rounded-[14px] sm:rounded-[16px] border-[3px] sm:border-[4px] border-[#0A1D3D] shadow-[3px_4px_0px_0px_#0A1D3D] sm:shadow-[4px_5px_0px_0px_#0A1D3D] rotate-[2deg] origin-top-left">
                   <span className="text-[34px] sm:text-[44px] lg:text-[42px] xl:text-[52px] 2xl:text-[54px] font-[800] tracking-[-1.5px] leading-[46px] sm:leading-[54px] lg:leading-[50px] xl:leading-[60px] text-white">
-                    Tomorrows.
+                    Tomorrows
                   </span>
 
+                  {/* 3D Moving Rocket Mascot with Thruster Sparks & Flight Animation */}
                   <div
-                    className="absolute -top-[30px] sm:-top-[42px] lg:-top-[46px] xl:-top-[52px] -right-[40px] sm:-right-[52px] lg:-right-[56px] xl:-right-[70px] w-[95px] sm:w-[120px] lg:w-[125px] xl:w-[150px] h-[40px] sm:h-[52px] lg:h-[54px] xl:h-[64px] pointer-events-none select-none z-20"
-                    style={{
-                      transform: "scaleX(-1)",
-                    }}
+                    className="absolute -top-[44px] sm:-top-[55px] -right-[20px] sm:-right-[30px] w-[54px] sm:w-[62px] aspect-square pointer-events-none select-none z-20"
                   >
-                    <Image
-                      src={encodeURI("/gif/cartoon.webp")}
-                      alt="Playful cartoon cat"
-                      width={150}
-                      height={64}
-                      unoptimized
-                      className="w-full h-full object-contain"
-                    />
+                    <div className="relative w-full h-full animate-rocket-flight">
+                      {/* Cyan Thruster Engine Plasma Glow behind the flame */}
+                      <div
+                        className="absolute pointer-events-none rounded-full animate-rocket-engine"
+                        style={{
+                          left: "14%",
+                          top: "72%",
+                          width: "28%",
+                          height: "28%",
+                          background:
+                            "radial-gradient(circle, rgba(56, 189, 248, 0.85) 0%, rgba(6, 182, 212, 0.45) 45%, rgba(14, 165, 233, 0) 75%)",
+                          filter: "blur(4px)",
+                        }}
+                      />
+
+                      {/* Trailing Stardust / Energy Particles */}
+                      <span
+                        className="absolute pointer-events-none rounded-full bg-cyan-300 animate-rocket-spark-1"
+                        style={{
+                          left: "18%",
+                          top: "76%",
+                          width: "4px",
+                          height: "4px",
+                          boxShadow: "0 0 5px #38bdf8",
+                        }}
+                      />
+                      <span
+                        className="absolute pointer-events-none rounded-full bg-[#A5F3FC] animate-rocket-spark-2"
+                        style={{
+                          left: "14%",
+                          top: "80%",
+                          width: "3px",
+                          height: "3px",
+                          boxShadow: "0 0 4px #67e8f9",
+                        }}
+                      />
+                      <span
+                        className="absolute pointer-events-none rounded-full bg-white animate-rocket-spark-3"
+                        style={{
+                          left: "16%",
+                          top: "78%",
+                          width: "2.5px",
+                          height: "2.5px",
+                          boxShadow: "0 0 4px #ffffff",
+                        }}
+                      />
+
+                      {/* Robot Mascot Image */}
+                      <Image
+                        src="/robots/robo3.png"
+                        alt="OrionKids 3D rocket robot mascot"
+                        width={90}
+                        height={90}
+                        priority
+                        className="relative z-10 w-full h-full object-contain drop-shadow-[0_8px_16px_rgba(10,29,61,0.3)]"
+                      />
+                    </div>
                   </div>
 
                   {/* SVG Line (line.svg) extending to the right from the vertical middle of Tomorrows */}

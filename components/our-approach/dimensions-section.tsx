@@ -9,95 +9,122 @@ const INK = "#0A1D3D";
 
 interface DimensionCard {
   id: string;
+  num: string;
   icon: string;
   iconBg: string;
+  cardBg: string;
+  cornerBg: string;
+  tag: string;
   title: string;
   description: string;
   quest: string;
-  questBorder: string;
   questBg: string;
 }
 
 const DIMENSIONS: DimensionCard[] = [
   {
     id: "memory",
+    num: "01",
     icon: "🧩",
-    iconBg: "#E1F5DE",
+    iconBg: "#DCFCE7",
+    cardBg: "#F4FBF6",
+    cornerBg: "#BBF7D0",
+    tag: "RETENTION",
     title: "Memory",
-    description: "remembering, retaining and working with information.",
+    description: "Remembering, retaining and working with information across daily learning tasks.",
     quest: "Quest: Pattern Recall",
-    questBorder: "#0F172A",
-    questBg: "#EEF2FF",
+    questBg: "#E8F8EE",
   },
   {
     id: "attention",
+    num: "02",
     icon: "🎯",
-    iconBg: "#FFEBD9",
+    iconBg: "#FED7AA",
+    cardBg: "#FFF9F3",
+    cornerBg: "#FDBA74",
+    tag: "FOCUS",
     title: "Attention",
-    description: "sustaining focus and responding to relevant information.",
+    description: "Sustaining focus and responding to relevant signals without getting sidetracked.",
     quest: "Quest: Star Seeker",
-    questBorder: "#0F172A",
-    questBg: "#FFF7DB",
+    questBg: "#FFEDD5",
   },
   {
     id: "reasoning",
+    num: "03",
     icon: "🔍",
-    iconBg: "#E3EEFF",
+    iconBg: "#BAE6FD",
+    cardBg: "#F2F8FF",
+    cornerBg: "#7DD3FC",
+    tag: "LOGIC",
     title: "Reasoning",
-    description: "recognizing patterns, relationships and logical connections.",
+    description: "Recognizing patterns, logical relationships, and discovering hidden connections.",
     quest: "Quest: Logic Mazes",
-    questBorder: "#0F172A",
-    questBg: "#E4F8FA",
+    questBg: "#E0F2FE",
   },
   {
     id: "processing",
+    num: "04",
     icon: "⚡",
-    iconBg: "#FFE6E8",
+    iconBg: "#FECDD3",
+    cardBg: "#FFF3F5",
+    cornerBg: "#FDA4AF",
+    tag: "AGILITY",
     title: "Processing",
-    description: "responding to information efficiently and accurately.",
+    description: "Responding to information with speed, clarity, and adaptive precision.",
     quest: "Quest: Sound & Signal",
-    questBorder: "#0F172A",
-    questBg: "#FFEDEE",
+    questBg: "#FFE4E6",
   },
   {
     id: "problem-solving",
+    num: "05",
     icon: "💡",
-    iconBg: "#DFF7E8",
+    iconBg: "#FEF08A",
+    cardBg: "#FEFCF0",
+    cornerBg: "#FDE047",
+    tag: "STRATEGY",
     title: "Problem Solving",
-    description: "planning, adapting and finding possible solutions.",
+    description: "Planning, testing possibilities, and adapting when a playful challenge shifts.",
     quest: "Quest: Bridge Builder",
-    questBorder: "#0F172A",
-    questBg: "#E3F8EF",
+    questBg: "#FEF3C7",
   },
   {
     id: "language",
+    num: "06",
     icon: "📖",
-    iconBg: "#EEE9FF",
-    title: "Language and Verbal Skills",
-    description: "working with words, meaning and verbal information.",
+    iconBg: "#E9D5FF",
+    cardBg: "#FAF6FF",
+    cornerBg: "#D8B4FE",
+    tag: "VERBAL",
+    title: "Language & Verbal Skills",
+    description: "Expressing thoughts, interpreting meaning, and structuring verbal ideas.",
     quest: "Quest: Fable Tracks",
-    questBorder: "#0F172A",
-    questBg: "#F1EAFF",
+    questBg: "#EDE9FE",
   },
   {
     id: "visual-spatial",
+    num: "07",
     icon: "📐",
-    iconBg: "#D9F0EE",
+    iconBg: "#A7F3D0",
+    cardBg: "#F2FDF9",
+    cornerBg: "#6EE7B7",
+    tag: "SPATIAL",
     title: "Visual-Spatial Skills",
-    description: "understanding visual relationships, patterns and space.",
+    description: "Visualizing transformations, space relationships, and geometric forms.",
     quest: "Quest: Astro Tangrams",
-    questBorder: "#0F172A",
-    questBg: "#E4F8FA",
+    questBg: "#CCFBF1",
   },
   {
     id: "executive-functions",
+    num: "08",
     icon: "🕹️",
-    iconBg: "#FFE3DD",
+    iconBg: "#FFD0C7",
+    cardBg: "#FFF5F2",
+    cornerBg: "#FFB3A6",
+    tag: "CONTROL",
     title: "Executive Functions",
-    description: "planning, flexibility, inhibition and goal-directed thinking.",
+    description: "Self-regulation, cognitive flexibility, and goal-directed decision making.",
     quest: "Quest: Chameleon Shift",
-    questBorder: "#0F172A",
-    questBg: "#FFEBDD",
+    questBg: "#FFEBE6",
   },
 ];
 
@@ -137,10 +164,10 @@ export function DimensionsSection() {
           </span>
 
           <h2
-            className="mt-3 max-w-[720px] text-[30px] sm:text-[38px] lg:text-[44px] leading-[1.08]"
+            className="mt-3 max-w-none text-[30px] sm:text-[38px] lg:text-[44px] leading-[1.08]"
             style={{ fontFamily: JAKARTA, fontWeight: 800, letterSpacing: "-0.04em", color: INK }}
           >
-            What We Explore Across Every Quest
+            What We Explore Across Every Quest?
           </h2>
 
           <p
@@ -205,56 +232,74 @@ export function DimensionsSection() {
         </div>
 
         {/* ================= 8 cards ================= */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-y-6 xl:gap-y-[68px] xl:[grid-template-rows:minmax(269px,auto)_minmax(320px,auto)]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4.5 sm:gap-5 xl:gap-6 w-full">
           {DIMENSIONS.map((d) => (
             <article
               key={d.id}
-              className="relative flex flex-col rounded-3xl border-2 bg-white p-5 xl:p-6 shadow-[3px_4px_0_#0A1D3D] transition-transform duration-200 motion-reduce:transition-none hover:-translate-y-1"
-              style={{ borderColor: INK }}
+              className="group relative flex flex-col justify-between rounded-[24px] border-[2px] p-5 sm:p-6 min-h-[310px] overflow-hidden shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-y-1.5 hover:shadow-[6px_8px_0px_0px_#0A1D3D] transition-all duration-200 select-none"
+              style={{
+                backgroundColor: d.cardBg,
+                borderColor: INK,
+                fontFamily: JAKARTA,
+              }}
             >
-              <span
-                className="w-14 h-14 rounded-[14px] border-[2px] flex items-center justify-center text-[24px] leading-none shrink-0"
-                style={{ backgroundColor: d.iconBg, borderColor: "#0F172A" }}
-                aria-hidden="true"
+              {/* Corner Number Tab (01, 02, ..., 08) */}
+              <div
+                className="absolute top-0 right-0 w-[42px] h-[40px] rounded-tr-[22px] rounded-bl-[24px] border-l-[2px] border-b-[2px] border-[#0A1D3D] flex items-center justify-center font-[800] text-[12px] text-[#0A1D3D] z-10 select-none"
+                style={{ backgroundColor: d.cornerBg }}
               >
-                {d.icon}
-              </span>
+                {d.num}
+              </div>
 
-              <h3
-                className="mt-3.5 text-[18px] leading-7"
-                style={{ fontFamily: JAKARTA, fontWeight: 800, letterSpacing: "-0.01em", color: INK }}
-              >
-                {d.title}
-              </h3>
+              {/* Top Section: Icon & Category Tag */}
+              <div className="flex flex-col gap-3 w-full">
+                <div className="flex items-center justify-between w-full pr-10">
+                  <div
+                    className="w-[46px] h-[46px] rounded-[14px] border-[2px] border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center text-[22px] shrink-0 transition-transform group-hover:scale-105"
+                    style={{ backgroundColor: d.iconBg }}
+                    aria-hidden="true"
+                  >
+                    <span>{d.icon}</span>
+                  </div>
 
-              <p
-                className="mt-1 text-[13px] leading-6"
-                style={{ fontFamily: INTER, fontWeight: 400, color: "#526176" }}
-              >
-                {d.description}
-              </p>
+                  <span
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full border-[1.5px] border-[#0A1D3D] bg-white text-[9.5px] font-[800] tracking-[0.5px] uppercase text-[#0A1D3D] shadow-[1.5px_1.5px_0px_0px_#0A1D3D]"
+                  >
+                    {d.tag}
+                  </span>
+                </div>
 
-              <div className="mt-auto pt-6">
+                {/* Title & Description */}
+                <div>
+                  <h3
+                    className="mt-1 text-[19px] sm:text-[20px] font-[800] text-[#0A1D3D] leading-snug tracking-[-0.4px]"
+                  >
+                    {d.title}
+                  </h3>
+                  <p
+                    className="mt-2 text-[13px] sm:text-[13.5px] font-[500] text-[#526176] leading-[155%]"
+                    style={{ fontFamily: INTER }}
+                  >
+                    {d.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom Section: Separator & Quest Pill */}
+              <div className="mt-auto pt-5 w-full">
                 <div
                   aria-hidden="true"
-                  style={{
-                    height: "1.5px",
-                    backgroundImage: `repeating-linear-gradient(90deg, ${INK} 0 4px, transparent 4px 7px)`,
-                  }}
+                  className="mb-3.5 w-full border-t-[1.5px] border-dashed border-[#0A1D3D]/30"
                 />
-                <span
-                  className="mt-3 inline-flex items-center h-[31px] px-3 rounded-lg border-2 bg-white max-w-full"
-                  style={{
-                    borderColor: d.questBorder,
-                    backgroundColor: d.questBg,
-                    fontFamily: JAKARTA,
-                    fontWeight: 700,
-                    fontSize: "10.5px",
-                    color: INK,
-                  }}
+                <div
+                  className="inline-flex items-center gap-1.5 h-[34px] px-3 rounded-[12px] border-[2px] border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] group-hover:translate-x-0.5 group-hover:translate-y-0.5 group-hover:shadow-[1px_1px_0px_0px_#0A1D3D] transition-all cursor-default select-none max-w-full"
+                  style={{ backgroundColor: d.questBg }}
                 >
-                  {d.quest}
-                </span>
+                  <span className="text-xs">🎮</span>
+                  <span className="font-[800] text-[11px] text-[#0A1D3D] tracking-tight truncate">
+                    {d.quest}
+                  </span>
+                </div>
               </div>
             </article>
           ))}

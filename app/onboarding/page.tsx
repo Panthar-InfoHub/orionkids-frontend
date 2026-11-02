@@ -98,9 +98,9 @@ export default function OnboardingPage() {
               fontWeight: 800,
             }}
           >
-            Every child is<br />
-            a world of<br />
-            potential.
+            Every Child Is<br />
+            A World Of<br />
+            Potential
           </h1>
 
           <p

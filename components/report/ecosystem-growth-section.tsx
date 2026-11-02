@@ -79,7 +79,7 @@ export function EcosystemGrowthSection() {
             className="mt-2 text-[#0F172A] text-[26px] sm:text-[30px]"
             style={{ fontWeight: 600, lineHeight: "36px", letterSpacing: "-0.75px" }}
           >
-            Everyone Plays a Part in Ananya’s Growth
+            Everyone Plays A Part In Ananya’s Growth
           </h2>
 
           <p

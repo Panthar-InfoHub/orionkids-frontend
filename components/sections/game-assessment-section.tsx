@@ -84,9 +84,9 @@ export function GameAssessmentSection() {
                 letterSpacing: "-0.03em",
               }}
             >
-              Assessment that
+              Assessment That
               <br />
-              <span>feels like play</span>
+              <span>Feels Like Play</span>
             </h2>
 
             {/* Subtitle */}
