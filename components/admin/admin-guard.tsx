@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Loader2, ShieldAlert, ArrowLeft } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
-import { fetchCurrentUserProfile, type UserProfile } from "@/lib/api/auth";
+import { fetchCurrentUserProfile, getRouteForUserProfile, type UserProfile } from "@/lib/api/auth";
 
 interface AdminContextValue {
   admin: UserProfile;
@@ -63,13 +63,9 @@ export function AdminGuard({ children }: AdminGuardProps) {
         return;
       }
 
-      // 4. Handle pending account
-      if (profile.status === "PENDING") {
-        if (!profile.onboardingSubmittedAt) {
-          router.replace("/onboarding");
-        } else {
-          router.replace("/pending-approval");
-        }
+      // 4. Handle non-active account
+      if (profile.status !== "ACTIVE") {
+        router.replace(getRouteForUserProfile(profile));
         return;
       }
 

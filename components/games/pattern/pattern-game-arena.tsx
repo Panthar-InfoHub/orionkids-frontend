@@ -8,6 +8,8 @@ import {
   completeQuestLevel,
 } from "@/lib/api/quest";
 import { fetchCurrentSession } from "@/lib/api/session";
+import { GameTutorialGuide } from "@/components/game-tutorial/game-tutorial-guide";
+import { TutorialReplayButton } from "@/components/game-tutorial/tutorial-replay-button";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
@@ -66,6 +68,8 @@ export function PatternGameArena({
   const [isNavigating, setIsNavigating] = useState(false);
   const startTimeRef = useRef<number>(Date.now());
 
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+
   // Flying Tile & Interaction States
   const arenaRef = useRef<HTMLDivElement>(null);
   const targetSlotRef = useRef<HTMLDivElement>(null);
@@ -73,10 +77,9 @@ export function PatternGameArena({
   const [isFlying, setIsFlying] = useState(false);
   const [filledSlot, setFilledSlot] = useState<{ symbol: string; isCorrect: boolean } | null>(null);
   const [selectedOptionInfo, setSelectedOptionInfo] = useState<{ option: string; isCorrect: boolean } | null>(null);
-  const [isCelebratingCorrect, setIsCelebratingCorrect] = useState(false);
   const [isSlidingOut, setIsSlidingOut] = useState(false);
   const [isInteractionLocked, setIsInteractionLocked] = useState(false);
-  const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string; isCorrect: boolean } | null>(null);
+  const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string } | null>(null);
 
   useEffect(() => {
     let isCancelled = false;
@@ -122,6 +125,7 @@ export function PatternGameArena({
     const targetEl = targetSlotRef.current;
     const arenaEl = arenaRef.current;
 
+    // Backend-authoritative and internal correctness calculation preserved
     const isCorrect = chosen === trials[currentIdx].answer;
     setIsInteractionLocked(true);
 
@@ -149,27 +153,18 @@ export function PatternGameArena({
         setIsFlying(true);
       });
 
-      // Once the tile lands on the question mark slot (420ms):
+      // Once the tile lands on the question mark slot (180ms):
       setTimeout(async () => {
         setFlyingTile(null);
         setIsFlying(false);
         setFilledSlot({ symbol: chosen, isCorrect });
         setSelectedOptionInfo({ option: chosen, isCorrect });
 
-        if (isCorrect) {
-          setIsCelebratingCorrect(true);
-          setFeedbackBanner({
-            icon: "✅",
-            text: "CORRECT! Super Logic! +1 🌟",
-            isCorrect: true,
-          });
-        } else {
-          setFeedbackBanner({
-            icon: "❌",
-            text: `Oops, Wrong! `,
-            isCorrect: false,
-          });
-        }
+        // Silent neutral interaction feedback: confirm registration without disclosing correctness
+        setFeedbackBanner({
+          icon: "✨",
+          text: "Choice registered...",
+        });
 
         const isLastTrial = currentIdx + 1 >= trials.length;
         const newCorrect = isCorrect ? correctCount + 1 : correctCount;
@@ -183,17 +178,16 @@ export function PatternGameArena({
           });
         }
 
-        // Wait comfortable duration (2200ms on last pattern, 1250ms on interim patterns) so user clearly absorbs outcome
-        const holdDuration = isLastTrial ? 2200 : 1250;
+        // Fast neutral transition hold (180ms)
+        const holdDuration = 180;
         setTimeout(async () => {
           // Slide out the completed pattern box to the left
           setIsSlidingOut(true);
 
-          // After slide-out transition completes (350ms), advance to next pattern or complete
+          // After slide-out transition completes (120ms), advance to next pattern or complete
           setTimeout(async () => {
             if (!isLastTrial) {
               setFilledSlot(null);
-              setIsCelebratingCorrect(false);
               setFeedbackBanner(null);
               setSelectedOptionInfo(null);
               setIsSlidingOut(false);
@@ -225,18 +219,27 @@ export function PatternGameArena({
                     nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
                   }
                   setNextLevelRoute(nextRoute);
+
+                  // Auto-advance immediately without asking
+                  setTimeout(() => {
+                    router.push(nextRoute);
+                  }, 250);
                 } else {
                   setSubmissionStatus("error");
                   setErrorMessage(result.error?.message || "Failed to save pattern recognition results.");
                 }
               } else {
                 setSubmissionStatus("success");
-                setNextLevelRoute(level < 3 ? `/games/pattern?level=${level + 1}` : "/games/odd-one-out?level=1");
+                const nextRoute = level < 3 ? `/games/pattern?level=${level + 1}` : "/games/odd-one-out?level=1";
+                setNextLevelRoute(nextRoute);
+                setTimeout(() => {
+                  router.push(nextRoute);
+                }, 250);
               }
             }
-          }, 350);
+          }, 120);
         }, holdDuration);
-      }, 420);
+      }, 180);
     }
   };
 
@@ -245,17 +248,25 @@ export function PatternGameArena({
 
   return (
     <div className="w-full flex flex-col items-center select-none">
+      {/* Level Tutorial Guide */}
+      <GameTutorialGuide
+        gameKey="pattern"
+        level={level}
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+      />
+
       <div
         ref={arenaRef}
-        className="relative z-10 w-full max-w-[840px] my-auto py-8 px-6 sm:px-12 rounded-[24px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center min-h-[460px] overflow-hidden"
+        className="relative z-10 w-full max-w-[840px] my-auto py-3.5 sm:py-4 px-4 sm:px-8 rounded-[20px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center min-h-[320px] sm:min-h-[340px] overflow-hidden"
       >
         {/* Flying Tile Animated Clone */}
         {flyingTile && (
           <div
-            className="absolute z-50 pointer-events-none rounded-[16px] bg-white border-2 border-[#0A1D3D] shadow-[4px_4px_0px_#0A1D3D] flex items-center justify-center text-3xl sm:text-4xl transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)]"
+            className="absolute z-50 pointer-events-none rounded-[14px] bg-white border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] flex items-center justify-center text-2xl sm:text-3xl transition-all duration-200 ease-[cubic-bezier(0.25,1,0.5,1)]"
             style={{
-              width: "60px",
-              height: "60px",
+              width: "52px",
+              height: "52px",
               left: `${isFlying ? flyingTile.targetX : flyingTile.startX}px`,
               top: `${isFlying ? flyingTile.targetY : flyingTile.startY}px`,
               transform: isFlying ? "scale(1.08) rotate(4deg)" : "scale(1) rotate(0deg)",
@@ -267,69 +278,65 @@ export function PatternGameArena({
         )}
 
         {isFinished ? (
-          <div className="py-6 flex flex-col items-center animate-in fade-in duration-300">
+          <div className="py-4 flex flex-col items-center animate-in fade-in duration-300">
             <div
-              className={`w-16 h-16 rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-3xl mb-4 ${
+              className={`w-12 h-12 rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-2xl mb-2 ${
                 submissionStatus === "error" ? "bg-[#FF5B5B]" : "bg-[#FFD028]"
               }`}
             >
               {submissionStatus === "error" ? "⚠️" : "🌟"}
             </div>
-            <h2 className="text-[26px] sm:text-[30px] font-extrabold text-white mb-2" style={{ fontFamily: JAKARTA }}>
+            <h2 className="text-[22px] sm:text-[24px] font-extrabold text-white mb-1" style={{ fontFamily: JAKARTA }}>
               {submissionStatus === "error" ? "Level Verification Required" : `Pattern Recognition Level ${level} Complete!`}
             </h2>
 
-            <p className="text-[15px] text-[#E0D3F8] max-w-[460px] mb-6 text-center leading-relaxed" style={{ fontFamily: JAKARTA }}>
+            <p className="text-[13px] text-[#E0D3F8] max-w-[440px] mb-4 text-center leading-relaxed" style={{ fontFamily: JAKARTA }}>
               {submissionStatus === "submitting"
                 ? "Recording your pattern logic score..."
                 : submissionStatus === "error"
                 ? errorMessage
-                : `Super spatial reasoning! You correctly solved ${correctCount} out of ${trials.length} patterns.`}
+                : `Super spatial reasoning! You completed all ${trials.length} pattern challenges.`}
             </p>
-            {submissionStatus === "success" && nextLevelRoute && (
-              <button
-                type="button"
-                disabled={isNavigating}
-                onClick={() => {
-                  if (isNavigating) return;
-                  setIsNavigating(true);
-                  router.push(nextLevelRoute);
-                }}
-                className="inline-flex items-center justify-center px-8 py-3.5 rounded-full font-extrabold text-[15px] text-[#0A1D3D] bg-[#FFD028] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] hover:-translate-y-0.5 transition-transform cursor-pointer"
-                style={{ fontFamily: JAKARTA }}
-              >
-                {isNavigating
-                  ? "Launching Next Challenge... 🚀"
-                  : level < 3
-                  ? `Next Level (${level + 1} of 3) 🚀`
-                  : "Next Game: Odd One Out 🚀"}
-              </button>
+            {submissionStatus === "success" && (
+              <div className="flex flex-wrap items-center justify-center gap-2 mt-1">
+                <div
+                  data-testid="scored-badge"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#65DCAA] text-[#0A1D3D] font-extrabold text-xs sm:text-[13px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] select-none"
+                  style={{ fontFamily: JAKARTA }}
+                >
+                  <span className="text-sm">✓</span>
+                  <span>Scored</span>
+                </div>
+
+                <div className="flex items-center gap-2 px-5 py-2 rounded-full bg-white text-[#0A1D3D] font-extrabold text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] animate-pulse">
+                  <span className="text-sm">✨</span>
+                  <span>
+                    {level < 3 ? `Moving to Level ${level + 1}... 🚀` : "Moving to Next Game... 🚀"}
+                  </span>
+                </div>
+              </div>
             )}
           </div>
         ) : (
-          <div className="w-full flex flex-col items-center gap-7">
-            {/* Header / Score */}
-            <div className="flex items-center justify-between w-full max-w-[560px] text-white/90 text-sm font-bold">
+          <div className="w-full flex flex-col items-center gap-3 sm:gap-3.5">
+            {/* Header / Replay Guide / Neutral Progress */}
+            <div className="flex items-center justify-between w-full max-w-[580px] text-white/90 text-xs sm:text-sm font-bold">
               <span>Pattern {currentIdx + 1} of {trials.length}</span>
-              <span>Score: {correctCount}</span>
+              <TutorialReplayButton onClick={() => setIsTutorialOpen(true)} />
             </div>
 
-            {/* Notification / Feedback Banner (Clear Green or Red Alert) */}
+            {/* Notification / Neutral Feedback Banner */}
             {feedbackBanner ? (
               <div
-                className={`inline-flex items-center gap-2.5 px-6 py-2 rounded-full font-extrabold text-[15px] sm:text-[16px] shadow-lg select-none animate-celebration-pop border-2 border-[#0A1D3D] ${
-                  feedbackBanner.isCorrect
-                    ? "bg-[#10B981] text-white shadow-[0_0_18px_rgba(16,185,129,0.5)]"
-                    : "bg-[#FFE4E6] text-[#9F1239] shadow-[0_0_18px_rgba(244,63,94,0.4)]"
-                }`}
+                className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full font-extrabold text-[13px] sm:text-[14px] shadow-lg select-none bg-white text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D]"
                 style={{ fontFamily: JAKARTA }}
               >
-                <span className="text-xl animate-bounce">{feedbackBanner.icon}</span>
+                <span className="text-lg">{feedbackBanner.icon}</span>
                 <span>{feedbackBanner.text}</span>
               </div>
             ) : (
               <div
-                className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-white text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] font-extrabold text-[13px] sm:text-[14px] select-none"
+                className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-white text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[1.5px_1.5px_0px_#0A1D3D] font-extrabold text-xs sm:text-[13px] select-none"
                 style={{ fontFamily: JAKARTA }}
               >
                 <span className="text-base">🧩</span>
@@ -340,7 +347,7 @@ export function PatternGameArena({
             {/* Sequence Display with Carousel Slide Transitions & Snap Landing Slot */}
             <div
               key={currentIdx}
-              className={`flex flex-wrap items-center justify-center gap-3 sm:gap-4 p-4 rounded-[20px] bg-[#1E0942]/60 border border-white/10 ${
+              className={`flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-3 rounded-[16px] bg-[#1E0942]/60 border border-white/10 ${
                 isSlidingOut ? "animate-slide-out-left" : ""
               }`}
             >
@@ -352,16 +359,9 @@ export function PatternGameArena({
                     <div
                       key={idx}
                       ref={targetSlotRef}
-                      className={`w-14 h-14 sm:w-16 sm:h-16 rounded-[16px] border-2 border-[#0A1D3D] flex items-center justify-center text-2xl sm:text-3xl relative ${
-                        filledSlot.isCorrect
-                          ? "bg-[#10B981] text-white animate-bounce-pop shadow-[0_0_20px_rgba(16,185,129,0.8)]"
-                          : "bg-[#F43F5E] text-white animate-wobble shadow-[0_0_20px_rgba(244,63,94,0.8)]"
-                      }`}
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-[14px] border-2 border-[#0A1D3D] bg-white text-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-xl sm:text-2xl relative"
                     >
                       {filledSlot.symbol}
-                      <span className="absolute -top-1.5 -right-1.5 text-xs">
-                        {filledSlot.isCorrect ? "✅" : "❌"}
-                      </span>
                     </div>
                   );
                 }
@@ -371,7 +371,7 @@ export function PatternGameArena({
                     <div
                       key={idx}
                       ref={targetSlotRef}
-                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-[16px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-2xl sm:text-3xl bg-[#FFD028] text-[#0A1D3D] font-bold animate-shape-slide-right"
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-[14px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-xl sm:text-2xl bg-[#FFD028] text-[#0A1D3D] font-bold animate-shape-slide-right"
                       style={{ animationDelay: `${idx * 85}ms` }}
                     >
                       <span className="animate-bounce inline-block">❓</span>
@@ -382,14 +382,8 @@ export function PatternGameArena({
                 return (
                   <div
                     key={idx}
-                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-[16px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-2xl sm:text-3xl bg-white/10 text-white transition-transform animate-shape-slide-right ${
-                      isCelebratingCorrect ? "animate-bounce" : ""
-                    }`}
-                    style={
-                      isCelebratingCorrect
-                        ? { animationDelay: `${idx * 80}ms` }
-                        : { animationDelay: `${idx * 85}ms` }
-                    }
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-[14px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] flex items-center justify-center text-xl sm:text-2xl bg-white/10 text-white transition-transform animate-shape-slide-right"
+                    style={{ animationDelay: `${idx * 85}ms` }}
                   >
                     {item}
                   </div>
@@ -397,17 +391,15 @@ export function PatternGameArena({
               })}
             </div>
 
-            {/* Options Row with Clear Correct/Wrong Feedback Badges & Staggered Slide */}
+            {/* Options Row with Neutral Interaction Feedback */}
             <div
               key={`options-${currentIdx}`}
-              className={`flex flex-wrap items-center justify-center gap-4 ${
+              className={`flex flex-wrap items-center justify-center gap-3 ${
                 isSlidingOut ? "animate-slide-out-left" : ""
               }`}
             >
               {currentTrial.options.map((opt, idx) => {
                 const isChosenThis = selectedOptionInfo?.option === opt;
-                const isChosenRight = isChosenThis && selectedOptionInfo.isCorrect;
-                const isChosenWrong = isChosenThis && !selectedOptionInfo.isCorrect;
 
                 return (
                   <button
@@ -416,27 +408,15 @@ export function PatternGameArena({
                     disabled={isInteractionLocked}
                     onClick={(e) => handleSelectOption(opt, e)}
                     style={{ animationDelay: `${currentTrial.sequence.length * 85 + idx * 60}ms` }}
-                    className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-[18px] border-2 flex items-center justify-center text-3xl sm:text-4xl transition-all cursor-pointer animate-shape-slide-right ${
-                      isChosenRight
-                        ? "bg-[#EEFBF3] border-[#10B981] shadow-[3px_3px_0px_#059669] scale-105 animate-bounce-pop text-[#065F46]"
-                        : isChosenWrong
-                        ? "bg-[#FFF1F2] border-[#F43F5E] shadow-[3px_3px_0px_#BE123C] scale-100 animate-wobble text-[#9F1239]"
+                    className={`relative w-13 h-13 sm:w-15 sm:h-15 rounded-[14px] border-2 flex items-center justify-center text-2xl sm:text-3xl transition-all cursor-pointer animate-shape-slide-right ${
+                      isChosenThis
+                        ? "bg-[#FFE066] border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] scale-105 ring-2 ring-[#0A1D3D]/30 text-[#0A1D3D]"
                         : isInteractionLocked
                         ? "opacity-40 cursor-not-allowed bg-white border-[#0A1D3D]"
-                        : "bg-white border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-1 hover:shadow-[4px_4px_0px_#0A1D3D] hover:bg-[#FFF8D6] active:translate-y-0"
+                        : "bg-white border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] hover:-translate-y-0.5 hover:shadow-[3.5px_3.5px_0px_#0A1D3D] hover:bg-[#FFF8D6] active:translate-y-0"
                     }`}
                   >
                     {opt}
-                    {isChosenRight && (
-                      <span className="absolute -top-2 -right-2 text-lg animate-in zoom-in-75">
-                        ✅
-                      </span>
-                    )}
-                    {isChosenWrong && (
-                      <span className="absolute -top-2 -right-2 text-lg animate-in zoom-in-75">
-                        ❌
-                      </span>
-                    )}
                   </button>
                 );
               })}

@@ -11,11 +11,18 @@ import {
   LogOut,
   ChevronDown,
   Baby,
+  Clock,
+  FileText,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
-import { fetchCurrentUserProfile, performSignOut, type UserProfile } from "@/lib/api/auth";
+import {
+  fetchCurrentUserProfile,
+  performSignOut,
+  getRouteForUserProfile,
+  type UserProfile,
+} from "@/lib/api/auth";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -298,18 +305,42 @@ export function Navbar() {
               </div>
             ) : currentUser ? (
               <div className="flex items-center gap-2">
-                <Link
-                  href="/dashboard"
-                  className="px-4 xl:px-5 h-[42px] rounded-[14px] bg-[#0A1D3D] hover:bg-[#122b54] text-white font-[800] text-[13px] xl:text-[14px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#FFE066] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer select-none"
-                  style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
-                >
-                  <Baby className="w-4 h-4 text-[#00BCD4]" />
-                  <span>Dashboard</span>
-                </Link>
+                {(() => {
+                  const userDestination = getRouteForUserProfile(currentUser);
+                  const isPending =
+                    currentUser.status === "PENDING" ||
+                    currentUser.accessRequestStatus === "PENDING";
+                  const isTerms = currentUser.termsAccepted === false;
+
+                  return (
+                    <Link
+                      href={userDestination}
+                      className="px-4 xl:px-5 h-[42px] rounded-[14px] bg-[#0A1D3D] hover:bg-[#122b54] text-white font-[800] text-[13px] xl:text-[14px] border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#FFE066] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer select-none"
+                      style={{ fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+                    >
+                      {isPending ? (
+                        <>
+                          <Clock className="w-4 h-4 text-amber-400 animate-pulse" />
+                          <span>Under Review</span>
+                        </>
+                      ) : isTerms ? (
+                        <>
+                          <FileText className="w-4 h-4 text-cyan-400" />
+                          <span>Accept Terms</span>
+                        </>
+                      ) : (
+                        <>
+                          <Baby className="w-4 h-4 text-[#00BCD4]" />
+                          <span>Dashboard</span>
+                        </>
+                      )}
+                    </Link>
+                  );
+                })()}
                 <button
                   type="button"
                   onClick={() => performSignOut()}
-                  className="p-2 text-slate-400 hover:text-rose-600 transition-colors"
+                  className="p-2 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
                   title="Sign Out"
                 >
                   <LogOut className="w-4 h-4" />

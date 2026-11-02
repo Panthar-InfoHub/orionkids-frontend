@@ -49,6 +49,7 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
   const isAllLevelsCompleted = stats.completedQuests > 0 || stats.completedLevelsCount >= 18;
 
   const handleQuestAction = async () => {
+    if (isStartingQuest) return;
     setIsStartingQuest(true);
     try {
       const { destination } = await startChildQuest(child.id);

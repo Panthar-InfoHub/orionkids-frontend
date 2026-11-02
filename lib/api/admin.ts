@@ -856,3 +856,117 @@ export async function fetchAdminMetrics(): Promise<AdminMetrics> {
   }
 }
 
+export interface AdminAccessRequestItem {
+  id: string;
+  userId: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  notes?: string | null;
+  submittedAt: string;
+  reviewedAt?: string | null;
+  reviewedById?: string | null;
+  rejectionReason?: string | null;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    image: string | null;
+    role: "USER" | "ADMIN";
+    status: "PENDING" | "ACTIVE" | "RESTRICTED";
+    termsAccepted: boolean;
+    termsVersion: string | null;
+    termsAcceptedAt: string | null;
+    createdAt: string;
+    onboardingSubmittedAt: string | null;
+    _count?: {
+      childProfiles: number;
+    };
+  };
+}
+
+export interface ListAccessRequestsParams {
+  page?: number;
+  limit?: number;
+  status?: "PENDING" | "APPROVED" | "REJECTED" | "ALL";
+  search?: string;
+}
+
+export interface ListAccessRequestsResult {
+  requests: AdminAccessRequestItem[];
+  meta: AdminPaginationMeta;
+}
+
+export async function fetchAdminAccessRequests(
+  params: ListAccessRequestsParams = {}
+): Promise<ListAccessRequestsResult> {
+  const query = new URLSearchParams();
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+  if (params.status && params.status !== "ALL") query.set("status", params.status);
+  if (params.search) query.set("search", params.search);
+
+  const res = await fetch(`${API_BASE_URL}/api/admin/access-requests?${query.toString()}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      "Cache-Control": "no-cache",
+    },
+    cache: "no-store",
+  });
+
+  const payload = await res.json().catch(() => null);
+
+  if (!res.ok || !payload?.success) {
+    throw new Error(payload?.error?.message || "Failed to fetch access requests");
+  }
+
+  return {
+    requests: (payload.data || []) as AdminAccessRequestItem[],
+    meta: (payload.meta || { page: 1, limit: 10, total: 0, totalPages: 1 }) as AdminPaginationMeta,
+  };
+}
+
+export async function approveAdminAccessRequest(
+  requestId: string
+): Promise<{ request: AdminAccessRequestItem; user: Record<string, unknown> }> {
+  const res = await fetch(`${API_BASE_URL}/api/admin/access-requests/${encodeURIComponent(requestId)}/approve`, {
+    method: "PATCH",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+
+  const payload = await res.json().catch(() => null);
+
+  if (!res.ok || !payload?.success) {
+    throw new Error(payload?.error?.message || "Failed to approve access request");
+  }
+
+  return payload.data;
+}
+
+export async function rejectAdminAccessRequest(
+  requestId: string,
+  reason?: string
+): Promise<{ request: AdminAccessRequestItem; user: Record<string, unknown> }> {
+  const res = await fetch(`${API_BASE_URL}/api/admin/access-requests/${encodeURIComponent(requestId)}/reject`, {
+    method: "PATCH",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ reason }),
+  });
+
+  const payload = await res.json().catch(() => null);
+
+  if (!res.ok || !payload?.success) {
+    throw new Error(payload?.error?.message || "Failed to reject access request");
+  }
+
+  return payload.data;
+}
+

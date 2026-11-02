@@ -11,9 +11,20 @@ export interface StroopTrial {
   options: {
     label: string;
     dotColor: string;
+    icon?: string;
+    objectName?: string;
   }[];
-  congruent: boolean;    // In Level 1, matching words
+  congruent: boolean;    // Matching or contrasting word vs ink
 }
+
+export const FAMILIAR_OBJECTS_BY_COLOR: Record<string, { icon: string; name: string }> = {
+  Red: { icon: "🍎", name: "Red Apple" },
+  Blue: { icon: "🦋", name: "Blue Butterfly" },
+  Green: { icon: "🐸", name: "Green Frog" },
+  Yellow: { icon: "🍌", name: "Yellow Banana" },
+  Orange: { icon: "🥕", name: "Orange Carrot" },
+  Purple: { icon: "🍇", name: "Purple Grapes" },
+};
 
 export interface StroopTrialRecord {
   trialId: number;
@@ -56,7 +67,9 @@ export interface StroopLevelCompletionResponse {
 }
 
 /**
- * Standard 8 Trials for Stroop Level 1 (2 Colours Â· Matching Words / Colour Clues)
+ * Varied, Engaging 8 Trials for Stroop Level 1 (Colour Detective · Ink Colour Focus)
+ * Incorporates familiar objects (🍎 Red Apple, 🦋 Blue Butterfly, 🐸 Green Frog, 🍌 Yellow Banana)
+ * with a balanced distribution of congruent and incongruent trials.
  */
 export const STROOP_LEVEL_1_TRIALS: StroopTrial[] = [
   {
@@ -65,8 +78,8 @@ export const STROOP_LEVEL_1_TRIALS: StroopTrial[] = [
     inkColor: "#E04F5F",
     inkName: "Red",
     options: [
-      { label: "Red", dotColor: "#E04F5F" },
-      { label: "Blue", dotColor: "#2563EB" },
+      { label: "Red", dotColor: "#E04F5F", icon: "🍎", objectName: "Red Apple" },
+      { label: "Blue", dotColor: "#2563EB", icon: "🦋", objectName: "Blue Butterfly" },
     ],
     congruent: true,
   },
@@ -76,76 +89,76 @@ export const STROOP_LEVEL_1_TRIALS: StroopTrial[] = [
     inkColor: "#2563EB",
     inkName: "Blue",
     options: [
-      { label: "Red", dotColor: "#E04F5F" },
-      { label: "Blue", dotColor: "#2563EB" },
+      { label: "Red", dotColor: "#E04F5F", icon: "🍎", objectName: "Red Apple" },
+      { label: "Blue", dotColor: "#2563EB", icon: "🦋", objectName: "Blue Butterfly" },
     ],
     congruent: true,
   },
   {
     id: 3,
-    word: "RED",
+    word: "GREEN",
     inkColor: "#E04F5F",
     inkName: "Red",
     options: [
-      { label: "Red", dotColor: "#E04F5F" },
-      { label: "Blue", dotColor: "#2563EB" },
+      { label: "Red", dotColor: "#E04F5F", icon: "🍎", objectName: "Red Apple" },
+      { label: "Green", dotColor: "#16A34A", icon: "🐸", objectName: "Green Frog" },
     ],
-    congruent: true,
+    congruent: false,
   },
   {
     id: 4,
     word: "BLUE",
-    inkColor: "#2563EB",
-    inkName: "Blue",
+    inkColor: "#16A34A",
+    inkName: "Green",
     options: [
-      { label: "Red", dotColor: "#E04F5F" },
-      { label: "Blue", dotColor: "#2563EB" },
+      { label: "Green", dotColor: "#16A34A", icon: "🐸", objectName: "Green Frog" },
+      { label: "Blue", dotColor: "#2563EB", icon: "🦋", objectName: "Blue Butterfly" },
     ],
-    congruent: true,
+    congruent: false,
   },
   {
     id: 5,
-    word: "RED",
-    inkColor: "#E04F5F",
-    inkName: "Red",
+    word: "YELLOW",
+    inkColor: "#EAB308",
+    inkName: "Yellow",
     options: [
-      { label: "Red", dotColor: "#E04F5F" },
-      { label: "Blue", dotColor: "#2563EB" },
+      { label: "Yellow", dotColor: "#EAB308", icon: "🍌", objectName: "Yellow Banana" },
+      { label: "Blue", dotColor: "#2563EB", icon: "🦋", objectName: "Blue Butterfly" },
     ],
     congruent: true,
   },
   {
     id: 6,
-    word: "BLUE",
+    word: "RED",
     inkColor: "#2563EB",
     inkName: "Blue",
     options: [
-      { label: "Red", dotColor: "#E04F5F" },
-      { label: "Blue", dotColor: "#2563EB" },
+      { label: "Red", dotColor: "#E04F5F", icon: "🍎", objectName: "Red Apple" },
+      { label: "Blue", dotColor: "#2563EB", icon: "🦋", objectName: "Blue Butterfly" },
     ],
-    congruent: true,
+    congruent: false,
   },
   {
     id: 7,
-    word: "RED",
-    inkColor: "#E04F5F",
-    inkName: "Red",
+    word: "GREEN",
+    inkColor: "#16A34A",
+    inkName: "Green",
     options: [
-      { label: "Red", dotColor: "#E04F5F" },
-      { label: "Blue", dotColor: "#2563EB" },
+      { label: "Green", dotColor: "#16A34A", icon: "🐸", objectName: "Green Frog" },
+      { label: "Yellow", dotColor: "#EAB308", icon: "🍌", objectName: "Yellow Banana" },
     ],
     congruent: true,
   },
   {
     id: 8,
-    word: "BLUE",
-    inkColor: "#2563EB",
-    inkName: "Blue",
+    word: "YELLOW",
+    inkColor: "#E04F5F",
+    inkName: "Red",
     options: [
-      { label: "Red", dotColor: "#E04F5F" },
-      { label: "Blue", dotColor: "#2563EB" },
+      { label: "Red", dotColor: "#E04F5F", icon: "🍎", objectName: "Red Apple" },
+      { label: "Yellow", dotColor: "#EAB308", icon: "🍌", objectName: "Yellow Banana" },
     ],
-    congruent: true,
+    congruent: false,
   },
 ];
 

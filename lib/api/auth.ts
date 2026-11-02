@@ -17,11 +17,26 @@ export interface UserProfile {
   id: string;
   name: string;
   email: string;
-  image: string | null;
+  image?: string | null;
   role: "USER" | "ADMIN";
   status: "PENDING" | "ACTIVE" | "RESTRICTED";
-  restrictedReason: string | null;
+  restrictedReason?: string | null;
+  termsAccepted?: boolean;
+  termsVersion?: string | null;
+  termsAcceptedAt?: string | null;
+  privacyPolicyVersion?: string | null;
+  privacyAcceptedAt?: string | null;
+  accessRequestStatus?: "NONE" | "PENDING" | "APPROVED" | "REJECTED" | null;
+  accessRequest?: {
+    id: string;
+    status: "PENDING" | "APPROVED" | "REJECTED";
+    submittedAt: string;
+    reviewedAt?: string | null;
+    reviewedById?: string | null;
+    rejectionReason?: string | null;
+  } | null;
   onboardingSubmittedAt?: string | null;
+  hasCompletedOnboarding?: boolean;
   childProfile?: ChildProfileData | null;
   childProfiles?: ChildProfileData[];
 }
@@ -156,26 +171,56 @@ export function getRouteForUserProfile(
     return "/admin";
   }
 
-  // 3. Regular User:
-  // If user has not submitted onboarding yet, MUST complete onboarding first!
-  if (!profile.onboardingSubmittedAt) {
-    const redirectParam = fallbackRedirect && fallbackRedirect !== "/warm-up" && !fallbackRedirect.includes("onboarding")
-      ? `?redirect=${encodeURIComponent(fallbackRedirect)}`
-      : "";
+  // 3. Terms Acceptance: if not accepted, MUST accept terms first
+  if (profile.termsAccepted === false) {
+    return "/terms-and-conditions";
+  }
+
+  // 4. Access Request State
+  const reqStatus =
+    profile.accessRequestStatus ||
+    (profile.status === "ACTIVE" ? "APPROVED" : "NONE");
+
+  if (reqStatus === "REJECTED") {
+    return "/access-rejected";
+  }
+
+  if (reqStatus === "NONE") {
+    return "/access-request";
+  }
+
+  if (reqStatus === "PENDING" || profile.status === "PENDING") {
+    return "/access-pending";
+  }
+
+  // 5. Approved Active User:
+  // Check child onboarding completion
+  const hasOnboarded =
+    Boolean(profile.hasCompletedOnboarding) ||
+    Boolean(profile.onboardingSubmittedAt) ||
+    Boolean(profile.childProfiles && profile.childProfiles.length > 0) ||
+    Boolean(profile.childProfile);
+
+  if (!hasOnboarded) {
+    const redirectParam =
+      fallbackRedirect &&
+      fallbackRedirect !== "/warm-up" &&
+      !fallbackRedirect.includes("onboarding")
+        ? `?redirect=${encodeURIComponent(fallbackRedirect)}`
+        : "";
     return `/onboarding${redirectParam}`;
   }
 
-  // 4. Onboarding submitted, pending administrator review
-  if (profile.status === "PENDING") {
-    return "/pending-approval";
-  }
-
-  // 5. Active regular user
+  // 6. Active regular user with onboarding completed
   if (fallbackRedirect && fallbackRedirect.startsWith("/") && !fallbackRedirect.startsWith("//")) {
     if (
       !fallbackRedirect.includes("/login") &&
       !fallbackRedirect.includes("/pending-approval") &&
+      !fallbackRedirect.includes("/access-pending") &&
+      !fallbackRedirect.includes("/access-rejected") &&
       !fallbackRedirect.includes("/access-denied") &&
+      !fallbackRedirect.includes("/terms-and-conditions") &&
+      !fallbackRedirect.includes("/access-request") &&
       !fallbackRedirect.includes("/onboarding")
     ) {
       return fallbackRedirect;

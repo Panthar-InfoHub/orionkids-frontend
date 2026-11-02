@@ -42,8 +42,10 @@ export default function ParentDashboardPage() {
         return;
       }
 
-      if (userProfile.status === "RESTRICTED") {
-        router.replace("/access-denied");
+      const { getRouteForUserProfile } = await import("@/lib/api/auth");
+      const destination = getRouteForUserProfile(userProfile);
+      if (destination !== "/dashboard") {
+        router.replace(destination);
         return;
       }
 

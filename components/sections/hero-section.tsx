@@ -11,22 +11,17 @@ export function HeroSection() {
   const [isRouting, setIsRouting] = useState(false);
 
   const handleLaunchQuest = async () => {
+    if (isRouting) return;
     setIsRouting(true);
     try {
       const profile = await fetchCurrentUserProfile();
       if (!profile) {
-        // Guest -> send to login preserving /onboarding as intended destination
         router.push("/login?redirect=%2Fonboarding");
         return;
       }
 
-      if (profile.status === "RESTRICTED") {
-        router.push("/access-denied");
-        return;
-      }
-
-      // Every click on Launch Free Quest begins a new onboarding flow
-      router.push("/onboarding");
+      const destination = getRouteForUserProfile(profile);
+      router.push(destination);
     } catch {
       router.push("/login?redirect=%2Fonboarding");
     } finally {

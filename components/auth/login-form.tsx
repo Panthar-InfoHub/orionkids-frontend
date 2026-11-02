@@ -39,17 +39,21 @@ export default function LoginForm() {
     // Check if the user is already signed in
     async function checkExistingAuth() {
       try {
-        const profile = await fetchCurrentUserProfile();
-        if (profile) {
+        const { fetchRegistrationStatus } = await import("@/lib/api/registration");
+        const regStatus = await fetchRegistrationStatus();
+
+        if (regStatus) {
           const redirectParam = searchParams.get("redirect");
 
           // Active regular user with completed onboarding: check for resumable quest
-          if (profile.status === "ACTIVE" && profile.onboardingSubmittedAt) {
+          if (regStatus.accountStatus === "ACTIVE" && regStatus.onboardingCompleted) {
             if (
               redirectParam &&
               redirectParam.startsWith("/") &&
               !redirectParam.includes("login") &&
-              !redirectParam.includes("onboarding")
+              !redirectParam.includes("onboarding") &&
+              !redirectParam.includes("terms") &&
+              !redirectParam.includes("access-")
             ) {
               router.replace(redirectParam);
               return;
@@ -64,6 +68,13 @@ export default function LoginForm() {
             }
           }
 
+          router.replace(regStatus.destination);
+          return;
+        }
+
+        const profile = await fetchCurrentUserProfile();
+        if (profile) {
+          const redirectParam = searchParams.get("redirect");
           const destination = getRouteForUserProfile(profile, redirectParam);
           router.replace(destination);
           return;
@@ -82,7 +93,7 @@ export default function LoginForm() {
     setErrorMessage("");
     setIsLoading(true);
     try {
-      const returnUrl = searchParams.get("redirect") || "/onboarding";
+      const returnUrl = searchParams.get("redirect") || "/terms-and-conditions";
       const frontendOrigin =
         typeof window !== "undefined"
           ? window.location.origin

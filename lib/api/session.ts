@@ -47,10 +47,21 @@ const API_URL =
     ? process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
     : undefined;
 
+interface SessionCacheEntry {
+  session: QuestSession | null;
+  expiresAt: number;
+  childId?: string;
+}
+
+let cachedSessionEntry: SessionCacheEntry | null = null;
+
+export function invalidateSessionCache() {
+  cachedSessionEntry = null;
+}
+
 /**
  * Fetches the current active session for the authenticated user / selected child.
- * Returns null if unauthenticated, the backend is unreachable, or no
- * session exists yet. Always bypasses browser HTTP cache to prevent stale stage loops.
+ * Uses a fast in-memory cache (10s) to eliminate repeated slow roundtrips when navigating between quest levels.
  */
 export async function fetchCurrentSession(
   childProfileId?: string
@@ -58,6 +69,16 @@ export async function fetchCurrentSession(
   if (!API_URL) return null;
 
   const targetChildId = childProfileId || getActiveChildId() || undefined;
+
+  // Return fresh in-memory cache if still valid
+  if (
+    cachedSessionEntry &&
+    cachedSessionEntry.expiresAt > Date.now() &&
+    cachedSessionEntry.childId === targetChildId
+  ) {
+    return cachedSessionEntry.session;
+  }
+
   const queryParam = targetChildId
     ? `?childProfileId=${encodeURIComponent(targetChildId)}`
     : "";
@@ -76,7 +97,16 @@ export async function fetchCurrentSession(
     if (!res.ok) return null;
 
     const data = await res.json();
-    return (data?.data ?? null) as QuestSession | null;
+    const session = (data?.data ?? null) as QuestSession | null;
+
+    // Cache for 10 seconds
+    cachedSessionEntry = {
+      session,
+      expiresAt: Date.now() + 10000,
+      childId: targetChildId,
+    };
+
+    return session;
   } catch {
     return null;
   }

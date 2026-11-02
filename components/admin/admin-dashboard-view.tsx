@@ -23,9 +23,11 @@ import {
   type AdminOverviewResult,
 } from "@/lib/api/admin";
 import { UserTable } from "./user-table";
+import { AccessRequestsSection } from "./access-requests-section";
 
 export function AdminDashboardView() {
   // State
+  const [adminTab, setAdminTab] = useState<"REQUESTS" | "USERS">("REQUESTS");
   const [users, setUsers] = useState<AdminUserItem[]>([]);
   const [meta, setMeta] = useState<AdminPaginationMeta>({
     page: 1,
@@ -182,9 +184,12 @@ export function AdminDashboardView() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Accounts */}
         <div
-          onClick={() => handleStatusFilterChange("ALL")}
+          onClick={() => {
+            setAdminTab("USERS");
+            handleStatusFilterChange("ALL");
+          }}
           className={`p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-            activeStatusFilter === "ALL"
+            adminTab === "USERS" && activeStatusFilter === "ALL"
               ? "bg-white border-[#0A1D3D] shadow-[4px_4px_0px_#0A1D3D]"
               : "bg-white border-slate-200 hover:border-slate-300 shadow-xs"
           }`}
@@ -207,11 +212,14 @@ export function AdminDashboardView() {
           </p>
         </div>
 
-        {/* Pending Review e*/}
+        {/* Pending Review */}
         <div
-          onClick={() => handleStatusFilterChange("PENDING")}
+          onClick={() => {
+            setAdminTab("REQUESTS");
+            handleStatusFilterChange("PENDING");
+          }}
           className={`p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-            activeStatusFilter === "PENDING"
+            adminTab === "REQUESTS"
               ? "bg-amber-50/70 border-amber-500 shadow-[4px_4px_0px_#f59e0b]"
               : "bg-white border-slate-200 hover:border-amber-300 shadow-xs"
           }`}
@@ -233,15 +241,18 @@ export function AdminDashboardView() {
             {overview?.accounts.pending ?? 0}
           </div>
           <p className="text-[11px] text-amber-700/80 mt-1">
-            Submitted onboarding requiring approval
+            Submitted requests requiring approval
           </p>
         </div>
 
         {/* Active Explorers */}
         <div
-          onClick={() => handleStatusFilterChange("ACTIVE")}
+          onClick={() => {
+            setAdminTab("USERS");
+            handleStatusFilterChange("ACTIVE");
+          }}
           className={`p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-            activeStatusFilter === "ACTIVE"
+            adminTab === "USERS" && activeStatusFilter === "ACTIVE"
               ? "bg-emerald-50/70 border-emerald-600 shadow-[4px_4px_0px_#059669]"
               : "bg-white border-slate-200 hover:border-emerald-300 shadow-xs"
           }`}
@@ -262,9 +273,12 @@ export function AdminDashboardView() {
 
         {/* Restricted Accounts */}
         <div
-          onClick={() => handleStatusFilterChange("RESTRICTED")}
+          onClick={() => {
+            setAdminTab("USERS");
+            handleStatusFilterChange("RESTRICTED");
+          }}
           className={`p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-            activeStatusFilter === "RESTRICTED"
+            adminTab === "USERS" && activeStatusFilter === "RESTRICTED"
               ? "bg-rose-50/70 border-rose-600 shadow-[4px_4px_0px_#e11d48]"
               : "bg-white border-slate-200 hover:border-rose-300 shadow-xs"
           }`}
@@ -365,19 +379,58 @@ export function AdminDashboardView() {
         </div>
       )}
 
-      {/* Users Table */}
-      <UserTable
-        users={users}
-        meta={meta}
-        isLoading={isLoading}
-        activeStatusFilter={activeStatusFilter}
-        searchQuery={searchQuery}
-        onStatusFilterChange={handleStatusFilterChange}
-        onSearchChange={setSearchQuery}
-        onPageChange={handlePageChange}
-        onRefresh={handleRefresh}
-        onUpdateStatus={handleUpdateStatus}
-      />
+      {/* View Switcher Tabs */}
+      <div className="flex border-b border-slate-200 gap-4 pt-2">
+        <button
+          type="button"
+          onClick={() => setAdminTab("REQUESTS")}
+          className={`pb-3.5 px-3 font-black text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+            adminTab === "REQUESTS"
+              ? "border-[#00BCD4] text-[#00838F]"
+              : "border-transparent text-slate-500 hover:text-slate-800"
+          }`}
+        >
+          <span>Access Requests & Approvals</span>
+          {(overview?.accounts.pending ?? 0) > 0 && (
+            <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-black">
+              {overview?.accounts.pending}
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setAdminTab("USERS")}
+          className={`pb-3.5 px-3 font-black text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+            adminTab === "USERS"
+              ? "border-[#00BCD4] text-[#00838F]"
+              : "border-transparent text-slate-500 hover:text-slate-800"
+          }`}
+        >
+          <span>All User Accounts</span>
+          <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-black">
+            {overview?.accounts.total ?? meta.total}
+          </span>
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      {adminTab === "REQUESTS" ? (
+        <AccessRequestsSection />
+      ) : (
+        <UserTable
+          users={users}
+          meta={meta}
+          isLoading={isLoading}
+          activeStatusFilter={activeStatusFilter}
+          searchQuery={searchQuery}
+          onStatusFilterChange={handleStatusFilterChange}
+          onSearchChange={setSearchQuery}
+          onPageChange={handlePageChange}
+          onRefresh={handleRefresh}
+          onUpdateStatus={handleUpdateStatus}
+        />
+      )}
     </div>
   );
 }
