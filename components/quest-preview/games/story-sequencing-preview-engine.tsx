@@ -7,7 +7,7 @@ import { InteractiveHint } from "../interactive-hint";
 import { RotateCcw } from "lucide-react";
 
 interface StorySequencingPreviewEngineProps {
-  level: PreviewLevel;
+  level?: PreviewLevel;
   onComplete: () => void;
   showHint?: boolean;
 }
@@ -15,33 +15,33 @@ interface StorySequencingPreviewEngineProps {
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 export function StorySequencingPreviewEngine({
-  level,
+  level = 1,
   onComplete,
   showHint = true,
 }: StorySequencingPreviewEngineProps) {
   const config = STORY_SEQUENCING_PREVIEWS[level] || STORY_SEQUENCING_PREVIEWS[1];
   const [placedSteps, setPlacedSteps] = useState<StorySequencingPreviewStep[]>([]);
   const [hintDismissed, setHintDismissed] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
+  const [isWrongOrder, setIsWrongOrder] = useState(false);
   const [isCompleteSuccess, setIsCompleteSuccess] = useState(false);
 
   useEffect(() => {
     setPlacedSteps([]);
     setHintDismissed(false);
-    setIsVerifying(false);
+    setIsWrongOrder(false);
     setIsCompleteSuccess(false);
   }, [level]);
 
   const handlePickStep = (step: StorySequencingPreviewStep) => {
-    if (placedSteps.some((s) => s.id === step.id)) return;
+    if (placedSteps.some((s) => s.id === step.id) || isCompleteSuccess) return;
     setHintDismissed(true);
 
     const newPlaced = [...placedSteps, step];
     setPlacedSteps(newPlaced);
+    setIsWrongOrder(false);
 
     // Check if all steps have been placed
     if (newPlaced.length === config.steps.length) {
-      setIsVerifying(true);
       const isAllCorrect = newPlaced.every(
         (s, idx) => s.order === idx + 1
       );
@@ -50,22 +50,24 @@ export function StorySequencingPreviewEngine({
         setIsCompleteSuccess(true);
         const timer = setTimeout(() => {
           onComplete();
-        }, 800);
+        }, 900);
         return () => clearTimeout(timer);
+      } else {
+        setIsWrongOrder(true);
       }
     }
   };
 
   const handleRemovePlaced = (stepId: number) => {
+    if (isCompleteSuccess) return;
     setPlacedSteps(placedSteps.filter((s) => s.id !== stepId));
-    setIsVerifying(false);
-    setIsCompleteSuccess(false);
+    setIsWrongOrder(false);
   };
 
   const handleResetTimeline = () => {
+    if (isCompleteSuccess) return;
     setPlacedSteps([]);
-    setIsVerifying(false);
-    setIsCompleteSuccess(false);
+    setIsWrongOrder(false);
   };
 
   const unplacedSteps = config.shuffledSteps.filter(
@@ -84,12 +86,30 @@ export function StorySequencingPreviewEngine({
         <span>Mission: {config.missionTitle}</span>
       </div>
 
-      <p className="text-slate-500 text-[11px] font-medium mb-3">
-        Tap the steps in order from first to last to complete the story timeline:
-      </p>
+      {/* Clear Correct / Incorrect Feedback Badge */}
+      <div className="h-10 my-1 flex items-center justify-center text-center">
+        {isCompleteSuccess && (
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs sm:text-sm font-black shadow-xs bg-emerald-100 text-emerald-900 border-2 border-emerald-500 shadow-[2px_2px_0_0_#059669] animate-in fade-in zoom-in-95 duration-150"
+            style={{ fontFamily: JAKARTA }}
+          >
+            <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">✓</span>
+            <span>CORRECT! Story sequence completed in order! +1 Star 🌟</span>
+          </div>
+        )}
+        {isWrongOrder && (
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs sm:text-sm font-black shadow-xs bg-rose-100 text-rose-900 border-2 border-rose-500 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
+            style={{ fontFamily: JAKARTA }}
+          >
+            <span className="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs">✕</span>
+            <span>INCORRECT! Story steps are out of order. Tap a card to re-order 👆</span>
+          </div>
+        )}
+      </div>
 
       {/* Story Timeline Slots (Chronological 1 -> N) */}
-      <div className="w-full max-w-[440px] mb-4">
+      <div className="w-full max-w-[440px] mb-3">
         <span
           className="text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5 block text-center"
           style={{ fontFamily: JAKARTA }}
@@ -106,8 +126,8 @@ export function StorySequencingPreviewEngine({
                   placed
                     ? isCompleteSuccess
                       ? "bg-emerald-50 border-emerald-500 shadow-[2px_2px_0_0_#10B981]"
-                      : isVerifying
-                      ? "bg-amber-50 border-amber-400"
+                      : isWrongOrder
+                      ? "bg-rose-50 border-rose-500 text-rose-950 animate-wobble cursor-pointer"
                       : "bg-white border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] cursor-pointer hover:bg-rose-50"
                     : "bg-slate-50 border-dashed border-slate-300 text-slate-400"
                 }`}
@@ -120,6 +140,8 @@ export function StorySequencingPreviewEngine({
                     <span className="text-[10px] font-bold text-[#0A1D3D] leading-tight line-clamp-2 mt-0.5">
                       {placed.text}
                     </span>
+                    {isCompleteSuccess && <span className="text-[9px] font-black text-emerald-700">✓</span>}
+                    {isWrongOrder && <span className="text-[9px] font-black text-rose-700">✕</span>}
                   </>
                 ) : (
                   <span className="text-xs font-black text-slate-400">
@@ -134,14 +156,14 @@ export function StorySequencingPreviewEngine({
 
       {/* Available Cards Pool */}
       <div className="w-full max-w-[440px] flex flex-col items-center">
-        <div className="w-full flex items-center justify-between mb-2 px-1">
+        <div className="w-full flex items-center justify-between mb-1.5 px-1">
           <span
             className="text-[11px] font-black uppercase tracking-wider text-slate-500"
             style={{ fontFamily: JAKARTA }}
           >
             Available Steps:
           </span>
-          {placedSteps.length > 0 && (
+          {placedSteps.length > 0 && !isCompleteSuccess && (
             <button
               type="button"
               onClick={handleResetTimeline}
@@ -180,7 +202,7 @@ export function StorySequencingPreviewEngine({
 
                 {isHintTarget && (
                   <InteractiveHint
-                    label="Place step 1! 🚀"
+                    label="Place step! 🚀"
                     isVisible={true}
                     position="right"
                     onDismiss={() => setHintDismissed(true)}
@@ -189,12 +211,6 @@ export function StorySequencingPreviewEngine({
               </div>
             );
           })}
-
-          {unplacedSteps.length === 0 && !isCompleteSuccess && (
-            <div className="p-2 text-center text-xs text-amber-700 bg-amber-50 rounded-xl border border-amber-200">
-              <span>Order doesn&apos;t match chronological steps. Tap any placed card or click Reset to re-order!</span>
-            </div>
-          )}
         </div>
       </div>
     </div>

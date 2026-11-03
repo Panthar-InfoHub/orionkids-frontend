@@ -23,12 +23,12 @@ export function PreviewInstructions({ meta, icon }: PreviewInstructionsProps) {
           <span>{meta.gameTitle}</span>
         </span>
 
-        {/* Level Badge */}
+        {/* Preview Badge */}
         <span
-          className="inline-flex items-center px-3 py-1 rounded-full bg-[#FFE066] border border-[#0A1D3D] text-[#0A1D3D] text-[11px] font-black uppercase tracking-wider shadow-xs"
+          className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FFE066] border border-[#0A1D3D] text-[#0A1D3D] text-[11px] font-black uppercase tracking-wider shadow-xs"
           style={{ fontFamily: JAKARTA }}
         >
-          {meta.levelTitle}
+          <span>Game Preview 🎮</span>
         </span>
       </div>
 
@@ -41,7 +41,7 @@ export function PreviewInstructions({ meta, icon }: PreviewInstructionsProps) {
       </h3>
 
       {/* Hint Note */}
-      <p className="text-slate-500 text-xs mt-1 font-medium max-w-[480px]">
+      <p className="text-slate-600 text-xs mt-1 font-semibold max-w-[500px]">
         {meta.hintInstruction}
       </p>
     </div>

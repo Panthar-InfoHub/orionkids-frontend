@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { PreviewGameKey, PreviewLevel } from "@/types/quest-preview";
-import { PREVIEW_METADATA, PREVIEW_GAMES_LIST } from "@/lib/data/quest-previews";
+import { GAME_PREVIEW_METADATA, PREVIEW_METADATA, PREVIEW_GAMES_LIST } from "@/lib/data/quest-previews";
 import { QuestPreviewSelector } from "./quest-preview-selector";
 import { PreviewInstructions } from "./preview-instructions";
 import { PreviewCompletion } from "./preview-completion";
@@ -27,28 +27,19 @@ const INTER = "var(--font-inter), 'Inter', sans-serif";
 
 export function QuestPreviewContainer({
   initialGame = "stroop",
-  initialLevel = 1,
   className = "",
 }: QuestPreviewContainerProps) {
   const router = useRouter();
   const [selectedGame, setSelectedGame] = useState<PreviewGameKey>(initialGame);
-  const [selectedLevel, setSelectedLevel] = useState<PreviewLevel>(initialLevel);
   const [isCompleted, setIsCompleted] = useState(false);
   const [replayKey, setReplayKey] = useState(0);
   const [isLaunching, setIsLaunching] = useState(false);
 
   const activeGameMeta = PREVIEW_GAMES_LIST.find((g) => g.key === selectedGame) || PREVIEW_GAMES_LIST[0];
-  const levelMeta = PREVIEW_METADATA[selectedGame][selectedLevel];
+  const previewMeta = GAME_PREVIEW_METADATA[selectedGame] || PREVIEW_METADATA[selectedGame][1];
 
   const handleGameChange = (game: PreviewGameKey) => {
     setSelectedGame(game);
-    setSelectedLevel(1);
-    setIsCompleted(false);
-    setReplayKey((k) => k + 1);
-  };
-
-  const handleLevelChange = (lvl: PreviewLevel) => {
-    setSelectedLevel(lvl);
     setIsCompleted(false);
     setReplayKey((k) => k + 1);
   };
@@ -81,20 +72,18 @@ export function QuestPreviewContainer({
     <div
       className={`w-full bg-white rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-[0_20px_50px_rgba(15,23,42,0.06)] border-2 border-[#0A1D3D] ${className}`}
     >
-      {/* 1. Header Bar: Game & Level Selector */}
+      {/* 1. Header Bar: 6 Games Selection (1 preview per game) */}
       <div className="w-full bg-[#F8FAFC] border-b-2 border-slate-200 p-3 sm:p-4">
         <QuestPreviewSelector
           selectedGame={selectedGame}
-          selectedLevel={selectedLevel}
           onSelectGame={handleGameChange}
-          onSelectLevel={handleLevelChange}
         />
       </div>
 
       {/* 2. Sub-header: Active Game Meta & Objective */}
       <div className="w-full bg-white border-b border-slate-100 pt-3 pb-2 px-3 sm:px-4 flex items-center justify-between gap-2">
         <div className="flex-1">
-          <PreviewInstructions meta={levelMeta} icon={activeGameMeta.icon} />
+          <PreviewInstructions meta={previewMeta} icon={activeGameMeta.icon} />
         </div>
         {!isCompleted && (
           <div className="shrink-0 self-start mt-2">
@@ -103,51 +92,51 @@ export function QuestPreviewContainer({
         )}
       </div>
 
-      {/* 3. Main Interactive Screen (Mini-Game Arena) */}
+      {/* 3. Main Interactive Screen (Mini-Game Arena for Selected Game) */}
       <div className="relative w-full min-h-[380px] sm:min-h-[420px] bg-linear-to-b from-slate-50/60 to-white flex items-center justify-center p-3 sm:p-6 overflow-hidden">
         {isCompleted ? (
           <PreviewCompletion
-            levelTitle={`${activeGameMeta.shortTitle} · Level ${selectedLevel}`}
-            feedbackMessage={`Great focus! You've mastered this interactive preview of ${activeGameMeta.title}. Ready for the complete 18-level journey?`}
+            levelTitle={`${activeGameMeta.title} Preview`}
+            feedbackMessage={`Great focus! You've mastered the core mechanic of ${activeGameMeta.title}. Ready for the complete 18-level journey?`}
             onReplay={handleReplay}
             onLaunchFullQuest={handleLaunchFullQuest}
             isLaunching={isLaunching}
           />
         ) : (
-          <div key={`${selectedGame}-${selectedLevel}-${replayKey}`} className="w-full flex items-center justify-center">
+          <div key={`${selectedGame}-${replayKey}`} className="w-full flex items-center justify-center">
             {selectedGame === "stroop" && (
               <StroopPreviewEngine
-                level={selectedLevel}
+                level={1}
                 onComplete={() => setIsCompleted(true)}
               />
             )}
             {selectedGame === "card-flip" && (
               <CardFlipPreviewEngine
-                level={selectedLevel}
+                level={1}
                 onComplete={() => setIsCompleted(true)}
               />
             )}
             {selectedGame === "pattern" && (
               <PatternPreviewEngine
-                level={selectedLevel}
+                level={1}
                 onComplete={() => setIsCompleted(true)}
               />
             )}
             {selectedGame === "odd-one-out" && (
               <OddOneOutPreviewEngine
-                level={selectedLevel}
+                level={1}
                 onComplete={() => setIsCompleted(true)}
               />
             )}
             {selectedGame === "rule-discovery" && (
               <RuleDiscoveryPreviewEngine
-                level={selectedLevel}
+                level={1}
                 onComplete={() => setIsCompleted(true)}
               />
             )}
             {selectedGame === "story-sequencing" && (
               <StorySequencingPreviewEngine
-                level={selectedLevel}
+                level={1}
                 onComplete={() => setIsCompleted(true)}
               />
             )}
@@ -161,7 +150,7 @@ export function QuestPreviewContainer({
           className="text-slate-600 text-xs font-semibold text-center sm:text-left leading-normal"
           style={{ fontFamily: INTER }}
         >
-          🎮 Interactive Demo Mode · Completely isolated from actual quest records.
+          🎮 Interactive Game Preview · Completely isolated from actual quest records.
         </p>
 
         <button

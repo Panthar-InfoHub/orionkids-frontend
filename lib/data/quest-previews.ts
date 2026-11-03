@@ -68,6 +68,57 @@ export const PREVIEW_GAMES_LIST: {
   },
 ];
 
+export const GAME_PREVIEW_METADATA: Record<PreviewGameKey, GameLevelPreviewMeta> = {
+  stroop: {
+    gameKey: "stroop",
+    level: 1,
+    gameTitle: "Stroop Colour-Word ✨",
+    levelTitle: "Game Introduction 🎨",
+    objective: "Look at the colour, not the word! Tap the button matching the ink colour.",
+    hintInstruction: "The word plays a trick: the letters spell one colour, but the ink is different! Choose the ink.",
+  },
+  "card-flip": {
+    gameKey: "card-flip",
+    level: 1,
+    gameTitle: "Cosmic Card Flip 🃏",
+    levelTitle: "Game Introduction 🃏",
+    objective: "Remember where pictures hide and flip matching pairs!",
+    hintInstruction: "Tap one card, then tap a second card to find its matching twin.",
+  },
+  pattern: {
+    gameKey: "pattern",
+    level: 1,
+    gameTitle: "Pattern Recognition 🧩",
+    levelTitle: "Game Introduction 🧩",
+    objective: "Follow the cosmic pattern and find what comes next in the sequence!",
+    hintInstruction: "Look at the repeating rhythm, then choose the missing symbol below.",
+  },
+  "odd-one-out": {
+    gameKey: "odd-one-out",
+    level: 1,
+    gameTitle: "Odd One Out 🔍",
+    levelTitle: "Game Introduction 🔍",
+    objective: "Three items belong together in a category, but one is different. Spot the outlier!",
+    hintInstruction: "Look closely at the pictures and tap the one that does not belong.",
+  },
+  "rule-discovery": {
+    gameKey: "rule-discovery",
+    level: 1,
+    gameTitle: "Rule Discovery 🔀",
+    levelTitle: "Game Introduction 🔀",
+    objective: "Discover the hidden rule and sort your card into the matching bucket!",
+    hintInstruction: "Observe the shape, colour, or count on your card to match the bucket rule.",
+  },
+  "story-sequencing": {
+    gameKey: "story-sequencing",
+    level: 1,
+    gameTitle: "Story Sequencing 📖",
+    levelTitle: "Game Introduction 📖",
+    objective: "Arrange the shuffled story cards in chronological order from first to last!",
+    hintInstruction: "Tap the cards in sequence to build the timeline: Step 1, Step 2, and Step 3.",
+  },
+};
+
 export const PREVIEW_METADATA: Record<PreviewGameKey, Record<PreviewLevel, GameLevelPreviewMeta>> = {
   stroop: {
     1: {

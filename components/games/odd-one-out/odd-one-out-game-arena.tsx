@@ -139,6 +139,15 @@ export function OddOneOutGameArena({
   const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string } | null>(null);
   const startTimeRef = useRef<number>(Date.now());
 
+  useEffect(() => {
+    try {
+      const seen = sessionStorage.getItem(`orion_tut_seen_odd_one_out_${level}`);
+      if (!seen && currentIdx === 0) {
+        setIsTutorialOpen(true);
+      }
+    } catch {}
+  }, [level, currentIdx]);
+
   // Shuffle cards whenever the trial index, level, or trials list changes
   useEffect(() => {
     if (trials[currentIdx]?.items) {
@@ -274,7 +283,16 @@ export function OddOneOutGameArena({
         gameKey="odd-one-out"
         level={level}
         isOpen={isTutorialOpen}
-        onClose={() => setIsTutorialOpen(false)}
+        onClose={() => {
+          setIsTutorialOpen(false);
+          startTimeRef.current = Date.now();
+          try { sessionStorage.setItem(`orion_tut_seen_odd_one_out_${level}`, "1"); } catch {}
+        }}
+        onComplete={() => {
+          setIsTutorialOpen(false);
+          startTimeRef.current = Date.now();
+          try { sessionStorage.setItem(`orion_tut_seen_odd_one_out_${level}`, "1"); } catch {}
+        }}
       />
 
       <div className="relative z-10 w-full max-w-[840px] my-auto py-3.5 sm:py-4 px-4 sm:px-8 rounded-[20px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center min-h-[320px] sm:min-h-[340px] overflow-hidden">

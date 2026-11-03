@@ -6,7 +6,7 @@ import { CARD_FLIP_PREVIEWS } from "@/lib/data/quest-previews";
 import { InteractiveHint } from "../interactive-hint";
 
 interface CardFlipPreviewEngineProps {
-  level: PreviewLevel;
+  level?: PreviewLevel;
   onComplete: () => void;
   showHint?: boolean;
 }
@@ -14,7 +14,7 @@ interface CardFlipPreviewEngineProps {
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 export function CardFlipPreviewEngine({
-  level,
+  level = 1,
   onComplete,
   showHint = true,
 }: CardFlipPreviewEngineProps) {
@@ -22,16 +22,20 @@ export function CardFlipPreviewEngine({
   const [cards, setCards] = useState<CardFlipPreviewCard[]>(config.cards);
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
   const [matchedPairIds, setMatchedPairIds] = useState<number[]>([]);
+  const [mismatchedIds, setMismatchedIds] = useState<number[]>([]);
   const [isLocked, setIsLocked] = useState(false);
   const [hintDismissed, setHintDismissed] = useState(false);
+  const [feedback, setFeedback] = useState<{ isCorrect: boolean; text: string } | null>(null);
 
   // Reset when level changes
   useEffect(() => {
     setCards(config.cards);
     setFlippedIds([]);
     setMatchedPairIds([]);
+    setMismatchedIds([]);
     setIsLocked(false);
     setHintDismissed(false);
+    setFeedback(null);
   }, [config.cards, level]);
 
   const handleCardClick = (card: CardFlipPreviewCard) => {
@@ -55,26 +59,31 @@ export function CardFlipPreviewEngine({
         const newMatched = [...matchedPairIds, firstCard.pairId];
         setMatchedPairIds(newMatched);
         setFlippedIds([]);
+        setMismatchedIds([]);
         setIsLocked(false);
+        setFeedback({ isCorrect: true, text: "Pair matched! Fantastic memory! +1 Star 🌟" });
 
         if (newMatched.length >= config.pairsToMatch) {
           const timer = setTimeout(() => {
             onComplete();
-          }, 600);
+          }, 800);
           return () => clearTimeout(timer);
         }
       } else {
-        // Not matched, flip back after 900ms
+        // Not matched
+        setMismatchedIds([firstId, secondId]);
+        setFeedback({ isCorrect: false, text: "Cards don't match! Remember their locations and try again 👆" });
         const timer = setTimeout(() => {
           setFlippedIds([]);
+          setMismatchedIds([]);
           setIsLocked(false);
-        }, 900);
+        }, 950);
         return () => clearTimeout(timer);
       }
     }
   };
 
-  // Find target for hint: card 0, or if card 0 flipped find its pair partner
+  // Find target for hint
   let targetHintId: number | null = null;
   if (showHint && !hintDismissed && matchedPairIds.length === 0) {
     if (flippedIds.length === 0) {
@@ -93,8 +102,34 @@ export function CardFlipPreviewEngine({
   return (
     <div className="w-full flex flex-col items-center justify-center py-4 px-2 select-none">
       {/* Progress Counter Pill */}
-      <div className="mb-3 px-4 py-1 rounded-full bg-slate-100 text-[#0A1D3D] text-xs font-bold border border-slate-200">
+      <div className="mb-2 px-4 py-1.5 rounded-full bg-slate-100 text-[#0A1D3D] text-xs font-bold border border-slate-200">
         <span>Pairs Matched: {matchedPairIds.length} of {config.pairsToMatch}</span>
+      </div>
+
+      {/* Clear Correct / Incorrect Feedback Badge */}
+      <div className="h-10 my-1.5 flex items-center justify-center">
+        {feedback && (
+          <div
+            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs sm:text-sm font-black shadow-xs animate-in fade-in zoom-in-95 duration-150 ${
+              feedback.isCorrect
+                ? "bg-emerald-100 text-emerald-900 border-2 border-emerald-500 shadow-[2px_2px_0_0_#059669]"
+                : "bg-rose-100 text-rose-900 border-2 border-rose-500 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
+            }`}
+            style={{ fontFamily: JAKARTA }}
+          >
+            {feedback.isCorrect ? (
+              <>
+                <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">✓</span>
+                <span>CORRECT! {feedback.text}</span>
+              </>
+            ) : (
+              <>
+                <span className="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs">✕</span>
+                <span>INCORRECT! {feedback.text}</span>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Grid of Cards */}
@@ -111,6 +146,7 @@ export function CardFlipPreviewEngine({
           const isFlipped =
             flippedIds.includes(card.id) || matchedPairIds.includes(card.pairId);
           const isMatched = matchedPairIds.includes(card.pairId);
+          const isMismatched = mismatchedIds.includes(card.id);
           const isHintTarget = targetHintId === card.id;
 
           return (
@@ -123,6 +159,8 @@ export function CardFlipPreviewEngine({
                 className={`w-full h-full rounded-2xl flex flex-col items-center justify-center border-2 transition-all duration-300 cursor-pointer select-none ${
                   isMatched
                     ? "bg-emerald-50 border-emerald-500 shadow-[2px_2px_0_0_#10B981] scale-95"
+                    : isMismatched
+                    ? "bg-rose-50 border-rose-500 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
                     : isFlipped
                     ? "bg-white border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D]"
                     : "bg-[#0A1D3D] hover:bg-[#132c58] text-[#FFE066] border-[#0A1D3D] shadow-[3px_3px_0_0_#FFE066] active:translate-y-0.5"
@@ -137,6 +175,8 @@ export function CardFlipPreviewEngine({
                     >
                       {card.name}
                     </span>
+                    {isMatched && <span className="text-[10px] font-black text-emerald-700">✓</span>}
+                    {isMismatched && <span className="text-[10px] font-black text-rose-700">✕</span>}
                   </div>
                 ) : (
                   <span className="text-xl sm:text-2xl font-black text-[#FFD028]">

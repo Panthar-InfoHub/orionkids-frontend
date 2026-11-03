@@ -97,6 +97,15 @@ export function StorySequencingGameArena({
   const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
+    try {
+      const seen = sessionStorage.getItem(`orion_tut_seen_story_sequencing_${level}`);
+      if (!seen && selectedOrder.length === 0) {
+        setIsTutorialOpen(true);
+      }
+    } catch {}
+  }, [level, selectedOrder.length]);
+
+  useEffect(() => {
     let isCancelled = false;
     async function init() {
       if (sessionId) {
@@ -221,7 +230,16 @@ export function StorySequencingGameArena({
         gameKey="story-sequencing"
         level={level}
         isOpen={isTutorialOpen}
-        onClose={() => setIsTutorialOpen(false)}
+        onClose={() => {
+          setIsTutorialOpen(false);
+          startTimeRef.current = Date.now();
+          try { sessionStorage.setItem(`orion_tut_seen_story_sequencing_${level}`, "1"); } catch {}
+        }}
+        onComplete={() => {
+          setIsTutorialOpen(false);
+          startTimeRef.current = Date.now();
+          try { sessionStorage.setItem(`orion_tut_seen_story_sequencing_${level}`, "1"); } catch {}
+        }}
       />
 
       <div className="relative z-10 w-full max-w-[840px] my-auto py-3.5 sm:py-4 px-4 sm:px-8 rounded-[20px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center min-h-[320px] sm:min-h-[340px]">
