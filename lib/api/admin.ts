@@ -343,16 +343,21 @@ export interface AdminQuestReportDetail {
   school: string | null;
   overallAccuracy: number;
   totalDurationMs: number;
-  gameSummaries: Array<{
-    gameId: number;
-    gameKey: string;
-    gameName?: string;
-    averageAccuracy: number;
-    levelsCompleted: number;
-    totalDurationMs: number;
-  }>;
+  gameSummaries:
+    | Array<{
+        gameId: number;
+        gameKey: string;
+        gameName?: string;
+        averageAccuracy: number;
+        levelsCompleted: number;
+        totalDurationMs: number;
+      }>
+    | Record<string, any>;
   cognitiveFacets: Record<string, unknown>;
   growthObservations: string[] | Record<string, unknown>;
+  status?: string;
+  modelName?: string | null;
+  aiReport?: any;
   schemaVersion: number;
   generatedAt: string;
 }
@@ -968,5 +973,121 @@ export async function rejectAdminAccessRequest(
   }
 
   return payload.data;
+}
+
+/**
+ * Downloads the server-generated PDF for an admin-inspected quest session report.
+ */
+export async function downloadAdminReportPdf(
+  sessionId: string,
+  childName?: string
+): Promise<boolean> {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/admin/quest-sessions/${encodeURIComponent(sessionId)}/report/pdf`,
+      {
+        credentials: "include",
+      }
+    );
+    if (!res.ok) throw new Error("Failed to download PDF");
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+    a.download = `OrionKids-Admin-Report-${cleanName}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    return true;
+  } catch (err) {
+    console.error("Admin PDF download failed:", err);
+    return false;
+  }
+}
+
+/**
+ * Admin triggers regeneration of a report with OpenAI.
+ */
+export async function regenerateAdminReport(
+  sessionId: string
+): Promise<AdminQuestReportDetail> {
+  return requestAdminApi<AdminQuestReportDetail>(
+    `/api/admin/quest-sessions/${encodeURIComponent(sessionId)}/regenerate-report`,
+    {
+      method: "POST",
+    }
+  );
+}
+
+export interface AdminReportListItem {
+  id: string;
+  questSessionId: string;
+  userId: string;
+  parentName: string;
+  parentEmail: string;
+  childProfileId: string | null;
+  childName: string;
+  age: number;
+  selectedClass: string;
+  school: string | null;
+  overallAccuracy: number;
+  totalDurationMs: number;
+  status: string;
+  modelName: string | null;
+  schemaVersion: number;
+  generatedAt: string;
+  questCompletedAt: string | null;
+}
+
+/**
+ * List all quest reports across the platform with filtering and search.
+ */
+export async function fetchAdminReportsList(params: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+  childProfileId?: string;
+} = {}): Promise<{ reports: AdminReportListItem[]; meta: AdminPaginationMeta }> {
+  const query = new URLSearchParams();
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+  if (params.search) query.set("search", params.search);
+  if (params.status) query.set("status", params.status);
+  if (params.childProfileId) query.set("childProfileId", params.childProfileId);
+
+  const endpoint = `/api/admin/reports${query.toString() ? `?${query.toString()}` : ""}`;
+  const url = `${API_BASE_URL}${endpoint}`;
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      headers: { Accept: "application/json" },
+    });
+  } catch (err) {
+    throw new Error(
+      `Unable to connect to OrionKids backend service (${API_BASE_URL}). Please verify backend is running.`
+    );
+  }
+
+  const body = await res.json();
+  if (!res.ok || !body.success) {
+    throw new Error(body?.error?.message || "Failed to fetch reports");
+  }
+
+  const envelope = body as ApiSuccessEnvelope<AdminReportListItem[]>;
+  return {
+    reports: envelope.data || [],
+    meta: envelope.meta || {
+      page: params.page || 1,
+      limit: params.limit || 10,
+      total: envelope.data?.length || 0,
+      totalPages: 1,
+    },
+  };
 }
 

@@ -10,6 +10,7 @@ import { SuperpowersSection } from "@/components/report/superpowers-section";
 import { GrowthPathwaysSection } from "@/components/report/growth-pathways-section";
 import { EcosystemGrowthSection } from "@/components/report/ecosystem-growth-section";
 import { HeartfeltNoteSection } from "@/components/report/heartfelt-note-section";
+import { LevelBreakdownSection } from "@/components/report/level-breakdown-section";
 import { FooterSection } from "@/components/layout/footer-section";
 import { PageCurtain } from "@/components/layout/page-curtain";
 import { fetchQuestReport, type QuestReportData } from "@/lib/api/quest";
@@ -76,7 +77,10 @@ function ReportContent() {
       style={{ backgroundColor: "#F8FAFCB2" }}
     >
       <PageCurtain className="bg-[#F8FAFC] pb-12">
-        <ReportHeader />
+        <ReportHeader
+          sessionId={paramSessionId || report?.questSessionId || null}
+          childName={report?.childName || null}
+        />
 
         {/* If quest is still in progress, show prominent status banner */}
         {isInProgress && (
@@ -117,10 +121,11 @@ function ReportContent() {
           <main className="max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 flex flex-col gap-8 sm:gap-10 items-center">
             <StudentProfileSection report={report} />
             <SkillsGlanceSection report={report} />
-            <SuperpowersSection />
-            <GrowthPathwaysSection />
+            <LevelBreakdownSection report={report} />
+            <SuperpowersSection report={report} />
+            <GrowthPathwaysSection report={report} />
             <EcosystemGrowthSection />
-            <HeartfeltNoteSection />
+            <HeartfeltNoteSection report={report} />
           </main>
         )}
       </PageCurtain>

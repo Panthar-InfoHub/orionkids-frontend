@@ -19,12 +19,14 @@ import {
   Loader2,
   AlertCircle,
   ShieldCheck,
+  Download,
 } from "lucide-react";
 import {
   fetchChild,
   fetchChildProgress,
   fetchChildQuestSessions,
   fetchChildReports,
+  downloadChildReportPdf,
   type ChildWithStats,
   type ChildProgressResponse,
   type ChildQuestSessionItem,
@@ -56,7 +58,20 @@ function ChildDetailContent({ params }: PageProps) {
   const [reports, setReports] = useState<ChildReportItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isStartingQuest, setIsStartingQuest] = useState(false);
+  const [downloadingReportId, setDownloadingReportId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleDownloadReportPdf = async (reportSessionId: string) => {
+    if (!child || downloadingReportId) return;
+    setDownloadingReportId(reportSessionId);
+    try {
+      await downloadChildReportPdf(child.id, reportSessionId, child.childName);
+    } catch (err) {
+      console.error("Failed to download PDF:", err);
+    } finally {
+      setDownloadingReportId(null);
+    }
+  };
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -383,11 +398,8 @@ function ChildDetailContent({ params }: PageProps) {
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-black text-[#0A1D3D]">
-                          Session #{sessions.length - idx}
-                        </span>
-                        <span className="font-mono text-[10px] text-slate-400">
-                          ({s.id})
+                        <span className="text-xs font-black text-[#0A1D3D]">
+                          Quest Journey #{sessions.length - idx}
                         </span>
                         <span
                           className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${
@@ -434,31 +446,73 @@ function ChildDetailContent({ params }: PageProps) {
                   </p>
                 </div>
               ) : (
-                reports.map((r) => (
+                reports.map((r, rIdx) => (
                   <div
                     key={r.id}
-                    className="p-6 rounded-2xl bg-white border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    className="p-6 rounded-2xl bg-white border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D] flex flex-col md:flex-row md:items-center justify-between gap-5"
                   >
-                    <div>
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-black text-[#0A1D3D]">
-                          OrionKids Cognitive Assessment Report
+                          Quest Report #{reports.length - rIdx}
                         </span>
                         <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase">
-                          Authoritative
+                          {r.status || "Generated"}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Generated {formatDate(r.generatedAt)} · Overall Accuracy: {r.overallAccuracy}%
-                      </p>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 text-xs text-slate-600">
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase font-bold">Child</span>
+                          <span className="font-bold text-[#0A1D3D]">{child.childName}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase font-bold">Quest Completed</span>
+                          <span className="font-medium">{formatDate(r.questCompletedAt || r.generatedAt)}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase font-bold">Games Completed</span>
+                          <span className="font-bold text-emerald-700">6 / 6 Games</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase font-bold">Levels Completed</span>
+                          <span className="font-bold text-emerald-700">18 / 18 Levels</span>
+                        </div>
+                      </div>
+
+                      <div className="text-[11px] text-slate-400 pt-1">
+                        Report Generated: {formatDate(r.generatedAt)} · Overall Accuracy: {Math.round(r.overallAccuracy)}%
+                      </div>
                     </div>
 
-                    <Link
-                      href={`/report?sessionId=${r.questSessionId}&childId=${child.id}`}
-                      className="px-5 py-2.5 rounded-xl bg-[#00BCD4] hover:bg-[#00acc1] text-white font-black text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] inline-flex items-center gap-1.5"
-                    >
-                      <span>Read Full Report</span>
-                    </Link>
+                    <div className="flex items-center gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+                      <Link
+                        href={`/report?sessionId=${r.questSessionId}&childId=${child.id}`}
+                        className="px-4 py-2.5 rounded-xl bg-[#00BCD4] hover:bg-[#00acc1] text-white font-black text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] inline-flex items-center gap-1.5 transition-all"
+                      >
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>View Report</span>
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadReportPdf(r.questSessionId)}
+                        disabled={downloadingReportId === r.questSessionId}
+                        className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#0A1D3D] font-black text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] inline-flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
+                      >
+                        {downloadingReportId === r.questSessionId ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00BCD4]" />
+                            <span>Downloading...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Download className="w-3.5 h-3.5 text-[#0A1D3D]" />
+                            <span>Download PDF</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 ))
               )}

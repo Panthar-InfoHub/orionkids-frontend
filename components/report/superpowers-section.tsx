@@ -1,12 +1,37 @@
 "use client";
 
 import React from "react";
+import type { QuestReportData } from "@/lib/api/quest";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
-export function SuperpowersSection() {
+export function SuperpowersSection({
+  report,
+}: {
+  report?: QuestReportData | null;
+}) {
+  const childName = report?.childName || "Your Child";
+  const selectedClass = report?.selectedClass || "Class 1";
+  const aiReport = report?.aiReport;
+  const strengths = aiReport?.observedStrengths || [];
+
+  // Default / fallback domain spotlights based on highest cognitive facets
+  const facets = report?.cognitiveFacets;
+  const focusScore = facets?.focusInhibition?.score ?? 89;
+  const memoryScore = facets?.workingMemory?.score ?? 84;
+
+  const strength1Title = strengths[0] ? "Observed Strength" : "Attention & Selective Focus";
+  const strength1Desc =
+    strengths[0] ||
+    `${childName} stuck with the Stroop Colour-Word game with notable poise, choosing target cues accurately and showing mature executive filtering.`;
+
+  const strength2Title = strengths[1] ? "Observed Strength" : "Spatial Memory & Recall";
+  const strength2Desc =
+    strengths[1] ||
+    `${childName} navigated the Card Flip memory matches with calm persistence, demonstrating good recall of spatial object positions.`;
+
   return (
-    <section className="flex flex-col gap-5">
+    <section className="w-full flex flex-col gap-5">
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="w-9 h-9 rounded-xl bg-[#059669] text-white flex items-center justify-center text-lg shadow-xs">
@@ -17,17 +42,17 @@ export function SuperpowersSection() {
             className="text-[22px] sm:text-[26px] font-bold text-[#0A1D3D]"
             style={{ fontFamily: JAKARTA }}
           >
-            Ananya’s Superpowers (Strengths)
+            {childName}’s Superpowers (Strengths)
           </h2>
           <p className="text-sm text-[#64748B]" style={{ fontFamily: JAKARTA }}>
-            Core cognitive advantages that can anchor her learning journey in Class 1
+            Core cognitive advantages that anchor learning progression in {selectedClass}
           </p>
         </div>
       </div>
 
       {/* 2 Strength Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Superpower 1: Attention & Selective Focus */}
+        {/* Superpower 1 */}
         <div className="bg-white rounded-[22px] border border-[#A7F3D0] shadow-xs p-6 flex flex-col justify-between gap-4">
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -35,16 +60,16 @@ export function SuperpowersSection() {
                 DOMAIN SPOTLIGHT
               </span>
               <span className="px-3 py-0.5 rounded-full bg-[#059669] text-white font-bold text-xs">
-                89th percentile
+                {focusScore}% Accuracy
               </span>
             </div>
 
             <h3 className="text-[20px] font-bold text-[#0A1D3D]" style={{ fontFamily: JAKARTA }}>
-              Attention & Selective Focus
+              {strength1Title}
             </h3>
 
             <p className="text-[14px] leading-[165%] text-[#475569] mt-2.5" style={{ fontFamily: JAKARTA }}>
-              Ananya stuck with the Colour Tap game with notable poise. She reliably chose the target cue even when mismatched text attempted to distract her, showing mature executive filtering for a 6-year-old.
+              {strength1Desc}
             </p>
           </div>
 
@@ -55,16 +80,16 @@ export function SuperpowersSection() {
             </span>
             <div className="text-[13px] leading-[160%] text-[#334155] flex flex-col gap-1.5">
               <p>
-                <strong>🏃 Movement & Sport:</strong> Play park games like &ldquo;Simon Says&rdquo; or &ldquo;Freeze Dance&rdquo; with changing auditory triggers (e.g., &lsquo;hop when I clap twice&rsquo;).
+                <strong>🏃 Movement & Rhythm:</strong> Play active games like &ldquo;Simon Says&rdquo; or &ldquo;Freeze Dance&rdquo; with changing verbal triggers.
               </p>
               <p>
-                <strong>🎨 Creative Play:</strong> Color complex illustrations while listening to short audio-tales, then recall two distinct story moments.
+                <strong>🎨 Creative Focus:</strong> Encourage drawing or coloring complex illustrations while listening to short audio stories.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Superpower 2: Spatial Memory & Recall */}
+        {/* Superpower 2 */}
         <div className="bg-white rounded-[22px] border border-[#A7F3D0] shadow-xs p-6 flex flex-col justify-between gap-4">
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -72,16 +97,16 @@ export function SuperpowersSection() {
                 DOMAIN SPOTLIGHT
               </span>
               <span className="px-3 py-0.5 rounded-full bg-[#059669] text-white font-bold text-xs">
-                84th percentile
+                {memoryScore}% Accuracy
               </span>
             </div>
 
             <h3 className="text-[20px] font-bold text-[#0A1D3D]" style={{ fontFamily: JAKARTA }}>
-              Spatial Memory & Recall
+              {strength2Title}
             </h3>
 
             <p className="text-[14px] leading-[165%] text-[#475569] mt-2.5" style={{ fontFamily: JAKARTA }}>
-              Ananya swiftly indexed where flipped cards were located, preventing redundant attempts. Such robust short-term visual memory directly assists fast sight-word recognition and math equations.
+              {strength2Desc}
             </p>
           </div>
 
@@ -92,10 +117,10 @@ export function SuperpowersSection() {
             </span>
             <div className="text-[13px] leading-[160%] text-[#334155] flex flex-col gap-1.5">
               <p>
-                <strong>🎲 Memory Hopscotch:</strong> Create a chalk tile path. Call out 3 steps, then have Ananya leap the pattern from memory.
+                <strong>🃏 Card Match Exploration:</strong> Play physical memory card pairs together, encouraging verbalization of card locations.
               </p>
               <p>
-                <strong>🧸 Tray Detective:</strong> Place 5 household items on a tray for 10 seconds, hide it under a cloth, and ask her to name or sketch what disappeared.
+                <strong>🗺️ Cosmic Scavenger Hunt:</strong> Hide 3 toys in a room and give 2-step clue sequences from memory.
               </p>
             </div>
           </div>

@@ -295,6 +295,44 @@ export interface QuestReportData {
   school: string | null;
   overallAccuracy: number;
   totalDurationMs: number;
+  status?: string;
+  modelName?: string | null;
+  aiReport?: {
+    reportTitle: string;
+    childOverview: string;
+    questSummary: string;
+    overallPerformanceSummary: string;
+    gameWiseAnalysis: Array<{
+      gameKey: string;
+      gameName: string;
+      cognitiveDomain: string;
+      levelsCompleted: number;
+      averageAccuracy: number | null;
+      averageReactionTimeMs: number | null;
+      summary: string;
+      observedStrengths: string[];
+      areasForPractice: string[];
+    }>;
+    levelWisePerformance: Array<{
+      gameKey: string;
+      levelNumber: number;
+      status: string;
+      accuracy: number | null;
+      durationMs: number | null;
+      averageReactionTimeMs: number | null;
+      insight: string;
+    }>;
+    observedStrengths: string[];
+    areasForPractice: string[];
+    progressAndConsistency: string;
+    parentRecommendations: Array<{
+      title: string;
+      description: string;
+      activityType?: string;
+    }>;
+    dataLimitations: string;
+    reportGenerationDate: string;
+  } | null;
   gameSummaries: Record<
     string,
     {
@@ -316,6 +354,36 @@ export interface QuestReportData {
   growthObservations: Record<string, unknown>;
   schemaVersion: number;
   generatedAt: string;
+}
+
+/**
+ * Download authoritative PDF assessment report.
+ */
+export async function downloadQuestReportPdf(
+  sessionId: string,
+  childName?: string
+): Promise<boolean> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  try {
+    const res = await fetch(`${apiUrl}/api/quest/sessions/${sessionId}/report/pdf`, {
+      credentials: "include",
+    });
+    if (!res.ok) throw new Error("Failed to download PDF");
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+    a.download = `OrionKids-Assessment-Report-${cleanName}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    return true;
+  } catch (err) {
+    console.error("PDF download failed:", err);
+    return false;
+  }
 }
 
 /**
