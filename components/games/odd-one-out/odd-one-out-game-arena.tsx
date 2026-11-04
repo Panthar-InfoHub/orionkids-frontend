@@ -141,8 +141,8 @@ export function OddOneOutGameArena({
 
   useEffect(() => {
     try {
-      const seen = sessionStorage.getItem(`orion_tut_seen_odd_one_out_${level}`);
-      if (!seen && currentIdx === 0) {
+      const seen = sessionStorage.getItem("orion_tut_seen_odd_one_out");
+      if (!seen && level === 1 && currentIdx === 0) {
         setIsTutorialOpen(true);
       }
     } catch {}
@@ -286,12 +286,12 @@ export function OddOneOutGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem(`orion_tut_seen_odd_one_out_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_odd_one_out", "1"); } catch {}
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem(`orion_tut_seen_odd_one_out_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_odd_one_out", "1"); } catch {}
         }}
       />
 

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { QuestGameKey } from "@/lib/api/quest";
 import { TutorialStageId, LevelTutorialConfig } from "@/types/game-tutorial";
-import { GAME_TUTORIALS } from "@/lib/data/game-tutorials";
+import { GAME_TUTORIALS, getGameTutorial } from "@/lib/data/game-tutorials";
 import { TutorialStageNav } from "./tutorial-stage-nav";
 import { TutorialMascot } from "./tutorial-mascot";
 import { TutorialShowMeStage } from "./tutorial-show-me-stage";
@@ -14,7 +14,7 @@ import { X } from "lucide-react";
 
 interface GameTutorialModalProps {
   gameKey: QuestGameKey;
-  level: number;
+  level?: number;
   isOpen: boolean;
   onClose: () => void;
   onComplete?: () => void;
@@ -25,27 +25,30 @@ const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 export function GameTutorialModal({
   gameKey,
-  level,
+  level = 1,
   isOpen,
   onClose,
   onComplete,
   className = "",
 }: GameTutorialModalProps) {
-  const tutorialConfig: LevelTutorialConfig =
-    GAME_TUTORIALS[gameKey]?.[level] ||
-    GAME_TUTORIALS[gameKey]?.[1] ||
-    GAME_TUTORIALS.stroop[1];
+  // Always use the canonical 1-game tutorial (1 preview per game, not per level)
+  const tutorialConfig: LevelTutorialConfig = getGameTutorial(gameKey);
 
   const [currentStage, setCurrentStage] = useState<TutorialStageId>("SHOW_ME");
   const [completedStages, setCompletedStages] = useState<TutorialStageId[]>([]);
+  const [practiceFeedback, setPracticeFeedback] = useState<{
+    text: string;
+    isCorrect: boolean;
+  } | null>(null);
 
-  // Reset stage state when modal opens or level changes
+  // Reset stage state when modal opens or game changes
   useEffect(() => {
     if (isOpen) {
       setCurrentStage("SHOW_ME");
       setCompletedStages([]);
+      setPracticeFeedback(null);
     }
-  }, [isOpen, level, gameKey]);
+  }, [isOpen, gameKey]);
 
   // Handle escape key to skip
   useEffect(() => {
@@ -66,6 +69,7 @@ export function GameTutorialModal({
   const handleProceedToPractice = useCallback(() => {
     handleStageComplete("SHOW_ME");
     setCurrentStage("LET_ME_TRY");
+    setPracticeFeedback(null);
   }, [handleStageComplete]);
 
   const handlePracticeComplete = useCallback(() => {
@@ -75,6 +79,7 @@ export function GameTutorialModal({
 
   const handleReplayAll = useCallback(() => {
     setCurrentStage("SHOW_ME");
+    setPracticeFeedback(null);
   }, []);
 
   const handleStartGame = useCallback(() => {
@@ -88,27 +93,37 @@ export function GameTutorialModal({
 
   if (!isOpen) return null;
 
-  // Determine active mascot message
-  const mascotMessage =
-    currentStage === "SHOW_ME"
-      ? tutorialConfig.demo.instruction
-      : currentStage === "LET_ME_TRY"
-      ? "Your turn! Tap the correct choice to complete the practice."
-      : "Awesome job! You are ready to start playing!";
+  // Determine active mascot message and mood
+  let mascotMessage = tutorialConfig.demo.instruction;
+  let mascotSub = tutorialConfig.demo.subInstruction;
+  let mascotMood: "happy" | "thinking" | "cheering" | "pointing" = "pointing";
 
-  const mascotSub =
-    currentStage === "SHOW_ME"
-      ? tutorialConfig.demo.subInstruction
-      : currentStage === "LET_ME_TRY"
-      ? "No rush! Take your time and explore."
-      : "Tap 'Start Level' whenever you're ready.";
+  if (currentStage === "LET_ME_TRY") {
+    if (!practiceFeedback) {
+      mascotMessage = "Your turn! Tap the correct choice to complete the practice.";
+      mascotSub = "No rush! Take your time and explore.";
+      mascotMood = "pointing";
+    } else if (practiceFeedback.isCorrect) {
+      mascotMessage = "🎉 Spot on! That's completely correct!";
+      mascotSub = "Awesome job! Tap 'Ready for the Game' below to continue!";
+      mascotMood = "cheering";
+    } else {
+      mascotMessage = "❌ Not quite right! Give it another try!";
+      mascotSub = practiceFeedback.text || "Look closely at the clue and tap again!";
+      mascotMood = "thinking";
+    }
+  } else if (currentStage === "READY_TO_PLAY") {
+    mascotMessage = "Awesome job! You are ready to start playing!";
+    mascotSub = "Tap 'Start Game' whenever you're ready.";
+    mascotMood = "cheering";
+  }
 
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="tutorial-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#0A1D3D]/80 backdrop-blur-xs select-none"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-[#0A1D3D]/80 backdrop-blur-xs select-none"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.94, y: 10 }}
@@ -117,8 +132,8 @@ export function GameTutorialModal({
         transition={{ duration: 0.25, ease: "easeOut" }}
         className={`relative w-full max-w-[620px] max-h-[92vh] overflow-y-auto bg-white rounded-[28px] sm:rounded-[36px] border-2 border-[#0A1D3D] shadow-[6px_6px_0_0_#FFE066] flex flex-col justify-between ${className}`}
       >
-        {/* Top Header Bar */}
-        <div className="w-full bg-[#F8FAFC] border-b-2 border-slate-200 p-3.5 sm:p-4 flex items-center justify-between gap-3">
+        {/* Top Header Bar: 1 Tutorial per Game (No Level-Specific Confusion) */}
+        <div className="w-full bg-[#F8FAFC] border-b-2 border-slate-200 p-3 sm:p-3.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl sm:text-3xl shrink-0" aria-hidden="true">
               {tutorialConfig.badgeIcon || "🎓"}
@@ -132,7 +147,7 @@ export function GameTutorialModal({
                 {tutorialConfig.gameTitle} Tutorial
               </h2>
               <span className="text-[11px] sm:text-xs font-bold text-slate-500">
-                {tutorialConfig.levelTitle}
+                Interactive Game Guide · Learn How to Play 🌟
               </span>
             </div>
           </div>
@@ -150,12 +165,15 @@ export function GameTutorialModal({
         </div>
 
         {/* Modal Body */}
-        <div className="p-4 sm:p-6 flex flex-col items-center gap-4">
+        <div className="p-3.5 sm:p-5 flex flex-col items-center gap-3">
           {/* Stage Progress Stepper */}
           <TutorialStageNav
             currentStage={currentStage}
             completedStages={completedStages}
-            onSelectStage={(stage) => setCurrentStage(stage)}
+            onSelectStage={(stage) => {
+              setCurrentStage(stage);
+              setPracticeFeedback(null);
+            }}
           />
 
           {/* Friendly Mascot Guide Bubble (Stages 1 and 2; Stage 3 has its own celebratory card) */}
@@ -163,12 +181,8 @@ export function GameTutorialModal({
             <TutorialMascot
               message={mascotMessage}
               subMessage={mascotSub}
-              mood={
-                currentStage === "LET_ME_TRY"
-                  ? "pointing"
-                  : "thinking"
-              }
-              className="w-full max-w-[520px]"
+              mood={mascotMood}
+              className="w-full max-w-[540px]"
             />
           )}
 
@@ -203,6 +217,7 @@ export function GameTutorialModal({
                   <TutorialPracticeStage
                     practice={tutorialConfig.practice}
                     onPracticeComplete={handlePracticeComplete}
+                    onFeedbackChange={setPracticeFeedback}
                   />
                 </motion.div>
               )}
@@ -233,4 +248,3 @@ export function GameTutorialModal({
     </div>
   );
 }
-

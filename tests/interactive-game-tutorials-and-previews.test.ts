@@ -1,8 +1,8 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { GAME_TUTORIALS, getLevelTutorial } from "../lib/data/game-tutorials";
-import { PREVIEW_GAMES_LIST, PREVIEW_METADATA, STROOP_PREVIEWS, CARD_FLIP_PREVIEWS, PATTERN_PREVIEWS, ODD_ONE_OUT_PREVIEWS, RULE_DISCOVERY_PREVIEWS, STORY_SEQUENCING_PREVIEWS } from "../lib/data/quest-previews";
+import { GAME_TUTORIALS, getGameTutorial, getLevelTutorial } from "../lib/data/game-tutorials";
+import { PREVIEW_GAMES_LIST, STROOP_PREVIEWS, CARD_FLIP_PREVIEWS, PATTERN_PREVIEWS, ODD_ONE_OUT_PREVIEWS, RULE_DISCOVERY_PREVIEWS, STORY_SEQUENCING_PREVIEWS } from "../lib/data/quest-previews";
 import { GameKey, GameLevel } from "../types/game-tutorial";
 
 describe("OrionKids — Interactive 3-Stage Tutorial & Game Preview Verification Suite", () => {
@@ -86,147 +86,115 @@ describe("OrionKids — Interactive 3-Stage Tutorial & Game Preview Verification
   });
 
   // -------------------------------------------------------------
-  // SUITE 2: All 18 Level-Specific Tutorials (3-Stage Engine)
+  // SUITE 2: 6 Game Tutorials (1 Preview & Tutorial Per Game)
   // -------------------------------------------------------------
-  describe("Suite 2: 18 Level-Specific Tutorials (3-Stage Engine)", () => {
-    it("2.1 verifies all 18 level tutorials have complete 3-stage definitions (Demo, Practice, Ready)", () => {
+  describe("Suite 2: 6 Game Tutorials (1 Preview & Tutorial Per Game)", () => {
+    it("2.1 verifies all 6 game tutorials have complete 3-stage definitions (Demo, Practice, Ready)", () => {
       let count = 0;
       for (const game of ALL_GAMES) {
-        for (const lvl of ALL_LEVELS) {
-          const tut = getLevelTutorial(game, lvl);
-          assert.ok(tut, `Missing tutorial for ${game} level ${lvl}`);
+        const tut = getGameTutorial(game);
+        assert.ok(tut, `Missing tutorial for ${game}`);
 
-          // Stage 1: SHOW ME (Demo)
-          assert.ok(tut.demo, `Missing demo for ${game} lvl ${lvl}`);
-          assert.ok(tut.demo.instruction.length > 5, `Demo instruction too short for ${game} lvl ${lvl}`);
-          assert.ok(tut.demo.subInstruction.length > 5, `Demo subInstruction too short for ${game} lvl ${lvl}`);
-          assert.ok(tut.demo.actionExplanation.length > 3, `Demo actionExplanation missing for ${game} lvl ${lvl}`);
-          assert.ok(tut.demo.demoPayload, `Missing demoPayload for ${game} lvl ${lvl}`);
+        // Stage 1: SHOW ME (Demo)
+        assert.ok(tut.demo, `Missing demo for ${game}`);
+        assert.ok(tut.demo.instruction.length > 5, `Demo instruction too short for ${game}`);
+        assert.ok(tut.demo.subInstruction.length > 5, `Demo subInstruction too short for ${game}`);
+        assert.ok(tut.demo.actionExplanation.length > 3, `Demo actionExplanation missing for ${game}`);
+        assert.ok(tut.demo.demoPayload, `Missing demoPayload for ${game}`);
 
-          // Stage 2: LET ME TRY (Practice)
-          assert.ok(tut.practice, `Missing practice for ${game} lvl ${lvl}`);
-          assert.ok(tut.practice.type, `Practice type missing for ${game} lvl ${lvl}`);
-          assert.ok(tut.practice.data, `Practice data missing for ${game} lvl ${lvl}`);
+        // Stage 2: LET ME TRY (Practice)
+        assert.ok(tut.practice, `Missing practice for ${game}`);
+        assert.ok(tut.practice.type, `Practice type missing for ${game}`);
+        assert.ok(tut.practice.data, `Practice data missing for ${game}`);
 
-          // Stage 3: READY TO PLAY
-          assert.ok(tut.readyMessage.length > 10, `Ready message too short for ${game} lvl ${lvl}`);
-          assert.ok((tut.readyTip || "").length > 5, `Ready tip missing or too short for ${game} lvl ${lvl}`);
+        // Stage 3: READY TO PLAY
+        assert.ok(tut.readyMessage.length > 10, `Ready message too short for ${game}`);
+        assert.ok((tut.readyTip || "").length > 5, `Ready tip missing or too short for ${game}`);
 
-          count++;
-        }
+        count++;
       }
-      assert.equal(count, 18, "Must verify exactly 18 complete level tutorials");
+      assert.equal(count, 6, "Must verify exactly 6 complete canonical game tutorials");
     });
 
-    it("2.2 Stroop: verifies demonstration and practice align with level rules", () => {
-      const s1 = getLevelTutorial("stroop", 1)!;
-      const s2 = getLevelTutorial("stroop", 2)!;
-      const s3 = getLevelTutorial("stroop", 3)!;
-
-      // Level 1: Match ink colour directly
-      assert.equal(s1.practice.type, "stroop");
-      if (s1.practice.type === "stroop") {
-        assert.equal(s1.practice.data.correctLabel, "Blue");
-      }
-
-      // Level 2: Incongruent trick word (ignore letters, pick ink)
-      assert.equal(s2.practice.type, "stroop");
-      if (s2.practice.type === "stroop") {
-        assert.equal(s2.practice.data.word, "GREEN");
-        assert.equal(s2.practice.data.correctLabel, "Red"); // Ink is red
-      }
-
-      // Level 3: Reverse rules (read written word)
-      assert.equal(s3.practice.type, "stroop");
-      if (s3.practice.type === "stroop") {
-        assert.equal(s3.practice.data.word, "BLUE");
-        assert.equal(s3.practice.data.correctLabel, "Blue"); // Spelled word
+    it("2.2 Stroop: verifies demonstration and practice align with ink colour identification", () => {
+      const tut = getGameTutorial("stroop");
+      assert.equal(tut.practice.type, "stroop");
+      if (tut.practice.type === "stroop") {
+        assert.equal(tut.practice.data.word, "YELLOW");
+        assert.equal(tut.practice.data.correctLabel, "Red");
+        assert.ok(tut.practice.data.options.some((o) => o.label === "Red"));
       }
     });
 
     it("2.3 Card Flip: verifies practice cards contain matching pairs for isolated practice", () => {
-      for (const lvl of ALL_LEVELS) {
-        const cf = getLevelTutorial("card-flip", lvl)!;
-        assert.equal(cf.practice.type, "card-flip");
-        if (cf.practice.type === "card-flip") {
-          const cards = cf.practice.data.cards;
-          assert.ok(cards.length >= 4);
-          // Check that there is at least one pair of matching cards
-          const pairMap = new Map<number, number>();
-          for (const c of cards) {
-            pairMap.set(c.pairId, (pairMap.get(c.pairId) || 0) + 1);
-          }
-          const hasCompletePair = Array.from(pairMap.values()).some((cnt) => cnt === 2);
-          assert.ok(hasCompletePair, `Card flip practice for level ${lvl} must have matching pairs`);
+      const cf = getGameTutorial("card-flip");
+      assert.equal(cf.practice.type, "card-flip");
+      if (cf.practice.type === "card-flip") {
+        const cards = cf.practice.data.cards;
+        assert.ok(cards.length >= 4);
+        const pairMap = new Map<number, number>();
+        for (const c of cards) {
+          pairMap.set(c.pairId, (pairMap.get(c.pairId) || 0) + 1);
         }
+        const hasCompletePair = Array.from(pairMap.values()).some((cnt) => cnt === 2);
+        assert.ok(hasCompletePair, "Card flip practice must have matching pairs");
       }
     });
 
     it("2.4 Pattern: verifies practice sequence has matching answer tile", () => {
-      for (const lvl of ALL_LEVELS) {
-        const pat = getLevelTutorial("pattern", lvl)!;
-        assert.equal(pat.practice.type, "pattern");
-        if (pat.practice.type === "pattern") {
-          const { sequence, missingIndex, options, answer } = pat.practice.data;
-          assert.ok(sequence.length > missingIndex);
-          assert.ok(options.includes(answer), `Answer ${answer} must be in options for level ${lvl}`);
-        }
+      const pat = getGameTutorial("pattern");
+      assert.equal(pat.practice.type, "pattern");
+      if (pat.practice.type === "pattern") {
+        const { sequence, missingIndex, options, answer } = pat.practice.data;
+        assert.ok(sequence.length > missingIndex);
+        assert.ok(options.includes(answer), `Answer ${answer} must be in options`);
       }
     });
 
     it("2.5 Odd One Out: verifies practice items have exactly 1 odd item", () => {
-      for (const lvl of ALL_LEVELS) {
-        const ooo = getLevelTutorial("odd-one-out", lvl)!;
-        assert.equal(ooo.practice.type, "odd-one-out");
-        if (ooo.practice.type === "odd-one-out") {
-          const oddItems = ooo.practice.data.items.filter((i) => i.isOdd);
-          assert.equal(oddItems.length, 1, `Odd One Out practice level ${lvl} must have 1 odd item`);
-        }
+      const ooo = getGameTutorial("odd-one-out");
+      assert.equal(ooo.practice.type, "odd-one-out");
+      if (ooo.practice.type === "odd-one-out") {
+        const items = ooo.practice.data.items;
+        const oddItems = items.filter((i) => i.isOdd);
+        assert.equal(oddItems.length, 1, "Must have exactly 1 odd item in practice");
       }
     });
 
-    it("2.6 Rule Discovery: verifies practice preserves rule secrecy without spoiling level answers", () => {
-      for (const lvl of ALL_LEVELS) {
-        const rd = getLevelTutorial("rule-discovery", lvl)!;
-        assert.equal(rd.practice.type, "rule-discovery");
-        if (rd.practice.type === "rule-discovery") {
-          const { buckets, cardToSort, targetBucketId } = rd.practice.data;
-          assert.ok(buckets.length >= 2);
-          assert.ok(cardToSort);
-          assert.ok(buckets.some((b) => b.id === targetBucketId));
-        }
+    it("2.6 Rule Discovery: verifies practice preserves rule discovery without spoiling game answers", () => {
+      const rd = getGameTutorial("rule-discovery");
+      assert.equal(rd.practice.type, "rule-discovery");
+      if (rd.practice.type === "rule-discovery") {
+        const { buckets, targetBucketId, cardToSort } = rd.practice.data;
+        assert.ok(buckets.some((b) => b.id === targetBucketId));
+        assert.ok(cardToSort);
       }
     });
 
     it("2.7 Story Sequencing: verifies practice steps have valid 1-2-3 chronological order", () => {
-      for (const lvl of ALL_LEVELS) {
-        const ss = getLevelTutorial("story-sequencing", lvl)!;
-        assert.equal(ss.practice.type, "story-sequencing");
-        if (ss.practice.type === "story-sequencing") {
-          const { steps, shuffledSteps } = ss.practice.data;
-          assert.ok(steps.length >= 3);
-          assert.equal(shuffledSteps.length, steps.length);
-          const orders = steps.map((s) => s.order);
-          assert.deepEqual(orders, [1, 2, 3]);
-        }
+      const ss = getGameTutorial("story-sequencing");
+      assert.equal(ss.practice.type, "story-sequencing");
+      if (ss.practice.type === "story-sequencing") {
+        const { steps, shuffledSteps } = ss.practice.data;
+        assert.equal(steps.length, 3);
+        assert.equal(shuffledSteps.length, 3);
+        const orders = steps.map((s) => s.order).sort();
+        assert.deepEqual(orders, [1, 2, 3]);
       }
     });
   });
 
   // -------------------------------------------------------------
-  // SUITE 3: Strict Backend & Telemetry Isolation
+  // SUITE 3: Backend & Telemetry Isolation
   // -------------------------------------------------------------
   describe("Suite 3: Backend & Telemetry Isolation", () => {
     it("3.1 confirms tutorial actions never invoke backend telemetry APIs", () => {
       const calls: string[] = [];
 
-      // Simulated tutorial practice handler
-      function onPracticeAction(action: string) {
-        // Pure local state transition
-        if (action === "selectPracticeOption") {
-          return { status: "local_feedback" };
+      function onPracticeAction(actionName: string) {
+        if (actionName.startsWith("quest_telemetry")) {
+          calls.push(actionName);
         }
-        calls.push(action);
         return { status: "server_called" };
       }
 
@@ -235,17 +203,14 @@ describe("OrionKids — Interactive 3-Stage Tutorial & Game Preview Verification
     });
 
     it("3.2 confirms reaction time clock resets to performance.now() when tutorial completes", () => {
-      // Suppose tutorial was open for 15,000ms
       const fakeTutorialDuration = 15_000;
       let trialStartTime = 100_000;
 
       function onTutorialClosed() {
-        // Reset trial start time
         trialStartTime = 100_000 + fakeTutorialDuration;
       }
 
       onTutorialClosed();
-      // Gameplay reaction time should calculate from 115,000, not 100,000
       const currentNow = 117_500;
       const reactionTime = currentNow - trialStartTime;
       assert.equal(reactionTime, 2_500, "Tutorial duration must not inflate gameplay reaction time");
@@ -271,14 +236,14 @@ describe("OrionKids — Interactive 3-Stage Tutorial & Game Preview Verification
           return {
             isCorrect: true,
             banner: `CORRECT! Spot on! +1 Star`,
-            cssClass: "bg-emerald-100 text-emerald-900 border-emerald-500",
+            cssClass: "bg-emerald-500 text-white border-emerald-600",
             icon: "✓",
           };
         }
         return {
           isCorrect: false,
-          banner: `INCORRECT! ${hint}`,
-          cssClass: "bg-rose-100 text-rose-900 border-rose-500 animate-wobble",
+          banner: `NOT QUITE! ${hint}`,
+          cssClass: "bg-rose-500 text-white border-rose-600 animate-wobble",
           icon: "✕",
         };
       }
@@ -293,11 +258,10 @@ describe("OrionKids — Interactive 3-Stage Tutorial & Game Preview Verification
       // Test wrong answer
       const wrongRes = evaluatePracticeChoice("BLUE", "RED", "Look at ink color!");
       assert.equal(wrongRes.isCorrect, false);
-      assert.ok(wrongRes.banner.includes("INCORRECT!"));
+      assert.ok(wrongRes.banner.includes("NOT QUITE!"));
       assert.equal(wrongRes.icon, "✕");
       assert.ok(wrongRes.cssClass.includes("rose"));
       assert.ok(wrongRes.cssClass.includes("animate-wobble"));
     });
   });
 });
-

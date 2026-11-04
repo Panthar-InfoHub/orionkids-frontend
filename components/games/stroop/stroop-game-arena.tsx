@@ -84,10 +84,10 @@ export function StroopGameArena({
     setNextLevelRoute(null);
     setIsNavigating(false);
 
-    // Auto-prompt tutorial only for first-time level entry without interrupting resumed trials
+    // Auto-prompt tutorial ONLY ONCE per game (only at Level 1, first trial)
     try {
-      const seen = sessionStorage.getItem(`orion_tut_seen_stroop_${level}`);
-      if (!seen && (initialTrialIndex === undefined || initialTrialIndex === 0)) {
+      const seen = sessionStorage.getItem("orion_tut_seen_stroop");
+      if (!seen && level === 1 && (initialTrialIndex === undefined || initialTrialIndex === 0)) {
         setIsTutorialOpen(true);
       }
     } catch {}
@@ -853,12 +853,12 @@ export function StroopGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           trialStartTimeRef.current = performance.now();
-          try { sessionStorage.setItem(`orion_tut_seen_stroop_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_stroop", "1"); } catch {}
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           trialStartTimeRef.current = performance.now();
-          try { sessionStorage.setItem(`orion_tut_seen_stroop_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_stroop", "1"); } catch {}
         }}
       />
     </div>

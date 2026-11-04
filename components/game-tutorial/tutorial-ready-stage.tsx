@@ -9,7 +9,7 @@ interface TutorialReadyStageProps {
   readyMessage: string;
   readyTip?: string;
   gameTitle: string;
-  levelTitle: string;
+  levelTitle?: string;
   onStartGame: () => void;
   onReplayTutorial: () => void;
   className?: string;
@@ -115,7 +115,7 @@ export function TutorialReadyStage({
           style={{ fontFamily: JAKARTA }}
         >
           <Play className="w-4 h-4 fill-[#0A1D3D]" />
-          <span>Start Level! 🚀</span>
+          <span>Start Game! 🚀</span>
         </motion.button>
       </div>
     </div>

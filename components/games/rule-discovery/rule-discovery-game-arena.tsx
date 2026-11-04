@@ -65,8 +65,8 @@ export function RuleDiscoveryGameArena({
 
   useEffect(() => {
     try {
-      const seen = sessionStorage.getItem(`orion_tut_seen_rule_discovery_${level}`);
-      if (!seen && cardIdx === 0) {
+      const seen = sessionStorage.getItem("orion_tut_seen_rule_discovery");
+      if (!seen && level === 1 && cardIdx === 0) {
         setIsTutorialOpen(true);
       }
     } catch {}
@@ -199,12 +199,12 @@ export function RuleDiscoveryGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem(`orion_tut_seen_rule_discovery_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_rule_discovery", "1"); } catch {}
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem(`orion_tut_seen_rule_discovery_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_rule_discovery", "1"); } catch {}
         }}
       />
 

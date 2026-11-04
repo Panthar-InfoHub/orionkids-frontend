@@ -104,10 +104,10 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
     setHasPromptedTired(false);
     setIntroPhase("deal");
 
-    // Auto-prompt tutorial only for first-time level entry without interrupting resumed trials
+    // Auto-prompt tutorial ONLY ONCE per game (only at Level 1 on first entry)
     try {
-      const seen = sessionStorage.getItem(`orion_tut_seen_card_flip_${level}`);
-      if (!seen && matchedCount === 0 && moves === 0) {
+      const seen = sessionStorage.getItem("orion_tut_seen_card_flip");
+      if (!seen && level === 1 && matchedCount === 0 && moves === 0) {
         setIsTutorialOpen(true);
       }
     } catch {}
@@ -365,12 +365,12 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         onClose={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem(`orion_tut_seen_card_flip_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_card_flip", "1"); } catch {}
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem(`orion_tut_seen_card_flip_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_card_flip", "1"); } catch {}
         }}
       />
 

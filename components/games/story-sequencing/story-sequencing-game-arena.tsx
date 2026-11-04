@@ -98,8 +98,8 @@ export function StorySequencingGameArena({
 
   useEffect(() => {
     try {
-      const seen = sessionStorage.getItem(`orion_tut_seen_story_sequencing_${level}`);
-      if (!seen && selectedOrder.length === 0) {
+      const seen = sessionStorage.getItem("orion_tut_seen_story_sequencing");
+      if (!seen && level === 1 && selectedOrder.length === 0) {
         setIsTutorialOpen(true);
       }
     } catch {}
@@ -233,12 +233,12 @@ export function StorySequencingGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem(`orion_tut_seen_story_sequencing_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_story_sequencing", "1"); } catch {}
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem(`orion_tut_seen_story_sequencing_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_story_sequencing", "1"); } catch {}
         }}
       />
 

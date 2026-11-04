@@ -1,1304 +1,491 @@
 import { QuestGameKey } from "@/lib/api/quest";
 import { LevelTutorialConfig } from "@/types/game-tutorial";
 
-export const GAME_TUTORIALS: Record<QuestGameKey, Record<number, LevelTutorialConfig>> = {
+/**
+ * OrionKids Canonical Game Tutorials (1 Preview & Tutorial Per Game for all 6 Games)
+ *
+ * Each of the 6 canonical games provides exactly 1 interactive 3-stage tutorial:
+ * Stage 1: SHOW ME (Animated demonstration with guide hand pointer)
+ * Stage 2: LET ME TRY (Isolated interactive practice with explicit correct/wrong feedback)
+ * Stage 3: READY TO PLAY (Celebration & level launch)
+ */
+export const GAME_TUTORIALS: Record<QuestGameKey, LevelTutorialConfig> = {
   // =========================================================================
-  // 1. STROOP COLOUR-WORD (Levels 1, 2, 3)
+  // 1. STROOP COLOUR-WORD TUTORIAL
   // =========================================================================
   stroop: {
-    1: {
-      gameKey: "stroop",
-      level: 1,
-      gameTitle: "Stroop Colour-Word",
-      levelTitle: "Level 1 · Colour Clues 🎨",
-      badgeIcon: "🎨",
-      ruleExplanation: "Observe the ink colour and tap the matching button below.",
-      readyMessage: "Awesome! You know the clue. Now it's your turn to play!",
-      readyTip: "Use the familiar fruit and animal clues to spot the matching color fast!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Look at the big word on the screen!",
-          subInstruction: "Notice the colour of the ink it is drawn with.",
-          targetDescription: "Stimulus Word",
-          pointerPosition: "top",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Find the button with that matching ink colour!",
-          subInstruction: "Look at the colour dots on the buttons below.",
-          targetDescription: "Colour Options",
-          pointerPosition: "bottom",
-          simulatedActionText: "Tapping matching colour button...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Your choice is registered smoothly!",
-          subInstruction: "Keep your focus sharp as new words appear.",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Look at the ink colour, then tap the matching button!",
-        subInstruction: "Here the word is RED drawn in red ink. Tap Red!",
-        demoType: "stroop",
-        simulatedTarget: "Red",
-        actionExplanation: "Tapping matching Red button!",
-        demoPayload: {
-          type: "stroop",
-          data: {
-            word: "RED",
-            inkColor: "#E04F5F",
-            inkName: "Red",
-            options: [
-              { label: "Red", dotColor: "#E04F5F", icon: "🍎" },
-              { label: "Blue", dotColor: "#2563EB", icon: "🦋" },
-            ],
-            correctLabel: "Red",
-            hintText: "The ink is red like a ripe apple!",
-          },
-        },
+    gameKey: "stroop",
+    level: 1,
+    gameTitle: "Stroop Colour-Word",
+    levelTitle: "Interactive Game Guide 🎨",
+    badgeIcon: "🎨",
+    ruleExplanation:
+      "Look at the colour of the ink the word is drawn in. Ignore what the letters say, and tap the matching ink colour button below.",
+    readyMessage: "Awesome! You know the clue. Look at the ink colour and tap fast!",
+    readyTip: "Say the colour of the ink out loud in your head to ignore the written word!",
+    steps: [
+      {
+        id: "step-1",
+        instruction: "Look at the big word on the screen!",
+        subInstruction: "Notice the colour of the ink it is drawn with.",
+        targetDescription: "Stimulus Word",
+        pointerPosition: "top",
+        stepType: "observe",
       },
-      practice: {
+      {
+        id: "step-2",
+        instruction: "Find the button with that matching ink colour!",
+        subInstruction: "Look at the colour dots on the buttons below.",
+        targetDescription: "Colour Options",
+        pointerPosition: "bottom",
+        simulatedActionText: "Tapping matching colour button...",
+        stepType: "interact",
+      },
+      {
+        id: "step-3",
+        instruction: "Your choice is registered smoothly!",
+        subInstruction: "Keep your focus sharp as new words appear.",
+        targetDescription: "Game Arena",
+        pointerPosition: "center",
+        stepType: "confirm",
+      },
+    ],
+    demo: {
+      instruction: "Look at the ink colour, then tap the matching button!",
+      subInstruction: "Here the word is RED drawn in blue ink. Tap Blue!",
+      demoType: "stroop",
+      simulatedTarget: "Blue",
+      actionExplanation: "Tapping matching Blue button!",
+      demoPayload: {
         type: "stroop",
         data: {
-          word: "BLUE",
-          inkColor: "#2563EB",
+          word: "RED",
+          inkColor: "#3B82F6",
           inkName: "Blue",
-          options: [
-            { label: "Red", dotColor: "#E04F5F", icon: "🍎" },
-            { label: "Blue", dotColor: "#2563EB", icon: "🦋" },
-          ],
           correctLabel: "Blue",
-          hintText: "Look at the ink! It's blue like a butterfly!",
+          hintText: "Ignore the letters R-E-D! The ink is BLUE!",
+          options: [
+            { label: "Red", dotColor: "#EF4444" },
+            { label: "Blue", dotColor: "#3B82F6" },
+            { label: "Green", dotColor: "#10B981" },
+            { label: "Yellow", dotColor: "#F59E0B" },
+          ],
         },
       },
     },
-    2: {
-      gameKey: "stroop",
-      level: 2,
-      gameTitle: "Stroop Colour-Word",
-      levelTitle: "Level 2 · Mixed-up Words 🔮",
-      badgeIcon: "🔮",
-      ruleExplanation: "The word says one colour, but its ink is different! Always choose the INK.",
-      readyMessage: "Don't let the letters trick you! Focus strictly on the ink and play!",
-      readyTip: "Your brain will want to read the word. Pause for a split second and name the ink color!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Tricky Word Alert! The letters spell a different colour.",
-          subInstruction: "For example, the letters spell BLUE, but the ink is red!",
-          targetDescription: "Stimulus Word",
-          pointerPosition: "top",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Ignore what the word spells! Look strictly at the INK.",
-          subInstruction: "Tap the button matching the ink colour.",
-          targetDescription: "Colour Options",
-          pointerPosition: "bottom",
-          simulatedActionText: "Choosing ink colour...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Great focus! Stay relaxed and trust your eyes.",
-          subInstruction: "Each word advances naturally without interruption.",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Tricky word! The letters spell RED, but the ink is BLUE!",
-        subInstruction: "Ignore the letters! Tap the button matching the BLUE ink.",
-        demoType: "stroop",
-        simulatedTarget: "Blue",
-        actionExplanation: "Tapping Blue for ink colour!",
-        demoPayload: {
-          type: "stroop",
-          data: {
-            word: "RED",
-            inkColor: "#2563EB",
-            inkName: "Blue",
-            options: [
-              { label: "Red", dotColor: "#E04F5F" },
-              { label: "Blue", dotColor: "#2563EB" },
-              { label: "Green", dotColor: "#16A34A" },
-            ],
-            correctLabel: "Blue",
-            hintText: "Look only at the ink colour: it's blue!",
-          },
-        },
-      },
-      practice: {
-        type: "stroop",
-        data: {
-          word: "GREEN",
-          inkColor: "#E04F5F",
-          inkName: "Red",
-          options: [
-            { label: "Red", dotColor: "#E04F5F" },
-            { label: "Blue", dotColor: "#2563EB" },
-            { label: "Green", dotColor: "#16A34A" },
-          ],
-          correctLabel: "Red",
-          hintText: "Ignore the word GREEN! The ink is RED!",
-        },
-      },
-    },
-    3: {
-      gameKey: "stroop",
-      level: 3,
-      gameTitle: "Stroop Colour-Word",
-      levelTitle: "Level 3 · Speed Challenge & Reverse Rules ⚡",
-      badgeIcon: "⚡",
-      ruleExplanation: "The rule has switched! Read what the word spells out, ignoring ink colour.",
-      readyMessage: "Reverse rules activated! Ready for the speed challenge?",
-      readyTip: "In Level 3, read the written letters quickly out loud in your head!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Reverse Rule Challenge! Read the written WORD.",
-          subInstruction: "In Level 3, name what the letters spell out, not the ink!",
-          targetDescription: "Stimulus Word",
-          pointerPosition: "top",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Tap the button for what the word spells!",
-          subInstruction: "Read the word quickly and tap its name.",
-          targetDescription: "Colour Options",
-          pointerPosition: "bottom",
-          simulatedActionText: "Selecting written word...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Fast thinking! You've got the reverse rule down.",
-          subInstruction: "Speed and accuracy lead to a cosmic score!",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Reverse Rule! Read the letters of the word, ignore the ink!",
-        subInstruction: "The word spells GREEN, so tap Green even though the ink is blue!",
-        demoType: "stroop",
-        simulatedTarget: "Green",
-        actionExplanation: "Tapping Green for spelled word!",
-        demoPayload: {
-          type: "stroop",
-          data: {
-            word: "GREEN",
-            inkColor: "#2563EB",
-            inkName: "Green",
-            options: [
-              { label: "Red", dotColor: "#E04F5F" },
-              { label: "Blue", dotColor: "#2563EB" },
-              { label: "Green", dotColor: "#16A34A" },
-            ],
-            correctLabel: "Green",
-            hintText: "Read the letters: G-R-E-E-N!",
-          },
-        },
-      },
-      practice: {
-        type: "stroop",
-        data: {
-          word: "BLUE",
-          inkColor: "#E04F5F",
-          inkName: "Blue",
-          options: [
-            { label: "Red", dotColor: "#E04F5F" },
-            { label: "Blue", dotColor: "#2563EB" },
-            { label: "Green", dotColor: "#16A34A" },
-          ],
-          correctLabel: "Blue",
-          hintText: "Reverse rule! Read the word BLUE!",
-        },
+    practice: {
+      type: "stroop",
+      data: {
+        word: "YELLOW",
+        inkColor: "#EF4444",
+        inkName: "Red",
+        correctLabel: "Red",
+        hintText: "Look at the color of the ink (Red), not what the letters spell! Try again 👆",
+        options: [
+          { label: "Red", dotColor: "#EF4444" },
+          { label: "Yellow", dotColor: "#F59E0B" },
+          { label: "Blue", dotColor: "#3B82F6" },
+          { label: "Green", dotColor: "#10B981" },
+        ],
       },
     },
   },
 
   // =========================================================================
-  // 2. COSMIC CARD FLIP (Levels 1, 2, 3)
+  // 2. CARD FLIP TUTORIAL
   // =========================================================================
   "card-flip": {
-    1: {
-      gameKey: "card-flip",
-      level: 1,
-      gameTitle: "Cosmic Card Flip",
-      levelTitle: "Level 1 · 2 Cosmic Pairs 🃏",
-      badgeIcon: "🃏",
-      ruleExplanation: "Memorize cards during sneak peek, then flip both pairs to match!",
-      readyMessage: "Your memory is super charged! Let's find both pairs!",
-      readyTip: "Remember the corner cards first during the sneak peek!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Sneak Peek! Look at all the cards when they land.",
-          subInstruction: "They show their pictures for a brief moment before turning face down.",
-          targetDescription: "Card Grid",
-          pointerPosition: "center",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Tap two cards to flip them over.",
-          subInstruction: "If they match, they stay open! If not, they turn back over.",
-          targetDescription: "Card Pair",
-          pointerPosition: "center",
-          simulatedActionText: "Flipping matching cards...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Match both pairs to clear the level!",
-          subInstruction: "Take your time and picture where each symbol is hiding.",
-          targetDescription: "Level Target",
-          pointerPosition: "top",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Flip two cards to find a matching pair!",
-        subInstruction: "Watch! When two matching stars are flipped, they lock open!",
-        demoType: "card-flip",
-        simulatedTarget: "Card 1 & Card 2",
-        actionExplanation: "Flipped matching pair of Stars!",
-        demoPayload: {
-          type: "card-flip",
-          data: {
-            cards: [
-              { id: 1, symbol: "⭐", name: "Star", color: "#FFD028", pairId: 1 },
-              { id: 2, symbol: "⭐", name: "Star", color: "#FFD028", pairId: 1 },
-            ],
-            hintPairId: 1,
-          },
-        },
+    gameKey: "card-flip",
+    level: 1,
+    gameTitle: "Card Flip",
+    levelTitle: "Interactive Game Guide 🃏",
+    badgeIcon: "🃏",
+    ruleExplanation:
+      "Tap cards to flip them over. Find the matching pairs and remember where cards are hidden!",
+    readyMessage: "Awesome memory skills! Match all the hidden pairs to win!",
+    readyTip: "Watch carefully where each symbol is hiding when cards flip!",
+    steps: [
+      {
+        id: "step-1",
+        instruction: "Tap any card to turn it face up!",
+        subInstruction: "Remember the picture and where it is placed.",
+        targetDescription: "Card Grid",
+        pointerPosition: "center",
+        stepType: "interact",
       },
-      practice: {
+      {
+        id: "step-2",
+        instruction: "Now find its twin partner!",
+        subInstruction: "Tap another card to see if it matches.",
+        targetDescription: "Card Pair",
+        pointerPosition: "bottom",
+        simulatedActionText: "Flipping second card...",
+        stepType: "interact",
+      },
+      {
+        id: "step-3",
+        instruction: "Matching pairs stay open!",
+        subInstruction: "Clear the grid by finding all pairs.",
+        targetDescription: "Matched Cards",
+        pointerPosition: "center",
+        stepType: "confirm",
+      },
+    ],
+    demo: {
+      instruction: "Watch how pairs match when both cards are revealed!",
+      subInstruction: "Card 1 is a Lion, Card 4 is also a Lion. Pair found!",
+      demoType: "card-flip",
+      simulatedTarget: "card-4",
+      actionExplanation: "Flipping twin Lion card to complete pair!",
+      demoPayload: {
         type: "card-flip",
         data: {
           cards: [
-            { id: 10, symbol: "🚀", name: "Rocket", color: "#60A5FA", pairId: 10 },
-            { id: 11, symbol: "⭐", name: "Star", color: "#FFD028", pairId: 11 },
-            { id: 12, symbol: "🚀", name: "Rocket", color: "#60A5FA", pairId: 10 },
-            { id: 13, symbol: "⭐", name: "Star", color: "#FFD028", pairId: 11 },
+            { id: 1, symbol: "🦁", name: "Lion", color: "#F59E0B", pairId: 1 },
+            { id: 2, symbol: "🚀", name: "Rocket", color: "#3B82F6", pairId: 2 },
+            { id: 3, symbol: "🚀", name: "Rocket", color: "#3B82F6", pairId: 2 },
+            { id: 4, symbol: "🦁", name: "Lion", color: "#F59E0B", pairId: 1 },
           ],
-          hintPairId: 10,
+          hintPairId: 1,
         },
       },
     },
-    2: {
-      gameKey: "card-flip",
-      level: 2,
-      gameTitle: "Cosmic Card Flip",
-      levelTitle: "Level 2 · 3 Cosmic Pairs 🪐",
-      badgeIcon: "🪐",
-      ruleExplanation: "More cards to remember! Find all 3 pairs in the grid.",
-      readyMessage: "Three pairs are ready for you. Trust your visual memory!",
-      readyTip: "When you see a mismatch, repeat both names in your head (like 'Saturn and UFO')!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "The grid grows to more cards with 3 pairs to find!",
-          subInstruction: "Watch the sneak peek carefully to spot where pairs land.",
-          targetDescription: "12-Card Grid",
-          pointerPosition: "center",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Turn over cards methodically.",
-          subInstruction: "If you remember where the partner is, flip it next!",
-          targetDescription: "Card Interaction",
-          pointerPosition: "bottom",
-          simulatedActionText: "Finding partners...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Match all 3 pairs to advance!",
-          subInstruction: "Keep going until all cards are smiling face up.",
-          targetDescription: "Game Arena",
-          pointerPosition: "top",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Level 2 has 3 pairs! Find matching cosmic objects.",
-        subInstruction: "Two matching Saturn planets stay unlocked!",
-        demoType: "card-flip",
-        simulatedTarget: "Saturn Pair",
-        actionExplanation: "Matched Saturn planets!",
-        demoPayload: {
-          type: "card-flip",
-          data: {
-            cards: [
-              { id: 1, symbol: "🪐", name: "Saturn", color: "#F59E0B", pairId: 2 },
-              { id: 2, symbol: "🪐", name: "Saturn", color: "#F59E0B", pairId: 2 },
-            ],
-            hintPairId: 2,
-          },
-        },
-      },
-      practice: {
-        type: "card-flip",
-        data: {
-          cards: [
-            { id: 21, symbol: "🪐", name: "Saturn", color: "#F59E0B", pairId: 21 },
-            { id: 22, symbol: "🛸", name: "UFO", color: "#10B981", pairId: 22 },
-            { id: 23, symbol: "🪐", name: "Saturn", color: "#F59E0B", pairId: 21 },
-            { id: 24, symbol: "🛸", name: "UFO", color: "#10B981", pairId: 22 },
-          ],
-          hintPairId: 21,
-        },
-      },
-    },
-    3: {
-      gameKey: "card-flip",
-      level: 3,
-      gameTitle: "Cosmic Card Flip",
-      levelTitle: "Level 3 · 4 Cosmic Pairs 🌌",
-      badgeIcon: "🌌",
-      ruleExplanation: "The ultimate memory grid! Match all 4 pairs.",
-      readyMessage: "Master memory challenge unlocked! Show your superpower!",
-      readyTip: "Search row by row to discover hidden cards!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Full memory grid with 4 pairs to match!",
-          subInstruction: "Focus on the initial sneak peek to find at least one or two pairs right away.",
-          targetDescription: "16-Card Grid",
-          pointerPosition: "center",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Flip cards and remember both icon and position.",
-          subInstruction: "Stay calm and match all 4 pairs.",
-          targetDescription: "Pairs Progress",
-          pointerPosition: "top",
-          simulatedActionText: "Unlocking 4 pairs...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Match all 4 pairs to complete the game!",
-          subInstruction: "You're playing at champion memory level!",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Level 3: Full grid! Find all 4 pairs.",
-        subInstruction: "Matching crescent moons stay unlocked!",
-        demoType: "card-flip",
-        simulatedTarget: "Moon Pair",
-        actionExplanation: "Matched glowing Moons!",
-        demoPayload: {
-          type: "card-flip",
-          data: {
-            cards: [
-              { id: 1, symbol: "🌙", name: "Moon", color: "#F472B6", pairId: 3 },
-              { id: 2, symbol: "🌙", name: "Moon", color: "#F472B6", pairId: 3 },
-            ],
-            hintPairId: 3,
-          },
-        },
-      },
-      practice: {
-        type: "card-flip",
-        data: {
-          cards: [
-            { id: 31, symbol: "🌙", name: "Moon", color: "#F472B6", pairId: 31 },
-            { id: 32, symbol: "🌟", name: "Glow Star", color: "#FFD028", pairId: 32 },
-            { id: 33, symbol: "🌙", name: "Moon", color: "#F472B6", pairId: 31 },
-            { id: 34, symbol: "🌟", name: "Glow Star", color: "#FFD028", pairId: 32 },
-          ],
-          hintPairId: 31,
-        },
+    practice: {
+      type: "card-flip",
+      data: {
+        cards: [
+          { id: 1, symbol: "🦁", name: "Lion", color: "#F59E0B", pairId: 1 },
+          { id: 2, symbol: "🚀", name: "Rocket", color: "#3B82F6", pairId: 2 },
+          { id: 3, symbol: "🚀", name: "Rocket", color: "#3B82F6", pairId: 2 },
+          { id: 4, symbol: "🦁", name: "Lion", color: "#F59E0B", pairId: 1 },
+        ],
+        hintPairId: 2,
       },
     },
   },
 
   // =========================================================================
-  // 3. PATTERN RECOGNITION (Levels 1, 2, 3)
+  // 3. PATTERN RECOGNITION TUTORIAL
   // =========================================================================
   pattern: {
-    1: {
-      gameKey: "pattern",
-      level: 1,
-      gameTitle: "Pattern Recognition",
-      levelTitle: "Level 1 · Repeating Rhythm 🧩",
-      badgeIcon: "🧩",
-      ruleExplanation: "Look at the repeating pattern and figure out what goes in the empty slot.",
-      readyMessage: "You found the missing piece! Ready to complete cosmic sequences?",
-      readyTip: "Say the pattern out loud: Star, Blue, Star, Blue... Star!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Read the pattern sequence from left to right.",
-          subInstruction: "Notice the rhythm: Star, Blue, Star, Blue...",
-          targetDescription: "Sequence Row",
-          pointerPosition: "top",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Look at the missing slot with the question mark in the sequence.",
-          subInstruction: "Tap the tile below that comes next in the pattern.",
-          targetDescription: "Answer Options",
-          pointerPosition: "bottom",
-          simulatedActionText: "Selecting completing tile...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Watch the tile fly into the empty space in the pattern!",
-          subInstruction: "Once the pattern is complete, the next challenge arrives.",
-          targetDescription: "Target Slot",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Notice the pattern sequence: Star, Diamond, Star, Diamond... what is next?",
-        subInstruction: "Star comes next! Tap the Star tile below.",
-        demoType: "pattern",
-        simulatedTarget: "⭐",
-        actionExplanation: "Selected Star to complete AB pattern!",
-        demoPayload: {
-          type: "pattern",
-          data: {
-            sequence: ["⭐", "🔷", "⭐", "🔷", "❓"],
-            missingIndex: 4,
-            options: ["⭐", "🔷", "🟢"],
-            answer: "⭐",
-            hintText: "The pattern alternates between Star and Diamond!",
-          },
-        },
+    gameKey: "pattern",
+    level: 1,
+    gameTitle: "Pattern Recognition",
+    levelTitle: "Interactive Game Guide 🧩",
+    badgeIcon: "🧩",
+    ruleExplanation:
+      "Look at the sequence of shapes. Figure out what comes next to complete the pattern!",
+    readyMessage: "Great pattern detective work! Spot the sequence and complete the line!",
+    readyTip: "Say the shapes in order (Circle, Square, Circle...) to hear what comes next!",
+    steps: [
+      {
+        id: "step-1",
+        instruction: "Look across the pattern row from left to right!",
+        subInstruction: "Find the repeating rule in the shapes.",
+        targetDescription: "Pattern Sequence",
+        pointerPosition: "top",
+        stepType: "observe",
       },
-      practice: {
+      {
+        id: "step-2",
+        instruction: "Notice the missing question mark tile!",
+        subInstruction: "Think what shape fits there to keep the rhythm.",
+        targetDescription: "Missing Slot",
+        pointerPosition: "center",
+        stepType: "observe",
+      },
+      {
+        id: "step-3",
+        instruction: "Tap the correct shape from the choices below!",
+        subInstruction: "The matching tile flies in to complete the row.",
+        targetDescription: "Shape Choices",
+        pointerPosition: "bottom",
+        simulatedActionText: "Selecting completing tile...",
+        stepType: "interact",
+      },
+    ],
+    demo: {
+      instruction: "Follow the sequence: Circle, Diamond, Circle, Diamond...",
+      subInstruction: "Next must be Circle! Watch the hand tap Circle.",
+      demoType: "pattern",
+      simulatedTarget: "🔴",
+      actionExplanation: "Tapping Red Circle to finish pattern!",
+      demoPayload: {
         type: "pattern",
         data: {
-          sequence: ["🪐", "🚀", "🪐", "🚀", "❓"],
+          sequence: ["🔴", "🔷", "🔴", "🔷", "?"],
           missingIndex: 4,
-          options: ["🪐", "🚀", "🛸"],
-          answer: "🪐",
-          hintText: "Say it out loud: Planet, Rocket, Planet, Rocket... Planet!",
+          options: ["🔴", "🔷", "⭐", "🟩"],
+          answer: "🔴",
+          hintText: "Circle, Diamond, Circle, Diamond... Circle comes next!",
         },
       },
     },
-    2: {
-      gameKey: "pattern",
-      level: 2,
-      gameTitle: "Pattern Recognition",
-      levelTitle: "Level 2 · 3-Step Rotation 🔺",
-      badgeIcon: "🔺",
-      ruleExplanation: "Patterns now have 3-shape cycles! Find what comes next in the 3-step sequence.",
-      readyMessage: "Three-part patterns are no match for you! Let's play!",
-      readyTip: "Group items into sets of three to spot the repeat!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Watch for 3-step rotation sequences: Triangle, Diamond, Circle...",
-          subInstruction: "Notice how the three shapes repeat together in a loop.",
-          targetDescription: "Three-Part Sequence",
-          pointerPosition: "top",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Find the missing third shape in the pattern sequence.",
-          subInstruction: "Tap the correct shape from the options below.",
-          targetDescription: "Answer Tiles",
-          pointerPosition: "bottom",
-          simulatedActionText: "Choosing third shape...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Great inductive logic! Keep the pattern sequence going.",
-          subInstruction: "Each completed pattern unlocks cosmic discoveries.",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Three-part pattern: Triangle, Diamond, Circle... Triangle, Diamond...",
-        subInstruction: "Circle comes next! Tap the Circle tile.",
-        demoType: "pattern",
-        simulatedTarget: "🟢",
-        actionExplanation: "Placed Circle into ABC pattern!",
-        demoPayload: {
-          type: "pattern",
-          data: {
-            sequence: ["🔺", "🔷", "🟢", "🔺", "🔷", "❓"],
-            missingIndex: 5,
-            options: ["🟢", "🔺", "🔷"],
-            answer: "🟢",
-            hintText: "Triangle, Diamond, Circle... Triangle, Diamond, Circle!",
-          },
-        },
-      },
-      practice: {
-        type: "pattern",
-        data: {
-          sequence: ["🚀", "🌙", "⭐", "🚀", "🌙", "❓"],
-          missingIndex: 5,
-          options: ["⭐", "🚀", "🪐"],
-          answer: "⭐",
-          hintText: "Rocket, Moon, Star... Rocket, Moon, Star!",
-        },
-      },
-    },
-    3: {
-      gameKey: "pattern",
-      level: 3,
-      gameTitle: "Pattern Recognition",
-      levelTitle: "Level 3 · Complex Patterns 🌟",
-      badgeIcon: "🌟",
-      ruleExplanation: "Complex paired sequences! Look for A-A-B-B repetitions.",
-      readyMessage: "Cosmic pattern master! Ready to tackle the final level?",
-      readyTip: "Check if symbols appear in pairs (like two Stars, then two Moons)!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Look for complex double patterns: Star, Star, Moon, Moon...",
-          subInstruction: "Shapes come in pairs! Identify which pair is incomplete.",
-          targetDescription: "Paired Sequence",
-          pointerPosition: "top",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Pick the missing partner to complete the pattern sequence pair.",
-          subInstruction: "Tap the tile below to fly it into position.",
-          targetDescription: "Answer Options",
-          pointerPosition: "bottom",
-          simulatedActionText: "Completing pair pattern...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Stellar logical thinking! You've mastered complex patterns.",
-          subInstruction: "Conquer Level 3 and claim your cosmic reward.",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Double pattern: Star, Star, Moon, Moon, Star, Star... what comes next?",
-        subInstruction: "Moon comes next to start the second pair!",
-        demoType: "pattern",
-        simulatedTarget: "🌙",
-        actionExplanation: "Completed double AABB pattern!",
-        demoPayload: {
-          type: "pattern",
-          data: {
-            sequence: ["⭐", "⭐", "🌙", "🌙", "⭐", "⭐", "❓"],
-            missingIndex: 6,
-            options: ["🌙", "⭐", "🪐"],
-            answer: "🌙",
-            hintText: "Two Stars, two Moons, two Stars... next is Moon!",
-          },
-        },
-      },
-      practice: {
-        type: "pattern",
-        data: {
-          sequence: ["🔺", "🔺", "🔷", "🔷", "🔺", "🔺", "❓"],
-          missingIndex: 6,
-          options: ["🔷", "🔺", "🟢"],
-          answer: "🔷",
-          hintText: "Two Triangles, two Diamonds, two Triangles... next is Diamond!",
-        },
+    practice: {
+      type: "pattern",
+      data: {
+        sequence: ["⭐", "🌙", "⭐", "🌙", "?"],
+        missingIndex: 4,
+        options: ["⭐", "🌙", "☀️", "☁️"],
+        answer: "⭐",
+        hintText: "Look at what repeats in order: Star, Moon, Star, Moon... What's next? Try again 👆",
       },
     },
   },
 
   // =========================================================================
-  // 4. ODD ONE OUT (Levels 1, 2, 3)
+  // 4. ODD ONE OUT TUTORIAL
   // =========================================================================
   "odd-one-out": {
-    1: {
-      gameKey: "odd-one-out",
-      level: 1,
-      gameTitle: "Odd One Out",
-      levelTitle: "Level 1 · Spot the Difference 🔍",
-      badgeIcon: "🔍",
-      ruleExplanation: "Look at the four items. Three share a category, but one does not belong!",
-      readyMessage: "Great detective work! You spotted what doesn't belong!",
-      readyTip: "Ask yourself: what do three of these items do that the fourth does not?",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Look at all four pictures: three belong together, one is different!",
-          subInstruction: "Three of them belong to the same group or family.",
-          targetDescription: "4-Card Grid",
-          pointerPosition: "center",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Tap the odd card that doesn't belong to the group!",
-          subInstruction: "For example, three are planets and one is a flying rocket.",
-          targetDescription: "Odd Item",
-          pointerPosition: "bottom",
-          simulatedActionText: "Tapping odd item...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Great detective eye! You found the odd item.",
-          subInstruction: "Stay sharp for the next group of items.",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Three are planets in space, but Rocket is a vehicle that flies!",
-        subInstruction: "Tap the Rocket because it's the odd one out!",
-        demoType: "odd-one-out",
-        simulatedTarget: "Rocket",
-        actionExplanation: "Selected Rocket (vehicle vs planets)!",
-        demoPayload: {
-          type: "odd-one-out",
-          data: {
-            items: [
-              { id: "1", symbol: "🪐", label: "Saturn", isOdd: false },
-              { id: "2", symbol: "🚀", label: "Rocket", isOdd: true, reason: "Rocket is a vehicle" },
-              { id: "3", symbol: "🌍", label: "Earth", isOdd: false },
-              { id: "4", symbol: "🔴", label: "Mars", isOdd: false },
-            ],
-            categoryHint: "Planets vs Vehicles",
-            hintItemId: "2",
-          },
-        },
+    gameKey: "odd-one-out",
+    level: 1,
+    gameTitle: "Odd One Out",
+    levelTitle: "Interactive Game Guide 🔍",
+    badgeIcon: "🔍",
+    ruleExplanation:
+      "Look at the four items. Three belong together, but one does not fit. Find the odd one out!",
+    readyMessage: "Sharp eyes! Tap the item that is different from all the rest!",
+    readyTip: "Ask yourself: what do three of these items have in common?",
+    steps: [
+      {
+        id: "step-1",
+        instruction: "Examine all four picture cards carefully!",
+        subInstruction: "Three items share something in common.",
+        targetDescription: "Card Grid",
+        pointerPosition: "top",
+        stepType: "observe",
       },
-      practice: {
+      {
+        id: "step-2",
+        instruction: "Identify the shared category!",
+        subInstruction: "For example: animals, fruits, or vehicles.",
+        targetDescription: "Common Category",
+        pointerPosition: "center",
+        stepType: "observe",
+      },
+      {
+        id: "step-3",
+        instruction: "Tap the item that does NOT belong!",
+        subInstruction: "The outlier is your odd one out.",
+        targetDescription: "Outlier Card",
+        pointerPosition: "bottom",
+        simulatedActionText: "Tapping outlier card...",
+        stepType: "interact",
+      },
+    ],
+    demo: {
+      instruction: "Apple, Banana, and Grapes are fruits. Car is a vehicle!",
+      subInstruction: "Tap Car because it is the odd one out!",
+      demoType: "odd-one-out",
+      simulatedTarget: "item-car",
+      actionExplanation: "Tapping Car because it is not a fruit!",
+      demoPayload: {
         type: "odd-one-out",
         data: {
+          categoryHint: "Fruits",
+          hintItemId: "item-car",
           items: [
-            { id: "p1", symbol: "🍎", label: "Apple", isOdd: false },
-            { id: "p2", symbol: "🍌", label: "Banana", isOdd: false },
-            { id: "p3", symbol: "🍇", label: "Grapes", isOdd: false },
-            { id: "p4", symbol: "🚗", label: "Car", isOdd: true, reason: "Car is a vehicle, others are fruits!" },
+            { id: "item-apple", symbol: "🍎", label: "Apple", isOdd: false },
+            { id: "item-banana", symbol: "🍌", label: "Banana", isOdd: false },
+            { id: "item-grapes", symbol: "🍇", label: "Grapes", isOdd: false },
+            { id: "item-car", symbol: "🚗", label: "Car", isOdd: true, reason: "Car is a vehicle, not fruit!" },
           ],
-          categoryHint: "Fruits vs Vehicles",
-          hintItemId: "p4",
         },
       },
     },
-    2: {
-      gameKey: "odd-one-out",
-      level: 2,
-      gameTitle: "Odd One Out",
-      levelTitle: "Level 2 · Properties & Elements ❄️",
-      badgeIcon: "❄️",
-      ruleExplanation: "Think about physical properties: heat, light, and environments!",
-      readyMessage: "You can spot subtle differences like a scientist! Let's play Level 2!",
-      readyTip: "Think about hot vs cold or space objects vs Earth objects!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Compare the physical properties: find which does not belong.",
-          subInstruction: "Think about heat, temperature, or where they belong.",
-          targetDescription: "Items Grid",
-          pointerPosition: "center",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Identify the contrasting item and tap it.",
-          subInstruction: "Three might be blistering hot, and one freezing cold!",
-          targetDescription: "Contrasting Card",
-          pointerPosition: "bottom",
-          simulatedActionText: "Selecting property contrast...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Brilliant analysis! Move through the trials.",
-          subInstruction: "Notice properties quickly without second-guessing.",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Sun, Fire, and Lightning are hot energy, but Ice Crystal is freezing cold!",
-        subInstruction: "Tap Ice Crystal as the odd one out!",
-        demoType: "odd-one-out",
-        simulatedTarget: "Ice Crystal",
-        actionExplanation: "Selected Ice Crystal (cold vs hot)!",
-        demoPayload: {
-          type: "odd-one-out",
-          data: {
-            items: [
-              { id: "1", symbol: "☀️", label: "Sun", isOdd: false },
-              { id: "2", symbol: "❄️", label: "Ice", isOdd: true, reason: "Ice is cold" },
-              { id: "3", symbol: "🔥", label: "Fire", isOdd: false },
-              { id: "4", symbol: "⚡", label: "Lightning", isOdd: false },
-            ],
-            categoryHint: "Hot Energy vs Cold Ice",
-            hintItemId: "2",
-          },
-        },
-      },
-      practice: {
-        type: "odd-one-out",
-        data: {
-          items: [
-            { id: "p1", symbol: "🪐", label: "Saturn", isOdd: false },
-            { id: "p2", symbol: "🌕", label: "Moon", isOdd: false },
-            { id: "p3", symbol: "⛵", label: "Sailboat", isOdd: true, reason: "Sailboat is on Earth water, others are in space!" },
-            { id: "p4", symbol: "☄️", label: "Comet", isOdd: false },
-          ],
-          categoryHint: "Space Objects vs Earth Boat",
-          hintItemId: "p3",
-        },
-      },
-    },
-    3: {
-      gameKey: "odd-one-out",
-      level: 3,
-      gameTitle: "Odd One Out",
-      levelTitle: "Level 3 · Scientific Functions 🔭",
-      badgeIcon: "🔭",
-      ruleExplanation: "Subtle categories: Tools, science instruments, and living habitats!",
-      readyMessage: "Master category detective! Ready for the toughest challenges?",
-      readyTip: "Look at the purpose or job of each item!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Examine what each item is used for to find which does not belong.",
-          subInstruction: "Three might be scientific instruments for exploring the universe.",
-          targetDescription: "Domain Cards",
-          pointerPosition: "center",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Tap the odd item with a completely different purpose.",
-          subInstruction: "Telescope, radar, and spectrometer are science tools; a guitar makes music!",
-          targetDescription: "Instrument Card",
-          pointerPosition: "bottom",
-          simulatedActionText: "Selecting domain outlier...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Stellar cognitive flexibility! Ready to ace Level 3.",
-          subInstruction: "Every correct choice elevates your final quest report.",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Telescope, Radar, and Microscope are science tools. Guitar is a musical instrument!",
-        subInstruction: "Tap Guitar as the odd one out!",
-        demoType: "odd-one-out",
-        simulatedTarget: "Guitar",
-        actionExplanation: "Selected Guitar (music vs science)!",
-        demoPayload: {
-          type: "odd-one-out",
-          data: {
-            items: [
-              { id: "1", symbol: "🔭", label: "Telescope", isOdd: false },
-              { id: "2", symbol: "🎸", label: "Guitar", isOdd: true, reason: "Musical instrument" },
-              { id: "3", symbol: "📡", label: "Radar", isOdd: false },
-              { id: "4", symbol: "🔬", label: "Microscope", isOdd: false },
-            ],
-            categoryHint: "Science Tools vs Musical Instrument",
-            hintItemId: "2",
-          },
-        },
-      },
-      practice: {
-        type: "odd-one-out",
-        data: {
-          items: [
-            { id: "p1", symbol: "👨‍🚀", label: "Astronaut", isOdd: false },
-            { id: "p2", symbol: "👩‍🚀", label: "Cosmonaut", isOdd: false },
-            { id: "p3", symbol: "🐠", label: "Fish", isOdd: true, reason: "Fish lives in ocean, others explore space!" },
-            { id: "p4", symbol: "👽", label: "Alien", isOdd: false },
-          ],
-          categoryHint: "Space Explorers vs Ocean Fish",
-          hintItemId: "p3",
-        },
+    practice: {
+      type: "odd-one-out",
+      data: {
+        categoryHint: "Animals",
+        hintItemId: "item-plane",
+        items: [
+          { id: "item-dog", symbol: "🐶", label: "Puppy", isOdd: false },
+          { id: "item-cat", symbol: "🐱", label: "Kitten", isOdd: false },
+          { id: "item-rabbit", symbol: "🐰", label: "Bunny", isOdd: false },
+          { id: "item-plane", symbol: "✈️", label: "Airplane", isOdd: true, reason: "Airplane is a machine, not an animal!" },
+        ],
       },
     },
   },
 
   // =========================================================================
-  // 5. RULE DISCOVERY (Levels 1, 2, 3)
+  // 5. RULE DISCOVERY TUTORIAL
   // =========================================================================
   "rule-discovery": {
-    1: {
-      gameKey: "rule-discovery",
-      level: 1,
-      gameTitle: "Rule Discovery",
-      levelTitle: "Level 1 · Colour Clues 🔀",
-      badgeIcon: "🔀",
-      ruleExplanation: "Test which bucket your card belongs to! Observe the color attributes and find the match.",
-      readyMessage: "You discovered how sorting works! Test the mystery rule in Level 1!",
-      readyTip: "Cards have color, shape, and count. Test which attribute matches the buckets!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Look at your Card to Sort and the three buckets below.",
-          subInstruction: "Each card has a shape, a colour, and a number of items.",
-          targetDescription: "Card to Sort",
-          pointerPosition: "top",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Test which bucket your card matches best by colour.",
-          subInstruction: "Tap the bucket that matches your card's attribute.",
-          targetDescription: "Target Buckets",
-          pointerPosition: "bottom",
-          simulatedActionText: "Sorting card into bucket...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Watch the feedback carefully!",
-          subInstruction: "If it matches, keep using that rule! If not, try a different attribute.",
-          targetDescription: "Feedback Banner",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Look at the card: it has a shape, a colour, and a count!",
-        subInstruction: "Watch how we test and sort it into the matching bucket below.",
-        demoType: "rule-discovery",
-        simulatedTarget: "Matching Bucket",
-        actionExplanation: "Sorted card into matching bucket!",
-        demoPayload: {
-          type: "rule-discovery",
-          data: {
-            sampleRuleExplanation: "Match the card to the bucket with the same color!",
-            buckets: [
-              { id: 1, shape: "circle", color: "red", count: 1, label: "🔴 Red Bucket" },
-              { id: 2, shape: "square", color: "blue", count: 2, label: "🟦 Blue Bucket" },
-            ],
-            cardToSort: { id: 10, shape: "circle", color: "blue", count: 1, label: "🔵 Blue Card" },
-            targetBucketId: 2,
-          },
-        },
+    gameKey: "rule-discovery",
+    level: 1,
+    gameTitle: "Rule Discovery",
+    levelTitle: "Interactive Game Guide 🔀",
+    badgeIcon: "🔀",
+    ruleExplanation:
+      "Discover the hidden sorting rule! Look at the card and find which bucket matches by Color, Shape, or Count.",
+    readyMessage: "Brilliant discovery! Sort cards into the right buckets by finding the secret rule!",
+    readyTip: "If a bucket doesn't match, test another rule like Color or Shape!",
+    steps: [
+      {
+        id: "step-1",
+        instruction: "Inspect the card shown in the center!",
+        subInstruction: "Notice its color, its shape, and how many items are on it.",
+        targetDescription: "Drawn Card",
+        pointerPosition: "top",
+        stepType: "observe",
       },
-      practice: {
+      {
+        id: "step-2",
+        instruction: "Look at the sorting buckets below!",
+        subInstruction: "Each bucket represents a potential match rule.",
+        targetDescription: "Bucket Row",
+        pointerPosition: "bottom",
+        stepType: "observe",
+      },
+      {
+        id: "step-3",
+        instruction: "Tap the bucket that follows the current rule!",
+        subInstruction: "If it matches, the card slides right in smoothly.",
+        targetDescription: "Target Bucket",
+        pointerPosition: "center",
+        simulatedActionText: "Sorting card into matching bucket...",
+        stepType: "interact",
+      },
+    ],
+    demo: {
+      instruction: "Watch the card match Bucket 1 by Color (Red)!",
+      subInstruction: "Red Circle matches Red Star bucket because both are Red.",
+      demoType: "rule-discovery",
+      simulatedTarget: "bucket-1",
+      actionExplanation: "Sorting into Bucket 1 (Color Rule: Red)!",
+      demoPayload: {
         type: "rule-discovery",
         data: {
-          sampleRuleExplanation: "Match by color! Find the bucket that shares the same color.",
+          sampleRuleExplanation: "Rule is COLOR: Card is Red, so it goes into Red Bucket!",
+          targetBucketId: 1,
+          cardToSort: { id: 101, shape: "circle", color: "red", count: 1, label: "Red Circle" },
           buckets: [
-            { id: 1, shape: "circle", color: "red", count: 1, label: "🔴 Red Bucket" },
-            { id: 3, shape: "triangle", color: "yellow", count: 3, label: "🟡 Yellow Bucket" },
+            { id: 1, shape: "triangle", color: "red", count: 2, label: "Red Bucket" },
+            { id: 2, shape: "square", color: "blue", count: 1, label: "Blue Bucket" },
+            { id: 3, shape: "circle", color: "yellow", count: 3, label: "Yellow Bucket" },
           ],
-          cardToSort: { id: 11, shape: "square", color: "yellow", count: 2, label: "🟡 Yellow Card" },
-          targetBucketId: 3,
         },
       },
     },
-    2: {
-      gameKey: "rule-discovery",
-      level: 2,
-      gameTitle: "Rule Discovery",
-      levelTitle: "Level 2 · Shape Explorer 🔄",
-      badgeIcon: "🔄",
-      ruleExplanation: "A new hidden rule is active! Test which shape matches the target bucket.",
-      readyMessage: "Flexible thinking ready! Can you find Level 2's new rule?",
-      readyTip: "If the old rule stops working, don't worry! Immediately try matching shapes instead.",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Rule Shift! The old rule might not apply anymore.",
-          subInstruction: "A new secret rule is deciding which bucket matches.",
-          targetDescription: "New Rule Alert",
-          pointerPosition: "top",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Test shapes, colours, or counts to discover the new rule.",
-          subInstruction: "Tap the bucket you want to test.",
-          targetDescription: "Buckets",
-          pointerPosition: "bottom",
-          simulatedActionText: "Testing new rule hypothesis...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Adapt your thinking quickly to test the shape!",
-          subInstruction: "Cognitive flexibility helps you score highest here.",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "The rule shifted to shapes! Match Circle with Circle.",
-        subInstruction: "Blue Circle matches Red Circle because both are circles!",
-        demoType: "rule-discovery",
-        simulatedTarget: "Circle Bucket",
-        actionExplanation: "Sorted by Shape (Circles match)!",
-        demoPayload: {
-          type: "rule-discovery",
-          data: {
-            sampleRuleExplanation: "Match the card to the bucket with the same shape!",
-            buckets: [
-              { id: 1, shape: "circle", color: "red", count: 1, label: "⭕ Circle Bucket" },
-              { id: 2, shape: "square", color: "blue", count: 2, label: "⏹ Square Bucket" },
-            ],
-            cardToSort: { id: 20, shape: "circle", color: "blue", count: 1, label: "🔵 Blue Circle" },
-            targetBucketId: 1,
-          },
-        },
-      },
-      practice: {
-        type: "rule-discovery",
-        data: {
-          sampleRuleExplanation: "Match by shape! Find the bucket with the same shape.",
-          buckets: [
-            { id: 2, shape: "square", color: "blue", count: 2, label: "⏹ Square Bucket" },
-            { id: 3, shape: "triangle", color: "yellow", count: 3, label: "▲ Triangle Bucket" },
-          ],
-          cardToSort: { id: 21, shape: "triangle", color: "red", count: 1, label: "🔺 Red Triangle" },
-          targetBucketId: 3,
-        },
-      },
-    },
-    3: {
-      gameKey: "rule-discovery",
-      level: 3,
-      gameTitle: "Rule Discovery",
-      levelTitle: "Level 3 · Count Detective 🔢",
-      badgeIcon: "🔢",
-      ruleExplanation: "Count the items on each card! The rule tests quantities 1, 2, or 3.",
-      readyMessage: "You're a master rule investigator! Ready for Level 3?",
-      readyTip: "Count how many shapes are inside the card (1, 2, or 3)!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Count the number of items drawn on the card.",
-          subInstruction: "Are there 1, 2, or 3 symbols?",
-          targetDescription: "Card Count",
-          pointerPosition: "top",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Match to the bucket with the same count of items.",
-          subInstruction: "Tap the bucket with the matching number of items.",
-          targetDescription: "Bucket Counts",
-          pointerPosition: "bottom",
-          simulatedActionText: "Sorting by count...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Great count hypothesis testing!",
-          subInstruction: "Solve Level 3 and finish the rule discovery quest.",
-          targetDescription: "Game Arena",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Match by count! The card has 2 squares, so it matches the 2-item bucket.",
-        subInstruction: "Tap the 2-item bucket to sort by number!",
-        demoType: "rule-discovery",
-        simulatedTarget: "2-Item Bucket",
-        actionExplanation: "Sorted by Count (2 items)!",
-        demoPayload: {
-          type: "rule-discovery",
-          data: {
-            sampleRuleExplanation: "Match by count: 1, 2, or 3 items!",
-            buckets: [
-              { id: 1, shape: "circle", color: "red", count: 1, label: "1 Item" },
-              { id: 2, shape: "square", color: "blue", count: 2, label: "2 Items" },
-              { id: 3, shape: "triangle", color: "yellow", count: 3, label: "3 Items" },
-            ],
-            cardToSort: { id: 30, shape: "circle", color: "yellow", count: 2, label: "🟡 2 Circles" },
-            targetBucketId: 2,
-          },
-        },
-      },
-      practice: {
-        type: "rule-discovery",
-        data: {
-          sampleRuleExplanation: "Match by count! Count how many items are shown.",
-          buckets: [
-            { id: 1, shape: "circle", color: "red", count: 1, label: "1 Item" },
-            { id: 3, shape: "triangle", color: "yellow", count: 3, label: "3 Items" },
-          ],
-          cardToSort: { id: 31, shape: "triangle", color: "blue", count: 3, label: "▲ 3 Triangles" },
-          targetBucketId: 3,
-        },
+    practice: {
+      type: "rule-discovery",
+      data: {
+        sampleRuleExplanation: "Both the card and bucket share the same Color (Red)! Try again 👆",
+        targetBucketId: 1,
+        cardToSort: { id: 201, shape: "circle", color: "red", count: 1, label: "🔴 Red Circle" },
+        buckets: [
+          { id: 1, shape: "triangle", color: "red", count: 1, label: "🔴 Red Bucket (Color)" },
+          { id: 2, shape: "square", color: "blue", count: 1, label: "🔵 Blue Bucket" },
+          { id: 3, shape: "triangle", color: "yellow", count: 1, label: "🟡 Yellow Bucket" },
+        ],
       },
     },
   },
 
   // =========================================================================
-  // 6. STORY SEQUENCING (Levels 1, 2, 3)
+  // 6. STORY SEQUENCING TUTORIAL
   // =========================================================================
   "story-sequencing": {
-    1: {
-      gameKey: "story-sequencing",
-      level: 1,
-      gameTitle: "Story Sequencing",
-      levelTitle: "Level 1 · 3 Steps Launch 📖",
-      badgeIcon: "📖",
-      ruleExplanation: "Arrange the shuffled story cards in chronological order from first to last.",
-      readyMessage: "Story in perfect order! Ready to sequence space missions?",
-      readyTip: "Think: what needs to be built before astronauts can blast off?",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Read the three event cards at the bottom.",
-          subInstruction: "Notice what happens first, second, and third in the story.",
-          targetDescription: "Shuffled Story Cards",
-          pointerPosition: "bottom",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Tap the cards in chronological order (1, 2, 3).",
-          subInstruction: "Build the rocket first, then blast off, then reach orbit!",
-          targetDescription: "Timeline Track",
-          pointerPosition: "top",
-          simulatedActionText: "Placing story steps...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "Your timeline is verified when all cards are placed.",
-          subInstruction: "Enjoy the visual story unfold in order!",
-          targetDescription: "Story Mission",
-          pointerPosition: "center",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Put the mission in order: Build Rocket ➔ 3-2-1 Blast Off ➔ Reach Orbit!",
-        subInstruction: "Tap the cards in sequence 1, 2, and 3.",
-        demoType: "story-sequencing",
-        simulatedTarget: "Timeline Steps",
-        actionExplanation: "Ordered 3-step Rocket Launch!",
-        demoPayload: {
-          type: "story-sequencing",
-          data: {
-            missionTitle: "Rocket Launch Mission",
-            steps: [
-              { id: 1, order: 1, text: "Build the Rocket", icon: "🛠️" },
-              { id: 2, order: 2, text: "3-2-1 Blast off!", icon: "🚀" },
-              { id: 3, order: 3, text: "Reach Earth orbit", icon: "🌍" },
-            ],
-            shuffledSteps: [
-              { id: 2, order: 2, text: "3-2-1 Blast off!", icon: "🚀" },
-              { id: 1, order: 1, text: "Build the Rocket", icon: "🛠️" },
-              { id: 3, order: 3, text: "Reach Earth orbit", icon: "🌍" },
-            ],
-          },
-        },
+    gameKey: "story-sequencing",
+    level: 1,
+    gameTitle: "Story Sequencing",
+    levelTitle: "Interactive Game Guide 📖",
+    badgeIcon: "📖",
+    ruleExplanation:
+      "Put the story cards in order from beginning to middle to end!",
+    readyMessage: "Wonderful storytelling! Order the events from first to last to complete each mission!",
+    readyTip: "Think about what has to happen first before the next step can happen!",
+    steps: [
+      {
+        id: "step-1",
+        instruction: "Read the story mission at the top!",
+        subInstruction: "Think about what event naturally happens first.",
+        targetDescription: "Story Mission",
+        pointerPosition: "top",
+        stepType: "observe",
       },
-      practice: {
+      {
+        id: "step-2",
+        instruction: "Tap the event cards in chronological order!",
+        subInstruction: "First step 1, then step 2, then step 3.",
+        targetDescription: "Event Cards",
+        pointerPosition: "bottom",
+        simulatedActionText: "Selecting story events in order...",
+        stepType: "interact",
+      },
+      {
+        id: "step-3",
+        instruction: "Watch the story come to life in order!",
+        subInstruction: "Beginning to end unfolds step by step.",
+        targetDescription: "Timeline",
+        pointerPosition: "center",
+        stepType: "confirm",
+      },
+    ],
+    demo: {
+      instruction: "Watch the story order: 1. Egg, 2. Hatching, 3. Little Bird!",
+      subInstruction: "Events are ordered from beginning to end.",
+      demoType: "story-sequencing",
+      simulatedTarget: "step-1",
+      actionExplanation: "Ordering: Egg -> Hatching -> Bird!",
+      demoPayload: {
         type: "story-sequencing",
         data: {
-          missionTitle: "Growing a Flower",
+          missionTitle: "Bird Hatching Lifecycle",
           steps: [
-            { id: 11, order: 1, text: "Plant the seed", icon: "🌰" },
-            { id: 12, order: 2, text: "Water it with sun", icon: "💧" },
-            { id: 13, order: 3, text: "Flower blooms!", icon: "🌻" },
+            { id: 1, order: 1, text: "Egg in nest", icon: "🥚" },
+            { id: 2, order: 2, text: "Egg cracks open", icon: "🐣" },
+            { id: 3, order: 3, text: "Bird takes flight", icon: "🐥" },
           ],
           shuffledSteps: [
-            { id: 12, order: 2, text: "Water it with sun", icon: "💧" },
-            { id: 11, order: 1, text: "Plant the seed", icon: "🌰" },
-            { id: 13, order: 3, text: "Flower blooms!", icon: "🌻" },
+            { id: 3, order: 3, text: "Bird takes flight", icon: "🐥" },
+            { id: 1, order: 1, text: "Egg in nest", icon: "🥚" },
+            { id: 2, order: 2, text: "Egg cracks open", icon: "🐣" },
           ],
         },
       },
     },
-    2: {
-      gameKey: "story-sequencing",
-      level: 2,
-      gameTitle: "Story Sequencing",
-      levelTitle: "Level 2 · 4 Steps Lunar Landing 🌕",
-      badgeIcon: "🌕",
-      ruleExplanation: "A 4-step mission to the Moon! Put all four stages in temporal order.",
-      readyMessage: "Moon landing sequence confirmed! You're ready to fly Level 2!",
-      readyTip: "Remember: astronauts orbit first, then touch down, collect samples, and salute the flag!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Level 2 has 4 steps to arrange!",
-          subInstruction: "Read all four mission cards to understand the journey.",
-          targetDescription: "4-Card Mission",
-          pointerPosition: "bottom",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Tap each step in order: 1, 2, 3, and 4.",
-          subInstruction: "Enter orbit ➔ Touch down ➔ Collect moon rocks ➔ Plant flag.",
-          targetDescription: "Lunar Timeline",
-          pointerPosition: "center",
-          simulatedActionText: "Building 4-step timeline...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "If you make a mistake, tap a step to remove it and try again.",
-          subInstruction: "Accuracy and temporal logic complete the mission.",
-          targetDescription: "Game Arena",
-          pointerPosition: "top",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "4-step Lunar Mission: Orbit ➔ Touchdown ➔ Moon Rocks ➔ Plant Flag!",
-        subInstruction: "Place cards in chronological order from first to last.",
-        demoType: "story-sequencing",
-        simulatedTarget: "4-Step Track",
-        actionExplanation: "Ordered 4-step Moon Landing!",
-        demoPayload: {
-          type: "story-sequencing",
-          data: {
-            missionTitle: "Lunar Landing Expedition",
-            steps: [
-              { id: 1, order: 1, text: "Enter Moon orbit", icon: "🛸" },
-              { id: 2, order: 2, text: "Touch down on Moon", icon: "🌕" },
-              { id: 3, order: 3, text: "Collect moon rocks", icon: "🪨" },
-              { id: 4, order: 4, text: "Plant Orion flag", icon: "🚩" },
-            ],
-            shuffledSteps: [
-              { id: 2, order: 2, text: "Touch down on Moon", icon: "🌕" },
-              { id: 4, order: 4, text: "Plant Orion flag", icon: "🚩" },
-              { id: 1, order: 1, text: "Enter Moon orbit", icon: "🛸" },
-              { id: 3, order: 3, text: "Collect moon rocks", icon: "🪨" },
-            ],
-          },
-        },
-      },
-      practice: {
-        type: "story-sequencing",
-        data: {
-          missionTitle: "Morning School Adventure",
-          steps: [
-            { id: 21, order: 1, text: "Wake up with sun", icon: "⏰" },
-            { id: 22, order: 2, text: "Eat healthy breakfast", icon: "🥣" },
-            { id: 23, order: 3, text: "Arrive at school", icon: "🎒" },
-          ],
-          shuffledSteps: [
-            { id: 22, order: 2, text: "Eat healthy breakfast", icon: "🥣" },
-            { id: 21, order: 1, text: "Wake up with sun", icon: "⏰" },
-            { id: 23, order: 3, text: "Arrive at school", icon: "🎒" },
-          ],
-        },
-      },
-    },
-    3: {
-      gameKey: "story-sequencing",
-      level: 3,
-      gameTitle: "Story Sequencing",
-      levelTitle: "Level 3 · 4 Steps Deep Space 🛰️",
-      badgeIcon: "🛰️",
-      ruleExplanation: "The final mission of OrionKids! Put the deep space discovery in order.",
-      readyMessage: "Deep space timeline mastered! Reach for the stars in Level 3!",
-      readyTip: "Fly through asteroids, discover crystals, transmit data, then return safely home!",
-      steps: [
-        {
-          id: "step-1",
-          instruction: "Deep space expedition! 4 stages of discovery.",
-          subInstruction: "Read the mission cards to reconstruct the journey.",
-          targetDescription: "Deep Space Cards",
-          pointerPosition: "bottom",
-          stepType: "observe",
-        },
-        {
-          id: "step-2",
-          instruction: "Place all 4 stages into the timeline track.",
-          subInstruction: "Asteroids ➔ Alien crystals ➔ Transmit data ➔ Return home.",
-          targetDescription: "Final Timeline",
-          pointerPosition: "center",
-          simulatedActionText: "Completing final story...",
-          stepType: "interact",
-        },
-        {
-          id: "step-3",
-          instruction: "You are completing the final level of all six games!",
-          subInstruction: "Your performance report will be generated after this level.",
-          targetDescription: "Quest Final",
-          pointerPosition: "top",
-          stepType: "confirm",
-        },
-      ],
-      demo: {
-        instruction: "Deep Space: Asteroids ➔ Alien Crystals ➔ Transmit Data ➔ Safe Return!",
-        subInstruction: "Reconstruct the timeline in chronological order.",
-        demoType: "story-sequencing",
-        simulatedTarget: "Deep Space Track",
-        actionExplanation: "Ordered Deep Space Expedition!",
-        demoPayload: {
-          type: "story-sequencing",
-          data: {
-            missionTitle: "Interstellar Discovery",
-            steps: [
-              { id: 1, order: 1, text: "Fly past Mars", icon: "☄️" },
-              { id: 2, order: 2, text: "Discover crystals", icon: "💎" },
-              { id: 3, order: 3, text: "Transmit deep data", icon: "📡" },
-              { id: 4, order: 4, text: "Safe return to base", icon: "🛰️" },
-            ],
-            shuffledSteps: [
-              { id: 3, order: 3, text: "Transmit deep data", icon: "📡" },
-              { id: 1, order: 1, text: "Fly past Mars", icon: "☄️" },
-              { id: 4, order: 4, text: "Safe return to base", icon: "🛰️" },
-              { id: 2, order: 2, text: "Discover crystals", icon: "💎" },
-            ],
-          },
-        },
-      },
-      practice: {
-        type: "story-sequencing",
-        data: {
-          missionTitle: "Creating an Art Masterpiece",
-          steps: [
-            { id: 31, order: 1, text: "Sketch the drawing", icon: "✏️" },
-            { id: 32, order: 2, text: "Paint vibrant colors", icon: "🎨" },
-            { id: 33, order: 3, text: "Hang in art gallery", icon: "🖼️" },
-          ],
-          shuffledSteps: [
-            { id: 32, order: 2, text: "Paint vibrant colors", icon: "🎨" },
-            { id: 31, order: 1, text: "Sketch the drawing", icon: "✏️" },
-            { id: 33, order: 3, text: "Hang in art gallery", icon: "🖼️" },
-          ],
-        },
+    practice: {
+      type: "story-sequencing",
+      data: {
+        missionTitle: "Planting a Garden Flower",
+        steps: [
+          { id: 11, order: 1, text: "Plant the seed", icon: "🌱" },
+          { id: 12, order: 2, text: "Water with sun", icon: "🌧️" },
+          { id: 13, order: 3, text: "Blooming flower", icon: "🌸" },
+        ],
+        shuffledSteps: [
+          { id: 13, order: 3, text: "Blooming flower", icon: "🌸" },
+          { id: 11, order: 1, text: "Plant the seed", icon: "🌱" },
+          { id: 12, order: 2, text: "Water with sun", icon: "🌧️" },
+        ],
       },
     },
   },
 };
 
+// Backward-compatibility bridge: ensure GAME_TUTORIALS[gameKey][1], [2], [3] all resolve to the canonical game tutorial
+for (const key of Object.keys(GAME_TUTORIALS) as QuestGameKey[]) {
+  const tut = GAME_TUTORIALS[key];
+  (tut as any)[1] = tut;
+  (tut as any)[2] = tut;
+  (tut as any)[3] = tut;
+}
+
+/**
+ * Get canonical game tutorial for any game key (1 tutorial per game)
+ */
+export function getGameTutorial(gameKey: QuestGameKey): LevelTutorialConfig {
+  return GAME_TUTORIALS[gameKey] || GAME_TUTORIALS.stroop;
+}
+
+/**
+ * Get level tutorial (resolves to canonical game tutorial for backward compatibility)
+ */
 export function getLevelTutorial(
   gameKey: QuestGameKey,
-  level: number
-): LevelTutorialConfig | undefined {
-  return GAME_TUTORIALS[gameKey]?.[level];
+  _level?: number
+): LevelTutorialConfig {
+  return GAME_TUTORIALS[gameKey] || GAME_TUTORIALS.stroop;
 }

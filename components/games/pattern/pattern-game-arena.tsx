@@ -83,8 +83,8 @@ export function PatternGameArena({
 
   useEffect(() => {
     try {
-      const seen = sessionStorage.getItem(`orion_tut_seen_pattern_${level}`);
-      if (!seen && currentIdx === 0) {
+      const seen = sessionStorage.getItem("orion_tut_seen_pattern");
+      if (!seen && level === 1 && currentIdx === 0) {
         setIsTutorialOpen(true);
       }
     } catch {}
@@ -265,12 +265,12 @@ export function PatternGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem(`orion_tut_seen_pattern_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_pattern", "1"); } catch {}
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem(`orion_tut_seen_pattern_${level}`, "1"); } catch {}
+          try { sessionStorage.setItem("orion_tut_seen_pattern", "1"); } catch {}
         }}
       />
 
