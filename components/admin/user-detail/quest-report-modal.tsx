@@ -13,21 +13,39 @@ import {
   AlertCircle,
   Copy,
   Check,
+  Download,
+  RefreshCw,
+  Loader2,
+  FileText,
+  Lightbulb,
 } from "lucide-react";
-import type { AdminSessionReportResult } from "@/lib/api/admin";
+import {
+  downloadAdminReportPdf,
+  regenerateAdminReport,
+  type AdminSessionReportResult,
+} from "@/lib/api/admin";
 
 interface QuestReportModalProps {
   reportResult: AdminSessionReportResult | null;
   isOpen: boolean;
   onClose: () => void;
+  onReportUpdated?: (updatedReport: any) => void;
 }
 
 export function QuestReportModal({
   reportResult,
   isOpen,
   onClose,
+  onReportUpdated,
 }: QuestReportModalProps) {
   const [copied, setCopied] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  const [currentReport, setCurrentReport] = useState(reportResult?.report || null);
+
+  React.useEffect(() => {
+    setCurrentReport(reportResult?.report || null);
+  }, [reportResult]);
 
   if (!isOpen || !reportResult) return null;
 
@@ -37,7 +55,37 @@ export function QuestReportModal({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const { hasReport, report, reason, message } = reportResult;
+  const { hasReport, reason, message } = reportResult;
+  const report = currentReport;
+
+  const handleDownloadPdf = async () => {
+    if (!report?.questSessionId || isDownloading) return;
+    setIsDownloading(true);
+    try {
+      await downloadAdminReportPdf(report.questSessionId, report.childName);
+    } catch (err) {
+      console.error("PDF download failed:", err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleRegenerate = async () => {
+    if (!report?.questSessionId || isRegenerating) return;
+    setIsRegenerating(true);
+    try {
+      const updated = await regenerateAdminReport(report.questSessionId);
+      setCurrentReport(updated);
+      if (onReportUpdated) {
+        onReportUpdated(updated);
+      }
+    } catch (err) {
+      console.error("Regeneration failed:", err);
+      alert(err instanceof Error ? err.message : "Failed to regenerate report");
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
 
   const formatDuration = (ms: number | undefined) => {
     if (!ms) return "—";
@@ -45,6 +93,16 @@ export function QuestReportModal({
     const seconds = Math.floor((ms % 60000) / 1000);
     return `${minutes}m ${seconds}s`;
   };
+
+  // Normalize game summaries: could be Array or Object
+  let summariesList: any[] = [];
+  if (Array.isArray(report?.gameSummaries)) {
+    summariesList = report.gameSummaries;
+  } else if (report?.gameSummaries && typeof report.gameSummaries === "object") {
+    summariesList = Object.values(report.gameSummaries);
+  }
+
+  const aiReport = report?.aiReport;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
@@ -71,25 +129,58 @@ export function QuestReportModal({
           </div>
 
           <div className="flex items-center gap-2">
-            {hasReport && (
-              <button
-                type="button"
-                onClick={handleCopyJson}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-black text-white transition-colors cursor-pointer"
-                title="Copy Raw Report JSON"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="text-emerald-300">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy JSON</span>
-                  </>
-                )}
-              </button>
+            {hasReport && report && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleDownloadPdf}
+                  disabled={isDownloading}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00BCD4] hover:bg-[#00acc1] text-xs font-black text-white transition-colors cursor-pointer disabled:opacity-60"
+                  title="Download Official PDF Report"
+                >
+                  {isDownloading ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>PDF...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download PDF</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleRegenerate}
+                  disabled={isRegenerating}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-black text-white transition-colors cursor-pointer disabled:opacity-60"
+                  title="Explicitly Regenerate with OpenAI"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isRegenerating ? "animate-spin text-[#FFE066]" : ""}`} />
+                  <span>{isRegenerating ? "Generating..." : "Regenerate"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCopyJson}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-black text-white transition-colors cursor-pointer"
+                  title="Copy Raw Report JSON"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-300">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy JSON</span>
+                    </>
+                  )}
+                </button>
+              </>
             )}
 
             <button
@@ -141,6 +232,14 @@ export function QuestReportModal({
                     {report.selectedClass} · Age {report.age}
                     {report.school ? ` · ${report.school}` : ""}
                   </p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[10px] font-mono text-slate-600">
+                      Model: {report.modelName || "OpenAI Engine"}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[10px] font-bold text-emerald-800 uppercase">
+                      Status: {report.status || "GENERATED"}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-4 border-t md:border-t-0 md:border-l border-slate-200 pt-3 md:pt-0 md:pl-6 text-xs">
@@ -175,8 +274,23 @@ export function QuestReportModal({
                 </div>
               </div>
 
+              {/* AI Structured Synthesis Card if present */}
+              {aiReport?.overallPerformanceSummary && (
+                <div className="p-5 rounded-2xl bg-[#F0FDF4] border-2 border-emerald-300 shadow-2xs space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-emerald-700" />
+                    <h4 className="text-xs font-black text-emerald-950 uppercase tracking-wider">
+                      AI Cognitive Performance Synthesis
+                    </h4>
+                  </div>
+                  <p className="text-xs text-emerald-900 leading-relaxed">
+                    {aiReport.overallPerformanceSummary}
+                  </p>
+                </div>
+              )}
+
               {/* Per-Game Performance Summaries */}
-              {Array.isArray(report.gameSummaries) && report.gameSummaries.length > 0 && (
+              {summariesList.length > 0 && (
                 <div>
                   <h4 className="text-sm font-black text-[#0A1D3D] mb-3 flex items-center gap-1.5">
                     <Target className="w-4 h-4 text-[#00BCD4]" />
@@ -184,7 +298,7 @@ export function QuestReportModal({
                   </h4>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {report.gameSummaries.map((gs, idx) => (
+                    {summariesList.map((gs, idx) => (
                       <div
                         key={idx}
                         className="p-4 rounded-xl bg-slate-50 border border-slate-200 shadow-2xs"
@@ -194,23 +308,66 @@ export function QuestReportModal({
                             {gs.gameName || gs.gameKey}
                           </span>
                           <span className="px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-slate-600">
-                            Levels: {gs.levelsCompleted}/3
+                            Levels: {gs.levelsCompleted || 3}/3
                           </span>
                         </div>
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-slate-500">Average Accuracy:</span>
                           <span className="font-black text-emerald-700">
-                            {Math.round(gs.averageAccuracy)}%
+                            {gs.averageAccuracy !== null && gs.averageAccuracy !== undefined
+                              ? `${Math.round(gs.averageAccuracy)}%`
+                              : "—"}
                           </span>
                         </div>
                         <div className="flex items-center justify-between text-xs mt-1">
-                          <span className="text-slate-500">Duration:</span>
+                          <span className="text-slate-500">Avg Pace:</span>
                           <span className="font-bold text-slate-700">
-                            {formatDuration(gs.totalDurationMs)}
+                            {gs.averageReactionTimeMs
+                              ? `${(gs.averageReactionTimeMs / 1000).toFixed(1)}s`
+                              : gs.totalDurationMs
+                              ? formatDuration(gs.totalDurationMs)
+                              : "—"}
                           </span>
                         </div>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Observed Strengths & Areas for Growth */}
+              {(aiReport?.observedStrengths?.length || aiReport?.areasForPractice?.length) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Strengths */}
+                  <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                    <h5 className="text-xs font-black text-emerald-800 flex items-center gap-1.5 uppercase">
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Observed Strengths</span>
+                    </h5>
+                    <ul className="space-y-1.5 text-xs text-slate-700">
+                      {aiReport.observedStrengths.map((str: string, sIdx: number) => (
+                        <li key={sIdx} className="flex items-start gap-1.5">
+                          <span className="text-emerald-600 font-bold">•</span>
+                          <span>{str}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Growth Areas */}
+                  <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                    <h5 className="text-xs font-black text-amber-800 flex items-center gap-1.5 uppercase">
+                      <Lightbulb className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Areas for Practice</span>
+                    </h5>
+                    <ul className="space-y-1.5 text-xs text-slate-700">
+                      {aiReport.areasForPractice.map((prc: string, pIdx: number) => (
+                        <li key={pIdx} className="flex items-start gap-1.5">
+                          <span className="text-amber-600 font-bold">•</span>
+                          <span>{prc}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               )}

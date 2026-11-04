@@ -6,7 +6,7 @@ import { STROOP_PREVIEWS } from "@/lib/data/quest-previews";
 import { InteractiveHint } from "../interactive-hint";
 
 interface StroopPreviewEngineProps {
-  level: PreviewLevel;
+  level?: PreviewLevel;
   onComplete: () => void;
   showHint?: boolean;
 }
@@ -14,7 +14,7 @@ interface StroopPreviewEngineProps {
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 export function StroopPreviewEngine({
-  level,
+  level = 1,
   onComplete,
   showHint = true,
 }: StroopPreviewEngineProps) {
@@ -23,7 +23,7 @@ export function StroopPreviewEngine({
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [hintDismissed, setHintDismissed] = useState(false);
 
-  // Reset when level changes
+  // Reset when level or game changes
   useEffect(() => {
     setSelectedOption(null);
     setIsCorrect(null);
@@ -38,7 +38,7 @@ export function StroopPreviewEngine({
     if (isOptionCorrect) {
       const timer = setTimeout(() => {
         onComplete();
-      }, 700);
+      }, 900);
       return () => clearTimeout(timer);
     }
   };
@@ -63,19 +63,29 @@ export function StroopPreviewEngine({
         </span>
       </div>
 
-      {/* Feedback Badge */}
-      <div className="h-7 my-2 flex items-center justify-center">
+      {/* Clear Correct / Incorrect Feedback Badge */}
+      <div className="h-10 my-2 flex items-center justify-center">
         {selectedOption !== null && (
-          <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black animate-in fade-in zoom-in-95 duration-150 ${
+          <div
+            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs sm:text-sm font-black shadow-xs animate-in fade-in zoom-in-95 duration-150 ${
               isCorrect
-                ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                : "bg-rose-100 text-rose-800 border border-rose-300 animate-wobble"
+                ? "bg-emerald-100 text-emerald-900 border-2 border-emerald-500 shadow-[2px_2px_0_0_#059669]"
+                : "bg-rose-100 text-rose-900 border-2 border-rose-500 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
             }`}
             style={{ fontFamily: JAKARTA }}
           >
-            {isCorrect ? "🌟 Spot on! +1 Star" : "🙈 Oops! Look at the ink colour!"}
-          </span>
+            {isCorrect ? (
+              <>
+                <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">✓</span>
+                <span>CORRECT! Spot on! +1 Star 🌟</span>
+              </>
+            ) : (
+              <>
+                <span className="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs">✕</span>
+                <span>INCORRECT! Look at the ink colour, not what the word says!</span>
+              </>
+            )}
+          </div>
         )}
       </div>
 
@@ -99,9 +109,9 @@ export function StroopPreviewEngine({
                 onClick={() => handleSelect(opt.label, opt.isCorrect)}
                 className={`relative h-12 sm:h-14 px-5 sm:px-6 rounded-2xl flex items-center justify-center gap-2.5 font-black text-sm sm:text-base border-2 transition-all cursor-pointer select-none ${
                   isChosenCorrect
-                    ? "bg-emerald-50 text-emerald-800 border-emerald-500 shadow-[2px_2px_0_0_#10B981] scale-105"
+                    ? "bg-emerald-100 text-emerald-900 border-emerald-600 shadow-[2px_2px_0_0_#059669] scale-105"
                     : isChosenWrong
-                    ? "bg-rose-50 text-rose-800 border-rose-400 shadow-[2px_2px_0_0_#F43F5E] animate-wobble"
+                    ? "bg-rose-100 text-rose-900 border-rose-500 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
                     : "bg-white text-[#0A1D3D] hover:bg-slate-50 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0"
                 } ${isHintTarget ? "ring-4 ring-[#FFE066] ring-offset-2 animate-pulse" : ""}`}
                 style={{ fontFamily: JAKARTA }}
@@ -111,7 +121,8 @@ export function StroopPreviewEngine({
                   style={{ backgroundColor: opt.dotColor }}
                 />
                 <span>{opt.label}</span>
-                {isChosenCorrect && <span>🌟</span>}
+                {isChosenCorrect && <span className="text-emerald-700 font-extrabold">✓</span>}
+                {isChosenWrong && <span className="text-rose-700 font-extrabold">✕</span>}
               </button>
 
               {isHintTarget && (

@@ -99,6 +99,10 @@ export interface ChildReportItem {
   gameSummaries: Record<string, unknown>;
   cognitiveFacets: Record<string, unknown>;
   growthObservations: Record<string, unknown>;
+  status?: string;
+  modelName?: string | null;
+  questCompletedAt?: string | null;
+  aiReport?: any;
   schemaVersion: number;
   generatedAt: string;
 }
@@ -352,5 +356,39 @@ export async function fetchChildReports(
   } catch (err) {
     console.error(`[children] Error fetching reports for child ${childId}:`, err);
     return [];
+  }
+}
+
+/**
+ * Downloads the server-generated PDF for a child's quest session.
+ */
+export async function downloadChildReportPdf(
+  childId: string,
+  sessionId: string,
+  childName?: string
+): Promise<boolean> {
+  const apiUrl = API_BASE_URL;
+  try {
+    const res = await fetch(
+      `${apiUrl}/api/children/${encodeURIComponent(childId)}/quest-sessions/${encodeURIComponent(sessionId)}/report/pdf`,
+      {
+        credentials: "include",
+      }
+    );
+    if (!res.ok) throw new Error("Failed to download PDF");
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+    a.download = `OrionKids-${cleanName}-Report.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    return true;
+  } catch (err) {
+    console.error("PDF download failed:", err);
+    return false;
   }
 }

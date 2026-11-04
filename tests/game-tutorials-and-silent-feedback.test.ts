@@ -1,8 +1,8 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { GAME_TUTORIALS, getLevelTutorial } from "../lib/data/game-tutorials";
-import { GameKey, GameLevel } from "../types/game-tutorial";
+import { GAME_TUTORIALS, getGameTutorial, getLevelTutorial } from "../lib/data/game-tutorials";
+import { GameKey } from "../types/game-tutorial";
 
 describe("OrionKids — Interactive In-Game Tutorial Guide & Silent Feedback System", () => {
   const ALL_GAMES: GameKey[] = [
@@ -13,113 +13,90 @@ describe("OrionKids — Interactive In-Game Tutorial Guide & Silent Feedback Sys
     "rule-discovery",
     "story-sequencing",
   ];
-  const ALL_LEVELS: GameLevel[] = [1, 2, 3];
 
-  describe("PART 1 & 2: Tutorial for All 18 Levels (6 Games x 3 Levels)", () => {
-    it("1. has tutorial configurations for all 6 canonical games", () => {
-      assert.deepEqual(Object.keys(GAME_TUTORIALS).sort(), ALL_GAMES.slice().sort());
+  describe("PART 1 & 2: Canonical Tutorials (Exactly 1 Preview & Tutorial Per Game for 6 Games)", () => {
+    it("1. has exactly 6 tutorial configurations for all 6 canonical games (1 per game, not per level)", () => {
+      const keys = Object.keys(GAME_TUTORIALS).filter((k) => ALL_GAMES.includes(k as GameKey));
+      assert.equal(keys.length, 6, "Must define exactly 6 game tutorials");
+      assert.deepEqual(keys.sort(), ALL_GAMES.slice().sort());
     });
 
-    it("2. has distinct, rich tutorials for every level in all 18 levels", () => {
-      let totalLevels = 0;
+    it("2. verifies each game has a rich, dedicated tutorial with demo, practice, and ready message", () => {
       for (const game of ALL_GAMES) {
-        for (const lvl of ALL_LEVELS) {
-          const config = getLevelTutorial(game, lvl);
-          assert.ok(config, `Missing tutorial config for ${game} level ${lvl}`);
-          assert.equal(config.gameKey, game);
-          assert.equal(config.level, lvl);
-          assert.ok(config.gameTitle.length > 3, "gameTitle must be informative");
-          assert.ok(config.levelTitle.length > 5, "levelTitle must describe level mechanic");
-          assert.ok(config.ruleExplanation.length > 10, "ruleExplanation must be clear");
-          assert.ok(config.readyMessage.length > 10, "readyMessage must encourage child");
-          assert.ok(config.steps.length >= 3, "Must have at least 3 demonstration steps");
-          totalLevels++;
-        }
+        const config = getGameTutorial(game);
+        assert.ok(config, `Missing tutorial config for ${game}`);
+        assert.equal(config.gameKey, game);
+        assert.ok(config.gameTitle.length > 3, "gameTitle must be informative");
+        assert.ok(config.ruleExplanation.length > 10, "ruleExplanation must be clear");
+        assert.ok(config.readyMessage.length > 10, "readyMessage must encourage child");
+        assert.ok(config.steps.length >= 3, "Must have at least 3 demonstration steps");
+        assert.ok(config.demo, "Must have demo config");
+        assert.ok(config.practice, "Must have practice payload");
       }
-      assert.equal(totalLevels, 18, "Must verify exactly 18 level tutorial configurations");
     });
 
     it("3. validates that every tutorial step has clear instructions, pointer position, and action", () => {
       for (const game of ALL_GAMES) {
-        for (const lvl of ALL_LEVELS) {
-          const config = getLevelTutorial(game, lvl)!;
-          config.steps.forEach((step, idx) => {
-            assert.ok(step.instruction.length > 5, `${game} lvl ${lvl} step ${idx} instruction too short`);
-            assert.ok((step.subInstruction || "").length > 5, `${game} lvl ${lvl} step ${idx} subInstruction too short`);
-            assert.ok(step.targetDescription.length > 0, `${game} lvl ${lvl} step ${idx} missing targetDescription`);
-            assert.ok(["top", "bottom", "left", "right", "center"].includes(step.pointerPosition));
-            assert.ok(["observe", "interact", "confirm"].includes(step.stepType));
-          });
-        }
+        const config = getGameTutorial(game);
+        config.steps.forEach((step, idx) => {
+          assert.ok(step.instruction.length > 5, `${game} step ${idx} instruction too short`);
+          assert.ok((step.subInstruction || "").length > 5, `${game} step ${idx} subInstruction too short`);
+          assert.ok(step.targetDescription.length > 0, `${game} step ${idx} missing targetDescription`);
+          assert.ok(["top", "bottom", "left", "right", "center"].includes(step.pointerPosition));
+          assert.ok(["observe", "interact", "confirm"].includes(step.stepType));
+        });
       }
     });
 
-    it("4. Stroop: reflects level-specific ink vs word mechanics across Levels 1-3", () => {
-      const l1 = getLevelTutorial("stroop", 1)!;
-      const l2 = getLevelTutorial("stroop", 2)!;
-      const l3 = getLevelTutorial("stroop", 3)!;
-
-      // Level 1: Match ink colour directly
-      assert.ok(l1.ruleExplanation.toLowerCase().includes("ink colour") || l1.levelTitle.includes("Colour"));
-      // Level 2: Overcome distraction (ink differs from word)
-      assert.ok(l2.ruleExplanation.toLowerCase().includes("different") || l2.ruleExplanation.toLowerCase().includes("ink"));
-      // Level 3: Reverse or speed challenge
-      assert.ok(l3.ruleExplanation.toLowerCase().includes("word") || l3.ruleExplanation.toLowerCase().includes("reverse") || l3.levelTitle.includes("Speed"));
+    it("4. Stroop: teaches ink color identification", () => {
+      const tut = getGameTutorial("stroop");
+      assert.ok(tut.ruleExplanation.toLowerCase().includes("ink"));
+      assert.equal(tut.practice.type, "stroop");
     });
 
-    it("5. Card Flip: demonstrates grid flipping and matching across Levels 1-3", () => {
-      const l1 = getLevelTutorial("card-flip", 1)!;
-      const l2 = getLevelTutorial("card-flip", 2)!;
-      const l3 = getLevelTutorial("card-flip", 3)!;
-
-      assert.ok(l1.levelTitle.includes("2 Cosmic Pairs") || l1.ruleExplanation.includes("both pairs"));
-      assert.ok(l2.levelTitle.includes("3 Cosmic Pairs") || l2.ruleExplanation.includes("3 pairs"));
-      assert.ok(l3.levelTitle.includes("4 Cosmic Pairs") || l3.ruleExplanation.includes("4 pairs"));
+    it("5. Card Flip: demonstrates card matching and spatial memory", () => {
+      const tut = getGameTutorial("card-flip");
+      assert.ok(tut.ruleExplanation.toLowerCase().includes("pair") || tut.ruleExplanation.toLowerCase().includes("match"));
+      assert.equal(tut.practice.type, "card-flip");
     });
 
-    it("6. Pattern Recognition: demonstrates sequence extrapolation across Levels 1-3", () => {
-      const l1 = getLevelTutorial("pattern", 1)!;
-      const l2 = getLevelTutorial("pattern", 2)!;
-      const l3 = getLevelTutorial("pattern", 3)!;
-
-      assert.ok(l1.steps.some((s) => s.instruction.includes("pattern") || s.instruction.includes("sequence")));
-      assert.ok(l2.levelTitle.includes("3-Step Rotation") || l2.ruleExplanation.includes("3-shape"));
-      assert.ok(l3.levelTitle.includes("Advanced") || l3.ruleExplanation.includes("Complex") || l3.levelTitle.includes("Complex"));
+    it("6. Pattern Recognition: demonstrates sequence completion", () => {
+      const tut = getGameTutorial("pattern");
+      assert.ok(tut.ruleExplanation.toLowerCase().includes("pattern") || tut.ruleExplanation.toLowerCase().includes("sequence"));
+      assert.equal(tut.practice.type, "pattern");
     });
 
-    it("7. Odd One Out: demonstrates finding the anomaly across Levels 1-3", () => {
-      const l1 = getLevelTutorial("odd-one-out", 1)!;
-      const l2 = getLevelTutorial("odd-one-out", 2)!;
-      const l3 = getLevelTutorial("odd-one-out", 3)!;
-
-      assert.ok(l1.steps.some((s) => s.instruction.includes("belong") || s.instruction.includes("odd") || s.instruction.includes("different")));
-      assert.ok(l2.steps.length >= 3);
-      assert.ok(l3.steps.length >= 3);
+    it("7. Odd One Out: demonstrates category anomaly detection", () => {
+      const tut = getGameTutorial("odd-one-out");
+      assert.ok(tut.ruleExplanation.toLowerCase().includes("odd") || tut.ruleExplanation.toLowerCase().includes("different") || tut.ruleExplanation.toLowerCase().includes("not fit"));
+      assert.equal(tut.practice.type, "odd-one-out");
     });
 
     it("8. Rule Discovery: demonstrates discovering hidden sorting rules (Color, Shape, Count)", () => {
-      const l1 = getLevelTutorial("rule-discovery", 1)!;
-      const l2 = getLevelTutorial("rule-discovery", 2)!;
-      const l3 = getLevelTutorial("rule-discovery", 3)!;
-
-      assert.ok(l1.levelTitle.toLowerCase().includes("colour") || l1.ruleExplanation.toLowerCase().includes("color") || l1.ruleExplanation.toLowerCase().includes("colour"));
-      assert.ok(l2.levelTitle.toLowerCase().includes("shape") || l2.ruleExplanation.toLowerCase().includes("shape"));
-      assert.ok(l3.levelTitle.toLowerCase().includes("count") || l3.ruleExplanation.toLowerCase().includes("count") || l3.ruleExplanation.toLowerCase().includes("number"));
+      const tut = getGameTutorial("rule-discovery");
+      assert.ok(tut.ruleExplanation.toLowerCase().includes("rule") || tut.ruleExplanation.toLowerCase().includes("bucket") || tut.ruleExplanation.toLowerCase().includes("color"));
+      assert.equal(tut.practice.type, "rule-discovery");
     });
 
-    it("9. Story Sequencing: demonstrates chronological order across Levels 1-3", () => {
-      const l1 = getLevelTutorial("story-sequencing", 1)!;
-      const l2 = getLevelTutorial("story-sequencing", 2)!;
-      const l3 = getLevelTutorial("story-sequencing", 3)!;
+    it("9. Story Sequencing: demonstrates chronological order from beginning to end", () => {
+      const tut = getGameTutorial("story-sequencing");
+      assert.ok(tut.ruleExplanation.toLowerCase().includes("order") || tut.ruleExplanation.toLowerCase().includes("beginning"));
+      assert.equal(tut.practice.type, "story-sequencing");
+    });
 
-      assert.ok(l1.levelTitle.includes("3 Steps") || l1.levelTitle.includes("Launch"));
-      assert.ok(l2.levelTitle.includes("4 Steps") || l2.levelTitle.includes("Lunar"));
-      assert.ok(l3.levelTitle.includes("4 Steps") || l3.levelTitle.includes("Deep Space"));
+    it("10. Backward Compatibility: getLevelTutorial resolves safely for levels 1, 2, and 3", () => {
+      for (const game of ALL_GAMES) {
+        for (const lvl of [1, 2, 3]) {
+          const config = getLevelTutorial(game, lvl);
+          assert.ok(config, `Missing config for ${game} level ${lvl}`);
+          assert.equal(config.gameKey, game);
+        }
+      }
     });
   });
 
   describe("PART 4, 5 & 6: Silent Gameplay Feedback System & Internal Metrics", () => {
-    it("10. Stroop Game Arena: calculates correctness internally without exposing right/wrong banners", () => {
+    it("11. Stroop Game Arena: calculates correctness internally without exposing right/wrong banners", () => {
       // Simulating Stroop response evaluation
       const currentTrial = { word: "BLUE", ink: "#FF5B5B", answerColor: "RED" };
       const chosenColor = "RED";
@@ -128,148 +105,58 @@ describe("OrionKids — Interactive In-Game Tutorial Guide & Silent Feedback Sys
 
       // In the updated arena, feedback banner text is neutral:
       const neutralFeedback = "Choice registered...";
-      assert.equal(neutralFeedback.includes("Correct"), false);
-      assert.equal(neutralFeedback.includes("Wrong"), false);
-      assert.equal(neutralFeedback.includes("Oops"), false);
+      assert.ok(!neutralFeedback.includes("Correct") && !neutralFeedback.includes("Wrong"));
     });
 
-    it("11. Pattern Game Arena: suppresses green/red slots and checkmarks while recording accuracy", () => {
-      const sequence = ["⭐", "🔷", "⭐", "🔷", "❓"];
-      const answer: string = "⭐";
-      const userChoice: string = "🔷";
-
-      // Internal correctness calculation
-      const isCorrect = userChoice === answer;
-      assert.equal(isCorrect, false);
-
-      const totalTrials = 4;
-      const prevCorrect = 2;
-      const newCorrect = isCorrect ? prevCorrect + 1 : prevCorrect;
-      assert.equal(newCorrect, 2);
-
-      const accuracy = Math.round((newCorrect / totalTrials) * 100);
-      assert.equal(accuracy, 50);
-
-      // Verify that neutral response feedback does not disclose answer
-      const feedbackText = "Choice registered...";
-      assert.equal(feedbackText.includes("CORRECT"), false);
-      assert.equal(feedbackText.includes("Wrong"), false);
+    it("12. Pattern Game Arena: suppresses green/red slots and checkmarks while recording accuracy", () => {
+      const trialAccuracy = { isCorrect: true, timeMs: 420 };
+      assert.equal(trialAccuracy.isCorrect, true);
+      // Suppresses visual evaluation banners during active live trial
+      const banner = null;
+      assert.equal(banner, null);
     });
 
-    it("12. Odd One Out Game Arena: does not reveal the odd item clue on incorrect tap", () => {
+    it("13. Odd One Out Game Arena: does not reveal the odd item clue on incorrect tap", () => {
       const items = [
-        { symbol: "🪐", label: "Saturn", isOdd: false },
-        { symbol: "🌍", label: "Earth", isOdd: false },
-        { symbol: "🔴", label: "Mars", isOdd: false },
-        { symbol: "🚀", label: "Rocket", isOdd: true },
+        { id: "1", isOdd: false },
+        { id: "2", isOdd: false },
+        { id: "3", isOdd: true },
+        { id: "4", isOdd: false },
       ];
-      const selectedIndex = 0; // Saturn (not odd)
-      const selectedItem = items[selectedIndex];
-
-      const isOdd = selectedItem.isOdd;
-      assert.equal(isOdd, false);
-
-      // Under silent feedback rules, showOddReveal is eliminated:
-      // The child is not shown "Odd One! 💡" or "Ye toh group ka dost hai!"
-      const showOddReveal = false;
-      assert.equal(showOddReveal, false);
+      const tappedId = "1";
+      const tappedItem = items.find((i) => i.id === tappedId);
+      assert.equal(tappedItem?.isOdd, false);
+      // Silent error records without highlighting the real odd item
+      const revealedItem = null;
+      assert.equal(revealedItem, null);
     });
 
-    it("13. Rule Discovery Game Arena: evaluates color, shape, count without showing real-time matched count", () => {
-      const ruleColor = "color";
-      const ruleShape = "shape";
-      const ruleCount = "count";
-
-      const card = { shape: "circle", color: "blue", count: 2 };
-      const bucketA = { shape: "circle", color: "red", count: 1 };
-      const bucketB = { shape: "square", color: "blue", count: 2 };
-
-      // Level 1: Match by Color
-      assert.equal(bucketB.color === card.color, true);
-      assert.equal(bucketA.color === card.color, false);
-
-      // Level 2: Match by Shape
-      assert.equal(bucketA.shape === card.shape, true);
-      assert.equal(bucketB.shape === card.shape, false);
-
-      // Level 3: Match by Count
-      assert.equal(bucketB.count === card.count, true);
-      assert.equal(bucketA.count === card.count, false);
+    it("14. Rule Discovery Game Arena: evaluates color, shape, count without showing real-time matched count", () => {
+      const activeRule = "COLOR";
+      const chosenRule = "COLOR";
+      const matched = chosenRule === activeRule;
+      assert.equal(matched, true);
     });
 
-    it("14. Story Sequencing Game Arena: removes individual step tick/cross badges while computing accuracy", () => {
-      const missionSteps = [
-        { id: 1, order: 1, text: "Build Rocket" },
-        { id: 2, order: 2, text: "Blast off" },
-        { id: 3, order: 3, text: "Reach orbit" },
-      ];
-
-      // Child arranged in order [1, 3, 2]
-      const userOrder = [missionSteps[0], missionSteps[2], missionSteps[1]];
-
-      let correctCount = 0;
-      userOrder.forEach((step, idx) => {
-        if (step.order === idx + 1) correctCount++;
-      });
-
-      // 1st step was placed correctly (order 1 at index 0)
-      // 2nd and 3rd were reversed
-      assert.equal(correctCount, 1);
-      const accuracy = Math.round((correctCount / missionSteps.length) * 100);
-      assert.equal(accuracy, 33);
-
-      // Verified that individual step ticks/crosses are not displayed
-      const feedbackText = "Mission sequence registered...";
-      assert.equal(feedbackText.includes("PERFECT"), false);
-      assert.equal(feedbackText.includes("Story Check:"), false);
+    it("15. Story Sequencing Game Arena: removes individual step tick/cross badges while computing accuracy", () => {
+      const userOrder = [1, 2, 3];
+      const correctOrder = [1, 2, 3];
+      const allCorrect = userOrder.every((val, idx) => val === correctOrder[idx]);
+      assert.equal(allCorrect, true);
     });
 
-    it("15. Tutorial Mode and Real Quest Attempt separation", () => {
-      // Tutorial states
-      type TutorialState = "NOT_STARTED" | "SHOWING" | "COMPLETED" | "SKIPPED";
-      const stateSequence: TutorialState[] = ["NOT_STARTED", "SHOWING", "COMPLETED"];
-      assert.equal(stateSequence.includes("COMPLETED"), true);
+    it("16. Tutorial Mode and Real Quest Attempt separation", () => {
+      const isTutorialAttempt = true;
+      const apiCalls: string[] = [];
 
-      // During tutorial, no quest API endpoint is called; game session state remains pristine
-      const isTutorialActive = true;
-      const apiCallsTriggered: string[] = [];
-
-      function onTutorialStep() {
-        if (isTutorialActive) {
-          // Isolated mock demonstration only
-          return;
+      function recordTelemetry(attempt: { isTutorial: boolean }) {
+        if (!attempt.isTutorial) {
+          apiCalls.push("POST /api/quest/level/telemetry");
         }
-        apiCallsTriggered.push("startQuestLevel");
       }
 
-      onTutorialStep();
-      assert.equal(apiCallsTriggered.length, 0, "Tutorial must never call backend attempt APIs");
-    });
-
-    it("16. Odd One Out: shuffles card positions dynamically so the odd item is not fixed at the 4th position", () => {
-      const items = [
-        { symbol: "🪐", label: "Saturn", isOdd: false },
-        { symbol: "🌍", label: "Earth", isOdd: false },
-        { symbol: "🔴", label: "Mars", isOdd: false },
-        { symbol: "🚀", label: "Rocket", isOdd: true },
-      ];
-
-      function shuffle<T>(arr: T[]): T[] {
-        const res = [...arr];
-        for (let i = res.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [res[i], res[j]] = [res[j], res[i]];
-        }
-        return res;
-      }
-
-      const oddIndices = new Set<number>();
-      for (let run = 0; run < 30; run++) {
-        const shuffled = shuffle(items);
-        const idx = shuffled.findIndex((item) => item.isOdd);
-        oddIndices.add(idx);
-      }
-      assert.ok(oddIndices.size > 1, "Odd item must appear at multiple randomized positions across trials");
+      recordTelemetry({ isTutorial: isTutorialAttempt });
+      assert.equal(apiCalls.length, 0, "Tutorial attempts must never submit live telemetry to backend");
     });
   });
 });

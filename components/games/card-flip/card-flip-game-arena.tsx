@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import {
   startQuestLevel,
@@ -103,6 +104,14 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
     setShowTiredModal(false);
     setHasPromptedTired(false);
     setIntroPhase("deal");
+
+    // Auto-prompt tutorial ONLY ONCE per game (only at Level 1 on first entry)
+    try {
+      const seen = sessionStorage.getItem("orion_tut_seen_card_flip");
+      if (!seen && level === 1 && matchedCount === 0 && moves === 0) {
+        setIsTutorialOpen(true);
+      }
+    } catch {}
 
     // Fast deal animation lands (100ms), flip cards face-up to reveal
     const revealTimer = setTimeout(() => {
@@ -354,7 +363,16 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         gameKey="card-flip"
         level={level}
         isOpen={isTutorialOpen}
-        onClose={() => setIsTutorialOpen(false)}
+        onClose={() => {
+          setIsTutorialOpen(false);
+          startTimeRef.current = Date.now();
+          try { sessionStorage.setItem("orion_tut_seen_card_flip", "1"); } catch {}
+        }}
+        onComplete={() => {
+          setIsTutorialOpen(false);
+          startTimeRef.current = Date.now();
+          try { sessionStorage.setItem("orion_tut_seen_card_flip", "1"); } catch {}
+        }}
       />
 
       <div className="relative z-10 w-full max-w-[840px] my-auto py-3.5 sm:py-4 px-4 sm:px-8 rounded-[20px] bg-[#351870]/50 backdrop-blur-md border border-white/20 shadow-[0_12px_45px_rgba(0,0,0,0.35)] flex flex-col items-center justify-center min-h-[320px] sm:min-h-[340px]">
@@ -501,22 +519,14 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         )}
       </div>
 
-      {/* In-Game Animated Tutorial Guide Modal */}
-      <GameTutorialGuide
-        gameKey="card-flip"
-        level={level}
-        isOpen={isTutorialOpen}
-        onClose={() => setIsTutorialOpen(false)}
-        onComplete={() => setIsTutorialOpen(false)}
-      />
 
       {/* "Are you tired?" Modal when moves > 4 */}
-      {showTiredModal && (
+      {showTiredModal && typeof document !== "undefined" && createPortal(
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="tired-modal-title"
-          className="fixed inset-0 z-50 bg-[#0A1D3D]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[9999] bg-[#0A1D3D]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
         >
           <div className="relative w-full max-w-[420px] rounded-[24px] bg-white border-3 border-[#0A1D3D] shadow-[6px_6px_0px_#0A1D3D] p-6 sm:p-7 flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
             {/* Friendly Sleeping / Relaxed Mascot Icon */}
@@ -563,7 +573,8 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

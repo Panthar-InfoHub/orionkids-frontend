@@ -13,6 +13,7 @@ import {
   Gamepad2,
   CheckCircle2,
   Hourglass,
+  FileText,
 } from "lucide-react";
 import {
   fetchAdminUsers,
@@ -24,10 +25,11 @@ import {
 } from "@/lib/api/admin";
 import { UserTable } from "./user-table";
 import { AccessRequestsSection } from "./access-requests-section";
+import { AdminReportsSection } from "./admin-reports-section";
 
 export function AdminDashboardView() {
   // State
-  const [adminTab, setAdminTab] = useState<"REQUESTS" | "USERS">("REQUESTS");
+  const [adminTab, setAdminTab] = useState<"REQUESTS" | "USERS" | "REPORTS">("REQUESTS");
   const [users, setUsers] = useState<AdminUserItem[]>([]);
   const [meta, setMeta] = useState<AdminPaginationMeta>({
     page: 1,
@@ -412,11 +414,31 @@ export function AdminDashboardView() {
             {overview?.accounts.total ?? meta.total}
           </span>
         </button>
+
+        <button
+          type="button"
+          onClick={() => setAdminTab("REPORTS")}
+          className={`pb-3.5 px-3 font-black text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+            adminTab === "REPORTS"
+              ? "border-[#00BCD4] text-[#00838F]"
+              : "border-transparent text-slate-500 hover:text-slate-800"
+          }`}
+        >
+          <FileText className="w-4 h-4" />
+          <span>Child Quest Reports</span>
+          {overview?.sessions.completed !== undefined && (
+            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-black">
+              {overview.sessions.completed}
+            </span>
+          )}
+        </button>
       </div>
 
       {/* Tab Content */}
       {adminTab === "REQUESTS" ? (
         <AccessRequestsSection />
+      ) : adminTab === "REPORTS" ? (
+        <AdminReportsSection />
       ) : (
         <UserTable
           users={users}

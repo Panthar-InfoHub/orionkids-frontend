@@ -6,24 +6,12 @@ import { ODD_ONE_OUT_PREVIEWS } from "@/lib/data/quest-previews";
 import { InteractiveHint } from "../interactive-hint";
 
 interface OddOneOutPreviewEngineProps {
-  level: PreviewLevel;
+  level?: PreviewLevel;
   onComplete: () => void;
   showHint?: boolean;
 }
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
-
-function seededShuffleCards<T>(items: T[], seedNumber: number): T[] {
-  const result = [...items];
-  let seed = seedNumber * 104729 + 17;
-  for (let i = result.length - 1; i > 0; i--) {
-    seed = (seed * 9301 + 49297) % 233280;
-    const rnd = seed / 233280;
-    const j = Math.floor(rnd * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
 
 function shuffleCards<T>(items: T[]): T[] {
   const result = [...items];
@@ -35,14 +23,12 @@ function shuffleCards<T>(items: T[]): T[] {
 }
 
 export function OddOneOutPreviewEngine({
-  level,
+  level = 1,
   onComplete,
   showHint = true,
 }: OddOneOutPreviewEngineProps) {
   const config = ODD_ONE_OUT_PREVIEWS[level] || ODD_ONE_OUT_PREVIEWS[1];
-  const [shuffledItems, setShuffledItems] = useState(() =>
-    seededShuffleCards(config.items, level * 100)
-  );
+  const [shuffledItems, setShuffledItems] = useState(() => config.items);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [hintDismissed, setHintDismissed] = useState(false);
@@ -72,8 +58,34 @@ export function OddOneOutPreviewEngine({
   return (
     <div className="w-full flex flex-col items-center justify-center py-4 px-2 select-none">
       {/* Category Hint Banner */}
-      <div className="mb-3 px-4 py-1.5 rounded-full bg-slate-100 text-[#0A1D3D] text-xs font-bold border border-slate-200">
+      <div className="mb-2 px-4 py-1.5 rounded-full bg-slate-100 text-[#0A1D3D] text-xs font-bold border border-slate-200">
         <span>Category: {config.categoryHint}</span>
+      </div>
+
+      {/* Clear Correct / Incorrect Feedback Badge */}
+      <div className="h-10 my-1.5 flex items-center justify-center text-center">
+        {selectedItem && (
+          <div
+            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs sm:text-sm font-black shadow-xs animate-in fade-in zoom-in-95 duration-150 ${
+              isCorrect
+                ? "bg-emerald-100 text-emerald-900 border-2 border-emerald-500 shadow-[2px_2px_0_0_#059669]"
+                : "bg-rose-100 text-rose-900 border-2 border-rose-500 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
+            }`}
+            style={{ fontFamily: JAKARTA }}
+          >
+            {isCorrect ? (
+              <>
+                <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">✓</span>
+                <span>CORRECT! {selectedItem.reason || "Spot on! That item does not belong. +1 Star 🌟"}</span>
+              </>
+            ) : (
+              <>
+                <span className="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs">✕</span>
+                <span>INCORRECT! This item belongs in the category. Find the different one 👆</span>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 4 Cards Grid */}
@@ -96,9 +108,9 @@ export function OddOneOutPreviewEngine({
                 onClick={() => handleSelect(item)}
                 className={`w-full py-4 px-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 border-2 transition-all cursor-pointer select-none ${
                   isChosenOdd
-                    ? "bg-emerald-50 text-emerald-800 border-emerald-500 shadow-[3px_3px_0_0_#10B981] scale-105"
+                    ? "bg-emerald-50 text-emerald-900 border-emerald-500 shadow-[3px_3px_0_0_#10B981] scale-105"
                     : isChosenWrong
-                    ? "bg-rose-50 text-rose-800 border-rose-400 shadow-[2px_2px_0_0_#F43F5E] animate-wobble"
+                    ? "bg-rose-50 text-rose-900 border-rose-500 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
                     : "bg-white text-[#0A1D3D] hover:bg-slate-50 border-[#0A1D3D] shadow-[2.5px_2.5px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0"
                 } ${isHintTarget ? "ring-4 ring-[#FFE066] ring-offset-2 animate-pulse" : ""}`}
               >
@@ -109,7 +121,8 @@ export function OddOneOutPreviewEngine({
                 >
                   {item.label}
                 </span>
-                {isChosenOdd && <span className="text-xs font-bold">✨ Anomaly!</span>}
+                {isChosenOdd && <span className="text-xs font-bold text-emerald-700">✓ Odd One</span>}
+                {isChosenWrong && <span className="text-xs font-bold text-rose-700">✕ Belongs</span>}
               </button>
 
               {isHintTarget && (
@@ -123,24 +136,6 @@ export function OddOneOutPreviewEngine({
             </div>
           );
         })}
-      </div>
-
-      {/* Explanation Banner */}
-      <div className="min-h-9 my-2 flex items-center justify-center max-w-[380px] text-center">
-        {selectedItem && (
-          <p
-            className={`text-xs font-bold px-3 py-1 rounded-lg ${
-              isCorrect
-                ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                : "bg-rose-50 text-rose-800 border border-rose-200"
-            }`}
-            style={{ fontFamily: JAKARTA }}
-          >
-            {isCorrect
-              ? selectedItem.reason || "Spot on! That item does not belong."
-              : "This belongs in the category. Look for the different one!"}
-          </p>
-        )}
       </div>
     </div>
   );

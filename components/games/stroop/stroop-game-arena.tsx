@@ -83,6 +83,14 @@ export function StroopGameArena({
     setErrorMessage(null);
     setNextLevelRoute(null);
     setIsNavigating(false);
+
+    // Auto-prompt tutorial ONLY ONCE per game (only at Level 1, first trial)
+    try {
+      const seen = sessionStorage.getItem("orion_tut_seen_stroop");
+      if (!seen && level === 1 && (initialTrialIndex === undefined || initialTrialIndex === 0)) {
+        setIsTutorialOpen(true);
+      }
+    } catch {}
   }, [level, initialTrialIndex, initialRecords]);
 
   // Synchronize or resolve active quest session ID
@@ -842,8 +850,16 @@ export function StroopGameArena({
         gameKey="stroop"
         level={level}
         isOpen={isTutorialOpen}
-        onClose={() => setIsTutorialOpen(false)}
-        onComplete={() => setIsTutorialOpen(false)}
+        onClose={() => {
+          setIsTutorialOpen(false);
+          trialStartTimeRef.current = performance.now();
+          try { sessionStorage.setItem("orion_tut_seen_stroop", "1"); } catch {}
+        }}
+        onComplete={() => {
+          setIsTutorialOpen(false);
+          trialStartTimeRef.current = performance.now();
+          try { sessionStorage.setItem("orion_tut_seen_stroop", "1"); } catch {}
+        }}
       />
     </div>
   );

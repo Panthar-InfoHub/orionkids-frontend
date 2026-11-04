@@ -1,10 +1,17 @@
 "use client";
 
 import React from "react";
+import type { QuestReportData } from "@/lib/api/quest";
 
 const INTER = "var(--font-inter), 'Inter', sans-serif";
 
-export function HeartfeltNoteSection() {
+export function HeartfeltNoteSection({
+  report,
+}: {
+  report?: QuestReportData | null;
+}) {
+  const childName = report?.childName || "Your Child";
+
   return (
     <section
       className="relative w-full rounded-2xl border border-[#DCE4FE] px-6 py-8 sm:p-8 flex flex-col items-center text-center"
@@ -32,7 +39,7 @@ export function HeartfeltNoteSection() {
           letterSpacing: "-0.4px",
         }}
       >
-        A Heartfelt Note For Ananya’s Family
+        A Heartfelt Note For {childName}’s Family
       </h2>
 
       {/* Body */}
@@ -41,11 +48,16 @@ export function HeartfeltNoteSection() {
         style={{ fontWeight: 400 }}
       >
         Every child’s brain unfolds at its own unique, wondrous tempo.
-        Percentiles are simply a playful, momentary snapshot from today’s
-        interactive journey—offering bright clues on what sparks her joy and
+        Gameplay observations are simply a playful, momentary snapshot from today’s
+        interactive journey—offering bright clues on what sparks joy and
         where gentle support can be most fun. Keep learning affectionate,
         light-hearted, and wondrous!
       </p>
+
+      {/* Educational Notice */}
+      <div className="mt-4 pt-4 border-t border-indigo-100 max-w-xl text-[11px] text-slate-500 leading-relaxed">
+        <strong>Educational Assessment Notice:</strong> This summary reflects educational gameplay performance across 18 levels. It is designed to inspire playful learning routines and is not a medical or psychological diagnosis.
+      </div>
     </section>
   );
 }

@@ -82,6 +82,15 @@ export function PatternGameArena({
   const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string } | null>(null);
 
   useEffect(() => {
+    try {
+      const seen = sessionStorage.getItem("orion_tut_seen_pattern");
+      if (!seen && level === 1 && currentIdx === 0) {
+        setIsTutorialOpen(true);
+      }
+    } catch {}
+  }, [level, currentIdx]);
+
+  useEffect(() => {
     let isCancelled = false;
     async function init() {
       if (sessionId) {
@@ -253,7 +262,16 @@ export function PatternGameArena({
         gameKey="pattern"
         level={level}
         isOpen={isTutorialOpen}
-        onClose={() => setIsTutorialOpen(false)}
+        onClose={() => {
+          setIsTutorialOpen(false);
+          startTimeRef.current = Date.now();
+          try { sessionStorage.setItem("orion_tut_seen_pattern", "1"); } catch {}
+        }}
+        onComplete={() => {
+          setIsTutorialOpen(false);
+          startTimeRef.current = Date.now();
+          try { sessionStorage.setItem("orion_tut_seen_pattern", "1"); } catch {}
+        }}
       />
 
       <div

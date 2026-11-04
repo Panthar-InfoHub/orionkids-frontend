@@ -6,8 +6,15 @@ import Image from "next/image";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
-export function ReportHeader() {
+export function ReportHeader({
+  sessionId,
+  childName,
+}: {
+  sessionId?: string | null;
+  childName?: string | null;
+}) {
   const [copied, setCopied] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleShare = () => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
@@ -18,6 +25,38 @@ export function ReportHeader() {
   };
 
   const handlePrint = () => {
+    if (typeof window !== "undefined") {
+      window.print();
+    }
+  };
+
+  const handleDownload = async () => {
+    if (sessionId) {
+      setIsDownloading(true);
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+        const res = await fetch(`${apiUrl}/api/quest/sessions/${sessionId}/report/pdf`, {
+          credentials: "include",
+        });
+        if (res.ok) {
+          const blob = await res.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+          a.download = `OrionKids-Assessment-Report-${cleanName}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+          return;
+        }
+      } catch (err) {
+        console.error("PDF download failed, falling back to window.print():", err);
+      } finally {
+        setIsDownloading(false);
+      }
+    }
     if (typeof window !== "undefined") {
       window.print();
     }
@@ -93,14 +132,15 @@ export function ReportHeader() {
           {/* Download PDF Button */}
           <button
             type="button"
-            onClick={handlePrint}
+            onClick={handleDownload}
+            disabled={isDownloading}
             title="Download PDF"
             aria-label="Download PDF"
-            className="inline-flex items-center gap-1 xs:gap-1.5 px-2.5 xs:px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-[#D8DFE8] bg-white text-[#0A1D3D] hover:bg-slate-50 active:scale-95 transition-all text-[11px] xs:text-xs sm:text-sm font-bold shadow-xs cursor-pointer select-none whitespace-nowrap"
+            className="inline-flex items-center gap-1 xs:gap-1.5 px-2.5 xs:px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-[#D8DFE8] bg-white text-[#0A1D3D] hover:bg-slate-50 active:scale-95 transition-all text-[11px] xs:text-xs sm:text-sm font-bold shadow-xs cursor-pointer select-none whitespace-nowrap disabled:opacity-60"
             style={{ fontFamily: JAKARTA }}
           >
             <svg
-              className="w-3.5 h-3.5 sm:w-[15px] sm:h-[15px] shrink-0"
+              className={`w-3.5 h-3.5 sm:w-[15px] sm:h-[15px] shrink-0 ${isDownloading ? "animate-spin" : ""}`}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -114,7 +154,13 @@ export function ReportHeader() {
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
             <span>
-              <span className="hidden md:inline">Download </span>PDF
+              {isDownloading ? (
+                "Preparing PDF..."
+              ) : (
+                <>
+                  <span className="hidden md:inline">Download </span>PDF
+                </>
+              )}
             </span>
           </button>
 

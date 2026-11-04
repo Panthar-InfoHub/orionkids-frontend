@@ -6,7 +6,7 @@ import { PATTERN_PREVIEWS } from "@/lib/data/quest-previews";
 import { InteractiveHint } from "../interactive-hint";
 
 interface PatternPreviewEngineProps {
-  level: PreviewLevel;
+  level?: PreviewLevel;
   onComplete: () => void;
   showHint?: boolean;
 }
@@ -14,7 +14,7 @@ interface PatternPreviewEngineProps {
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 export function PatternPreviewEngine({
-  level,
+  level = 1,
   onComplete,
   showHint = true,
 }: PatternPreviewEngineProps) {
@@ -37,7 +37,7 @@ export function PatternPreviewEngine({
     if (correct) {
       const timer = setTimeout(() => {
         onComplete();
-      }, 700);
+      }, 850);
       return () => clearTimeout(timer);
     }
   };
@@ -67,7 +67,7 @@ export function PatternPreviewEngine({
                     ? isCorrect
                       ? "bg-emerald-100 text-emerald-800 border-emerald-500 shadow-[2px_2px_0_0_#10B981] animate-in zoom-in-75"
                       : isCorrect === false
-                      ? "bg-rose-100 text-rose-800 border-rose-400 animate-wobble"
+                      ? "bg-rose-100 text-rose-800 border-rose-400 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
                       : "bg-[#FFE066] text-[#0A1D3D] border-[#0A1D3D] border-dashed shadow-[2px_2px_0_0_#0A1D3D] animate-pulse"
                     : "bg-white text-[#0A1D3D] border-slate-300 shadow-xs"
                 }`}
@@ -79,30 +79,42 @@ export function PatternPreviewEngine({
         </div>
       </div>
 
-      {/* Feedback Alert */}
-      <div className="h-7 my-2 flex items-center justify-center">
+      {/* Prominent High-Visibility Feedback Banner */}
+      <div className="h-10 my-2 flex items-center justify-center">
         {selectedSymbol !== null && (
-          <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black animate-in fade-in zoom-in-95 duration-150 ${
+          <div
+            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs sm:text-sm font-black shadow-xs animate-in fade-in zoom-in-95 duration-150 ${
               isCorrect
-                ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                : "bg-rose-100 text-rose-800 border border-rose-300 animate-wobble"
+                ? "bg-emerald-100 text-emerald-900 border-2 border-emerald-500 shadow-[2px_2px_0_0_#059669]"
+                : "bg-rose-100 text-rose-900 border-2 border-rose-500 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
             }`}
             style={{ fontFamily: JAKARTA }}
           >
-            {isCorrect ? "✨ Pattern Completed! +1 Star" : "🧩 Look closer at the sequence!"}
-          </span>
+            {isCorrect ? (
+              <>
+                <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">✓</span>
+                <span>CORRECT! Pattern Completed! +1 Star 🌟</span>
+              </>
+            ) : (
+              <>
+                <span className="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs">✕</span>
+                <span>INCORRECT! Look closely at the repeating symbols! Try again 👆</span>
+              </>
+            )}
+          </div>
         )}
       </div>
 
       {/* Options Row */}
       <div
         role="group"
-        aria-label="Pattern Options"
+        aria-label="Pattern Choices"
         className="flex items-center justify-center gap-3 sm:gap-4 mt-1"
       >
         {config.options.map((opt) => {
           const isThisSelected = selectedSymbol === opt.symbol;
+          const isChosenCorrect = isThisSelected && isCorrect === true;
+          const isChosenWrong = isThisSelected && isCorrect === false;
           const isHintTarget =
             showHint && !hintDismissed && opt.symbol === config.hintSymbol;
 
@@ -111,20 +123,22 @@ export function PatternPreviewEngine({
               <button
                 type="button"
                 onClick={() => handleSelect(opt.symbol, opt.isCorrect)}
-                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-2xl border-2 transition-all cursor-pointer select-none ${
-                  isThisSelected && isCorrect
-                    ? "bg-emerald-50 border-emerald-500 shadow-[2px_2px_0_0_#10B981] scale-105"
-                    : isThisSelected && isCorrect === false
-                    ? "bg-rose-50 border-rose-400 shadow-[2px_2px_0_0_#F43F5E] animate-wobble"
-                    : "bg-white hover:bg-slate-50 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0"
+                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl border-2 transition-all cursor-pointer select-none ${
+                  isChosenCorrect
+                    ? "bg-emerald-100 border-emerald-600 shadow-[2px_2px_0_0_#059669] scale-105"
+                    : isChosenWrong
+                    ? "bg-rose-100 border-rose-500 text-rose-900 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
+                    : "bg-white text-[#0A1D3D] hover:bg-slate-50 border-[#0A1D3D] shadow-[2.5px_2.5px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0"
                 } ${isHintTarget ? "ring-4 ring-[#FFE066] ring-offset-2 animate-pulse" : ""}`}
               >
-                {opt.symbol}
+                <span>{opt.symbol}</span>
+                {isChosenCorrect && <span className="text-emerald-700 text-xs font-black absolute top-1 right-1">✓</span>}
+                {isChosenWrong && <span className="text-rose-700 text-xs font-black absolute top-1 right-1">✕</span>}
               </button>
 
               {isHintTarget && (
                 <InteractiveHint
-                  label="Pick this! 🧩"
+                  label="Pick next! 🧩"
                   isVisible={true}
                   position="bottom"
                   onDismiss={() => setHintDismissed(true)}
