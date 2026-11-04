@@ -18,8 +18,14 @@ import {
   ArrowRight,
   Download,
 } from "lucide-react";
-import type { ChildWithStats } from "@/lib/api/children";
+import {
+  fetchChildQuestSessions,
+  fetchChildReports,
+  downloadChildReportPdf,
+  type ChildWithStats,
+} from "@/lib/api/children";
 import { startChildQuest } from "@/lib/api/session";
+import { generateQuestReport } from "@/lib/api/quest";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
@@ -47,6 +53,65 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
   };
 
   const isAllLevelsCompleted = stats.completedQuests > 0 || stats.completedLevelsCount >= 18;
+
+  // Report actions (generate / retry and download)
+  const [reportAction, setReportAction] = useState<"idle" | "generating" | "downloading">("idle");
+  const [reportError, setReportError] = useState<string | null>(null);
+  const [isReportReadyLocal, setIsReportReadyLocal] = useState(false);
+  const hasReport = stats.hasReport || isReportReadyLocal;
+
+  const handleGenerateReport = async () => {
+    if (reportAction !== "idle") return;
+    setReportAction("generating");
+    setReportError(null);
+    try {
+      // Find the most recent completed quest session that has no report yet
+      const sessions = await fetchChildQuestSessions(child.id);
+      const pending = sessions.find((s) => s.status === "COMPLETED" && !s.hasReport);
+
+      if (!pending) {
+        // Nothing pending: the background generation most likely finished in the meantime
+        setIsReportReadyLocal(true);
+        return;
+      }
+
+      const result = await generateQuestReport(pending.id);
+      if (result.success) {
+        setIsReportReadyLocal(true);
+      } else {
+        setReportError(result.message || "Could not generate the report. Please try again.");
+      }
+    } catch (err) {
+      console.error("Failed to generate report for child:", err);
+      setReportError("Could not generate the report. Please try again.");
+    } finally {
+      setReportAction("idle");
+    }
+  };
+
+  const handleDownloadReport = async () => {
+    if (reportAction !== "idle") return;
+    setReportAction("downloading");
+    setReportError(null);
+    try {
+      // Reports are returned newest first
+      const reports = await fetchChildReports(child.id);
+      const latest = reports[0];
+      if (!latest) {
+        setReportError("No report found yet. Please generate the report first.");
+        return;
+      }
+      const ok = await downloadChildReportPdf(child.id, latest.questSessionId, child.childName);
+      if (!ok) {
+        setReportError("Could not download the report. Please try again.");
+      }
+    } catch (err) {
+      console.error("Failed to download report for child:", err);
+      setReportError("Could not download the report. Please try again.");
+    } finally {
+      setReportAction("idle");
+    }
+  };
 
   const handleQuestAction = async () => {
     if (isStartingQuest) return;
@@ -223,15 +288,37 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
       {/* Action Buttons Row */}
       <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
         {/* Primary Action Button */}
-        {isAllLevelsCompleted ? (
+        {isAllLevelsCompleted && hasReport ? (
           <button
             type="button"
-            className="flex-1 h-11 px-4 rounded-xl bg-[#FFD028] hover:bg-[#ffc524] text-[#0A1D3D] font-black text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            onClick={handleDownloadReport}
+            disabled={reportAction !== "idle"}
+            className="flex-1 h-11 px-4 rounded-xl bg-[#FFD028] hover:bg-[#ffc524] text-[#0A1D3D] font-black text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
             style={{ fontFamily: JAKARTA }}
             title="Download Your Report"
           >
-            <Download className="w-4 h-4 text-[#0A1D3D]" />
-            <span>Download Your Report</span>
+            {reportAction === "downloading" ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4 text-[#0A1D3D]" />
+            )}
+            <span>{reportAction === "downloading" ? "Downloading..." : "Download Your Report"}</span>
+          </button>
+        ) : isAllLevelsCompleted ? (
+          <button
+            type="button"
+            onClick={handleGenerateReport}
+            disabled={reportAction !== "idle"}
+            className="flex-1 h-11 px-4 rounded-xl bg-[#FFD028] hover:bg-[#ffc524] text-[#0A1D3D] font-black text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+            style={{ fontFamily: JAKARTA }}
+            title="Generate the assessment report for the completed quest"
+          >
+            {reportAction === "generating" ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <RotateCcw className="w-4 h-4" />
+            )}
+            <span>{reportAction === "generating" ? "Generating Report..." : "Generate Report"}</span>
           </button>
         ) : stats.hasInProgressQuest ? (
           <button
@@ -286,6 +373,12 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
           </Link>
         )}
       </div>
+
+      {reportError && (
+        <p className="mt-2 text-[11px] font-bold text-rose-600" role="alert">
+          {reportError}
+        </p>
+      )}
     </div>
   );
 }

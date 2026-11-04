@@ -33,6 +33,7 @@ import {
   type ChildReportItem,
 } from "@/lib/api/children";
 import { startChildQuest } from "@/lib/api/session";
+import { generateQuestReport } from "@/lib/api/quest";
 import { PageCurtain } from "@/components/layout/page-curtain";
 import { FooterSection } from "@/components/layout/footer-section";
 
@@ -60,6 +61,76 @@ function ChildDetailContent({ params }: PageProps) {
   const [isStartingQuest, setIsStartingQuest] = useState(false);
   const [downloadingReportId, setDownloadingReportId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [generatingSessionId, setGeneratingSessionId] = useState<string | null>(null);
+  const [generateError, setGenerateError] = useState<{ sessionId: string; message: string } | null>(null);
+
+  // Completed quests whose report is missing (e.g. background generation failed)
+  const sessionsMissingReport = sessions.filter((s) => s.status === "COMPLETED" && !s.hasReport);
+
+  /**
+   * Re-fetches child, sessions and reports without showing the full-page loader.
+   */
+  const refreshReportData = useCallback(async () => {
+    const [childData, sessionsData, reportsData] = await Promise.all([
+      fetchChild(childId),
+      fetchChildQuestSessions(childId),
+      fetchChildReports(childId),
+    ]);
+    if (childData) setChild(childData);
+    setSessions(sessionsData);
+    setReports(reportsData);
+  }, [childId]);
+
+  const handleGenerateReport = async (sessionId: string) => {
+    if (generatingSessionId) return;
+    setGeneratingSessionId(sessionId);
+    setGenerateError(null);
+    try {
+      const result = await generateQuestReport(sessionId);
+      if (result.success) {
+        await refreshReportData();
+      } else {
+        setGenerateError({
+          sessionId,
+          message: result.message || "Could not generate the report. Please try again.",
+        });
+      }
+    } catch (err) {
+      console.error("Failed to generate report:", err);
+      setGenerateError({ sessionId, message: "Could not generate the report. Please try again." });
+    } finally {
+      setGeneratingSessionId(null);
+    }
+  };
+
+  const renderGenerateReportButton = (sessionId: string) => (
+    <div className="flex flex-col items-end gap-1">
+      <button
+        type="button"
+        onClick={() => handleGenerateReport(sessionId)}
+        disabled={generatingSessionId !== null}
+        className="px-3.5 py-1.5 rounded-xl bg-[#FFD028] hover:bg-[#ffc524] text-[#0A1D3D] font-black text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] inline-flex items-center gap-1.5 transition-all disabled:opacity-60 cursor-pointer"
+        style={{ fontFamily: JAKARTA }}
+      >
+        {generatingSessionId === sessionId ? (
+          <>
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <span>Generating Report...</span>
+          </>
+        ) : (
+          <>
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Generate Report</span>
+          </>
+        )}
+      </button>
+      {generateError?.sessionId === sessionId && (
+        <span className="text-[11px] font-bold text-rose-600" role="alert">
+          {generateError.message}
+        </span>
+      )}
+    </div>
+  );
 
   const handleDownloadReportPdf = async (reportSessionId: string) => {
     if (!child || downloadingReportId) return;
@@ -427,6 +498,7 @@ function ChildDetailContent({ params }: PageProps) {
                           View Report
                         </Link>
                       )}
+                      {s.status === "COMPLETED" && !s.hasReport && renderGenerateReportButton(s.id)}
                     </div>
                   </div>
                 ))
@@ -437,7 +509,26 @@ function ChildDetailContent({ params }: PageProps) {
           {/* TAB 3: Reports */}
           {activeTab === "REPORTS" && (
             <div className="space-y-4">
-              {reports.length === 0 ? (
+              {sessionsMissingReport.map((s) => (
+                <div
+                  key={`missing-report-${s.id}`}
+                  className="p-6 rounded-2xl bg-[#FFF8D6] border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D] flex flex-col md:flex-row md:items-center justify-between gap-4"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-amber-600" />
+                      <span className="text-sm font-black text-[#0A1D3D]">Report Not Ready Yet</span>
+                    </div>
+                    <p className="text-xs text-slate-600">
+                      The quest completed on {formatDate(s.completedAt || s.lastActivityAt)} doesn&apos;t have a report yet.
+                      If it was just finished, it may still be generating. Otherwise, generate it now.
+                    </p>
+                  </div>
+                  {renderGenerateReportButton(s.id)}
+                </div>
+              ))}
+
+              {reports.length === 0 && sessionsMissingReport.length > 0 ? null : reports.length === 0 ? (
                 <div className="p-10 rounded-2xl bg-white border border-slate-200 text-center space-y-2">
                   <FileText className="w-8 h-8 text-slate-300 mx-auto" />
                   <h3 className="text-sm font-bold text-slate-700">No Assessment Reports Yet</h3>

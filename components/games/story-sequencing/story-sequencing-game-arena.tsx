@@ -6,6 +6,7 @@ import {
   startQuestLevel,
   saveQuestCheckpoint,
   completeQuestLevel,
+  generateQuestReport,
 } from "@/lib/api/quest";
 import { fetchCurrentSession } from "@/lib/api/session";
 import { GameTutorialGuide } from "@/components/game-tutorial/game-tutorial-guide";
@@ -192,6 +193,19 @@ export function StorySequencingGameArena({
 
         if (result.success) {
           setSubmissionStatus("success");
+
+          // Quest finished (all 18 levels): start report generation in the background.
+          // We don't wait for it — the child is redirected to the homepage as usual.
+          // If it fails, the parent dashboard shows a "Generate Report" retry button.
+          if (result.isQuestComplete) {
+            const completedSessionId = result.sessionId || activeSessionId;
+            void generateQuestReport(completedSessionId, { keepalive: true }).then((res) => {
+              if (!res.success) {
+                console.warn("[StorySequencing] Background report generation failed:", res.message);
+              }
+            });
+          }
+
           // If final level of story sequencing (Game 6 Level 3) -> routes to homepage or report!
           let nextRoute =
             result.nextLevelRoute && !result.nextLevelRoute.includes("report")

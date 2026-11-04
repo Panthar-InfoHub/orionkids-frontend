@@ -370,6 +370,52 @@ export interface QuestReportData {
 }
 
 /**
+ * Asks the backend to generate (or return the already-saved) report for a completed quest session.
+ * Safe to call more than once: if a report already exists, the backend returns it without regenerating.
+ *
+ * Pass `keepalive: true` when firing it in the background right before navigating away,
+ * so the browser still delivers the request even if the page is unloaded.
+ */
+export async function generateQuestReport(
+  sessionId: string,
+  options?: { keepalive?: boolean }
+): Promise<{ success: boolean; report?: QuestReportData; message?: string }> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) {
+    return { success: false, message: "Backend API URL not configured." };
+  }
+
+  try {
+    const res = await fetch(
+      `${apiUrl}/api/quest/sessions/${encodeURIComponent(sessionId)}/report`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        keepalive: options?.keepalive ?? false,
+      }
+    );
+
+    const body = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      return {
+        success: false,
+        message: body?.error?.message || "Could not generate the report. Please try again.",
+      };
+    }
+
+    return { success: true, report: (body?.data || body) as QuestReportData };
+  } catch (err) {
+    return {
+      success: false,
+      message: err instanceof Error ? err.message : "Could not generate the report. Please try again.",
+    };
+  }
+}
+
+/**
  * Download authoritative PDF assessment report.
  */
 export async function downloadQuestReportPdf(
