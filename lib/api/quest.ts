@@ -241,7 +241,20 @@ export async function completeQuestLevel(
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   if (!apiUrl) {
     const isLastOfGame = payload.levelNumber >= 3;
-    const nextRoute = isLastOfGame ? "/games/card-flip?level=1" : `/games/${payload.gameKey}?level=${payload.levelNumber + 1}`;
+    const nextGameMap: Record<QuestGameKey, QuestGameKey | "report"> = {
+      stroop: "card-flip",
+      "card-flip": "pattern",
+      pattern: "odd-one-out",
+      "odd-one-out": "rule-discovery",
+      "rule-discovery": "story-sequencing",
+      "story-sequencing": "report",
+    };
+    const nextGame = nextGameMap[payload.gameKey];
+    const nextRoute = isLastOfGame
+      ? nextGame === "report"
+        ? `/report?sessionId=${sessionId}`
+        : `/games/${nextGame}?level=1`
+      : `/games/${payload.gameKey}?level=${payload.levelNumber + 1}`;
     return {
       success: true,
       message: `Level ${payload.levelNumber} completed (demo mode)`,

@@ -33,19 +33,19 @@ const ODD_TRIALS: Record<number, OddTrial[]> = {
       items: [
         { symbol: "⭐", label: "Star", isOdd: false },
         { symbol: "🌟", label: "Glowing Star", isOdd: false },
-        { symbol: "🛸", label: "UFO", isOdd: true },
+        { symbol: "🛰️", label: "Satellite", isOdd: true },
         { symbol: "✨", label: "Sparkles", isOdd: false },
       ],
-      categoryHint: "Starlight vs Spacecraft",
+      categoryHint: "Natural Starlight vs Orbiting Satellite",
     },
     {
       items: [
-        { symbol: "🌙", label: "Crescent Moon", isOdd: true },
-        { symbol: "🚀", label: "Spaceship", isOdd: false },
-        { symbol: "🛰️", label: "Satellite", isOdd: false },
-        { symbol: "🛸", label: "Flying Saucer", isOdd: false },
+        { symbol: "🌕", label: "Full Moon", isOdd: false },
+        { symbol: "🌙", label: "Crescent Moon", isOdd: false },
+        { symbol: "☄️", label: "Comet", isOdd: false },
+        { symbol: "🚁", label: "Helicopter", isOdd: true },
       ],
-      categoryHint: "Machines vs Celestial Bodies",
+      categoryHint: "Celestial Bodies vs Earth Helicopter",
     },
   ],
   2: [
@@ -60,32 +60,50 @@ const ODD_TRIALS: Record<number, OddTrial[]> = {
     },
     {
       items: [
-        { symbol: "🪐", label: "Ringed Planet", isOdd: false },
-        { symbol: "🌕", label: "Moon", isOdd: false },
-        { symbol: "🚗", label: "Car", isOdd: true },
-        { symbol: "☄️", label: "Comet", isOdd: false },
+        { symbol: "👨‍🚀", label: "Astronaut", isOdd: false },
+        { symbol: "👩‍🚀", label: "Cosmonaut", isOdd: false },
+        { symbol: "👽", label: "Alien Explorer", isOdd: false },
+        { symbol: "🐙", label: "Octopus", isOdd: true },
       ],
-      categoryHint: "Space Objects vs Earth Vehicle",
+      categoryHint: "Space Inhabitants vs Sea Creature",
+    },
+    {
+      items: [
+        { symbol: "🔭", label: "Telescope", isOdd: false },
+        { symbol: "📡", label: "Radar Dish", isOdd: false },
+        { symbol: "🔬", label: "Spectrometer", isOdd: false },
+        { symbol: "🎸", label: "Guitar", isOdd: true },
+      ],
+      categoryHint: "Observatory Scientific Tools vs Music",
     },
   ],
   3: [
     {
       items: [
-        { symbol: "🎸", label: "Guitar", isOdd: true },
-        { symbol: "🔭", label: "Telescope", isOdd: false },
-        { symbol: "📡", label: "Radar Dish", isOdd: false },
-        { symbol: "🔬", label: "Spectrometer", isOdd: false },
+        { symbol: "🛸", label: "Flying Saucer", isOdd: false },
+        { symbol: "🚀", label: "Space Shuttle", isOdd: false },
+        { symbol: "🛰️", label: "Space Station", isOdd: false },
+        { symbol: "🚂", label: "Steam Train", isOdd: true },
       ],
-      categoryHint: "Astronomy Tools vs Musical Instrument",
+      categoryHint: "Interstellar Craft vs Ground Railway",
     },
     {
       items: [
-        { symbol: "👨‍🚀", label: "Astronaut", isOdd: false },
-        { symbol: "👩‍🚀", label: "Cosmonaut", isOdd: false },
-        { symbol: "🐠", label: "Fish", isOdd: true },
-        { symbol: "👽", label: "Space Explorer", isOdd: false },
+        { symbol: "🌌", label: "Spiral Galaxy", isOdd: false },
+        { symbol: "🌠", label: "Shooting Star", isOdd: false },
+        { symbol: "🪐", label: "Gas Giant", isOdd: false },
+        { symbol: "✂️", label: "Scissors", isOdd: true },
       ],
-      categoryHint: "Space Inhabitants vs Sea Creature",
+      categoryHint: "Galactic Phenomena vs Desk Supply",
+    },
+    {
+      items: [
+        { symbol: "🐶", label: "Space Pup", isOdd: false },
+        { symbol: "🐵", label: "Astro Chimp", isOdd: false },
+        { symbol: "🐱", label: "Cosmo Kitten", isOdd: false },
+        { symbol: "🍕", label: "Pizza Slice", isOdd: true },
+      ],
+      categoryHint: "Living Astro Pioneers vs Food",
     },
   ],
 };
@@ -244,9 +262,21 @@ export function OddOneOutGameArena({
 
             if (result.success) {
               setSubmissionStatus("success");
-              let nextRoute =
-                result.nextLevelRoute ||
-                (level < 3 ? `/games/odd-one-out?level=${level + 1}` : "/games/rule-discovery?level=1");
+              const fallbackNext =
+                level < 3
+                  ? `/games/odd-one-out?level=${level + 1}`
+                  : "/games/rule-discovery?level=1";
+
+              let nextRoute = result.nextLevelRoute;
+              // If nextRoute is missing or repeating current level of odd-one-out, strictly advance forward
+              if (
+                !nextRoute ||
+                (nextRoute.includes("/games/odd-one-out") &&
+                  nextRoute.includes(`level=${level}`))
+              ) {
+                nextRoute = fallbackNext;
+              }
+
               if (activeSessionId && !nextRoute.includes("sessionId=")) {
                 nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
               }

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import {
   startQuestLevel,
@@ -520,12 +521,12 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
 
 
       {/* "Are you tired?" Modal when moves > 4 */}
-      {showTiredModal && (
+      {showTiredModal && typeof document !== "undefined" && createPortal(
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="tired-modal-title"
-          className="fixed inset-0 z-50 bg-[#0A1D3D]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[9999] bg-[#0A1D3D]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
         >
           <div className="relative w-full max-w-[420px] rounded-[24px] bg-white border-3 border-[#0A1D3D] shadow-[6px_6px_0px_#0A1D3D] p-6 sm:p-7 flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
             {/* Friendly Sleeping / Relaxed Mascot Icon */}
@@ -572,7 +573,8 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { QuestGameKey } from "@/lib/api/quest";
 import { TutorialStageId, LevelTutorialConfig } from "@/types/game-tutorial";
@@ -31,6 +32,12 @@ export function GameTutorialModal({
   onComplete,
   className = "",
 }: GameTutorialModalProps) {
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+
   // Always use the canonical 1-game tutorial (1 preview per game, not per level)
   const tutorialConfig: LevelTutorialConfig = getGameTutorial(gameKey);
 
@@ -49,6 +56,16 @@ export function GameTutorialModal({
       setPracticeFeedback(null);
     }
   }, [isOpen, gameKey]);
+
+  // Lock outer page scrolling when tutorial is open
+  useEffect(() => {
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isOpen]);
 
   // Handle escape key to skip
   useEffect(() => {
@@ -91,7 +108,7 @@ export function GameTutorialModal({
     }
   }, [handleStageComplete, onComplete, onClose]);
 
-  if (!isOpen) return null;
+  if (!mounted || !isOpen) return null;
 
   // Determine active mascot message and mood
   let mascotMessage = tutorialConfig.demo.instruction;
@@ -118,22 +135,22 @@ export function GameTutorialModal({
     mascotMood = "cheering";
   }
 
-  return (
+  const modalContent = (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="tutorial-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-[#0A1D3D]/80 backdrop-blur-xs select-none"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 bg-[#0A1D3D]/80 backdrop-blur-xs select-none"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.94, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.94, y: 10 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className={`relative w-full max-w-[620px] max-h-[92vh] overflow-y-auto bg-white rounded-[28px] sm:rounded-[36px] border-2 border-[#0A1D3D] shadow-[6px_6px_0_0_#FFE066] flex flex-col justify-between ${className}`}
+        className={`relative w-full max-w-[620px] max-h-[90vh] bg-white rounded-[28px] sm:rounded-[36px] border-2 border-[#0A1D3D] shadow-[6px_6px_0_0_#FFE066] flex flex-col overflow-hidden ${className}`}
       >
-        {/* Top Header Bar: 1 Tutorial per Game (No Level-Specific Confusion) */}
-        <div className="w-full bg-[#F8FAFC] border-b-2 border-slate-200 p-3 sm:p-3.5 flex items-center justify-between gap-3">
+        {/* Top Header Bar: Pinned at top */}
+        <div className="w-full bg-[#F8FAFC] border-b-2 border-slate-200 p-3 sm:p-3.5 flex items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl sm:text-3xl shrink-0" aria-hidden="true">
               {tutorialConfig.badgeIcon || "🎓"}
@@ -164,8 +181,8 @@ export function GameTutorialModal({
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="p-3.5 sm:p-5 flex flex-col items-center gap-3">
+        {/* Modal Scrollable Body */}
+        <div className="p-3.5 sm:p-5 pb-6 flex flex-col items-center gap-3 overflow-y-auto flex-1">
           {/* Stage Progress Stepper */}
           <TutorialStageNav
             currentStage={currentStage}
@@ -187,7 +204,7 @@ export function GameTutorialModal({
           )}
 
           {/* Dynamic Stage Views */}
-          <div className="w-full flex flex-col items-center">
+          <div className="w-full flex flex-col items-center pb-2">
             <AnimatePresence mode="wait">
               {currentStage === "SHOW_ME" && (
                 <motion.div
@@ -247,4 +264,6 @@ export function GameTutorialModal({
       </motion.div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
