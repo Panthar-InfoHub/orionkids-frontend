@@ -61,7 +61,7 @@ const ODD_TRIALS: Record<number, OddTrial[]> = {
     {
       items: [
         { symbol: "👨‍🚀", label: "Astronaut", isOdd: false },
-        { symbol: "👩‍🚀", label: "Cosmonaut", isOdd: false },
+        { symbol: "🤖", label: "Space Robot", isOdd: false },
         { symbol: "👽", label: "Alien Explorer", isOdd: false },
         { symbol: "🐙", label: "Octopus", isOdd: true },
       ],
