@@ -83,8 +83,15 @@ export interface ChildQuestSessionItem {
     generatedAt: string;
     overallAccuracy: number;
     totalDurationMs: number;
+    emailStatus?: ReportEmailStatus;
+    emailRecipient?: string | null;
+    emailSentAt?: string | null;
+    emailError?: string | null;
   } | null;
 }
+
+/** Status of the "report ready" email sent to the parent */
+export type ReportEmailStatus = "NOT_SENT" | "PENDING" | "SENT" | "FAILED";
 
 export interface ChildReportItem {
   id: string;
@@ -105,6 +112,10 @@ export interface ChildReportItem {
   aiReport?: any;
   schemaVersion: number;
   generatedAt: string;
+  emailStatus?: ReportEmailStatus;
+  emailRecipient?: string | null;
+  emailSentAt?: string | null;
+  emailError?: string | null;
 }
 
 export interface CreateChildPayload {
@@ -356,6 +367,36 @@ export async function fetchChildReports(
   } catch (err) {
     console.error(`[children] Error fetching reports for child ${childId}:`, err);
     return [];
+  }
+}
+
+/**
+ * Resends the report email to the child's parent (the previous link stops working).
+ * Sending happens in the background; the status becomes PENDING, then SENT or FAILED.
+ */
+export async function resendChildReportEmail(
+  childId: string,
+  sessionId: string
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/children/${encodeURIComponent(childId)}/quest-sessions/${encodeURIComponent(sessionId)}/report/resend-email`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { Accept: "application/json" },
+      }
+    );
+    const payload = await res.json().catch(() => null);
+    if (!res.ok || !payload?.success) {
+      return {
+        success: false,
+        message: payload?.error?.message || "Could not resend the report email. Please try again.",
+      };
+    }
+    return { success: true };
+  } catch {
+    return { success: false, message: "Could not reach the server. Please try again." };
   }
 }
 

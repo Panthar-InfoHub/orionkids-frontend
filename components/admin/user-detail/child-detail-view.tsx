@@ -22,6 +22,7 @@ import {
   Award,
   ArrowLeft,
   FileText,
+  Loader2,
 } from "lucide-react";
 import {
   fetchAdminChildDetail,
@@ -29,6 +30,7 @@ import {
   fetchAdminChildQuestSessionDetail,
   fetchAdminChildSessionAttempts,
   fetchAdminChildSessionReport,
+  updateAdminChildParentEmail,
   type AdminChildDetail,
   type AdminQuestSessionItem,
   type AdminQuestSessionDetail,
@@ -74,6 +76,50 @@ export function ChildDetailView({
   // Status & Error
   const [isLoading, setIsLoading] = useState(true);
   const [isSessionLoading, setIsSessionLoading] = useState(false);
+
+  // Admin-only: correct the parent email (where the report email is sent)
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [emailDraft, setEmailDraft] = useState("");
+  const [emailConfirmDraft, setEmailConfirmDraft] = useState("");
+  const [isSavingEmail, setIsSavingEmail] = useState(false);
+  const [emailEditMessage, setEmailEditMessage] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const startEditingEmail = () => {
+    setEmailDraft(childDetail?.parentEmail || "");
+    setEmailConfirmDraft("");
+    setEmailEditMessage(null);
+    setIsEditingEmail(true);
+  };
+
+  const handleSaveParentEmail = async () => {
+    const next = emailDraft.trim().toLowerCase();
+    if (!next || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(next)) {
+      setEmailEditMessage({ ok: false, text: "Please enter a valid email address." });
+      return;
+    }
+    if (next !== emailConfirmDraft.trim().toLowerCase()) {
+      setEmailEditMessage({ ok: false, text: "Email addresses do not match." });
+      return;
+    }
+    setIsSavingEmail(true);
+    setEmailEditMessage(null);
+    try {
+      const updated = await updateAdminChildParentEmail(userId, childProfileId, next);
+      setChildDetail((prev) => (prev ? { ...prev, parentEmail: updated.parentEmail } : prev));
+      setIsEditingEmail(false);
+      setEmailEditMessage({
+        ok: true,
+        text: "Parent email updated. Open the report and press \"Resend email\" to send it to the new address.",
+      });
+    } catch (err) {
+      setEmailEditMessage({
+        ok: false,
+        text: err instanceof Error ? err.message : "Failed to update the parent email.",
+      });
+    } finally {
+      setIsSavingEmail(false);
+    }
+  };
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // 1. Fetch child profile and child-specific quest sessions
@@ -347,9 +393,73 @@ export function ChildDetailView({
                   <span>·</span>
                   <div className="flex items-center gap-1">
                     <Mail className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{childDetail.parentEmail}</span>
+                    <span title="Report emails are sent to this address">{childDetail.parentEmail}</span>
+                    {!isEditingEmail && (
+                      <button
+                        type="button"
+                        onClick={startEditingEmail}
+                        className="ml-1 px-2 py-0.5 rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-[10px] font-black text-[#0A1D3D] cursor-pointer"
+                      >
+                        Edit parent email
+                      </button>
+                    )}
                   </div>
                 </div>
+
+                {isEditingEmail && (
+                  <div className="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2 max-w-xl">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <input
+                        type="email"
+                        value={emailDraft}
+                        onChange={(e) => setEmailDraft(e.target.value)}
+                        placeholder="New parent email"
+                        aria-label="New parent email"
+                        autoComplete="off"
+                        className="h-9 px-3 rounded-lg border border-slate-300 text-xs focus:outline-none focus:border-[#00BCD4]"
+                      />
+                      <input
+                        type="email"
+                        value={emailConfirmDraft}
+                        onChange={(e) => setEmailConfirmDraft(e.target.value)}
+                        placeholder="Confirm parent email"
+                        aria-label="Confirm parent email"
+                        autoComplete="off"
+                        className="h-9 px-3 rounded-lg border border-slate-300 text-xs focus:outline-none focus:border-[#00BCD4]"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleSaveParentEmail}
+                        disabled={isSavingEmail}
+                        className="px-3 py-1.5 rounded-lg bg-[#0A1D3D] text-white text-[11px] font-black inline-flex items-center gap-1.5 disabled:opacity-60 cursor-pointer"
+                      >
+                        {isSavingEmail && <Loader2 className="w-3 h-3 animate-spin" />}
+                        <span>Save email</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsEditingEmail(false);
+                          setEmailEditMessage(null);
+                        }}
+                        disabled={isSavingEmail}
+                        className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-[11px] font-bold text-slate-600 cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {emailEditMessage && (
+                  <p
+                    className={`mt-2 text-[11px] font-bold ${emailEditMessage.ok ? "text-emerald-700" : "text-rose-600"}`}
+                    role={emailEditMessage.ok ? "status" : "alert"}
+                  >
+                    {emailEditMessage.text}
+                  </p>
+                )}
               </div>
             </div>
 

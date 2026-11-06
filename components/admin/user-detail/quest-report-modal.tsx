@@ -18,12 +18,15 @@ import {
   Loader2,
   FileText,
   Lightbulb,
+  Mail,
 } from "lucide-react";
 import {
   downloadAdminReportPdf,
   regenerateAdminReport,
+  resendAdminReportEmail,
   type AdminSessionReportResult,
 } from "@/lib/api/admin";
+import { ReportEmailStatus } from "@/components/reports/report-email-status";
 
 interface QuestReportModalProps {
   reportResult: AdminSessionReportResult | null;
@@ -42,6 +45,8 @@ export function QuestReportModal({
   const [isDownloading, setIsDownloading] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [currentReport, setCurrentReport] = useState(reportResult?.report || null);
+  const [isResending, setIsResending] = useState(false);
+  const [emailFeedback, setEmailFeedback] = useState<{ ok: boolean; message: string } | null>(null);
 
   React.useEffect(() => {
     setCurrentReport(reportResult?.report || null);
@@ -70,12 +75,47 @@ export function QuestReportModal({
     }
   };
 
+  const handleResendEmail = async () => {
+    if (!report?.questSessionId || isResending) return;
+    setIsResending(true);
+    setEmailFeedback(null);
+    try {
+      const state = await resendAdminReportEmail(report.questSessionId);
+      setCurrentReport({
+        ...report,
+        emailStatus: state.emailStatus,
+        emailRecipient: state.emailRecipient,
+        emailError: null,
+      });
+      setEmailFeedback({
+        ok: true,
+        message: `A new link is being emailed to ${state.emailRecipient ?? "the parent"}. The previous link no longer works.`,
+      });
+    } catch (err) {
+      setEmailFeedback({
+        ok: false,
+        message: err instanceof Error ? err.message : "Failed to resend the report email",
+      });
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   const handleRegenerate = async () => {
     if (!report?.questSessionId || isRegenerating) return;
+    const confirmed = window.confirm(
+      "This will create a new report with OpenAI and email the parent a new link (the previous link will stop working). Continue?"
+    );
+    if (!confirmed) return;
     setIsRegenerating(true);
     try {
       const updated = await regenerateAdminReport(report.questSessionId);
-      setCurrentReport(updated);
+      // The backend now rebuilds the PDF and emails the parent in the background
+      setCurrentReport({ ...updated, emailStatus: "PENDING" });
+      setEmailFeedback({
+        ok: true,
+        message: "Report regenerated. A new link is being emailed to the parent.",
+      });
       if (onReportUpdated) {
         onReportUpdated(updated);
       }
@@ -218,6 +258,46 @@ export function QuestReportModal({
             </div>
           ) : report ? (
             <>
+              {/* Parent email delivery */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <span className="block text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    Parent report email
+                  </span>
+                  <ReportEmailStatus
+                    status={report.emailStatus}
+                    recipient={report.emailRecipient}
+                    sentAt={report.emailSentAt}
+                    error={report.emailError}
+                    showFullEmail
+                    showError
+                  />
+                  {emailFeedback && (
+                    <p
+                      className={`text-[11px] font-bold ${emailFeedback.ok ? "text-emerald-700" : "text-rose-600"}`}
+                      role={emailFeedback.ok ? "status" : "alert"}
+                    >
+                      {emailFeedback.message}
+                    </p>
+                  )}
+                </div>
+                {report.emailStatus !== "PENDING" && (
+                  <button
+                    type="button"
+                    onClick={handleResendEmail}
+                    disabled={isResending}
+                    className="self-start sm:self-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border-2 border-[#0A1D3D] text-xs font-black text-[#0A1D3D] transition-colors cursor-pointer disabled:opacity-60"
+                  >
+                    {isResending ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Mail className="w-3.5 h-3.5" />
+                    )}
+                    <span>{report.emailStatus === "SENT" ? "Resend email" : "Send email to parent"}</span>
+                  </button>
+                )}
+              </div>
+
               {/* Student Overview Header Card */}
               <div className="p-5 rounded-2xl bg-white border-2 border-[#0A1D3D] shadow-[4px_4px_0px_#0A1D3D] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>

@@ -27,6 +27,7 @@ import {
   fetchChildQuestSessions,
   fetchChildReports,
   downloadChildReportPdf,
+  resendChildReportEmail,
   type ChildWithStats,
   type ChildProgressResponse,
   type ChildQuestSessionItem,
@@ -34,6 +35,7 @@ import {
 } from "@/lib/api/children";
 import { startChildQuest } from "@/lib/api/session";
 import { generateQuestReport } from "@/lib/api/quest";
+import { ReportEmailStatus } from "@/components/reports/report-email-status";
 import { PageCurtain } from "@/components/layout/page-curtain";
 import { FooterSection } from "@/components/layout/footer-section";
 
@@ -63,6 +65,12 @@ function ChildDetailContent({ params }: PageProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [generatingSessionId, setGeneratingSessionId] = useState<string | null>(null);
   const [generateError, setGenerateError] = useState<{ sessionId: string; message: string } | null>(null);
+  const [resendingSessionId, setResendingSessionId] = useState<string | null>(null);
+  const [resendFeedback, setResendFeedback] = useState<{
+    sessionId: string;
+    ok: boolean;
+    message: string;
+  } | null>(null);
 
   // Completed quests whose report is missing (e.g. background generation failed)
   const sessionsMissingReport = sessions.filter((s) => s.status === "COMPLETED" && !s.hasReport);
@@ -131,6 +139,38 @@ function ChildDetailContent({ params }: PageProps) {
       )}
     </div>
   );
+
+  /**
+   * Resends the report email to the parent. Sending runs in the background,
+   * so the list is refreshed now (shows "Sending…") and again shortly after.
+   */
+  const handleResendEmail = async (reportSessionId: string) => {
+    if (!child || resendingSessionId) return;
+    setResendingSessionId(reportSessionId);
+    setResendFeedback(null);
+    try {
+      const result = await resendChildReportEmail(child.id, reportSessionId);
+      if (result.success) {
+        setResendFeedback({
+          sessionId: reportSessionId,
+          ok: true,
+          message: "A new link is being emailed to the parent. The previous link no longer works.",
+        });
+        await refreshReportData();
+        setTimeout(() => {
+          void refreshReportData();
+        }, 8000);
+      } else {
+        setResendFeedback({
+          sessionId: reportSessionId,
+          ok: false,
+          message: result.message || "Could not resend the report email. Please try again.",
+        });
+      }
+    } finally {
+      setResendingSessionId(null);
+    }
+  };
 
   const handleDownloadReportPdf = async (reportSessionId: string) => {
     if (!child || downloadingReportId) return;
@@ -574,6 +614,40 @@ function ChildDetailContent({ params }: PageProps) {
                       <div className="text-[11px] text-slate-400 pt-1">
                         Report Generated: {formatDate(r.generatedAt)} · Overall Accuracy: {Math.round(r.overallAccuracy)}%
                       </div>
+
+                      {/* Parent email status + resend */}
+                      <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2">
+                        <ReportEmailStatus
+                          status={r.emailStatus}
+                          recipient={r.emailRecipient}
+                          sentAt={r.emailSentAt}
+                        />
+                        {r.emailStatus !== "PENDING" && (
+                          <button
+                            type="button"
+                            onClick={() => handleResendEmail(r.questSessionId)}
+                            disabled={resendingSessionId !== null}
+                            className="self-start px-3 py-1 rounded-lg bg-white hover:bg-slate-50 text-[#0A1D3D] font-black text-[11px] border border-[#0A1D3D] inline-flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
+                          >
+                            {resendingSessionId === r.questSessionId ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <RotateCcw className="w-3 h-3" />
+                            )}
+                            <span>
+                              {r.emailStatus === "SENT" ? "Resend email" : "Send email to parent"}
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                      {resendFeedback?.sessionId === r.questSessionId && (
+                        <p
+                          className={`text-[11px] font-bold ${resendFeedback.ok ? "text-emerald-700" : "text-rose-600"}`}
+                          role={resendFeedback.ok ? "status" : "alert"}
+                        >
+                          {resendFeedback.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
