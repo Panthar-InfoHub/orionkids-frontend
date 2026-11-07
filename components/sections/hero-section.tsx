@@ -1,14 +1,17 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { fetchCurrentUserProfile, getRouteForUserProfile } from "@/lib/api/auth";
+import { TeaserVideoModal } from "./teaser-video-modal";
 
 export function HeroSection() {
   const router = useRouter();
   const [isRouting, setIsRouting] = useState(false);
+  const [isTeaserOpen, setIsTeaserOpen] = useState(false);
+  const closeTeaser = useCallback(() => setIsTeaserOpen(false), []);
 
   const handleLaunchQuest = async () => {
     if (isRouting) return;
@@ -276,6 +279,8 @@ export function HeroSection() {
               {/* Left Button: Enjoy a Quick 2-Minute Adventure */}
               <button
                 type="button"
+                onClick={() => setIsTeaserOpen(true)}
+                aria-haspopup="dialog"
                 className="h-[48px] sm:h-[50px] xl:h-[52px] px-4 sm:px-4 md:px-5 xl:px-6 rounded-2xl bg-white text-[#0A1D3D] font-black text-sm sm:text-[13px] md:text-sm xl:text-[15px] whitespace-nowrap border-[2.5px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_6px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center gap-2 sm:gap-2.5 transition-all cursor-pointer select-none shrink-0"
               >
                 {/* Circular play icon matching exact Figma specs */}
@@ -410,7 +415,7 @@ export function HeroSection() {
         </div>
       </div>
 
-    
+      <TeaserVideoModal open={isTeaserOpen} onClose={closeTeaser} />
     </section>
   );
 }

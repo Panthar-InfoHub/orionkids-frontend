@@ -1,0 +1,3 @@
+# Original, uncompressed source media (local backup only — never deployed).
+# The optimized versions served by the site live in public/videos/.
+/media-source

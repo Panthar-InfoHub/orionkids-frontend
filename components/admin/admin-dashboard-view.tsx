@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Hourglass,
   FileText,
+  PencilRuler,
 } from "lucide-react";
 import {
   fetchAdminUsers,
@@ -26,10 +27,11 @@ import {
 import { UserTable } from "./user-table";
 import { AccessRequestsSection } from "./access-requests-section";
 import { AdminReportsSection } from "./admin-reports-section";
+import { CustomSheetRequestsSection } from "./custom-sheet-requests-section";
 
 export function AdminDashboardView() {
   // State
-  const [adminTab, setAdminTab] = useState<"REQUESTS" | "USERS" | "REPORTS">("REQUESTS");
+  const [adminTab, setAdminTab] = useState<"REQUESTS" | "USERS" | "REPORTS" | "CUSTOM_SHEETS">("REQUESTS");
   const [users, setUsers] = useState<AdminUserItem[]>([]);
   const [meta, setMeta] = useState<AdminPaginationMeta>({
     page: 1,
@@ -382,7 +384,7 @@ export function AdminDashboardView() {
       )}
 
       {/* View Switcher Tabs */}
-      <div className="flex border-b border-slate-200 gap-4 pt-2">
+      <div className="flex border-b border-slate-200 gap-4 pt-2 overflow-x-auto [&>button]:shrink-0 [&>button]:whitespace-nowrap">
         <button
           type="button"
           onClick={() => setAdminTab("REQUESTS")}
@@ -432,6 +434,27 @@ export function AdminDashboardView() {
             </span>
           )}
         </button>
+
+        <button
+          type="button"
+          onClick={() => setAdminTab("CUSTOM_SHEETS")}
+          className={`pb-3.5 px-3 font-black text-sm flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+            adminTab === "CUSTOM_SHEETS"
+              ? "border-[#00BCD4] text-[#00838F]"
+              : "border-transparent text-slate-500 hover:text-slate-800"
+          }`}
+        >
+          <PencilRuler className="w-4 h-4" />
+          <span>Custom Sheet Requests</span>
+          {(overview?.customSheetRequests?.new ?? 0) > 0 && (
+            <span
+              className="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[11px] font-black"
+              title="New requests not yet reviewed"
+            >
+              {overview?.customSheetRequests?.new}
+            </span>
+          )}
+        </button>
       </div>
 
       {/* Tab Content */}
@@ -439,6 +462,8 @@ export function AdminDashboardView() {
         <AccessRequestsSection />
       ) : adminTab === "REPORTS" ? (
         <AdminReportsSection />
+      ) : adminTab === "CUSTOM_SHEETS" ? (
+        <CustomSheetRequestsSection onChanged={loadOverview} />
       ) : (
         <UserTable
           users={users}

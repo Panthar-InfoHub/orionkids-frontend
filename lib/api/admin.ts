@@ -83,6 +83,10 @@ export interface AdminOverviewResult {
   children: {
     total: number;
   };
+  /** Optional so an older backend without this field doesn't break the UI */
+  customSheetRequests?: {
+    new: number;
+  };
   sessions: {
     total: number;
     completed: number;
