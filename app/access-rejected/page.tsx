@@ -23,6 +23,7 @@ import {
   type AccessRequestItem,
 } from "@/lib/api/registration";
 import { performSignOut } from "@/lib/api/auth";
+import { CopyrightNotice } from "@/components/layout/copyright-notice";
 
 export default function AccessRejectedPage() {
   const router = useRouter();
@@ -220,7 +221,7 @@ export default function AccessRejectedPage() {
       {/* Footer */}
       <footer className="w-full bg-white border-t border-[#E7EDF6] py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left text-xs text-[#526176] font-medium">
-          <span>© 2026 OrionKids Digital Solutions Pvt. Ltd. All rights reserved.</span>
+          <CopyrightNotice />
           <span className="text-slate-400">
             For inquiries, contact support@orionkids.com
           </span>

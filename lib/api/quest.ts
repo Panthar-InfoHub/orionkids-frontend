@@ -204,31 +204,19 @@ export async function startQuestLevel(
   };
 }
 
+import { queueCheckpointSave } from "./checkpoint-queue";
+
 /**
  * Persists an in-game checkpoint for an in-progress level attempt.
+ * Leverages in-flight deduplication and ordered delivery to avoid redundant network overhead.
  */
 export async function saveQuestCheckpoint(
   sessionId: string,
   attemptId: string,
   checkpoint: Record<string, unknown>
 ): Promise<boolean> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) return true;
-
-  try {
-    const res = await fetch(
-      `${apiUrl}/api/quest/sessions/${sessionId}/attempts/${attemptId}/checkpoint`,
-      {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ checkpoint }),
-      }
-    );
-    return res.ok;
-  } catch {
-    return false;
-  }
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  return queueCheckpointSave(apiUrl, sessionId, attemptId, checkpoint);
 }
 
 /**

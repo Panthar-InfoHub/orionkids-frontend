@@ -96,6 +96,23 @@ export function StorySequencingGameArena({
   const [isVerifying, setIsVerifying] = useState(false);
   const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string } | null>(null);
   const startTimeRef = useRef<number>(Date.now());
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const scheduleTimeout = (fn: () => void, delayMs: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((t) => t !== id);
+      fn();
+    }, delayMs);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
+  }, []);
 
   // Derived available cards: cards that have not yet been placed into the story sequence
   const availableCards = shuffled.filter(
@@ -204,7 +221,7 @@ export function StorySequencingGameArena({
     });
 
     // Smooth fast transition
-    setTimeout(async () => {
+    scheduleTimeout(async () => {
       setSubmissionStatus("submitting");
       const accuracy = Math.round((correctCount / mission.steps.length) * 100);
       const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
@@ -246,7 +263,7 @@ export function StorySequencingGameArena({
           setNextLevelRoute(nextRoute);
 
           // Auto-advance immediately without asking
-          setTimeout(() => {
+          scheduleTimeout(() => {
             router.push(nextRoute);
           }, level === 3 ? 1200 : 300);
         } else {
@@ -257,7 +274,7 @@ export function StorySequencingGameArena({
         setSubmissionStatus("success");
         const nextRoute = level < 3 ? `/games/story-sequencing?level=${level + 1}` : "/";
         setNextLevelRoute(nextRoute);
-        setTimeout(() => {
+        scheduleTimeout(() => {
           router.push(nextRoute);
         }, level === 3 ? 1200 : 300);
       }

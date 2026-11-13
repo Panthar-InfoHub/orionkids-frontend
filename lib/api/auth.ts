@@ -163,7 +163,7 @@ export function getRouteForUserProfile(
 
   // 1. Restricted account
   if (profile.status === "RESTRICTED") {
-    return "/access-denied";
+    return "/account/restricted";
   }
 
   // 2. Active Administrator

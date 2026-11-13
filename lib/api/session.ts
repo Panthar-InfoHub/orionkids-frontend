@@ -154,34 +154,19 @@ export async function fetchResumeState(
   }
 }
 
+import { queueCheckpointSave } from "./checkpoint-queue";
+
 /**
  * Persists an in-game checkpoint to the active in-progress level attempt.
- * Safe to call periodically during gameplay; cannot overwrite completed stages.
+ * Leverages in-flight deduplication and ordered delivery to avoid redundant network overhead.
  */
 export async function saveAttemptCheckpoint(
   sessionId: string,
   attemptId: string,
   checkpoint: Record<string, unknown>
 ): Promise<boolean> {
-  if (!API_URL) return false;
-
-  try {
-    const res = await fetch(
-      `${API_URL}/api/quest/sessions/${sessionId}/attempts/${attemptId}/checkpoint`,
-      {
-        method: "PATCH",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ checkpoint }),
-      }
-    );
-
-    return res.ok;
-  } catch {
-    return false;
-  }
+  const apiUrl = API_URL || "http://localhost:8080";
+  return queueCheckpointSave(apiUrl, sessionId, attemptId, checkpoint);
 }
 
 /**

@@ -35,6 +35,70 @@ const COSMIC_SYMBOLS = [
   { symbol: "🛰️", name: "Satellite", color: "#FFA450" },
 ];
 
+/**
+ * Isolated, memoized card tile to eliminate full-grid re-rendering when flipping individual cards.
+ */
+const FlipCardItem = React.memo(function FlipCardItem({
+  card,
+  idx,
+  isFlipped,
+  isLocked,
+  isReady,
+  isRecentlyMatched,
+  onCardClick,
+}: {
+  card: CardItem;
+  idx: number;
+  isFlipped: boolean;
+  isLocked: boolean;
+  isReady: boolean;
+  isRecentlyMatched: boolean;
+  onCardClick: (idx: number) => void;
+}) {
+  const handleClick = useCallback(() => {
+    onCardClick(idx);
+  }, [idx, onCardClick]);
+
+  return (
+    <div
+      className="perspective-1000 animate-card-deal"
+      style={{ animationDelay: `${idx * 45}ms` }}
+    >
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={isFlipped || isLocked || !isReady}
+        aria-label={`Card ${idx + 1}: ${isFlipped ? card.name : "Hidden"}`}
+        className={`relative w-[62px] h-[76px] sm:w-[82px] sm:h-[98px] rounded-[14px] transition-transform duration-500 preserve-3d cursor-pointer select-none ${
+          isFlipped
+            ? "[transform:rotateY(180deg)]"
+            : "hover:-translate-y-0.5 hover:shadow-lg"
+        } ${isRecentlyMatched ? "animate-match-celebration" : ""}`}
+      >
+        {/* Back Face (Unflipped - Dark Cosmic Star Pattern) */}
+        <div className="absolute inset-0 w-full h-full rounded-[14px] bg-[#230C4D] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center backface-hidden">
+          <span className="text-xl sm:text-2xl text-[#FFD028] opacity-75 drop-shadow-[0_0_6px_rgba(255,208,40,0.5)]">
+            ★
+          </span>
+        </div>
+
+        {/* Front Face (Flipped - Bright Symbol & Colour) */}
+        <div
+          className="absolute inset-0 w-full h-full rounded-[14px] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center backface-hidden [transform:rotateY(180deg)]"
+          style={{ backgroundColor: card.color }}
+        >
+          <span className="text-2xl sm:text-3xl filter drop-shadow-md select-none">
+            {card.symbol}
+          </span>
+          {card.isMatched && (
+            <span className="absolute top-1 right-1 text-[10px]">✨</span>
+          )}
+        </div>
+      </button>
+    </div>
+  );
+});
+
 function generateCards(level: number): CardItem[] {
   const pairCount = level === 1 ? 4 : level === 2 ? 6 : 8;
   const selected = COSMIC_SYMBOLS.slice(0, pairCount);
@@ -98,6 +162,23 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
 
   const startTimeRef = useRef<number>(Date.now());
   const totalPairs = level === 1 ? 4 : level === 2 ? 6 : 8;
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const scheduleTimeout = useCallback((fn: () => void, delayMs: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((t) => t !== id);
+      fn();
+    }, delayMs);
+    timeoutsRef.current.push(id);
+    return id;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
+  }, []);
 
  
   useEffect(() => {
@@ -236,7 +317,7 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         setIsLocked(false);
         setLastMatchedPair([firstIdx, secondIdx]);
         setShowMatchToast(true);
-        setTimeout(() => {
+        scheduleTimeout(() => {
           setShowMatchToast(false);
           setLastMatchedPair(null);
         }, 500);
@@ -256,19 +337,19 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         // Completion check
         if (newMatched === totalPairs) {
           setIsLocked(true);
-          setTimeout(() => {
+          scheduleTimeout(() => {
             handleLevelFinished(nextMoves);
           }, 300);
         } else if (nextMoves > 4 && !hasPromptedTired) {
           // If moves > 4, prompt "Are you tired?"
           setHasPromptedTired(true);
-          setTimeout(() => {
+          scheduleTimeout(() => {
             setShowTiredModal(true);
           }, 350);
         }
       } else {
         // No match -> quick flip back after 450ms
-        setTimeout(() => {
+        scheduleTimeout(() => {
           newCards[firstIdx].isFlipped = false;
           newCards[secondIdx].isFlipped = false;
           setCards([...newCards]);
@@ -278,7 +359,7 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
           // Check if moves > 4 and tired modal should trigger
           if (nextMoves > 4 && !hasPromptedTired) {
             setHasPromptedTired(true);
-            setTimeout(() => {
+            scheduleTimeout(() => {
               setShowTiredModal(true);
             }, 100);
           }
@@ -467,53 +548,21 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
                   : "grid-cols-4"
               }`}
             >
-              {cards.map((card, idx) => {
-                const isFlipped = introPhase === "reveal" || card.isFlipped || card.isMatched;
-                const isRecentlyMatched =
-                  lastMatchedPair !== null &&
-                  (lastMatchedPair[0] === idx || lastMatchedPair[1] === idx);
-
-                return (
-                  <div
-                    key={card.id}
-                    className="perspective-1000 animate-card-deal"
-                    style={{ animationDelay: `${idx * 45}ms` }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => handleCardClick(idx)}
-                      disabled={isFlipped || isLocked || introPhase !== "ready"}
-                      className={`relative w-[62px] h-[76px] sm:w-[82px] sm:h-[98px] rounded-[14px] transition-transform duration-500 preserve-3d cursor-pointer select-none ${
-                        isFlipped
-                          ? "[transform:rotateY(180deg)]"
-                          : "hover:-translate-y-0.5 hover:shadow-lg"
-                      } ${
-                        isRecentlyMatched ? "animate-match-celebration" : ""
-                      }`}
-                    >
-                      {/* Back Face (Unflipped - Dark Cosmic Star Pattern) */}
-                      <div className="absolute inset-0 w-full h-full rounded-[14px] bg-[#230C4D] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center backface-hidden">
-                        <span className="text-xl sm:text-2xl text-[#FFD028] opacity-75 drop-shadow-[0_0_6px_rgba(255,208,40,0.5)]">
-                          ★
-                        </span>
-                      </div>
-
-                      {/* Front Face (Flipped - Bright Symbol & Colour with Clean UI Matching Border & Shadow) */}
-                      <div
-                        className="absolute inset-0 w-full h-full rounded-[14px] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center backface-hidden [transform:rotateY(180deg)]"
-                        style={{ backgroundColor: card.color }}
-                      >
-                        <span className="text-2xl sm:text-3xl filter drop-shadow-md select-none">
-                          {card.symbol}
-                        </span>
-                        {card.isMatched && (
-                          <span className="absolute top-1 right-1 text-[10px]">✨</span>
-                        )}
-                      </div>
-                    </button>
-                  </div>
-                );
-              })}
+              {cards.map((card, idx) => (
+                <FlipCardItem
+                  key={card.id}
+                  card={card}
+                  idx={idx}
+                  isFlipped={introPhase === "reveal" || card.isFlipped || card.isMatched}
+                  isLocked={isLocked}
+                  isReady={introPhase === "ready"}
+                  isRecentlyMatched={
+                    lastMatchedPair !== null &&
+                    (lastMatchedPair[0] === idx || lastMatchedPair[1] === idx)
+                  }
+                  onCardClick={handleCardClick}
+                />
+              ))}
             </div>
           </div>
         )}

@@ -26,7 +26,7 @@ export async function generatePrintablePdf({
 
   for (const candidatePath of candidatePaths) {
     try {
-      const buffer = await fs.readFile(candidatePath);
+      const buffer = await fs.readFile(/*turbopackIgnore: true*/ candidatePath);
       const loadedDoc = await PDFDocument.load(buffer);
       const pageCount = loadedDoc.getPageCount();
 

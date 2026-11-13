@@ -34,6 +34,132 @@ interface StroopGameArenaProps {
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
+/**
+ * Static Cosmic Atmosphere extracted into a memoized component.
+ * Prevents re-evaluating and re-mounting complex nested SVG filters and paths on every trial state update.
+ */
+const CosmicAtmosphere = React.memo(function CosmicAtmosphere() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Deep Galaxy Gradient */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 20%, #43178C 0%, #200B4B 45%, #0F0326 100%)",
+        }}
+      />
+
+      {/* Planet Left (Pink/Purple with Rings) */}
+      <div className="absolute -left-12 top-6 w-48 h-48 rounded-full opacity-90 blur-[0.3px]">
+        <svg viewBox="0 0 160 160" fill="none" className="w-full h-full">
+          <defs>
+            <radialGradient id="planetPink" cx="40%" cy="40%" r="60%">
+              <stop offset="0%" stopColor="#FF77C6" />
+              <stop offset="60%" stopColor="#C9358E" />
+              <stop offset="100%" stopColor="#6C1450" />
+            </radialGradient>
+          </defs>
+          <circle cx="80" cy="80" r="70" fill="url(#planetPink)" />
+          <circle cx="65" cy="55" r="14" fill="#6C1450" opacity="0.4" />
+          <circle cx="105" cy="95" r="18" fill="#6C1450" opacity="0.4" />
+          <ellipse
+            cx="80"
+            cy="80"
+            rx="92"
+            ry="20"
+            stroke="#FFA8DC"
+            strokeWidth="4.5"
+            opacity="0.75"
+            transform="rotate(-25 80 80)"
+          />
+        </svg>
+      </div>
+
+      {/* Planet Right (Purple/Cyan Cosmic Sphere with ring) */}
+      <div className="absolute -right-12 top-4 w-52 h-52 rounded-full opacity-85 blur-[0.3px]">
+        <svg viewBox="0 0 160 160" fill="none" className="w-full h-full">
+          <defs>
+            <radialGradient id="planetPurple" cx="35%" cy="35%" r="65%">
+              <stop offset="0%" stopColor="#B388FF" />
+              <stop offset="55%" stopColor="#6D3BD8" />
+              <stop offset="100%" stopColor="#321475" />
+            </radialGradient>
+          </defs>
+          <circle cx="80" cy="80" r="70" fill="url(#planetPurple)" />
+          <circle cx="95" cy="65" r="15" fill="#240D55" opacity="0.5" />
+          <circle cx="60" cy="100" r="12" fill="#240D55" opacity="0.4" />
+          <ellipse
+            cx="80"
+            cy="80"
+            rx="90"
+            ry="18"
+            stroke="#D1B8FF"
+            strokeWidth="4"
+            opacity="0.65"
+            transform="rotate(22 80 80)"
+          />
+        </svg>
+      </div>
+
+      {/* Floating Twinkling Stars */}
+      <span className="absolute left-[20%] top-[15%] text-[#FFDE59] text-2xl opacity-90 animate-pulse">
+        ✦
+      </span>
+      <span className="absolute left-[31%] top-[38%] text-[#FF85C0] text-sm opacity-80">
+        ★
+      </span>
+      <span className="absolute right-[21%] top-[14%] text-[#FFDE59] text-2xl opacity-95 animate-pulse">
+        ✦
+      </span>
+      <span className="absolute right-[32%] top-[42%] text-[#A8FFB2] text-xs opacity-70">
+        ✦
+      </span>
+      <span className="absolute left-[48%] top-[6%] text-[#FFFFFF] text-xs opacity-75">
+        ★
+      </span>
+      <span className="absolute right-[46%] top-[10%] text-[#FFD028] text-sm opacity-85">
+        ★
+      </span>
+      <span className="absolute left-[12%] top-[60%] text-[#FFFFFF] text-xs opacity-60">
+        ✦
+      </span>
+      <span className="absolute right-[14%] top-[62%] text-[#FFDE59] text-sm opacity-70">
+        ✦
+      </span>
+
+      {/* Bottom Lunar Surface & Soft Clouds */}
+      <div className="absolute bottom-0 inset-x-0 h-32 flex items-end">
+        <svg
+          viewBox="0 0 1000 160"
+          fill="none"
+          preserveAspectRatio="none"
+          className="w-full h-full opacity-95"
+        >
+          <defs>
+            <linearGradient id="lunarGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#4D2799" />
+              <stop offset="60%" stopColor="#311466" />
+              <stop offset="100%" stopColor="#1E0A40" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M0,80 Q250,20 500,70 T1000,60 L1000,160 L0,160 Z"
+            fill="url(#lunarGrad)"
+          />
+          <ellipse cx="280" cy="110" rx="35" ry="12" fill="#240D55" opacity="0.6" />
+          <ellipse cx="440" cy="130" rx="28" ry="9" fill="#240D55" opacity="0.6" />
+          <ellipse cx="610" cy="115" rx="42" ry="14" fill="#240D55" opacity="0.5" />
+          <circle cx="90" cy="135" r="50" fill="#FF85C0" opacity="0.35" />
+          <circle cx="160" cy="145" r="40" fill="#FF85C0" opacity="0.35" />
+          <circle cx="880" cy="135" r="50" fill="#FF85C0" opacity="0.35" />
+          <circle cx="940" cy="140" r="45" fill="#FF85C0" opacity="0.35" />
+        </svg>
+      </div>
+    </div>
+  );
+});
+
 export function StroopGameArena({
   trials,
   level = 1,
@@ -70,6 +196,23 @@ export function StroopGameArena({
   const isSubmitting = submissionStatus === "submitting";
 
   const trialStartTimeRef = useRef<number>(0);
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const scheduleTimeout = useCallback((fn: () => void, delayMs: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((t) => t !== id);
+      fn();
+    }, delayMs);
+    timeoutsRef.current.push(id);
+    return id;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
+  }, []);
   const currentTrial = trials[currentTrialIdx] || trials[0];
   const totalTrials = trials.length;
 
@@ -232,7 +375,7 @@ export function StroopGameArena({
             onLevelComplete(trialsToSubmit);
           }
           // Automatically advance to the next level without asking
-          setTimeout(() => {
+          scheduleTimeout(() => {
             router.push(resolvedNextRoute);
           }, 250);
         } else if (result.errorType === "UNAUTHORIZED") {
@@ -246,7 +389,7 @@ export function StroopGameArena({
           if (onLevelComplete) {
             onLevelComplete(trialsToSubmit);
           }
-          setTimeout(() => {
+          scheduleTimeout(() => {
             router.push(nextRoute);
           }, 250);
           return;
@@ -339,7 +482,7 @@ export function StroopGameArena({
       const holdDuration = isLastTrial ? 250 : 160;
 
       // Advance after a brief micro-transition for natural gameplay feedback
-      setTimeout(async () => {
+      scheduleTimeout(async () => {
         if (!isLastTrial) {
           const nextIdx = currentTrialIdx + 1;
           setCurrentTrialIdx(nextIdx);
@@ -400,130 +543,8 @@ export function StroopGameArena({
 
   return (
     <div className="w-full rounded-[28px] overflow-hidden relative border-2 border-[#0A1D3D] shadow-2xl min-h-[540px] p-5 sm:p-8 md:p-10 flex flex-col justify-between items-center text-center select-none bg-[#1C093D]">
-      {/* 1. Cosmic Background Atmosphere & Planets */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Deep Galaxy Gradient */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse at 50% 20%, #43178C 0%, #200B4B 45%, #0F0326 100%)",
-          }}
-        />
-
-        {/* Planet Left (Pink/Purple with Rings) */}
-        <div className="absolute -left-12 top-6 w-48 h-48 rounded-full opacity-90 blur-[0.3px]">
-          <svg viewBox="0 0 160 160" fill="none" className="w-full h-full">
-            <defs>
-              <radialGradient id="planetPink" cx="40%" cy="40%" r="60%">
-                <stop offset="0%" stopColor="#FF77C6" />
-                <stop offset="60%" stopColor="#C9358E" />
-                <stop offset="100%" stopColor="#6C1450" />
-              </radialGradient>
-            </defs>
-            <circle cx="80" cy="80" r="70" fill="url(#planetPink)" />
-            {/* Crater shadows */}
-            <circle cx="65" cy="55" r="14" fill="#6C1450" opacity="0.4" />
-            <circle cx="105" cy="95" r="18" fill="#6C1450" opacity="0.4" />
-            {/* Planet ring */}
-            <ellipse
-              cx="80"
-              cy="80"
-              rx="92"
-              ry="20"
-              stroke="#FFA8DC"
-              strokeWidth="4.5"
-              opacity="0.75"
-              transform="rotate(-25 80 80)"
-            />
-          </svg>
-        </div>
-
-        {/* Planet Right (Purple/Cyan Cosmic Sphere with ring) */}
-        <div className="absolute -right-12 top-4 w-52 h-52 rounded-full opacity-85 blur-[0.3px]">
-          <svg viewBox="0 0 160 160" fill="none" className="w-full h-full">
-            <defs>
-              <radialGradient id="planetPurple" cx="35%" cy="35%" r="65%">
-                <stop offset="0%" stopColor="#B388FF" />
-                <stop offset="55%" stopColor="#6D3BD8" />
-                <stop offset="100%" stopColor="#321475" />
-              </radialGradient>
-            </defs>
-            <circle cx="80" cy="80" r="70" fill="url(#planetPurple)" />
-            {/* Crater shadows */}
-            <circle cx="95" cy="65" r="15" fill="#240D55" opacity="0.5" />
-            <circle cx="60" cy="100" r="12" fill="#240D55" opacity="0.4" />
-            <ellipse
-              cx="80"
-              cy="80"
-              rx="90"
-              ry="18"
-              stroke="#D1B8FF"
-              strokeWidth="4"
-              opacity="0.65"
-              transform="rotate(22 80 80)"
-            />
-          </svg>
-        </div>
-
-        {/* Floating Twinkling Stars (✦, ★) */}
-        <span className="absolute left-[20%] top-[15%] text-[#FFDE59] text-2xl opacity-90 animate-pulse">
-          ✦
-        </span>
-        <span className="absolute left-[31%] top-[38%] text-[#FF85C0] text-sm opacity-80">
-          ★
-        </span>
-        <span className="absolute right-[21%] top-[14%] text-[#FFDE59] text-2xl opacity-95 animate-pulse">
-          ✦
-        </span>
-        <span className="absolute right-[32%] top-[42%] text-[#A8FFB2] text-xs opacity-70">
-          ✦
-        </span>
-        <span className="absolute left-[48%] top-[6%] text-[#FFFFFF] text-xs opacity-75">
-          ★
-        </span>
-        <span className="absolute right-[46%] top-[10%] text-[#FFD028] text-sm opacity-85">
-          ★
-        </span>
-        <span className="absolute left-[12%] top-[60%] text-[#FFFFFF] text-xs opacity-60">
-          ✦
-        </span>
-        <span className="absolute right-[14%] top-[62%] text-[#FFDE59] text-sm opacity-70">
-          ✦
-        </span>
-
-        {/* Bottom Lunar Surface & Soft Clouds */}
-        <div className="absolute bottom-0 inset-x-0 h-32 flex items-end">
-          <svg
-            viewBox="0 0 1000 160"
-            fill="none"
-            preserveAspectRatio="none"
-            className="w-full h-full opacity-95"
-          >
-            <defs>
-              <linearGradient id="lunarGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#4D2799" />
-                <stop offset="60%" stopColor="#311466" />
-                <stop offset="100%" stopColor="#1E0A40" />
-              </linearGradient>
-            </defs>
-            {/* Crater surface curve */}
-            <path
-              d="M0,80 Q250,20 500,70 T1000,60 L1000,160 L0,160 Z"
-              fill="url(#lunarGrad)"
-            />
-            {/* Moon craters */}
-            <ellipse cx="280" cy="110" rx="35" ry="12" fill="#240D55" opacity="0.6" />
-            <ellipse cx="440" cy="130" rx="28" ry="9" fill="#240D55" opacity="0.6" />
-            <ellipse cx="610" cy="115" rx="42" ry="14" fill="#240D55" opacity="0.5" />
-            {/* Soft pink clouds at edges */}
-            <circle cx="90" cy="135" r="50" fill="#FF85C0" opacity="0.35" />
-            <circle cx="160" cy="145" r="40" fill="#FF85C0" opacity="0.35" />
-            <circle cx="880" cy="135" r="50" fill="#FF85C0" opacity="0.35" />
-            <circle cx="940" cy="140" r="45" fill="#FF85C0" opacity="0.35" />
-          </svg>
-        </div>
-      </div>
+      {/* 1. Memoized Cosmic Background Atmosphere & Planets */}
+      <CosmicAtmosphere />
 
       {/* 2. Top Header Badges */}
       <div className="relative z-10 w-full flex items-center justify-between gap-2">

@@ -156,6 +156,23 @@ export function OddOneOutGameArena({
   const [isSlidingOut, setIsSlidingOut] = useState(false);
   const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string } | null>(null);
   const startTimeRef = useRef<number>(Date.now());
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const scheduleTimeout = (fn: () => void, delayMs: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((t) => t !== id);
+      fn();
+    }, delayMs);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -232,11 +249,11 @@ export function OddOneOutGameArena({
 
     // Smooth fast neutral transition delay (180ms)
     const holdDuration = 180;
-    setTimeout(async () => {
+    scheduleTimeout(async () => {
       // Carousel Slide-Out to left before new challenge slides in from right
       setIsSlidingOut(true);
 
-      setTimeout(async () => {
+      scheduleTimeout(async () => {
         setSelectedIdx(null);
         setFeedbackBanner(null);
         setIsLocked(false);
@@ -283,7 +300,7 @@ export function OddOneOutGameArena({
               setNextLevelRoute(nextRoute);
 
               // Auto-advance immediately without asking
-              setTimeout(() => {
+              scheduleTimeout(() => {
                 router.push(nextRoute);
               }, 250);
             } else {
@@ -294,7 +311,7 @@ export function OddOneOutGameArena({
             setSubmissionStatus("success");
             const nextRoute = level < 3 ? `/games/odd-one-out?level=${level + 1}` : "/games/rule-discovery?level=1";
             setNextLevelRoute(nextRoute);
-            setTimeout(() => {
+            scheduleTimeout(() => {
               router.push(nextRoute);
             }, 250);
           }

@@ -62,6 +62,23 @@ export function RuleDiscoveryGameArena({
   const [isNavigating, setIsNavigating] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const startTimeRef = useRef<number>(Date.now());
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const scheduleTimeout = (fn: () => void, delayMs: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((t) => t !== id);
+      fn();
+    }, delayMs);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -135,7 +152,7 @@ export function RuleDiscoveryGameArena({
     }
 
     const holdDuration = 180;
-    setTimeout(async () => {
+    scheduleTimeout(async () => {
       setFeedback(null);
       setSelectedBucketId(null);
       setIsLocked(false);
@@ -168,7 +185,7 @@ export function RuleDiscoveryGameArena({
             setNextLevelRoute(nextRoute);
 
             // Auto-advance immediately without asking
-            setTimeout(() => {
+            scheduleTimeout(() => {
               router.push(nextRoute);
             }, 250);
           } else {
@@ -179,7 +196,7 @@ export function RuleDiscoveryGameArena({
           setSubmissionStatus("success");
           const nextRoute = level < 3 ? `/games/rule-discovery?level=${level + 1}` : "/games/story-sequencing?level=1";
           setNextLevelRoute(nextRoute);
-          setTimeout(() => {
+          scheduleTimeout(() => {
             router.push(nextRoute);
           }, 250);
         }

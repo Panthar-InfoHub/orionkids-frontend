@@ -11,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import confetti from "canvas-confetti";
+import { CopyrightNotice } from "./copyright-notice";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -312,6 +313,7 @@ export function FooterSection() {
   const mobileCardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   // State & Stable Refs
+  const [currentYear, setCurrentYear] = useState<number>(2026);
   const [isFlowMode, setIsFlowMode] = useState<boolean>(false);
   const isFlowModeRef = useRef(false);
   const isReducedMotionRef = useRef(false);
@@ -322,6 +324,10 @@ export function FooterSection() {
 
   const desktopTouchTimer = useRef<NodeJS.Timeout | null>(null);
   const mobileTouchTimer = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   // Instantly place cards at resting layout
   const resetCardsToResting = useCallback(() => {
@@ -1073,7 +1079,7 @@ export function FooterSection() {
           className="mt-6 pt-4 border-t border-[#F0E6FF] flex flex-col md:flex-row items-center justify-between gap-3 text-[10px] sm:text-[11px] text-[#0A1D3D] font-medium text-center md:text-left"
           style={{ fontFamily: INTER }}
         >
-          <span>© 2026 OrionKids Digital Solutions Pvt. Ltd.</span>
+          <CopyrightNotice />
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[#526176]">
             <Link href="/privacy-policy" className="hover:text-[#00BCD4] transition-colors cursor-pointer">
               Privacy Policy
