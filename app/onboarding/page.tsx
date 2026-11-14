@@ -27,6 +27,7 @@ export default function OnboardingPage() {
               height={58}
               priority
               className="h-11 w-auto object-contain"
+              style={{ width: "auto", height: "auto" }}
             />
           </Link>
 

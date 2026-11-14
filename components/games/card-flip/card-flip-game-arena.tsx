@@ -290,7 +290,80 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
   const handleSkipToNextLevelFromTired = async () => {
     setShowTiredModal(false);
     setIsLocked(true);
+<<<<<<< Updated upstream
     await handleLevelFinished(moves, true);
+=======
+    setSubmissionStatus("submitting");
+    const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
+
+    if (activeSessionId) {
+      const result = await skipQuestActivity(activeSessionId, {
+        gameKey: "card-flip",
+        levelNumber: level,
+        skipEntireGame: false,
+        reason: "tired_prompt_skipped_level",
+        durationMs,
+      });
+
+      if (result.success) {
+        setSubmissionStatus("success");
+        let nextRoute =
+          result.nextLevelRoute ||
+          (level < 3 ? `/games/card-flip?level=${level + 1}` : "/games/pattern?level=1");
+        if (activeSessionId && !nextRoute.includes("sessionId=")) {
+          nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+        }
+        setNextLevelRoute(nextRoute);
+        setTimeout(() => {
+          router.push(nextRoute);
+        }, 300);
+      } else {
+        setSubmissionStatus("error");
+        setErrorMessage(result.error?.message || "Failed to record skip on the server.");
+      }
+    } else {
+      setSubmissionStatus("success");
+      const nextRoute = level < 3 ? `/games/card-flip?level=${level + 1}` : "/games/pattern?level=1";
+      router.push(nextRoute);
+    }
+  };
+
+  const handleSkipLevel = handleSkipToNextLevelFromTired;
+
+  const handleSkipEntireGame = async () => {
+    setShowTiredModal(false);
+    setIsLocked(true);
+    setSubmissionStatus("submitting");
+    const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
+
+    if (activeSessionId) {
+      const result = await skipQuestActivity(activeSessionId, {
+        gameKey: "card-flip",
+        levelNumber: level,
+        skipEntireGame: true,
+        reason: "tired_prompt_skipped_game",
+        durationMs,
+      });
+
+      if (result.success) {
+        setSubmissionStatus("success");
+        let nextRoute = result.nextLevelRoute || "/games/pattern?level=1";
+        if (activeSessionId && !nextRoute.includes("sessionId=")) {
+          nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+        }
+        setNextLevelRoute(nextRoute);
+        setTimeout(() => {
+          router.push(nextRoute);
+        }, 300);
+      } else {
+        setSubmissionStatus("error");
+        setErrorMessage(result.error?.message || "Failed to record skip on the server.");
+      }
+    } else {
+      setSubmissionStatus("success");
+      router.push("/games/pattern?level=1");
+    }
+>>>>>>> Stashed changes
   };
 
   const handleContinuePlayingFromTired = () => {
@@ -550,7 +623,24 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
             </p>
 
             <div className="w-full flex flex-col gap-2.5">
+<<<<<<< Updated upstream
               {/* Option 1: Yes, move to next level */}
+=======
+              {/* Option 1: Skip to next level (if level < 3) */}
+              {level < 3 && (
+                <button
+                  type="button"
+                  onClick={handleSkipLevel}
+                  className="w-full py-3 px-5 rounded-full font-extrabold text-[15px] bg-[#FFD028] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer flex items-center justify-center gap-2"
+                  style={{ fontFamily: JAKARTA }}
+                >
+                  <span>Yes, next level (Level {level + 1})</span>
+                  <span>🚀</span>
+                </button>
+              )}
+
+              {/* Option 2: Skip entire Card Flip game */}
+>>>>>>> Stashed changes
               <button
                 type="button"
                 onClick={handleSkipToNextLevelFromTired}

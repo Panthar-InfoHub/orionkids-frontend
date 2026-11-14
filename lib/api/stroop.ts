@@ -350,16 +350,40 @@ export async function submitStroopLevelResults(
         }
       }
 
-      const response = await fetch(`${apiUrl}/api/games/stroop/level-submit`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...payload,
-          level: payload.level,
-          sessionId: sessionId ?? undefined,
-        }),
-      });
+      let response: Response | null = null;
+      const maxRetries = 2;
+
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          response = await fetch(`${apiUrl}/api/games/stroop/level-submit`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...payload,
+              level: payload.level,
+              sessionId: sessionId ?? undefined,
+            }),
+          });
+
+          // If transient server error (500, 502, 503, 504), retry with backoff
+          if (response.status >= 500 && attempt < maxRetries) {
+            await new Promise((r) => setTimeout(r, 150 * (attempt + 1)));
+            continue;
+          }
+          break;
+        } catch (fetchErr) {
+          if (attempt < maxRetries) {
+            await new Promise((r) => setTimeout(r, 150 * (attempt + 1)));
+            continue;
+          }
+          throw fetchErr;
+        }
+      }
+
+      if (!response) {
+        throw new Error("No response received from Stroop submission");
+      }
 
       // 2. Progression & Auth Validation: Never treat 401/403 as offline success
       if (response.status === 401) {

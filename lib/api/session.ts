@@ -154,6 +154,13 @@ export async function fetchResumeState(
   }
 }
 
+<<<<<<< Updated upstream
+=======
+import { queueCheckpointSave, clearPendingCheckpoints } from "./checkpoint-queue";
+
+export { clearPendingCheckpoints };
+
+>>>>>>> Stashed changes
 /**
  * Persists an in-game checkpoint to the active in-progress level attempt.
  * Safe to call periodically during gameplay; cannot overwrite completed stages.
