@@ -11,7 +11,6 @@ import {
   performSignOut,
   type UserProfile,
 } from "@/lib/api/auth";
-import { CopyrightNotice } from "@/components/layout/copyright-notice";
 
 export default function AccountRestrictedPage() {
   const router = useRouter();
@@ -155,7 +154,7 @@ export default function AccountRestrictedPage() {
       {/* Footer */}
       <footer className="w-full bg-white border-t border-[#E7EDF6] py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center text-xs text-[#526176] font-medium">
-          <CopyrightNotice />
+          © 2026 OrionKids Digital Solutions Pvt. Ltd. All rights reserved.
         </div>
       </footer>
     </div>

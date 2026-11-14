@@ -244,3 +244,14 @@ export async function performSignOut(): Promise<void> {
   }
 }
 
+/**
+ * Broadcast an account restricted event to immediately lock the UI and redirect.
+ */
+export function broadcastAccountRestricted(reason?: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem("orion_account_restricted_reason", reason || "");
+    window.dispatchEvent(new CustomEvent("orion:account-restricted", { detail: { reason } }));
+  } catch {}
+}
+

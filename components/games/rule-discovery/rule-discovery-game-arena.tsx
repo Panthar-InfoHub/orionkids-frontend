@@ -46,6 +46,21 @@ export function RuleDiscoveryGameArena({
   const [isLocked, setIsLocked] = useState(false);
 
   const startTimeRef = useRef<number>(Date.now());
+  const cardStartTimeRef = useRef<number>(Date.now());
+  const reactionTimesRef = useRef<number[]>([]);
+  const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
+
+  const scheduleTimeout = (fn: () => void, ms: number) => {
+    const t = setTimeout(fn, ms);
+    timeoutsRef.current.push(t);
+    return t;
+  };
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+    };
+  }, []);
 
   // When level prop changes, show the dedicated preview screen for that level
   useEffect(() => {
@@ -136,34 +151,22 @@ export function RuleDiscoveryGameArena({
       });
     }
 
-<<<<<<< Updated upstream
-    const holdDuration = 180;
-    setTimeout(async () => {
-=======
     const isLastRound = cardIdx + 1 >= rounds.length;
     const holdDuration = 600; // brief friendly feedback time
 
     scheduleTimeout(async () => {
->>>>>>> Stashed changes
       setFeedback(null);
       setFeedbackType(null);
       setSelectedOptionId(null);
       setIsLocked(false);
-<<<<<<< Updated upstream
-      if (!isLastTrial) {
-=======
 
       if (!isLastRound) {
         cardStartTimeRef.current = Date.now();
->>>>>>> Stashed changes
         setCardIdx((i) => i + 1);
       } else {
         // Complete Level
         setSubmissionStatus("submitting");
         const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
-<<<<<<< Updated upstream
-        const accuracy = Math.round((newCorrect / CARDS_TO_SORT.length) * 100);
-=======
         const accuracy = Math.round((newCorrect / rounds.length) * 100);
         const avgRT =
           reactionTimesRef.current.length > 0
@@ -172,7 +175,6 @@ export function RuleDiscoveryGameArena({
                   reactionTimesRef.current.length
               )
             : Math.round(durationMs / Math.max(1, rounds.length));
->>>>>>> Stashed changes
 
         if (activeSessionId) {
           const result = await completeQuestLevel(activeSessionId, {
@@ -182,14 +184,11 @@ export function RuleDiscoveryGameArena({
             correctTrials: newCorrect,
             accuracy,
             durationMs,
-<<<<<<< Updated upstream
-=======
             averageReactionTimeMs: avgRT,
             metrics: {
               reactionTimes: reactionTimesRef.current,
               levelType: level === 3 ? "cosmic_rule_switch" : level === 2 ? "shape" : "color",
             },
->>>>>>> Stashed changes
             completedAt: new Date().toISOString(),
           });
 
@@ -207,13 +206,8 @@ export function RuleDiscoveryGameArena({
             }
             setNextLevelRoute(nextRoute);
 
-<<<<<<< Updated upstream
-            // Auto-advance immediately without asking
-            setTimeout(() => {
-=======
             // Auto-advance
             scheduleTimeout(() => {
->>>>>>> Stashed changes
               router.push(nextRoute);
             }, 350);
           } else {
@@ -227,7 +221,7 @@ export function RuleDiscoveryGameArena({
               ? `/games/rule-discovery?level=${level + 1}`
               : "/games/story-sequencing?level=1";
           setNextLevelRoute(nextRoute);
-          setTimeout(() => {
+          scheduleTimeout(() => {
             router.push(nextRoute);
           }, 350);
         }
@@ -241,25 +235,6 @@ export function RuleDiscoveryGameArena({
     submissionStatus === "error";
 
   return (
-<<<<<<< Updated upstream
-    <div className="w-full flex flex-col items-center select-none">
-      {/* Level Tutorial Guide */}
-      <GameTutorialGuide
-        gameKey="rule-discovery"
-        level={level}
-        isOpen={isTutorialOpen}
-        onClose={() => {
-          setIsTutorialOpen(false);
-          startTimeRef.current = Date.now();
-          try { sessionStorage.setItem("orion_tut_seen_rule_discovery", "1"); } catch {}
-        }}
-        onComplete={() => {
-          setIsTutorialOpen(false);
-          startTimeRef.current = Date.now();
-          try { sessionStorage.setItem("orion_tut_seen_rule_discovery", "1"); } catch {}
-        }}
-      />
-=======
     <div className="w-full flex flex-col items-center select-none" style={{ fontFamily: JAKARTA }}>
       {/* "How to Play" In-Game Modal Overlay */}
       {isHowToPlayModalOpen && (
@@ -276,7 +251,6 @@ export function RuleDiscoveryGameArena({
           />
         </div>
       )}
->>>>>>> Stashed changes
 
       {/* BEFORE LEVEL STARTS: Show Full Dedicated Preview Screen */}
       {showPreview && !isFinished ? (
