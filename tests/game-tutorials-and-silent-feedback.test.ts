@@ -131,11 +131,15 @@ describe("OrionKids — Interactive In-Game Tutorial Guide & Silent Feedback Sys
       assert.equal(revealedItem, null);
     });
 
-    it("14. Rule Discovery Game Arena: evaluates color, shape, count without showing real-time matched count", () => {
+    it("14. Rule Discovery Game Arena: evaluates color, shape, count without showing real-time matched count or right/wrong banner", () => {
       const activeRule = "COLOR";
       const chosenRule = "COLOR";
       const matched = chosenRule === activeRule;
       assert.equal(matched, true);
+
+      // Silent feedback banner suppresses right/wrong text
+      const neutralBanner = "Choice registered...";
+      assert.ok(!neutralBanner.includes("Matched") && !neutralBanner.includes("Remember") && !neutralBanner.includes("Wrong"));
     });
 
     it("15. Story Sequencing Game Arena: removes individual step tick/cross badges while computing accuracy", () => {

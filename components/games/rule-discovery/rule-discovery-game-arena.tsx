@@ -28,14 +28,13 @@ export function RuleDiscoveryGameArena({
   const router = useRouter();
   const rounds = getRoundsForLevel(level);
 
-  // Preview / Tutorial screen state (shown before every level)
-  const [showPreview, setShowPreview] = useState(true);
+  // Preview / Tutorial screen state: only shown on initial entry to Level 1
+  const [showPreview, setShowPreview] = useState(level === 1);
   const [isHowToPlayModalOpen, setIsHowToPlayModalOpen] = useState(false);
 
   const [cardIdx, setCardIdx] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [feedbackType, setFeedbackType] = useState<"correct" | "incorrect" | null>(null);
   const [selectedOptionId, setSelectedOptionId] = useState<string | number | null>(null);
 
   const [activeSessionId, setActiveSessionId] = useState<string | null>(sessionId || null);
@@ -62,17 +61,19 @@ export function RuleDiscoveryGameArena({
     };
   }, []);
 
-  // When level prop changes, show the dedicated preview screen for that level
+  // When level prop changes, seamlessly begin gameplay for subsequent levels without blocking preview roadblocks
   useEffect(() => {
-    setShowPreview(true);
+    setShowPreview(false);
     setCardIdx(0);
     setCorrectCount(0);
     setSelectedOptionId(null);
     setFeedback(null);
-    setFeedbackType(null);
     setSubmissionStatus("idle");
     setActiveAttemptId(null);
+    setIsLocked(false);
     reactionTimesRef.current = [];
+    startTimeRef.current = Date.now();
+    cardStartTimeRef.current = Date.now();
   }, [level]);
 
   // Session retrieval
@@ -122,26 +123,17 @@ export function RuleDiscoveryGameArena({
     setIsLocked(true);
     setSelectedOptionId(option.id);
 
-    // Semantic correctness evaluation
+    // Record card reaction time
+    const reactionTimeMs = Math.max(1, Date.now() - cardStartTimeRef.current);
+    reactionTimesRef.current.push(reactionTimeMs);
+
+    // Semantic correctness evaluation (calculated silently — never revealed to the player)
     const isMatch = isRuleMatch(currentRound.rule, currentRound.target, option);
     const newCorrect = isMatch ? correctCount + 1 : correctCount;
     setCorrectCount(newCorrect);
 
-    if (isMatch) {
-      setFeedbackType("correct");
-      setFeedback(
-        currentRound.rule === "COLOR"
-          ? "✓ Matched Color! 🌟"
-          : "✓ Matched Shape! 🌟"
-      );
-    } else {
-      setFeedbackType("incorrect");
-      setFeedback(
-        currentRound.rule === "COLOR"
-          ? "Remember: Look for the same COLOR!"
-          : "Remember: Look for the same SHAPE!"
-      );
-    }
+    // Silent feedback: neutral acknowledgement without indicating right or wrong
+    setFeedback("Choice registered...");
 
     if (activeSessionId && activeAttemptId) {
       saveQuestCheckpoint(activeSessionId, activeAttemptId, {
@@ -152,11 +144,11 @@ export function RuleDiscoveryGameArena({
     }
 
     const isLastRound = cardIdx + 1 >= rounds.length;
-    const holdDuration = 600; // brief friendly feedback time
+    // Snappy neutral transition delay (180ms) matching Stroop & Odd One Out
+    const holdDuration = 180;
 
     scheduleTimeout(async () => {
       setFeedback(null);
-      setFeedbackType(null);
       setSelectedOptionId(null);
       setIsLocked(false);
 
@@ -206,10 +198,10 @@ export function RuleDiscoveryGameArena({
             }
             setNextLevelRoute(nextRoute);
 
-            // Auto-advance
+            // Auto-advance seamlessly to next level of game
             scheduleTimeout(() => {
               router.push(nextRoute);
-            }, 350);
+            }, 300);
           } else {
             setSubmissionStatus("error");
             setErrorMessage(result.error?.message || "Failed to record Rule Discovery results.");
@@ -223,7 +215,7 @@ export function RuleDiscoveryGameArena({
           setNextLevelRoute(nextRoute);
           scheduleTimeout(() => {
             router.push(nextRoute);
-          }, 350);
+          }, 300);
         }
       }
     }, holdDuration);
@@ -370,19 +362,15 @@ export function RuleDiscoveryGameArena({
                   </span>
                 </div>
 
-                {/* Feedback Toast */}
-                {feedback && (
+                {/* Silent Neutral Feedback Pill */}
+                {feedback ? (
                   <div
-                    className={`inline-flex items-center gap-1.5 px-4 py-1 rounded-full border-2 border-[#0A1D3D] font-black text-xs shadow-sm animate-in fade-in zoom-in duration-150 ${
-                      feedbackType === "correct"
-                        ? "bg-[#65DCAA] text-[#0A1D3D]"
-                        : "bg-[#FFD028] text-[#0A1D3D]"
-                    }`}
+                    className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full border-2 border-[#0A1D3D] font-extrabold text-xs shadow-sm bg-white text-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] animate-in fade-in zoom-in duration-150"
                   >
-                    <span>{feedbackType === "correct" ? "✨" : "💡"}</span>
+                    <span>✨</span>
                     <span>{feedback}</span>
                   </div>
-                )}
+                ) : null}
               </div>
 
               {/* Instruction subtitle */}
@@ -400,19 +388,16 @@ export function RuleDiscoveryGameArena({
               <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 w-full max-w-[660px]">
                 {currentRound.options.map((opt) => {
                   const isSelected = selectedOptionId === opt.id;
-                  const isCorrect = isRuleMatch(currentRound.rule, currentRound.target, opt);
 
                   let btnStyle =
                     "bg-[#230C4D] hover:bg-[#32126D] hover:-translate-y-0.5 border-white/20 text-white shadow-[2.5px_2.5px_0px_#0A1D3D]";
 
                   if (isSelected) {
-                    if (isCorrect) {
-                      btnStyle =
-                        "bg-[#65DCAA] text-[#0A1D3D] border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] scale-103 ring-3 ring-[#65DCAA]/40";
-                    } else {
-                      btnStyle =
-                        "bg-[#FF5B5B] text-white border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] scale-98";
-                    }
+                    btnStyle =
+                      "bg-[#FFE066] text-[#0A1D3D] border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] scale-102 ring-3 ring-[#FFE066]/40";
+                  } else if (selectedOptionId !== null) {
+                    btnStyle =
+                      "opacity-50 scale-98 bg-[#230C4D] border-white/10 text-white/70";
                   }
 
                   return (
