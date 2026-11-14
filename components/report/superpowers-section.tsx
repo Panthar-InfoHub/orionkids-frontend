@@ -20,15 +20,29 @@ export function SuperpowersSection({
   const focusScore = facets?.focusInhibition?.score ?? 89;
   const memoryScore = facets?.workingMemory?.score ?? 84;
 
-  const strength1Title = strengths[0] ? "Observed Strength" : "Attention & Selective Focus";
-  const strength1Desc =
-    strengths[0] ||
-    `${childName} stuck with the Stroop Colour-Word game with notable poise, choosing target cues accurately and showing mature executive filtering.`;
+  const getStrengthTitle = (item: any, fallback: string) => {
+    if (!item) return fallback;
+    if (typeof item === "string") return "Observed Strength";
+    return item.heading || "Observed Strength";
+  };
 
-  const strength2Title = strengths[1] ? "Observed Strength" : "Spatial Memory & Recall";
-  const strength2Desc =
-    strengths[1] ||
-    `${childName} navigated the Card Flip memory matches with calm persistence, demonstrating good recall of spatial object positions.`;
+  const getStrengthDesc = (item: any, fallback: string) => {
+    if (!item) return fallback;
+    if (typeof item === "string") return item;
+    return `${item.observation} ${item.performanceEvidence ? `Evidence: ${item.performanceEvidence}` : ""}`.trim();
+  };
+
+  const strength1Title = getStrengthTitle(strengths[0], "Attention & Selective Focus");
+  const strength1Desc = getStrengthDesc(
+    strengths[0],
+    `${childName} stuck with the Stroop Colour-Word game with notable poise, choosing target cues accurately and showing mature executive filtering.`
+  );
+
+  const strength2Title = getStrengthTitle(strengths[1], "Spatial Memory & Recall");
+  const strength2Desc = getStrengthDesc(
+    strengths[1],
+    `${childName} navigated the Card Flip memory matches with calm persistence, demonstrating good recall of spatial object positions.`
+  );
 
   return (
     <section className="w-full flex flex-col gap-5">

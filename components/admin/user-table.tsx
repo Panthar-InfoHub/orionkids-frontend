@@ -21,6 +21,7 @@ import {
 import type { AdminUserItem, AdminPaginationMeta } from "@/lib/api/admin";
 import { useAdmin } from "./admin-guard";
 import { UserStatusModal } from "./user-status-modal";
+import { ProfileAvatar } from "@/components/shared/profile-avatar";
 
 interface UserTableProps {
   users: AdminUserItem[];
@@ -236,14 +237,6 @@ export function UserTable({
             ) : (
               users.map((user) => {
                 const isSelf = user.id === currentAdmin.id;
-                const initials = user.name
-                  ? user.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .slice(0, 2)
-                      .join("")
-                      .toUpperCase()
-                  : "OK";
 
                 return (
                   <tr
@@ -253,18 +246,13 @@ export function UserTable({
                     {/* User Identity Column */}
                     <td className="py-3.5 px-4 sm:px-6">
                       <div className="flex items-center gap-3">
-                        {user.image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={user.image}
-                            alt={user.name}
-                            className="w-9 h-9 rounded-full object-cover border border-slate-200 shrink-0"
-                          />
-                        ) : (
-                          <div className="w-9 h-9 rounded-full bg-[#0A1D3D] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-xs">
-                            {initials}
-                          </div>
-                        )}
+                        <ProfileAvatar
+                          src={user.image}
+                          name={user.name}
+                          size="md"
+                          shape="circle"
+                          borderClassName="border border-slate-200 shadow-xs"
+                        />
 
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">

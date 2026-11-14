@@ -88,6 +88,25 @@ export async function fetchCurrentUserProfile(): Promise<UserProfile | null> {
       return null;
     }
 
+    // 403 with ACCOUNT_RESTRICTED means user account is restricted in PostgreSQL
+    if (res.status === 403) {
+      const payload = await res.json().catch(() => null);
+      if (
+        payload?.code === "ACCOUNT_RESTRICTED" ||
+        payload?.error?.code === "ACCOUNT_RESTRICTED"
+      ) {
+        return {
+          id: payload?.data?.id || "",
+          name: payload?.data?.name || "User",
+          email: payload?.data?.email || "",
+          role: "USER",
+          status: "RESTRICTED",
+          restrictedReason: payload?.data?.restrictedReason || null,
+        } as UserProfile;
+      }
+      return null;
+    }
+
     if (!res.ok) {
       console.warn(`[auth] /api/me returned status ${res.status}`);
       return null;
@@ -240,7 +259,92 @@ export async function performSignOut(): Promise<void> {
   } catch (err) {
     console.error("Error signing out:", err);
   } finally {
-    window.location.href = "/login";
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
   }
 }
+
+export interface AccountStatusData {
+  status: "PENDING" | "ACTIVE" | "RESTRICTED";
+  role: "USER" | "ADMIN";
+  restrictedReason?: string | null;
+}
+
+/**
+ * Lightweight account status check from backend `/api/me/account-status`.
+ * Returns null if unauthenticated or network error.
+ */
+export async function fetchAccountStatus(): Promise<AccountStatusData | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/me/account-status`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Cache-Control": "no-cache",
+      },
+      cache: "no-store",
+    });
+
+    if (res.status === 401) {
+      return null;
+    }
+
+    if (res.status === 403) {
+      const payload = await res.json().catch(() => null);
+      if (
+        payload?.code === "ACCOUNT_RESTRICTED" ||
+        payload?.error?.code === "ACCOUNT_RESTRICTED"
+      ) {
+        return {
+          status: "RESTRICTED",
+          role: "USER",
+          restrictedReason: payload?.data?.restrictedReason || null,
+        };
+      }
+    }
+
+    if (!res.ok) {
+      return null;
+    }
+
+    const payload = await res.json().catch(() => null);
+    if (payload?.success && payload?.data) {
+      return payload.data as AccountStatusData;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export const ACCOUNT_RESTRICTION_EVENT_KEY = "orionkids_account_restricted_event";
+
+/**
+ * Broadcasts an account restriction event across browser tabs.
+ */
+export function broadcastAccountRestricted(reason?: string | null) {
+  if (typeof window === "undefined") return;
+
+  try {
+    if (typeof BroadcastChannel !== "undefined") {
+      const channel = new BroadcastChannel("orionkids_account_status");
+      channel.postMessage({ type: "ACCOUNT_RESTRICTED", reason });
+      channel.close();
+    }
+  } catch {
+    // Fallback to localStorage event for environments where BroadcastChannel is constrained
+  }
+
+  try {
+    localStorage.setItem(
+      ACCOUNT_RESTRICTION_EVENT_KEY,
+      JSON.stringify({ timestamp: Date.now(), reason })
+    );
+  } catch {
+    // Ignore storage quota/permission exceptions
+  }
+}
+
 

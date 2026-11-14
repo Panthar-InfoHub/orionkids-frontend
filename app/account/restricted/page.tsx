@@ -16,32 +16,40 @@ import { CopyrightNotice } from "@/components/layout/copyright-notice";
 export default function AccountRestrictedPage() {
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [currentYear, setCurrentYear] = useState<number>(2026);
 
   useEffect(() => {
-    setCurrentYear(new Date().getFullYear());
+    let isMounted = true;
+
     async function verify() {
       try {
         const user = await fetchCurrentUserProfile();
-        if (!user) {
-          return;
-        }
-        // If account is actually active/pending/admin, route them away from restricted page
+        if (!isMounted) return;
+
+        // If not authenticated or backend offline, remain safely on restriction page
+        if (!user) return;
+
+        // If the account is actually ACTIVE, PENDING, or an ADMIN, route away
         if (user.status !== "RESTRICTED") {
           router.replace(getRouteForUserProfile(user));
           return;
         }
+
         setProfile(user);
       } catch (err) {
-        console.warn("[restricted] Session check note:", err);
+        console.warn("[restricted] Session status verification note:", err);
       }
     }
+
     verify();
+
+    return () => {
+      isMounted = false;
+    };
   }, [router]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between selection:bg-[#FFE066] selection:text-[#0A1D3D]">
-      {/* Top accent bar */}
+      {/* Top red accent bar */}
       <div className="w-full h-[6px] bg-[#E11D48]" />
 
       {/* Header */}
@@ -71,9 +79,9 @@ export default function AccountRestrictedPage() {
 
       {/* Main Card */}
       <main className="flex-1 flex items-center justify-center px-4 sm:px-6 py-12">
-        <div className="w-full max-w-[500px] mx-auto bg-white rounded-3xl p-8 sm:p-10 border-2 border-rose-200 shadow-[0_8px_30px_rgb(0,0,0,0.06)] text-center transition-all animate-in fade-in duration-300">
+        <div className="w-full max-w-[520px] mx-auto bg-white rounded-3xl p-8 sm:p-10 border-2 border-rose-200 shadow-[0_8px_30px_rgb(0,0,0,0.06)] text-center transition-all animate-in fade-in duration-300">
           {/* Visual Alert Icon */}
-          <div className="w-16 h-16 rounded-2xl bg-rose-50 border-2 border-rose-200 text-rose-600 flex items-center justify-center mx-auto mb-6 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-rose-50 border-2 border-rose-200 text-rose-600 flex items-center justify-center mx-auto mb-6 shadow-xs">
             <ShieldAlert className="w-8 h-8" />
           </div>
 
@@ -84,24 +92,24 @@ export default function AccountRestrictedPage() {
 
           {/* Heading */}
           <h1 className="text-2xl sm:text-[28px] font-black text-[#0A1D3D] tracking-tight mb-3">
-            Account Access Restricted
+            Your Account Has Been Restricted
           </h1>
 
-          {/* Primary Description */}
-          <p className="text-sm text-slate-600 mb-4 leading-relaxed">
-            Your OrionKids account is currently restricted. You cannot access your games or dashboard at this time.
+          {/* Description */}
+          <p className="text-sm text-slate-600 mb-3 leading-relaxed">
+            Your access to OrionKids has been temporarily restricted by our administration team.
           </p>
 
-          {/* Supporting Information */}
+          {/* Supporting message */}
           <p className="text-xs sm:text-[13px] text-slate-500 mb-6 leading-relaxed">
-            Please contact the OrionKids support team if you believe this restriction was applied incorrectly.
+            If you believe this action was taken by mistake, please contact the OrionKids support team for assistance.
           </p>
 
-          {/* Admin Recorded Reason (if available) */}
+          {/* Safely display admin restriction reason if present */}
           {profile?.restrictedReason && (
             <div className="mb-6 p-4 rounded-2xl bg-rose-50/70 border border-rose-200 text-left">
               <span className="block text-[11px] font-extrabold uppercase tracking-wider text-rose-800 mb-1">
-                Restriction Note
+                Restriction Reason
               </span>
               <p className="text-xs text-rose-700 font-medium leading-relaxed">
                 {profile.restrictedReason}
@@ -112,7 +120,7 @@ export default function AccountRestrictedPage() {
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href="mailto:contact@orionkids.in?subject=Inquiry%20regarding%20restricted%20account"
+              href="mailto:support@orionkids.in?subject=Inquiry%20regarding%20restricted%20account"
               className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#0A1D3D] hover:bg-[#10345B] active:scale-[0.99] text-white font-extrabold text-sm shadow-md transition-all cursor-pointer"
             >
               <Mail className="w-4 h-4" />
@@ -129,7 +137,7 @@ export default function AccountRestrictedPage() {
             </button>
           </div>
 
-          {/* Helpful Support Link */}
+          {/* Help Center Link */}
           <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-xs text-slate-400">
             <HelpCircle className="w-3.5 h-3.5" />
             <span>Need more help?</span>

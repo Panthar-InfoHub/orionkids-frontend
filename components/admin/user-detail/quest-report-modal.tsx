@@ -425,10 +425,22 @@ export function QuestReportModal({
                       <span>Observed Strengths</span>
                     </h5>
                     <ul className="space-y-1.5 text-xs text-slate-700">
-                      {aiReport.observedStrengths.map((str: string, sIdx: number) => (
+                      {aiReport.observedStrengths.map((str: any, sIdx: number) => (
                         <li key={sIdx} className="flex items-start gap-1.5">
                           <span className="text-emerald-600 font-bold">•</span>
-                          <span>{str}</span>
+                          <span>
+                            {typeof str === "string" ? (
+                              str
+                            ) : (
+                              <span>
+                                <strong className="text-slate-900">{str.heading}:</strong>{" "}
+                                {str.observation}{" "}
+                                {str.performanceEvidence && (
+                                  <span className="text-emerald-700 font-medium">({str.performanceEvidence})</span>
+                                )}
+                              </span>
+                            )}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -441,10 +453,22 @@ export function QuestReportModal({
                       <span>Areas for Practice</span>
                     </h5>
                     <ul className="space-y-1.5 text-xs text-slate-700">
-                      {aiReport.areasForPractice.map((prc: string, pIdx: number) => (
+                      {aiReport.areasForPractice.map((prc: any, pIdx: number) => (
                         <li key={pIdx} className="flex items-start gap-1.5">
                           <span className="text-amber-600 font-bold">•</span>
-                          <span>{prc}</span>
+                          <span>
+                            {typeof prc === "string" ? (
+                              prc
+                            ) : (
+                              <span>
+                                <strong className="text-slate-900">{prc.heading}:</strong>{" "}
+                                {prc.observedPattern}{" "}
+                                {prc.recommendedApproach && (
+                                  <span className="text-amber-700 font-medium">({prc.recommendedApproach})</span>
+                                )}
+                              </span>
+                            )}
+                          </span>
                         </li>
                       ))}
                     </ul>

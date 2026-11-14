@@ -70,6 +70,10 @@ async function executeSave(
         data?.code === "ACCOUNT_RESTRICTED" ||
         data?.error?.code === "ACCOUNT_RESTRICTED"
       ) {
+        import("./auth").then(({ broadcastAccountRestricted }) => {
+          broadcastAccountRestricted(data?.data?.restrictedReason || data?.error?.message);
+        }).catch(() => {});
+
         if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
           window.location.replace("/account/restricted");
         }

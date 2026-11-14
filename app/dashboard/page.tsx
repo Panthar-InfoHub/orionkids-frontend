@@ -22,6 +22,7 @@ import { fetchChildren, type ChildWithStats } from "@/lib/api/children";
 import { ChildCard } from "@/components/dashboard/child-card";
 import { PageCurtain } from "@/components/layout/page-curtain";
 import { FooterSection } from "@/components/layout/footer-section";
+import { ProfileAvatar } from "@/components/shared/profile-avatar";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
@@ -138,6 +139,21 @@ export default function ParentDashboardPage() {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
+              {profile && (
+                <div className="flex items-center gap-2 pr-2 border-r border-slate-200">
+                  <ProfileAvatar
+                    src={profile.image}
+                    name={profile.name}
+                    size="sm"
+                    shape="circle"
+                    borderClassName="border-2 border-[#00BCD4] shadow-xs"
+                  />
+                  <span className="hidden md:inline text-xs font-black text-[#0A1D3D] max-w-[120px] truncate">
+                    {profile.name}
+                  </span>
+                </div>
+              )}
+
               <button
                 type="button"
                 onClick={handleRefresh}
@@ -166,16 +182,27 @@ export default function ParentDashboardPage() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 flex-1 space-y-6 sm:space-y-8">
           {/* Welcome & Primary Launch Header */}
           <div className="p-6 sm:p-8 rounded-[28px] bg-white border-2 border-[#0A1D3D] shadow-[6px_6px_0_0_#0A1D3D] flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFE066] border border-[#0A1D3D] text-[11px] font-black text-[#0A1D3D]">
-                <span>🌟 Parent Explorer Dashboard</span>
+            <div className="flex items-start sm:items-center gap-4 sm:gap-5">
+              {profile && (
+                <ProfileAvatar
+                  src={profile.image}
+                  name={profile.name}
+                  size="xl"
+                  shape="rounded"
+                  borderClassName="border-2 border-[#0A1D3D] shadow-xs"
+                />
+              )}
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFE066] border border-[#0A1D3D] text-[11px] font-black text-[#0A1D3D]">
+                  <span>🌟 Parent Explorer Dashboard</span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0A1D3D] tracking-tight" style={{ fontFamily: JAKARTA }}>
+                  Welcome, {profile?.name || "Parent"}!
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-xl">
+                  Onboard new children, track active 18-level cognitive quests, and view assessment reports. Every Launch Free Quest creates an independent child journey.
+                </p>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0A1D3D] tracking-tight" style={{ fontFamily: JAKARTA }}>
-                Welcome, {profile?.name || "Parent"}!
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-xl">
-                Onboard new children, track active 18-level cognitive quests, and view assessment reports. Every Launch Free Quest creates an independent child journey.
-              </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">

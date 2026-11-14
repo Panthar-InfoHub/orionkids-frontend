@@ -60,7 +60,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
       // 3. Handle restricted account
       if (profile.status === "RESTRICTED") {
-        router.replace("/access-denied");
+        router.replace("/account/restricted");
         return;
       }
 

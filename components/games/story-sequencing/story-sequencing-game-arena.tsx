@@ -225,6 +225,7 @@ export function StorySequencingGameArena({
       setSubmissionStatus("submitting");
       const accuracy = Math.round((correctCount / mission.steps.length) * 100);
       const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
+      const avgRT = Math.round(durationMs / Math.max(1, mission.steps.length));
 
       if (activeSessionId) {
         const result = await completeQuestLevel(activeSessionId, {
@@ -234,6 +235,7 @@ export function StorySequencingGameArena({
           correctTrials: correctCount,
           accuracy,
           durationMs,
+          averageReactionTimeMs: avgRT,
           completedAt: new Date().toISOString(),
         });
 

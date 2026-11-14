@@ -94,7 +94,23 @@ export async function fetchCurrentSession(
       cache: "no-store",
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      if (res.status === 403) {
+        const errData = await res.json().catch(() => null);
+        if (
+          errData?.code === "ACCOUNT_RESTRICTED" ||
+          errData?.error?.code === "ACCOUNT_RESTRICTED"
+        ) {
+          import("./auth").then(({ broadcastAccountRestricted }) => {
+            broadcastAccountRestricted(errData?.data?.restrictedReason || errData?.error?.message);
+          }).catch(() => {});
+          if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+            window.location.replace("/account/restricted");
+          }
+        }
+      }
+      return null;
+    }
 
     const data = await res.json();
     const session = (data?.data ?? null) as QuestSession | null;
@@ -141,6 +157,20 @@ export async function fetchResumeState(
     });
 
     if (!res.ok) {
+      if (res.status === 403) {
+        const errData = await res.json().catch(() => null);
+        if (
+          errData?.code === "ACCOUNT_RESTRICTED" ||
+          errData?.error?.code === "ACCOUNT_RESTRICTED"
+        ) {
+          import("./auth").then(({ broadcastAccountRestricted }) => {
+            broadcastAccountRestricted(errData?.data?.restrictedReason || errData?.error?.message);
+          }).catch(() => {});
+          if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+            window.location.replace("/account/restricted");
+          }
+        }
+      }
       return { hasResumableQuest: false, destination: "/" };
     }
 
@@ -200,7 +230,23 @@ export async function fetchOrCreateSession(
       ),
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      if (res.status === 403) {
+        const errData = await res.json().catch(() => null);
+        if (
+          errData?.code === "ACCOUNT_RESTRICTED" ||
+          errData?.error?.code === "ACCOUNT_RESTRICTED"
+        ) {
+          import("./auth").then(({ broadcastAccountRestricted }) => {
+            broadcastAccountRestricted(errData?.data?.restrictedReason || errData?.error?.message);
+          }).catch(() => {});
+          if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+            window.location.replace("/account/restricted");
+          }
+        }
+      }
+      return null;
+    }
 
     const data = await res.json();
     const created = (data?.data ?? null) as QuestSession | null;

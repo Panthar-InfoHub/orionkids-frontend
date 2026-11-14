@@ -62,6 +62,8 @@ export function RuleDiscoveryGameArena({
   const [isNavigating, setIsNavigating] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const startTimeRef = useRef<number>(Date.now());
+  const cardStartTimeRef = useRef<number>(Date.now());
+  const reactionTimesRef = useRef<number[]>([]);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const scheduleTimeout = (fn: () => void, delayMs: number) => {
@@ -123,6 +125,11 @@ export function RuleDiscoveryGameArena({
 
   const handleSelectBucket = async (bucket: typeof TARGET_BUCKETS[0]) => {
     if (submissionStatus !== "idle" || isLocked) return;
+
+    // Record per-card reaction time
+    const cardRT = Math.max(100, Date.now() - cardStartTimeRef.current);
+    reactionTimesRef.current.push(cardRT);
+
     setIsLocked(true);
     setSelectedBucketId(bucket.id);
     const currentCard = CARDS_TO_SORT[cardIdx];
@@ -157,11 +164,19 @@ export function RuleDiscoveryGameArena({
       setSelectedBucketId(null);
       setIsLocked(false);
       if (!isLastTrial) {
+        cardStartTimeRef.current = Date.now();
         setCardIdx((i) => i + 1);
       } else {
         setSubmissionStatus("submitting");
         const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
         const accuracy = Math.round((newCorrect / CARDS_TO_SORT.length) * 100);
+        const avgRT =
+          reactionTimesRef.current.length > 0
+            ? Math.round(
+                reactionTimesRef.current.reduce((a, b) => a + b, 0) /
+                  reactionTimesRef.current.length
+              )
+            : Math.round(durationMs / Math.max(1, CARDS_TO_SORT.length));
 
         if (activeSessionId) {
           const result = await completeQuestLevel(activeSessionId, {
@@ -171,6 +186,10 @@ export function RuleDiscoveryGameArena({
             correctTrials: newCorrect,
             accuracy,
             durationMs,
+            averageReactionTimeMs: avgRT,
+            metrics: {
+              reactionTimes: reactionTimesRef.current,
+            },
             completedAt: new Date().toISOString(),
           });
 
@@ -216,11 +235,13 @@ export function RuleDiscoveryGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
+          cardStartTimeRef.current = Date.now();
           try { sessionStorage.setItem("orion_tut_seen_rule_discovery", "1"); } catch {}
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
+          cardStartTimeRef.current = Date.now();
           try { sessionStorage.setItem("orion_tut_seen_rule_discovery", "1"); } catch {}
         }}
       />

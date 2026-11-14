@@ -15,13 +15,37 @@ export function GrowthPathwaysSection({
   const practiceAreas = aiReport?.areasForPractice || [];
   const recs = aiReport?.parentRecommendations || [];
 
-  const practice1 =
-    practiceAreas[0] ||
-    `${childName} displayed persistent curiosity with multi-step rule discovery and pattern extrapolation.`;
+  const getPracticeTitle = (item: any, fallback: string) => {
+    if (!item) return fallback;
+    if (typeof item === "string") return fallback;
+    return item.heading || fallback;
+  };
 
-  const practice2 =
-    practiceAreas[1] ||
-    `Introduce everyday sorting, storytelling, and sequential puzzles to reinforce conceptual flexibility.`;
+  const getPracticeDesc = (item: any, fallback: string) => {
+    if (!item) return fallback;
+    if (typeof item === "string") return item;
+    return `${item.observedPattern} ${item.recommendedApproach ? `Recommendation: ${item.recommendedApproach}` : ""}`.trim();
+  };
+
+  const getRecDesc = (rec: any) => {
+    if (!rec) return "";
+    if (rec.description) return rec.description;
+    if (rec.learningOpportunity) return rec.learningOpportunity;
+    if (Array.isArray(rec.instructions)) return rec.instructions.join(" ");
+    return "";
+  };
+
+  const practice1Title = getPracticeTitle(practiceAreas[0], "Reasoning & Adaptive Flexibility");
+  const practice1 = getPracticeDesc(
+    practiceAreas[0],
+    `${childName} displayed persistent curiosity with multi-step rule discovery and pattern extrapolation.`
+  );
+
+  const practice2Title = getPracticeTitle(practiceAreas[1], "Narrative & Causal Sequencing");
+  const practice2 = getPracticeDesc(
+    practiceAreas[1],
+    `Introduce everyday sorting, storytelling, and sequential puzzles to reinforce conceptual flexibility.`
+  );
 
   return (
     <section className="w-full flex flex-col gap-5">
@@ -58,7 +82,7 @@ export function GrowthPathwaysSection({
             </div>
 
             <h3 className="text-[20px] font-bold text-[#0A1D3D]" style={{ fontFamily: JAKARTA }}>
-              Reasoning & Adaptive Flexibility
+              {practice1Title}
             </h3>
 
             <p className="text-[14px] leading-[165%] text-[#475569] mt-2.5" style={{ fontFamily: JAKARTA }}>
@@ -74,7 +98,7 @@ export function GrowthPathwaysSection({
             <div className="text-[13px] leading-[160%] text-[#334155] flex flex-col gap-2">
               {recs[0] ? (
                 <p>
-                  <strong>🧩 {recs[0].title}:</strong> {recs[0].description}
+                  <strong>🧩 {recs[0].title}:</strong> {getRecDesc(recs[0])}
                 </p>
               ) : (
                 <p>
@@ -83,7 +107,7 @@ export function GrowthPathwaysSection({
               )}
               {recs[1] ? (
                 <p>
-                  <strong>🔀 {recs[1].title}:</strong> {recs[1].description}
+                  <strong>🔀 {recs[1].title}:</strong> {getRecDesc(recs[1])}
                 </p>
               ) : (
                 <p>
@@ -107,7 +131,7 @@ export function GrowthPathwaysSection({
             </div>
 
             <h3 className="text-[20px] font-bold text-[#0A1D3D]" style={{ fontFamily: JAKARTA }}>
-              Narrative & Causal Sequencing
+              {practice2Title}
             </h3>
 
             <p className="text-[14px] leading-[165%] text-[#475569] mt-2.5" style={{ fontFamily: JAKARTA }}>
@@ -123,16 +147,22 @@ export function GrowthPathwaysSection({
             <div className="text-[13px] leading-[160%] text-[#334155] flex flex-col gap-2">
               {recs[2] ? (
                 <p>
-                  <strong>📖 {recs[2].title}:</strong> {recs[2].description}
+                  <strong>📖 {recs[2].title}:</strong> {getRecDesc(recs[2])}
                 </p>
               ) : (
                 <p>
                   <strong>📖 Bedtime Story Steps:</strong> Pause mid-book and playfully ask: &ldquo;What happened first, next, and what might happen now?&rdquo;
                 </p>
               )}
-              <p>
-                <strong>🎲 Daily Timeline Riddle:</strong> Retell three fun moments of the day in reverse order together.
-              </p>
+              {recs[3] ? (
+                <p>
+                  <strong>🎲 {recs[3].title}:</strong> {getRecDesc(recs[3])}
+                </p>
+              ) : (
+                <p>
+                  <strong>🎲 Daily Timeline Riddle:</strong> Retell three fun moments of the day in reverse order together.
+                </p>
+              )}
             </div>
           </div>
         </div>

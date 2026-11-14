@@ -156,6 +156,8 @@ export function OddOneOutGameArena({
   const [isSlidingOut, setIsSlidingOut] = useState(false);
   const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string } | null>(null);
   const startTimeRef = useRef<number>(Date.now());
+  const trialStartTimeRef = useRef<number>(Date.now());
+  const reactionTimesRef = useRef<number[]>([]);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const scheduleTimeout = (fn: () => void, delayMs: number) => {
@@ -224,6 +226,11 @@ export function OddOneOutGameArena({
 
   const handleSelectItem = async (itemIdx: number, isOdd: boolean) => {
     if (submissionStatus !== "idle" || isLocked) return;
+
+    // Record per-trial reaction time
+    const trialRT = Math.max(100, Date.now() - trialStartTimeRef.current);
+    reactionTimesRef.current.push(trialRT);
+
     setIsLocked(true);
     setSelectedIdx(itemIdx);
 
@@ -260,11 +267,19 @@ export function OddOneOutGameArena({
         setIsSlidingOut(false);
 
         if (!isLastTrial) {
+          trialStartTimeRef.current = Date.now();
           setCurrentIdx((i) => i + 1);
         } else {
           setSubmissionStatus("submitting");
           const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
           const accuracy = Math.round((newCorrect / trials.length) * 100);
+          const avgRT =
+            reactionTimesRef.current.length > 0
+              ? Math.round(
+                  reactionTimesRef.current.reduce((a, b) => a + b, 0) /
+                    reactionTimesRef.current.length
+                )
+              : Math.round(durationMs / Math.max(1, trials.length));
 
           if (activeSessionId) {
             const result = await completeQuestLevel(activeSessionId, {
@@ -274,6 +289,10 @@ export function OddOneOutGameArena({
               correctTrials: newCorrect,
               accuracy,
               durationMs,
+              averageReactionTimeMs: avgRT,
+              metrics: {
+                reactionTimes: reactionTimesRef.current,
+              },
               completedAt: new Date().toISOString(),
             });
 
@@ -333,11 +352,13 @@ export function OddOneOutGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
+          trialStartTimeRef.current = Date.now();
           try { sessionStorage.setItem("orion_tut_seen_odd_one_out", "1"); } catch {}
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
+          trialStartTimeRef.current = Date.now();
           try { sessionStorage.setItem("orion_tut_seen_odd_one_out", "1"); } catch {}
         }}
       />

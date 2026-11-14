@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import type { AdminUserDetail } from "@/lib/api/admin";
 import { UserStatusModal } from "../user-status-modal";
+import { ProfileAvatar } from "@/components/shared/profile-avatar";
 
 interface UserOverviewSectionProps {
   userDetail: AdminUserDetail;
@@ -42,15 +43,6 @@ export function UserOverviewSection({
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  const initials = user.name
-    ? user.name
-        .split(" ")
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join("")
-        .toUpperCase()
-    : "OK";
 
   const formatDate = (iso: string | null | undefined) => {
     if (!iso) return "—";
@@ -82,18 +74,15 @@ export function UserOverviewSection({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           {/* Left: User Avatar & Basic Identity */}
           <div className="flex items-start sm:items-center gap-4 sm:gap-5">
-            {user.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={user.image}
-                alt={user.name}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-[#0A1D3D] shadow-xs shrink-0"
-              />
-            ) : (
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#0A1D3D] text-[#FFE066] flex items-center justify-center font-black text-2xl shadow-xs shrink-0">
-                {initials}
-              </div>
-            )}
+            <ProfileAvatar
+              src={user.image}
+              name={user.name}
+              size="xl"
+              shape="rounded"
+              borderClassName="border-2 border-[#0A1D3D] shadow-xs"
+              fallbackTextClassName="text-[#FFE066]"
+              priority={true}
+            />
 
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2">

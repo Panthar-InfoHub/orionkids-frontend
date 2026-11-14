@@ -7,6 +7,7 @@ import {
   startQuestLevel,
   saveQuestCheckpoint,
   completeQuestLevel,
+  skipQuestActivity,
   QUEST_GAMES_METADATA,
 } from "@/lib/api/quest";
 import { fetchCurrentSession } from "@/lib/api/session";
@@ -368,10 +369,77 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
     }
   };
 
-  const handleSkipToNextLevelFromTired = async () => {
+  const handleSkipLevel = async () => {
     setShowTiredModal(false);
     setIsLocked(true);
-    await handleLevelFinished(moves, true);
+    setSubmissionStatus("submitting");
+    const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
+
+    if (activeSessionId) {
+      const result = await skipQuestActivity(activeSessionId, {
+        gameKey: "card-flip",
+        levelNumber: level,
+        skipEntireGame: false,
+        reason: "tired_prompt_skipped_level",
+        durationMs,
+      });
+
+      if (result.success) {
+        setSubmissionStatus("success");
+        let nextRoute =
+          result.nextLevelRoute ||
+          (level < 3 ? `/games/card-flip?level=${level + 1}` : "/games/pattern?level=1");
+        if (activeSessionId && !nextRoute.includes("sessionId=")) {
+          nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+        }
+        setNextLevelRoute(nextRoute);
+        setTimeout(() => {
+          router.push(nextRoute);
+        }, 300);
+      } else {
+        setSubmissionStatus("error");
+        setErrorMessage(result.error?.message || "Failed to record skip on the server.");
+      }
+    } else {
+      setSubmissionStatus("success");
+      const nextRoute = level < 3 ? `/games/card-flip?level=${level + 1}` : "/games/pattern?level=1";
+      router.push(nextRoute);
+    }
+  };
+
+  const handleSkipEntireGame = async () => {
+    setShowTiredModal(false);
+    setIsLocked(true);
+    setSubmissionStatus("submitting");
+    const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
+
+    if (activeSessionId) {
+      const result = await skipQuestActivity(activeSessionId, {
+        gameKey: "card-flip",
+        levelNumber: level,
+        skipEntireGame: true,
+        reason: "tired_prompt_skipped_game",
+        durationMs,
+      });
+
+      if (result.success) {
+        setSubmissionStatus("success");
+        let nextRoute = result.nextLevelRoute || "/games/pattern?level=1";
+        if (activeSessionId && !nextRoute.includes("sessionId=")) {
+          nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+        }
+        setNextLevelRoute(nextRoute);
+        setTimeout(() => {
+          router.push(nextRoute);
+        }, 300);
+      } else {
+        setSubmissionStatus("error");
+        setErrorMessage(result.error?.message || "Failed to record skip on the server.");
+      }
+    } else {
+      setSubmissionStatus("success");
+      router.push("/games/pattern?level=1");
+    }
   };
 
   const handleContinuePlayingFromTired = () => {
@@ -379,15 +447,12 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
     setIsLocked(false);
   };
 
-  const handleLevelFinished = async (finalMoves: number, isTiredSkip: boolean = false) => {
+  const handleLevelFinished = async (finalMoves: number) => {
     setSubmissionStatus("submitting");
     const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
     // Accuracy based on moves vs optimal pairs
-    const accuracy = isTiredSkip
-      ? Math.max(50, Math.round((Math.max(1, matchedCount) / Math.max(totalPairs, finalMoves)) * 100))
-      : Math.min(100, Math.round((totalPairs / Math.max(totalPairs, finalMoves)) * 100));
-
-    const correctPairs = isTiredSkip ? Math.max(1, matchedCount) : totalPairs;
+    const accuracy = Math.min(100, Math.round((totalPairs / Math.max(totalPairs, finalMoves)) * 100));
+    const correctPairs = totalPairs;
 
     if (activeSessionId) {
       const result = await completeQuestLevel(activeSessionId, {
@@ -401,7 +466,6 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         metrics: {
           totalMoves: finalMoves,
           optimalPairs: totalPairs,
-          skippedViaTiredPrompt: isTiredSkip,
         },
         completedAt: new Date().toISOString(),
       });
@@ -595,22 +659,35 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
               className="text-[13px] sm:text-[14px] text-[#526176] font-medium leading-relaxed max-w-[320px] mb-6"
               style={{ fontFamily: JAKARTA }}
             >
-              You&apos;ve made {moves} moves! Would you like to move forward to the next level or keep playing?
+              You&apos;ve made {moves} moves! It&apos;s totally okay to take a break or jump ahead whenever you like.
             </p>
 
             <div className="w-full flex flex-col gap-2.5">
-              {/* Option 1: Yes, move to next level */}
+              {/* Option 1: Skip to next level (if level < 3) */}
+              {level < 3 && (
+                <button
+                  type="button"
+                  onClick={handleSkipLevel}
+                  className="w-full py-3 px-5 rounded-full font-extrabold text-[15px] bg-[#FFD028] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer flex items-center justify-center gap-2"
+                  style={{ fontFamily: JAKARTA }}
+                >
+                  <span>Skip to Level {level + 1}</span>
+                  <span>🚀</span>
+                </button>
+              )}
+
+              {/* Option 2: Skip entire Card Flip game */}
               <button
                 type="button"
-                onClick={handleSkipToNextLevelFromTired}
-                className="w-full py-3 px-5 rounded-full font-extrabold text-[15px] bg-[#FFD028] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer flex items-center justify-center gap-2"
+                onClick={handleSkipEntireGame}
+                className="w-full py-2.5 px-5 rounded-full font-extrabold text-[14px] bg-[#FFE066] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer flex items-center justify-center gap-2"
                 style={{ fontFamily: JAKARTA }}
               >
-                <span>Yes, next level</span>
-                <span>🚀</span>
+                <span>Skip to Next Game (Pattern)</span>
+                <span>🧩</span>
               </button>
 
-              {/* Option 2: No, continue playing */}
+              {/* Option 3: Continue playing */}
               <button
                 type="button"
                 onClick={handleContinuePlayingFromTired}

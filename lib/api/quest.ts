@@ -135,6 +135,16 @@ export interface CompleteLevelPayload {
   metrics?: Record<string, unknown>;
   trialRecords?: unknown[];
   completedAt?: string;
+  isSkipped?: boolean;
+  skipEntireGame?: boolean;
+}
+
+export interface SkipQuestPayload {
+  gameKey: QuestGameKey;
+  levelNumber?: number;
+  skipEntireGame?: boolean;
+  reason?: string;
+  durationMs?: number;
 }
 
 export interface CompleteLevelResult {
@@ -187,6 +197,18 @@ export async function startQuestLevel(
   const body = await res.json().catch(() => null);
 
   if (!res.ok) {
+    if (
+      res.status === 403 &&
+      (body?.code === "ACCOUNT_RESTRICTED" || body?.error?.code === "ACCOUNT_RESTRICTED")
+    ) {
+      import("./auth").then(({ broadcastAccountRestricted }) => {
+        broadcastAccountRestricted(body?.data?.restrictedReason || body?.error?.message);
+      }).catch(() => {});
+      if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+        window.location.replace("/account/restricted");
+      }
+    }
+
     return {
       success: false,
       error: {
@@ -262,6 +284,18 @@ export async function completeQuestLevel(
   const body = await res.json().catch(() => null);
 
   if (!res.ok) {
+    if (
+      res.status === 403 &&
+      (body?.code === "ACCOUNT_RESTRICTED" || body?.error?.code === "ACCOUNT_RESTRICTED")
+    ) {
+      import("./auth").then(({ broadcastAccountRestricted }) => {
+        broadcastAccountRestricted(body?.data?.restrictedReason || body?.error?.message);
+      }).catch(() => {});
+      if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+        window.location.replace("/account/restricted");
+      }
+    }
+
     return {
       success: false,
       error: {
@@ -282,6 +316,73 @@ export async function completeQuestLevel(
     currentLevel: data.currentLevel,
     isQuestComplete: data.isQuestComplete,
     nextLevelRoute: data.nextLevelRoute,
+  };
+}
+
+/**
+ * Records a skipped level or entire game in the session and advances progression.
+ */
+export async function skipQuestActivity(
+  sessionId: string,
+  payload: SkipQuestPayload
+): Promise<CompleteLevelResult> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) {
+    const isSkipEntire = payload.skipEntireGame ?? false;
+    const nextGameMap: Record<QuestGameKey, QuestGameKey | "report"> = {
+      stroop: "card-flip",
+      "card-flip": "pattern",
+      pattern: "odd-one-out",
+      "odd-one-out": "rule-discovery",
+      "rule-discovery": "story-sequencing",
+      "story-sequencing": "report",
+    };
+    const nextGame = nextGameMap[payload.gameKey];
+    const nextRoute =
+      isSkipEntire || (payload.levelNumber || 1) >= 3
+        ? nextGame === "report"
+          ? `/report?sessionId=${sessionId}`
+          : `/games/${nextGame}?level=1`
+        : `/games/${payload.gameKey}?level=${(payload.levelNumber || 1) + 1}`;
+    return {
+      success: true,
+      message: `${payload.gameKey} skipped (demo mode)`,
+      nextLevelRoute: nextRoute,
+    };
+  }
+
+  import("./session").then(({ invalidateSessionCache }) => invalidateSessionCache()).catch(() => {});
+
+  const res = await fetch(`${apiUrl}/api/quest/sessions/${sessionId}/skip`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const body = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    return {
+      success: false,
+      error: {
+        code: body?.error?.code || "ERROR",
+        message: body?.error?.message || `Failed to record skipped activity (${res.statusText})`,
+      },
+    };
+  }
+
+  const data = body?.data || body;
+  return {
+    success: true,
+    message: body?.message || "Activity skipped",
+    levelAttemptId: data?.levelAttemptId,
+    sessionId: data?.sessionId || sessionId,
+    nextStage: data?.nextStage,
+    currentGame: data?.currentGame,
+    currentLevel: data?.currentLevel,
+    isQuestComplete: data?.isQuestComplete,
+    nextLevelRoute: data?.nextLevelRoute,
   };
 }
 
@@ -323,13 +424,48 @@ export interface QuestReportData {
       averageReactionTimeMs: number | null;
       insight: string;
     }>;
-    observedStrengths: string[];
-    areasForPractice: string[];
+    observedStrengths: Array<
+      | string
+      | {
+          heading: string;
+          cognitiveSkill: string;
+          observation: string;
+          performanceEvidence: string;
+          educationalRelevance: string;
+        }
+    >;
+    areasForPractice: Array<
+      | string
+      | {
+          heading: string;
+          cognitiveSkill: string;
+          observedPattern: string;
+          performanceEvidence: string;
+          recommendedApproach: string;
+        }
+    >;
     progressAndConsistency: string;
     parentRecommendations: Array<{
       title: string;
-      description: string;
+      description?: string;
       activityType?: string;
+      skillsPracticed?: string[];
+      materials?: string[];
+      instructions?: string[];
+      suggestedDuration?: string;
+      difficultyProgression?: string;
+      learningOpportunity?: string;
+      parentTip?: string;
+    }>;
+    homeActivities?: Array<{
+      title: string;
+      skillsPracticed: string[];
+      materials: string[];
+      instructions: string[];
+      suggestedDuration: string;
+      difficultyProgression?: string;
+      learningOpportunity: string;
+      parentTip: string;
     }>;
     dataLimitations: string;
     reportGenerationDate: string;
@@ -454,6 +590,18 @@ export async function fetchQuestReport(
     const body = await res.json().catch(() => null);
 
     if (!res.ok) {
+      if (
+        res.status === 403 &&
+        (body?.code === "ACCOUNT_RESTRICTED" || body?.error?.code === "ACCOUNT_RESTRICTED")
+      ) {
+        import("./auth").then(({ broadcastAccountRestricted }) => {
+          broadcastAccountRestricted(body?.data?.restrictedReason || body?.error?.message);
+        }).catch(() => {});
+        if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+          window.location.replace("/account/restricted");
+        }
+      }
+
       const errMsg = body?.error?.message || "Could not retrieve report.";
       const isInProgress = errMsg.toLowerCase().includes("in progress");
       return {

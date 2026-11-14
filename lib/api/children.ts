@@ -192,6 +192,20 @@ export async function fetchChildren(): Promise<ChildWithStats[]> {
     });
 
     if (!res.ok) {
+      if (res.status === 403) {
+        const payload = await res.json().catch(() => null);
+        if (
+          payload?.code === "ACCOUNT_RESTRICTED" ||
+          payload?.error?.code === "ACCOUNT_RESTRICTED"
+        ) {
+          import("./auth").then(({ broadcastAccountRestricted }) => {
+            broadcastAccountRestricted(payload?.data?.restrictedReason || payload?.error?.message);
+          }).catch(() => {});
+          if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+            window.location.replace("/account/restricted");
+          }
+        }
+      }
       if (res.status === 401) return [];
       console.warn(`[children] fetchChildren returned status ${res.status}`);
       return [];
