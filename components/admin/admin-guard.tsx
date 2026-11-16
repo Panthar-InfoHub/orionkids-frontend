@@ -105,6 +105,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
             width={48}
             height={24}
             className="w-10 h-auto object-contain"
+            style={{ width: "auto", height: "auto" }}
           />
         </div>
         <div className="flex items-center gap-2 text-slate-700 font-bold text-sm">
@@ -131,6 +132,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
                 width={115}
                 height={58}
                 className="h-9 w-auto object-contain"
+                style={{ width: "auto", height: "auto" }}
               />
             </Link>
             <Link

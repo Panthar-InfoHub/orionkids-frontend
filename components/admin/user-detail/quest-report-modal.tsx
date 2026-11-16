@@ -26,6 +26,7 @@ import {
   resendAdminReportEmail,
   type AdminSessionReportResult,
 } from "@/lib/api/admin";
+import { formatChildName } from "@/lib/utils/format-child-name";
 import { ReportEmailStatus } from "@/components/reports/report-email-status";
 
 interface QuestReportModalProps {
@@ -67,7 +68,7 @@ export function QuestReportModal({
     if (!report?.questSessionId || isDownloading) return;
     setIsDownloading(true);
     try {
-      await downloadAdminReportPdf(report.questSessionId, report.childName);
+      await downloadAdminReportPdf(report.questSessionId, formatChildName(report.childName));
     } catch (err) {
       console.error("PDF download failed:", err);
     } finally {
@@ -306,7 +307,7 @@ export function QuestReportModal({
                     <span>Explorer Profile</span>
                   </div>
                   <h2 className="text-xl font-black text-[#0A1D3D]">
-                    {report.childName}
+                    {formatChildName(report.childName)}
                   </h2>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {report.selectedClass} · Age {report.age}

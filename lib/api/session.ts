@@ -1,4 +1,7 @@
 import { getActiveChildId, setActiveChildId } from "./children";
+import { queueCheckpointSave, clearPendingCheckpoints } from "./checkpoint-queue";
+
+export { queueCheckpointSave, clearPendingCheckpoints };
 
 /**
  * Quest Session API client.
@@ -183,8 +186,6 @@ export async function fetchResumeState(
     return { hasResumableQuest: false, destination: "/" };
   }
 }
-
-import { queueCheckpointSave } from "./checkpoint-queue";
 
 /**
  * Persists an in-game checkpoint to the active in-progress level attempt.

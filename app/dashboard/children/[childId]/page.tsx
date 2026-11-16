@@ -33,6 +33,7 @@ import {
   type ChildQuestSessionItem,
   type ChildReportItem,
 } from "@/lib/api/children";
+import { formatChildName } from "@/lib/utils/format-child-name";
 import { startChildQuest } from "@/lib/api/session";
 import { generateQuestReport } from "@/lib/api/quest";
 import { ReportEmailStatus } from "@/components/reports/report-email-status";
@@ -176,7 +177,7 @@ function ChildDetailContent({ params }: PageProps) {
     if (!child || downloadingReportId) return;
     setDownloadingReportId(reportSessionId);
     try {
-      await downloadChildReportPdf(child.id, reportSessionId, child.childName);
+      await downloadChildReportPdf(child.id, reportSessionId, formatChildName(child.childName));
     } catch (err) {
       console.error("Failed to download PDF:", err);
     } finally {
@@ -323,7 +324,7 @@ function ChildDetailContent({ params }: PageProps) {
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-2xl sm:text-3xl font-black text-[#0A1D3D]" style={{ fontFamily: JAKARTA }}>
-                    {child.childName}
+                    {formatChildName(child.childName)}
                   </h1>
                   <span className="px-2.5 py-0.5 rounded-full bg-[#FFE066] border border-[#0A1D3D] text-[11px] font-black text-[#0A1D3D]">
                     {child.selectedClass}
@@ -595,7 +596,7 @@ function ChildDetailContent({ params }: PageProps) {
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 text-xs text-slate-600">
                         <div>
                           <span className="text-slate-400 block text-[10px] uppercase font-bold">Child</span>
-                          <span className="font-bold text-[#0A1D3D]">{child.childName}</span>
+                          <span className="font-bold text-[#0A1D3D]">{formatChildName(child.childName)}</span>
                         </div>
                         <div>
                           <span className="text-slate-400 block text-[10px] uppercase font-bold">Quest Completed</span>

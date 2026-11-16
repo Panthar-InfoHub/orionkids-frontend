@@ -43,6 +43,7 @@ export function PlayJourneyHeader({
               height={44}
               priority
               className="w-[96px] sm:w-[110px] h-[34px] sm:h-[40px] object-contain"
+              style={{ width: "auto", height: "auto" }}
             />
           </Link>
 

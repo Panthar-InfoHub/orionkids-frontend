@@ -31,6 +31,7 @@ export function WarmUpHeader({ currentStep, totalSteps, isLastStep, isCompleted 
               height={60}
               priority
               className="w-[115px] h-[54px] sm:w-[130px] sm:h-[62px] object-contain"
+              style={{ width: "auto", height: "auto" }}
             />
           </Link>
 

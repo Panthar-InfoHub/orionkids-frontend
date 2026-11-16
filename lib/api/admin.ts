@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./auth";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 export interface AdminUserItem {
   id: string;
@@ -1016,7 +1017,8 @@ export async function downloadAdminReportPdf(
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+    const formattedName = formatChildName(childName, "Child");
+    const cleanName = formattedName.replace(/\s+/g, "_");
     a.download = `OrionKids-Admin-Report-${cleanName}.pdf`;
     document.body.appendChild(a);
     a.click();

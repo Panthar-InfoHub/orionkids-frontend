@@ -22,6 +22,7 @@ import type { AdminUserItem, AdminPaginationMeta } from "@/lib/api/admin";
 import { useAdmin } from "./admin-guard";
 import { UserStatusModal } from "./user-status-modal";
 import { ProfileAvatar } from "@/components/shared/profile-avatar";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 interface UserTableProps {
   users: AdminUserItem[];
@@ -352,7 +353,7 @@ export function UserTable({
                       {user.childProfile ? (
                         <div className="min-w-0">
                           <p className="font-bold text-[#0A1D3D] text-[11px] truncate">
-                            {user.childProfile.childName}
+                            {formatChildName(user.childProfile.childName)}
                           </p>
                           <p className="text-slate-400 text-[10px]">
                             {user.childProfile.selectedClass} · {user.childProfile.age} yrs

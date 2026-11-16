@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { QuestReportData } from "@/lib/api/quest";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 const INTER = "var(--font-inter), 'Inter', sans-serif";
 
@@ -10,7 +11,7 @@ export function HeartfeltNoteSection({
 }: {
   report?: QuestReportData | null;
 }) {
-  const childName = report?.childName || "Your Child";
+  const childName = formatChildName(report?.childName, "Your Child");
 
   return (
     <section

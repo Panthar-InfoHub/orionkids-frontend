@@ -24,6 +24,7 @@ import {
   downloadChildReportPdf,
   type ChildWithStats,
 } from "@/lib/api/children";
+import { formatChildName } from "@/lib/utils/format-child-name";
 import { startChildQuest } from "@/lib/api/session";
 import { generateQuestReport } from "@/lib/api/quest";
 
@@ -101,7 +102,8 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
         setReportError("No report found yet. Please generate the report first.");
         return;
       }
-      const ok = await downloadChildReportPdf(child.id, latest.questSessionId, child.childName);
+      const formattedName = formatChildName(child.childName);
+      const ok = await downloadChildReportPdf(child.id, latest.questSessionId, formattedName);
       if (!ok) {
         setReportError("Could not download the report. Please try again.");
       }
@@ -151,7 +153,7 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
                 className="text-xl sm:text-2xl font-black text-[#0A1D3D] tracking-tight"
                 style={{ fontFamily: JAKARTA }}
               >
-                {child.childName}
+                {formatChildName(child.childName)}
               </h3>
               {onEdit && (
                 <button
@@ -159,7 +161,7 @@ export function ChildCard({ child, onEdit }: ChildCardProps) {
                   onClick={() => onEdit(child)}
                   className="p-1 text-slate-400 hover:text-[#00BCD4] rounded-md hover:bg-slate-50 transition-colors cursor-pointer"
                   title="Edit child profile"
-                  aria-label={`Edit profile for ${child.childName}`}
+                  aria-label={`Edit profile for ${formatChildName(child.childName)}`}
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>

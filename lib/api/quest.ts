@@ -1,4 +1,6 @@
 
+import { formatChildName } from "@/lib/utils/format-child-name";
+
 export type QuestGameKey =
   | "stroop"
   | "card-flip"
@@ -88,12 +90,12 @@ export const QUEST_GAMES_METADATA: Record<QuestGameKey, GameInfo> = {
     subtitles: {
       1: "Level 1 · Color Matching 🎨",
       2: "Level 2 · Shape Shifting 📐",
-      3: "Level 3 · Quantity & Number Rules 🔢",
+      3: "Level 3 · Cosmic Rule Switch ⚡",
     },
     callouts: {
-      1: "Sort the items! The secret cosmic rule will change—pay attention to feedback.",
-      2: "The sorting rule just shifted. Adapt quickly and find the new pattern.",
-      3: "Master mental flexibility! Complete all sorts to unlock Story Sequencing.",
+      1: "Look closely at the card color! Find another card with the same color.",
+      2: "Look closely at the card shape! Find another card with the same shape.",
+      3: "Watch the active rule symbol! Switch between matching color and matching shape.",
     },
     totalLevels: 3,
   },
@@ -274,12 +276,42 @@ export async function completeQuestLevel(
 
   import("./session").then(({ invalidateSessionCache }) => invalidateSessionCache()).catch(() => {});
 
-  const res = await fetch(`${apiUrl}/api/quest/sessions/${sessionId}/levels/complete`, {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  let res: Response | null = null;
+  const maxRetries = 2;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      res = await fetch(`${apiUrl}/api/quest/sessions/${sessionId}/levels/complete`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      // If transient server error (500, 502, 503, 504), retry with backoff
+      if (res.status >= 500 && attempt < maxRetries) {
+        await new Promise((r) => setTimeout(r, 150 * (attempt + 1)));
+        continue;
+      }
+      break;
+    } catch (fetchErr) {
+      if (attempt < maxRetries) {
+        await new Promise((r) => setTimeout(r, 150 * (attempt + 1)));
+        continue;
+      }
+      throw fetchErr;
+    }
+  }
+
+  if (!res) {
+    return {
+      success: false,
+      error: {
+        code: "NETWORK_ERROR",
+        message: "Failed to connect to quest service",
+      },
+    };
+  }
 
   const body = await res.json().catch(() => null);
 
@@ -427,24 +459,40 @@ export interface QuestReportData {
     observedStrengths: Array<
       | string
       | {
-          heading: string;
-          cognitiveSkill: string;
-          observation: string;
-          performanceEvidence: string;
-          educationalRelevance: string;
+          heading?: string;
+          cognitiveSkill?: string;
+          observation?: string;
+          performanceEvidence?: string;
+          educationalRelevance?: string;
         }
     >;
     areasForPractice: Array<
       | string
       | {
-          heading: string;
-          cognitiveSkill: string;
-          observedPattern: string;
-          performanceEvidence: string;
-          recommendedApproach: string;
+          heading?: string;
+          cognitiveSkill?: string;
+          observedPattern?: string;
+          performanceEvidence?: string;
+          recommendedApproach?: string;
         }
     >;
     progressAndConsistency: string;
+    whatDoesThisMean?: string;
+    shouldIWorry?: {
+      reassurance: string;
+      keyPoints: string[];
+      teacherPartnershipGuidance: string;
+    };
+    startHere?: {
+      activityTitle: string;
+      relatedDomain: string;
+      relatedGameKey: string;
+      whyThisFirst: string;
+      evidenceCitation: string;
+      quickSteps: string[];
+      suggestedDuration: string;
+    };
+    cardFlipRetryNote?: string;
     parentRecommendations: Array<{
       title: string;
       description?: string;
@@ -456,6 +504,10 @@ export interface QuestReportData {
       difficultyProgression?: string;
       learningOpportunity?: string;
       parentTip?: string;
+      relatedGameKey?: string;
+      relatedDomain?: string;
+      observedFinding?: string;
+      unassessedNote?: string;
     }>;
     homeActivities?: Array<{
       title: string;
@@ -556,7 +608,8 @@ export async function downloadQuestReportPdf(
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+    const formattedName = formatChildName(childName, "Child");
+    const cleanName = formattedName.replace(/\s+/g, "_");
     a.download = `OrionKids-Assessment-Report-${cleanName}.pdf`;
     document.body.appendChild(a);
     a.click();

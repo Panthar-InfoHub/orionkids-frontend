@@ -16,6 +16,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import type { AdminChildProfile } from "@/lib/api/admin";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 interface ChildProfilesSectionProps {
   childrenList: AdminChildProfile[];
@@ -85,7 +86,7 @@ export function ChildProfilesSection({
                     <div>
                       <div className="flex items-center gap-2">
                         <h4 className="text-base font-black text-[#0A1D3D] group-hover:text-[#00838F] transition-colors">
-                          {child.childName}
+                          {formatChildName(child.childName)}
                         </h4>
                         <span className="text-[11px] font-bold text-[#00838F] opacity-0 group-hover:opacity-100 transition-opacity">
                           View details →

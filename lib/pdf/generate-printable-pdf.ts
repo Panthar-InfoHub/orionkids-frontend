@@ -7,6 +7,8 @@ export interface GeneratePdfOptions {
   printable: PrintableItem;
 }
 
+const WORKSHEETS_DIR = path.join(process.cwd(), "public", "OrionKids_Worksheets");
+
 /**
  * Generates and returns the authentic single-page vector worksheet for the given printable.
  * Directly serves the original vector PDF from /public/OrionKids_Worksheets/ with robust fallback.
@@ -16,11 +18,12 @@ export async function generatePrintablePdf({
 }: GeneratePdfOptions): Promise<Uint8Array> {
   const rawWorksheet =
     printable.worksheetFile || "OrionKids_01_Join_the_Stars_Orion.pdf";
-  const cleanFilename = rawWorksheet.replace(/^\/?(OrionKids_Worksheets\/)?/, "");
+  const cleanFilename = path.basename(
+    rawWorksheet.replace(/^\/?(OrionKids_Worksheets\/)?/, "")
+  );
 
-  // Candidate paths where the authentic worksheet PDF resides
   const candidatePaths = [
-    path.join(process.cwd(), "public", "OrionKids_Worksheets", cleanFilename),
+    path.join(WORKSHEETS_DIR, cleanFilename),
     path.join(process.cwd(), "public", cleanFilename),
   ];
 

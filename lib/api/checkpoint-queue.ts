@@ -15,6 +15,14 @@ const pendingMap = new Map<string, CheckpointTask>();
 const sequenceMap = new Map<string, number>();
 
 /**
+ * Clears any pending queued checkpoints for an attempt (e.g. upon final level completion).
+ */
+export function clearPendingCheckpoints(sessionId: string, attemptId: string) {
+  const key = `${sessionId}:${attemptId}`;
+  pendingMap.delete(key);
+}
+
+/**
  * Queues a checkpoint save with in-flight deduplication and sequencing.
  */
 export async function queueCheckpointSave(

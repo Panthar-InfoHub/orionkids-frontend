@@ -322,10 +322,15 @@ export async function fetchAccountStatus(): Promise<AccountStatusData | null> {
 export const ACCOUNT_RESTRICTION_EVENT_KEY = "orionkids_account_restricted_event";
 
 /**
- * Broadcasts an account restriction event across browser tabs.
+ * Broadcasts an account restriction event across browser tabs and local context.
  */
 export function broadcastAccountRestricted(reason?: string | null) {
   if (typeof window === "undefined") return;
+
+  try {
+    sessionStorage.setItem("orion_account_restricted_reason", reason || "");
+    window.dispatchEvent(new CustomEvent("orion:account-restricted", { detail: { reason } }));
+  } catch {}
 
   try {
     if (typeof BroadcastChannel !== "undefined") {
@@ -346,5 +351,3 @@ export function broadcastAccountRestricted(reason?: string | null) {
     // Ignore storage quota/permission exceptions
   }
 }
-
-

@@ -1,4 +1,5 @@
 import { API_BASE_URL, type ChildProfileData } from "./auth";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 export interface ChildStats {
   totalQuests: number;
@@ -435,7 +436,8 @@ export async function downloadChildReportPdf(
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+    const formattedName = formatChildName(childName, "Child");
+    const cleanName = formattedName.replace(/\s+/g, "_");
     a.download = `OrionKids-${cleanName}-Report.pdf`;
     document.body.appendChild(a);
     a.click();

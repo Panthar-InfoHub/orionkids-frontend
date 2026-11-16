@@ -27,6 +27,7 @@ import {
 } from "@/lib/api/admin";
 import { QuestReportModal } from "./user-detail/quest-report-modal";
 import { ReportEmailStatus } from "@/components/reports/report-email-status";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 export function AdminReportsSection() {
   const [reports, setReports] = useState<AdminReportListItem[]>([]);
@@ -99,7 +100,7 @@ export function AdminReportsSection() {
     if (downloadingId) return;
     setDownloadingId(reportItem.questSessionId);
     try {
-      await downloadAdminReportPdf(reportItem.questSessionId, reportItem.childName);
+      await downloadAdminReportPdf(reportItem.questSessionId, formatChildName(reportItem.childName));
     } catch (err) {
       console.error("Download failed:", err);
       alert("Failed to download PDF report");
@@ -221,7 +222,7 @@ export function AdminReportsSection() {
                 {reports.map((r) => (
                   <tr key={r.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="font-black text-[#0A1D3D]">{r.childName}</div>
+                      <div className="font-black text-[#0A1D3D]">{formatChildName(r.childName)}</div>
                       <div className="text-[11px] text-slate-400">
                         {r.selectedClass} · Age {r.age}
                         {r.school ? ` · ${r.school}` : ""}

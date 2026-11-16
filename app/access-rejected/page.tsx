@@ -113,6 +113,7 @@ export default function AccessRejectedPage() {
               height={58}
               priority
               className="h-10 w-auto object-contain"
+              style={{ width: "auto", height: "auto" }}
             />
           </Link>
 

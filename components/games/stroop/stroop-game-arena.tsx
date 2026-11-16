@@ -498,7 +498,12 @@ export function StroopGameArena({
             });
           }
         } else {
-          // Level finished
+          // Level finished - clear any pending in-flight checkpoints to avoid race conditions with final submission
+          if (activeSessionId && activeAttemptId) {
+            import("@/lib/api/session").then(({ clearPendingCheckpoints }) => {
+              clearPendingCheckpoints(activeSessionId, activeAttemptId);
+            }).catch(() => {});
+          }
           setIsLevelFinished(true);
           await submitResults(updatedRecords);
         }

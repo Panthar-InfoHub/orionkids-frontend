@@ -44,11 +44,11 @@ export function TutorialShowMeStage({
   };
 
   return (
-    <div className={`w-full flex flex-col items-center gap-4 ${className}`}>
+    <div className={`w-full flex flex-col items-center gap-3 sm:gap-4 ${className}`}>
       {/* 1. Demonstration Arena Box */}
-      <div className="relative w-full max-w-[520px] min-h-[260px] p-5 rounded-3xl bg-linear-to-b from-sky-50 via-white to-amber-50/50 border-2 border-[#0A1D3D] shadow-[4px_4px_0_0_#0A1D3D] flex flex-col items-center justify-center overflow-hidden">
+      <div className="relative w-full max-w-[520px] min-h-[190px] sm:min-h-[240px] p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-linear-to-b from-sky-50 via-white to-amber-50/50 border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D] flex flex-col items-center justify-center overflow-hidden">
         {/* "Watch the Demo" Badge */}
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-slate-200 text-[#0A1D3D] text-[11px] font-black shadow-xs">
+        <div className="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white/90 border border-slate-200 text-[#0A1D3D] text-[10px] sm:text-[11px] font-black shadow-xs">
           <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
           <span>Demonstration 👁️</span>
         </div>
@@ -57,7 +57,7 @@ export function TutorialShowMeStage({
         <button
           type="button"
           onClick={handleReplay}
-          className="absolute top-3 right-3 p-1.5 rounded-full bg-white hover:bg-slate-100 text-slate-600 hover:text-[#0A1D3D] border border-slate-200 shadow-xs text-xs font-bold transition-all cursor-pointer"
+          className="absolute top-2.5 sm:top-3 right-2.5 sm:right-3 p-1.5 rounded-full bg-white hover:bg-slate-100 text-slate-600 hover:text-[#0A1D3D] border border-slate-200 shadow-xs text-xs font-bold transition-all cursor-pointer"
           title="Watch demonstration again"
           aria-label="Watch demo again"
         >
@@ -65,19 +65,19 @@ export function TutorialShowMeStage({
         </button>
 
         {/* Render Specific Demo Interactive Visuals based on demoType */}
-        <div className="w-full flex flex-col items-center justify-center py-4">
+        <div className="w-full flex flex-col items-center justify-center py-2 sm:py-4">
           {renderDemoVisual(demo, phase)}
         </div>
 
         {/* Phase Feedback Pill */}
-        <div className="h-7 mt-2 flex items-center justify-center">
+        <div className="h-6 sm:h-7 mt-1 sm:mt-2 flex items-center justify-center">
           <AnimatePresence mode="wait">
             {phase === "success" && (
               <motion.span
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 border border-emerald-400 text-emerald-900 text-xs font-black shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 border border-emerald-400 text-emerald-900 text-[11px] sm:text-xs font-black shadow-xs"
                 style={{ fontFamily: JAKARTA }}
               >
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
@@ -89,11 +89,11 @@ export function TutorialShowMeStage({
       </div>
 
       {/* 2. Short Action Footer */}
-      <div className="w-full max-w-[520px] flex items-center justify-between gap-3 pt-1">
+      <div className="w-full max-w-[520px] flex items-center justify-between gap-3 pt-0.5 sm:pt-1">
         <button
           type="button"
           onClick={handleReplay}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs transition-colors cursor-pointer"
           style={{ fontFamily: JAKARTA }}
         >
           <RotateCcw className="w-3.5 h-3.5" />
@@ -103,11 +103,11 @@ export function TutorialShowMeStage({
         <button
           type="button"
           onClick={onProceedToPractice}
-          className="inline-flex items-center gap-2 h-11 px-6 rounded-2xl bg-[#FFD028] hover:bg-[#ffc524] text-[#0A1D3D] font-black text-xs sm:text-sm border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer"
+          className="inline-flex items-center gap-2 h-10 sm:h-11 px-5 sm:px-6 rounded-xl sm:rounded-2xl bg-[#FFD028] hover:bg-[#ffc524] text-[#0A1D3D] font-black text-xs sm:text-sm border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer"
           style={{ fontFamily: JAKARTA }}
         >
           <span>Now Let Me Try!</span>
-          <ArrowRight className="w-4 h-4 stroke-[3]" />
+          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
         </button>
       </div>
     </div>

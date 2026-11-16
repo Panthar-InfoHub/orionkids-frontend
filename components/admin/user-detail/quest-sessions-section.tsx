@@ -15,6 +15,7 @@ import {
   Layers,
 } from "lucide-react";
 import type { AdminQuestSessionItem } from "@/lib/api/admin";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 interface QuestSessionsSectionProps {
   sessions: AdminQuestSessionItem[];
@@ -132,7 +133,7 @@ export function QuestSessionsSection({
 
                       {session.childName && (
                         <span className="px-2 py-0.5 rounded-md bg-[#FFE066] border border-[#0A1D3D] text-[11px] font-black text-[#0A1D3D]">
-                          Child: {session.childName}
+                          Child: {formatChildName(session.childName)}
                         </span>
                       )}
 

@@ -140,17 +140,17 @@ export function GameTutorialModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="tutorial-modal-title"
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 bg-[#0A1D3D]/80 backdrop-blur-xs select-none"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-2.5 sm:p-4 md:p-6 bg-[#0A1D3D]/92 backdrop-blur-md select-none"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.94, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.94, y: 10 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className={`relative w-full max-w-[620px] max-h-[90vh] bg-white rounded-[28px] sm:rounded-[36px] border-2 border-[#0A1D3D] shadow-[6px_6px_0_0_#FFE066] flex flex-col overflow-hidden ${className}`}
+        className={`relative w-full max-w-[580px] max-h-[94vh] sm:max-h-[90vh] bg-white rounded-[24px] sm:rounded-[36px] border-2 border-[#0A1D3D] shadow-[6px_6px_0_0_#FFE066] flex flex-col overflow-hidden ${className}`}
       >
         {/* Top Header Bar: Pinned at top */}
-        <div className="w-full bg-[#F8FAFC] border-b-2 border-slate-200 p-3 sm:p-3.5 flex items-center justify-between gap-3 shrink-0">
+        <div className="w-full bg-[#F8FAFC] border-b-2 border-slate-200 p-2.5 sm:p-3.5 flex items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl sm:text-3xl shrink-0" aria-hidden="true">
               {tutorialConfig.badgeIcon || "🎓"}
@@ -182,7 +182,7 @@ export function GameTutorialModal({
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="p-3.5 sm:p-5 pb-6 flex flex-col items-center gap-3 overflow-y-auto flex-1">
+        <div className="p-3 sm:p-5 pb-6 sm:pb-8 flex flex-col items-center gap-2.5 sm:gap-3 overflow-y-auto overscroll-contain flex-1">
           {/* Stage Progress Stepper */}
           <TutorialStageNav
             currentStage={currentStage}

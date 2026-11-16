@@ -3,6 +3,8 @@
 import React from "react";
 import type { QuestReportData } from "@/lib/api/quest";
 
+import { formatChildName } from "@/lib/utils/format-child-name";
+
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 export function SuperpowersSection({
@@ -10,7 +12,7 @@ export function SuperpowersSection({
 }: {
   report?: QuestReportData | null;
 }) {
-  const childName = report?.childName || "Your Child";
+  const childName = formatChildName(report?.childName, "Your Child");
   const selectedClass = report?.selectedClass || "Class 1";
   const aiReport = report?.aiReport;
   const strengths = aiReport?.observedStrengths || [];
@@ -29,7 +31,9 @@ export function SuperpowersSection({
   const getStrengthDesc = (item: any, fallback: string) => {
     if (!item) return fallback;
     if (typeof item === "string") return item;
-    return `${item.observation} ${item.performanceEvidence ? `Evidence: ${item.performanceEvidence}` : ""}`.trim();
+    return `${item.observation || item.performanceEvidence || ""} ${
+      item.performanceEvidence && item.observation ? `Evidence: ${item.performanceEvidence}` : ""
+    }`.trim() || fallback;
   };
 
   const strength1Title = getStrengthTitle(strengths[0], "Attention & Selective Focus");

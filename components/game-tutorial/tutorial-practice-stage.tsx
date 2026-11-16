@@ -45,12 +45,12 @@ export function TutorialPracticeStage({
   };
 
   return (
-    <div className={`w-full flex flex-col items-center gap-3 ${className}`}>
+    <div className={`w-full flex flex-col items-center gap-2.5 sm:gap-3 ${className}`}>
       {/* 1. Interactive Practice Arena Box */}
-      <div className="relative w-full max-w-[540px] min-h-[250px] p-4 sm:p-5 rounded-3xl bg-linear-to-b from-amber-50/50 via-white to-sky-50 border-2 border-[#0A1D3D] shadow-[4px_4px_0_0_#0A1D3D] flex flex-col items-center justify-center overflow-hidden">
+      <div className="relative w-full max-w-[540px] min-h-[190px] sm:min-h-[240px] p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-linear-to-b from-amber-50/50 via-white to-sky-50 border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D] flex flex-col items-center justify-center overflow-hidden">
         {/* Top Badges */}
-        <div className="w-full flex items-center justify-between pb-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200 text-[#0A1D3D] text-[11px] font-black shadow-xs">
+        <div className="w-full flex items-center justify-between pb-1.5 sm:pb-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white border border-slate-200 text-[#0A1D3D] text-[10px] sm:text-[11px] font-black shadow-xs">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>Guided Practice · Let Me Try 🎮</span>
           </div>
@@ -69,12 +69,12 @@ export function TutorialPracticeStage({
         </div>
 
         {/* Practice Arena Content (Keyed to easily allow clean reset) */}
-        <div key={resetKey} className="w-full flex flex-col items-center justify-center pt-2 pb-2">
+        <div key={resetKey} className="w-full flex flex-col items-center justify-center pt-1 pb-1 sm:pt-2 sm:pb-2">
           {renderPracticeArena(practice, handleSuccess, handleMistake, isCompleted)}
         </div>
 
         {/* Prominent High-Visibility Feedback Banner (Explicit Correct / Incorrect) */}
-        <div className="min-h-12 my-2 flex items-center justify-center w-full px-2">
+        <div className="min-h-10 my-1 sm:my-1.5 flex items-center justify-center w-full px-2">
           <AnimatePresence mode="wait">
             {feedback && (
               <motion.div
@@ -83,23 +83,23 @@ export function TutorialPracticeStage({
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
-                className={`inline-flex items-center gap-2.5 px-4 sm:px-6 py-2.5 rounded-2xl text-xs sm:text-sm font-black shadow-md select-none text-center ${
+                className={`inline-flex items-center gap-2 sm:gap-2.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-black shadow-md select-none text-center ${
                   feedback.isCorrect
-                    ? "bg-[#10B981] text-white border-2 border-[#059669] shadow-[3px_3px_0_0_#064e3b]"
-                    : "bg-[#EF4444] text-white border-2 border-[#DC2626] shadow-[3px_3px_0_0_#7f1d1d] animate-wobble"
+                    ? "bg-[#10B981] text-white border-2 border-[#059669] shadow-[2.5px_2.5px_0_0_#064e3b]"
+                    : "bg-[#EF4444] text-white border-2 border-[#DC2626] shadow-[2.5px_2.5px_0_0_#7f1d1d] animate-wobble"
                 }`}
                 style={{ fontFamily: JAKARTA }}
               >
                 {feedback.isCorrect ? (
                   <>
-                    <span className="w-6 h-6 rounded-full bg-white text-[#059669] flex items-center justify-center text-sm font-black shrink-0 shadow-xs">
+                    <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white text-[#059669] flex items-center justify-center text-xs sm:text-sm font-black shrink-0 shadow-xs">
                       ✓
                     </span>
                     <span className="tracking-wide">CORRECT! {feedback.text}</span>
                   </>
                 ) : (
                   <>
-                    <span className="w-6 h-6 rounded-full bg-white text-[#DC2626] flex items-center justify-center text-sm font-black shrink-0 shadow-xs">
+                    <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white text-[#DC2626] flex items-center justify-center text-xs sm:text-sm font-black shrink-0 shadow-xs">
                       ✕
                     </span>
                     <span className="tracking-wide">NOT QUITE! {feedback.text}</span>
@@ -112,7 +112,7 @@ export function TutorialPracticeStage({
       </div>
 
       {/* 2. Bottom Controls */}
-      <div className="w-full max-w-[540px] flex items-center justify-between gap-3 pt-1">
+      <div className="w-full max-w-[540px] flex items-center justify-between gap-3 pt-0.5 sm:pt-1">
         <span
           className="text-xs font-black text-slate-500"
           style={{ fontFamily: JAKARTA }}
@@ -126,11 +126,11 @@ export function TutorialPracticeStage({
             animate={{ scale: 1, opacity: 1 }}
             type="button"
             onClick={onPracticeComplete}
-            className="inline-flex items-center gap-2 h-11 px-6 rounded-2xl bg-[#4ADE80] hover:bg-[#3ecb72] text-[#0A1D3D] font-black text-xs sm:text-sm border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer"
+            className="inline-flex items-center gap-2 h-10 sm:h-11 px-5 sm:px-6 rounded-xl sm:rounded-2xl bg-[#4ADE80] hover:bg-[#3ecb72] text-[#0A1D3D] font-black text-xs sm:text-sm border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0_0_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer"
             style={{ fontFamily: JAKARTA }}
           >
             <span>Ready for the Game!</span>
-            <ArrowRight className="w-4 h-4 stroke-[3]" />
+            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
           </motion.button>
         )}
       </div>

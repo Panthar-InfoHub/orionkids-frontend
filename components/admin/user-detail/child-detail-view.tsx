@@ -42,6 +42,7 @@ import { QuestSessionsSection } from "@/components/admin/user-detail/quest-sessi
 import { SixGameProgressionView } from "@/components/admin/user-detail/six-game-progression-view";
 import { TelemetryInspectorModal } from "@/components/admin/user-detail/telemetry-inspector-modal";
 import { QuestReportModal } from "@/components/admin/user-detail/quest-report-modal";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 interface ChildDetailViewProps {
   userId: string;
@@ -314,7 +315,7 @@ export function ChildDetailView({
           </Link>
           <span>/</span>
           <span className="text-slate-900 font-black">
-            {childDetail?.childName || "Child Profile"}
+            {formatChildName(childDetail?.childName, "Child Profile")}
           </span>
         </div>
 
@@ -353,7 +354,7 @@ export function ChildDetailView({
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="text-xl sm:text-2xl font-black text-[#0A1D3D] tracking-tight">
-                    {childDetail.childName}
+                    {formatChildName(childDetail.childName)}
                   </h2>
                   <span className="px-2.5 py-0.5 rounded-md bg-[#FFE066]/30 border border-[#0A1D3D] text-[11px] font-black text-[#0A1D3D]">
                     {childDetail.selectedClass}
@@ -610,7 +611,7 @@ export function ChildDetailView({
                 </div>
                 <p className="text-xs text-slate-500 font-mono mt-0.5">
                   Session ID: <strong>{selectedSessionId}</strong> · Child:{" "}
-                  <strong>{childDetail?.childName}</strong>
+                  <strong>{formatChildName(childDetail?.childName)}</strong>
                 </p>
               </div>
             </div>
