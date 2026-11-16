@@ -365,13 +365,58 @@ export interface QuestReportData {
       averageReactionTimeMs: number | null;
       insight: string;
     }>;
-    observedStrengths: string[];
-    areasForPractice: string[];
+    observedStrengths: Array<
+      | string
+      | {
+          heading?: string;
+          cognitiveSkill?: string;
+          observation?: string;
+          performanceEvidence?: string;
+          educationalRelevance?: string;
+        }
+    >;
+    areasForPractice: Array<
+      | string
+      | {
+          heading?: string;
+          cognitiveSkill?: string;
+          observedPattern?: string;
+          performanceEvidence?: string;
+          recommendedApproach?: string;
+        }
+    >;
     progressAndConsistency: string;
+    whatDoesThisMean?: string;
+    shouldIWorry?: {
+      reassurance: string;
+      keyPoints: string[];
+      teacherPartnershipGuidance: string;
+    };
+    startHere?: {
+      activityTitle: string;
+      relatedDomain: string;
+      relatedGameKey: string;
+      whyThisFirst: string;
+      evidenceCitation: string;
+      quickSteps: string[];
+      suggestedDuration: string;
+    };
+    cardFlipRetryNote?: string;
     parentRecommendations: Array<{
       title: string;
-      description: string;
+      description?: string;
       activityType?: string;
+      skillsPracticed?: string[];
+      materials?: string[];
+      instructions?: string[];
+      suggestedDuration?: string;
+      difficultyProgression?: string;
+      learningOpportunity?: string;
+      parentTip?: string;
+      relatedGameKey?: string;
+      relatedDomain?: string;
+      observedFinding?: string;
+      unassessedNote?: string;
     }>;
     dataLimitations: string;
     reportGenerationDate: string;

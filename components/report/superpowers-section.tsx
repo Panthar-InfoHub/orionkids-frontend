@@ -20,14 +20,26 @@ export function SuperpowersSection({
   const focusScore = facets?.focusInhibition?.score ?? 89;
   const memoryScore = facets?.workingMemory?.score ?? 84;
 
-  const strength1Title = strengths[0] ? "Observed Strength" : "Attention & Selective Focus";
+  const extractStrength = (item: unknown) => {
+    if (!item) return { title: "", desc: "" };
+    if (typeof item === "string") return { title: "Observed Strength", desc: item };
+    const obj = item as Record<string, string>;
+    return {
+      title: obj.heading || "Observed Strength",
+      desc: obj.observation || obj.performanceEvidence || "",
+    };
+  };
+
+  const st1 = extractStrength(strengths[0]);
+  const strength1Title = st1.title || "Attention & Selective Focus";
   const strength1Desc =
-    strengths[0] ||
+    st1.desc ||
     `${childName} stuck with the Stroop Colour-Word game with notable poise, choosing target cues accurately and showing mature executive filtering.`;
 
-  const strength2Title = strengths[1] ? "Observed Strength" : "Spatial Memory & Recall";
+  const st2 = extractStrength(strengths[1]);
+  const strength2Title = st2.title || "Spatial Memory & Recall";
   const strength2Desc =
-    strengths[1] ||
+    st2.desc ||
     `${childName} navigated the Card Flip memory matches with calm persistence, demonstrating good recall of spatial object positions.`;
 
   return (
