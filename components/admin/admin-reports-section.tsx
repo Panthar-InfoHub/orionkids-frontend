@@ -26,6 +26,8 @@ import {
   type AdminSessionReportResult,
 } from "@/lib/api/admin";
 import { QuestReportModal } from "./user-detail/quest-report-modal";
+import { ReportEmailStatus } from "@/components/reports/report-email-status";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 export function AdminReportsSection() {
   const [reports, setReports] = useState<AdminReportListItem[]>([]);
@@ -98,7 +100,7 @@ export function AdminReportsSection() {
     if (downloadingId) return;
     setDownloadingId(reportItem.questSessionId);
     try {
-      await downloadAdminReportPdf(reportItem.questSessionId, reportItem.childName);
+      await downloadAdminReportPdf(reportItem.questSessionId, formatChildName(reportItem.childName));
     } catch (err) {
       console.error("Download failed:", err);
       alert("Failed to download PDF report");
@@ -206,7 +208,8 @@ export function AdminReportsSection() {
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-black tracking-wider text-[10px]">
                 <tr>
                   <th className="py-3 px-4">Child Profile</th>
-                  <th className="py-3 px-4">Parent</th>
+                  <th className="py-3 px-4">Account</th>
+                  <th className="py-3 px-4">Parent Email</th>
                   <th className="py-3 px-4">Quest Completed</th>
                   <th className="py-3 px-4">Accuracy</th>
                   <th className="py-3 px-4">Duration</th>
@@ -219,15 +222,29 @@ export function AdminReportsSection() {
                 {reports.map((r) => (
                   <tr key={r.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="font-black text-[#0A1D3D]">{r.childName}</div>
+                      <div className="font-black text-[#0A1D3D]">{formatChildName(r.childName)}</div>
                       <div className="text-[11px] text-slate-400">
                         {r.selectedClass} · Age {r.age}
                         {r.school ? ` · ${r.school}` : ""}
                       </div>
                     </td>
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-slate-800">{r.parentName}</div>
-                      <div className="text-[11px] text-slate-400 font-mono">{r.parentEmail}</div>
+                      <div className="font-bold text-slate-800">{r.accountName}</div>
+                      <div className="text-[11px] text-slate-400 font-mono">{r.accountEmail}</div>
+                    </td>
+                    <td className="py-3.5 px-4 max-w-[240px]">
+                      <div className="text-[11px] font-mono text-slate-700 break-all">
+                        {r.childParentEmail || "—"}
+                      </div>
+                      <ReportEmailStatus
+                        className="mt-1"
+                        status={r.emailStatus}
+                        recipient={r.emailRecipient}
+                        sentAt={r.emailSentAt}
+                        error={r.emailError}
+                        showFullEmail
+                        showError
+                      />
                     </td>
                     <td className="py-3.5 px-4 text-slate-600">
                       {formatDate(r.questCompletedAt || r.generatedAt)}

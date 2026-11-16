@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
@@ -43,7 +44,8 @@ export function ReportHeader({
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+          const formattedName = formatChildName(childName, "Child");
+          const cleanName = formattedName.replace(/\s+/g, "_");
           a.download = `OrionKids-Assessment-Report-${cleanName}.pdf`;
           document.body.appendChild(a);
           a.click();

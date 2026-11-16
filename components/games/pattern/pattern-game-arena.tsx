@@ -67,6 +67,25 @@ export function PatternGameArena({
   const [nextLevelRoute, setNextLevelRoute] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
   const startTimeRef = useRef<number>(Date.now());
+  const trialStartTimeRef = useRef<number>(Date.now());
+  const reactionTimesRef = useRef<number[]>([]);
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const scheduleTimeout = (fn: () => void, delayMs: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((t) => t !== id);
+      fn();
+    }, delayMs);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
+  }, []);
 
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
@@ -130,6 +149,10 @@ export function PatternGameArena({
   const handleSelectOption = async (chosen: string, e: React.MouseEvent<HTMLButtonElement>) => {
     if (submissionStatus !== "idle" || isInteractionLocked) return;
 
+    // Record per-trial reaction time
+    const trialRT = Math.max(100, Date.now() - trialStartTimeRef.current);
+    reactionTimesRef.current.push(trialRT);
+
     const buttonEl = e.currentTarget;
     const targetEl = targetSlotRef.current;
     const arenaEl = arenaRef.current;
@@ -163,7 +186,7 @@ export function PatternGameArena({
       });
 
       // Once the tile lands on the question mark slot (180ms):
-      setTimeout(async () => {
+      scheduleTimeout(async () => {
         setFlyingTile(null);
         setIsFlying(false);
         setFilledSlot({ symbol: chosen, isCorrect });
@@ -189,24 +212,32 @@ export function PatternGameArena({
 
         // Fast neutral transition hold (180ms)
         const holdDuration = 180;
-        setTimeout(async () => {
+        scheduleTimeout(async () => {
           // Slide out the completed pattern box to the left
           setIsSlidingOut(true);
 
           // After slide-out transition completes (120ms), advance to next pattern or complete
-          setTimeout(async () => {
+          scheduleTimeout(async () => {
             if (!isLastTrial) {
               setFilledSlot(null);
               setFeedbackBanner(null);
               setSelectedOptionInfo(null);
               setIsSlidingOut(false);
               setIsInteractionLocked(false);
+              trialStartTimeRef.current = Date.now();
               setCurrentIdx((i) => i + 1);
             } else {
               // Completed!
               setSubmissionStatus("submitting");
               const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
               const accuracy = Math.round((newCorrect / trials.length) * 100);
+              const avgRT =
+                reactionTimesRef.current.length > 0
+                  ? Math.round(
+                      reactionTimesRef.current.reduce((a, b) => a + b, 0) /
+                        reactionTimesRef.current.length
+                    )
+                  : Math.round(durationMs / Math.max(1, trials.length));
 
               if (activeSessionId) {
                 const result = await completeQuestLevel(activeSessionId, {
@@ -216,6 +247,10 @@ export function PatternGameArena({
                   correctTrials: newCorrect,
                   accuracy,
                   durationMs,
+                  averageReactionTimeMs: avgRT,
+                  metrics: {
+                    reactionTimes: reactionTimesRef.current,
+                  },
                   completedAt: new Date().toISOString(),
                 });
 
@@ -230,7 +265,7 @@ export function PatternGameArena({
                   setNextLevelRoute(nextRoute);
 
                   // Auto-advance immediately without asking
-                  setTimeout(() => {
+                  scheduleTimeout(() => {
                     router.push(nextRoute);
                   }, 250);
                 } else {
@@ -241,7 +276,7 @@ export function PatternGameArena({
                 setSubmissionStatus("success");
                 const nextRoute = level < 3 ? `/games/pattern?level=${level + 1}` : "/games/odd-one-out?level=1";
                 setNextLevelRoute(nextRoute);
-                setTimeout(() => {
+                scheduleTimeout(() => {
                   router.push(nextRoute);
                 }, 250);
               }
@@ -265,11 +300,13 @@ export function PatternGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
+          trialStartTimeRef.current = Date.now();
           try { sessionStorage.setItem("orion_tut_seen_pattern", "1"); } catch {}
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
+          trialStartTimeRef.current = Date.now();
           try { sessionStorage.setItem("orion_tut_seen_pattern", "1"); } catch {}
         }}
       />

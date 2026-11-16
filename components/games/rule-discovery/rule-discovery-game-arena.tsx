@@ -47,17 +47,21 @@ export function RuleDiscoveryGameArena({
   const startTimeRef = useRef<number>(Date.now());
   const cardStartTimeRef = useRef<number>(Date.now());
   const reactionTimesRef = useRef<number[]>([]);
-  const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  const scheduleTimeout = (fn: () => void, ms: number) => {
-    const t = setTimeout(fn, ms);
-    timeoutsRef.current.push(t);
-    return t;
+  const scheduleTimeout = (fn: () => void, delayMs: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((t) => t !== id);
+      fn();
+    }, delayMs);
+    timeoutsRef.current.push(id);
+    return id;
   };
 
   useEffect(() => {
     return () => {
       timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
     };
   }, []);
 
@@ -120,6 +124,11 @@ export function RuleDiscoveryGameArena({
 
   const handleSelectOption = async (option: CosmicCardItem) => {
     if (submissionStatus !== "idle" || isLocked) return;
+
+    // Record per-card reaction time
+    const cardRT = Math.max(100, Date.now() - cardStartTimeRef.current);
+    reactionTimesRef.current.push(cardRT);
+
     setIsLocked(true);
     setSelectedOptionId(option.id);
 

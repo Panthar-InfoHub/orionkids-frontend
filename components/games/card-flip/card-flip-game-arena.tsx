@@ -7,6 +7,7 @@ import {
   startQuestLevel,
   saveQuestCheckpoint,
   completeQuestLevel,
+  skipQuestActivity,
   QUEST_GAMES_METADATA,
 } from "@/lib/api/quest";
 import { fetchCurrentSession } from "@/lib/api/session";
@@ -34,6 +35,70 @@ const COSMIC_SYMBOLS = [
   { symbol: "🔭", name: "Telescope", color: "#B88CFF" },
   { symbol: "🛰️", name: "Satellite", color: "#FFA450" },
 ];
+
+/**
+ * Isolated, memoized card tile to eliminate full-grid re-rendering when flipping individual cards.
+ */
+const FlipCardItem = React.memo(function FlipCardItem({
+  card,
+  idx,
+  isFlipped,
+  isLocked,
+  isReady,
+  isRecentlyMatched,
+  onCardClick,
+}: {
+  card: CardItem;
+  idx: number;
+  isFlipped: boolean;
+  isLocked: boolean;
+  isReady: boolean;
+  isRecentlyMatched: boolean;
+  onCardClick: (idx: number) => void;
+}) {
+  const handleClick = useCallback(() => {
+    onCardClick(idx);
+  }, [idx, onCardClick]);
+
+  return (
+    <div
+      className="perspective-1000 animate-card-deal"
+      style={{ animationDelay: `${idx * 45}ms` }}
+    >
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={isFlipped || isLocked || !isReady}
+        aria-label={`Card ${idx + 1}: ${isFlipped ? card.name : "Hidden"}`}
+        className={`relative w-[62px] h-[76px] sm:w-[82px] sm:h-[98px] rounded-[14px] transition-transform duration-500 preserve-3d cursor-pointer select-none ${
+          isFlipped
+            ? "[transform:rotateY(180deg)]"
+            : "hover:-translate-y-0.5 hover:shadow-lg"
+        } ${isRecentlyMatched ? "animate-match-celebration" : ""}`}
+      >
+        {/* Back Face (Unflipped - Dark Cosmic Star Pattern) */}
+        <div className="absolute inset-0 w-full h-full rounded-[14px] bg-[#230C4D] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center backface-hidden">
+          <span className="text-xl sm:text-2xl text-[#FFD028] opacity-75 drop-shadow-[0_0_6px_rgba(255,208,40,0.5)]">
+            ★
+          </span>
+        </div>
+
+        {/* Front Face (Flipped - Bright Symbol & Colour) */}
+        <div
+          className="absolute inset-0 w-full h-full rounded-[14px] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center backface-hidden [transform:rotateY(180deg)]"
+          style={{ backgroundColor: card.color }}
+        >
+          <span className="text-2xl sm:text-3xl filter drop-shadow-md select-none">
+            {card.symbol}
+          </span>
+          {card.isMatched && (
+            <span className="absolute top-1 right-1 text-[10px]">✨</span>
+          )}
+        </div>
+      </button>
+    </div>
+  );
+});
 
 function generateCards(level: number): CardItem[] {
   const pairCount = level === 1 ? 4 : level === 2 ? 6 : 8;
@@ -98,6 +163,23 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
 
   const startTimeRef = useRef<number>(Date.now());
   const totalPairs = level === 1 ? 4 : level === 2 ? 6 : 8;
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const scheduleTimeout = useCallback((fn: () => void, delayMs: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((t) => t !== id);
+      fn();
+    }, delayMs);
+    timeoutsRef.current.push(id);
+    return id;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
+  }, []);
 
  
   useEffect(() => {
@@ -236,7 +318,7 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         setIsLocked(false);
         setLastMatchedPair([firstIdx, secondIdx]);
         setShowMatchToast(true);
-        setTimeout(() => {
+        scheduleTimeout(() => {
           setShowMatchToast(false);
           setLastMatchedPair(null);
         }, 500);
@@ -256,19 +338,19 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         // Completion check
         if (newMatched === totalPairs) {
           setIsLocked(true);
-          setTimeout(() => {
+          scheduleTimeout(() => {
             handleLevelFinished(nextMoves);
           }, 300);
         } else if (nextMoves > 4 && !hasPromptedTired) {
           // If moves > 4, prompt "Are you tired?"
           setHasPromptedTired(true);
-          setTimeout(() => {
+          scheduleTimeout(() => {
             setShowTiredModal(true);
           }, 350);
         }
       } else {
         // No match -> quick flip back after 450ms
-        setTimeout(() => {
+        scheduleTimeout(() => {
           newCards[firstIdx].isFlipped = false;
           newCards[secondIdx].isFlipped = false;
           setCards([...newCards]);
@@ -278,7 +360,7 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
           // Check if moves > 4 and tired modal should trigger
           if (nextMoves > 4 && !hasPromptedTired) {
             setHasPromptedTired(true);
-            setTimeout(() => {
+            scheduleTimeout(() => {
               setShowTiredModal(true);
             }, 100);
           }
@@ -287,10 +369,77 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
     }
   };
 
-  const handleSkipToNextLevelFromTired = async () => {
+  const handleSkipLevel = async () => {
     setShowTiredModal(false);
     setIsLocked(true);
-    await handleLevelFinished(moves, true);
+    setSubmissionStatus("submitting");
+    const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
+
+    if (activeSessionId) {
+      const result = await skipQuestActivity(activeSessionId, {
+        gameKey: "card-flip",
+        levelNumber: level,
+        skipEntireGame: false,
+        reason: "tired_prompt_skipped_level",
+        durationMs,
+      });
+
+      if (result.success) {
+        setSubmissionStatus("success");
+        let nextRoute =
+          result.nextLevelRoute ||
+          (level < 3 ? `/games/card-flip?level=${level + 1}` : "/games/pattern?level=1");
+        if (activeSessionId && !nextRoute.includes("sessionId=")) {
+          nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+        }
+        setNextLevelRoute(nextRoute);
+        setTimeout(() => {
+          router.push(nextRoute);
+        }, 300);
+      } else {
+        setSubmissionStatus("error");
+        setErrorMessage(result.error?.message || "Failed to record skip on the server.");
+      }
+    } else {
+      setSubmissionStatus("success");
+      const nextRoute = level < 3 ? `/games/card-flip?level=${level + 1}` : "/games/pattern?level=1";
+      router.push(nextRoute);
+    }
+  };
+
+  const handleSkipEntireGame = async () => {
+    setShowTiredModal(false);
+    setIsLocked(true);
+    setSubmissionStatus("submitting");
+    const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
+
+    if (activeSessionId) {
+      const result = await skipQuestActivity(activeSessionId, {
+        gameKey: "card-flip",
+        levelNumber: level,
+        skipEntireGame: true,
+        reason: "tired_prompt_skipped_game",
+        durationMs,
+      });
+
+      if (result.success) {
+        setSubmissionStatus("success");
+        let nextRoute = result.nextLevelRoute || "/games/pattern?level=1";
+        if (activeSessionId && !nextRoute.includes("sessionId=")) {
+          nextRoute += `${nextRoute.includes("?") ? "&" : "?"}sessionId=${encodeURIComponent(activeSessionId)}`;
+        }
+        setNextLevelRoute(nextRoute);
+        setTimeout(() => {
+          router.push(nextRoute);
+        }, 300);
+      } else {
+        setSubmissionStatus("error");
+        setErrorMessage(result.error?.message || "Failed to record skip on the server.");
+      }
+    } else {
+      setSubmissionStatus("success");
+      router.push("/games/pattern?level=1");
+    }
   };
 
   const handleContinuePlayingFromTired = () => {
@@ -298,15 +447,12 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
     setIsLocked(false);
   };
 
-  const handleLevelFinished = async (finalMoves: number, isTiredSkip: boolean = false) => {
+  const handleLevelFinished = async (finalMoves: number) => {
     setSubmissionStatus("submitting");
     const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
     // Accuracy based on moves vs optimal pairs
-    const accuracy = isTiredSkip
-      ? Math.max(50, Math.round((Math.max(1, matchedCount) / Math.max(totalPairs, finalMoves)) * 100))
-      : Math.min(100, Math.round((totalPairs / Math.max(totalPairs, finalMoves)) * 100));
-
-    const correctPairs = isTiredSkip ? Math.max(1, matchedCount) : totalPairs;
+    const accuracy = Math.min(100, Math.round((totalPairs / Math.max(totalPairs, finalMoves)) * 100));
+    const correctPairs = totalPairs;
 
     if (activeSessionId) {
       const result = await completeQuestLevel(activeSessionId, {
@@ -320,7 +466,6 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         metrics: {
           totalMoves: finalMoves,
           optimalPairs: totalPairs,
-          skippedViaTiredPrompt: isTiredSkip,
         },
         completedAt: new Date().toISOString(),
       });
@@ -467,53 +612,21 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
                   : "grid-cols-4"
               }`}
             >
-              {cards.map((card, idx) => {
-                const isFlipped = introPhase === "reveal" || card.isFlipped || card.isMatched;
-                const isRecentlyMatched =
-                  lastMatchedPair !== null &&
-                  (lastMatchedPair[0] === idx || lastMatchedPair[1] === idx);
-
-                return (
-                  <div
-                    key={card.id}
-                    className="perspective-1000 animate-card-deal"
-                    style={{ animationDelay: `${idx * 45}ms` }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => handleCardClick(idx)}
-                      disabled={isFlipped || isLocked || introPhase !== "ready"}
-                      className={`relative w-[62px] h-[76px] sm:w-[82px] sm:h-[98px] rounded-[14px] transition-transform duration-500 preserve-3d cursor-pointer select-none ${
-                        isFlipped
-                          ? "[transform:rotateY(180deg)]"
-                          : "hover:-translate-y-0.5 hover:shadow-lg"
-                      } ${
-                        isRecentlyMatched ? "animate-match-celebration" : ""
-                      }`}
-                    >
-                      {/* Back Face (Unflipped - Dark Cosmic Star Pattern) */}
-                      <div className="absolute inset-0 w-full h-full rounded-[14px] bg-[#230C4D] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center backface-hidden">
-                        <span className="text-xl sm:text-2xl text-[#FFD028] opacity-75 drop-shadow-[0_0_6px_rgba(255,208,40,0.5)]">
-                          ★
-                        </span>
-                      </div>
-
-                      {/* Front Face (Flipped - Bright Symbol & Colour with Clean UI Matching Border & Shadow) */}
-                      <div
-                        className="absolute inset-0 w-full h-full rounded-[14px] border-2 border-[#0A1D3D] shadow-[2.5px_2.5px_0px_#0A1D3D] flex items-center justify-center backface-hidden [transform:rotateY(180deg)]"
-                        style={{ backgroundColor: card.color }}
-                      >
-                        <span className="text-2xl sm:text-3xl filter drop-shadow-md select-none">
-                          {card.symbol}
-                        </span>
-                        {card.isMatched && (
-                          <span className="absolute top-1 right-1 text-[10px]">✨</span>
-                        )}
-                      </div>
-                    </button>
-                  </div>
-                );
-              })}
+              {cards.map((card, idx) => (
+                <FlipCardItem
+                  key={card.id}
+                  card={card}
+                  idx={idx}
+                  isFlipped={introPhase === "reveal" || card.isFlipped || card.isMatched}
+                  isLocked={isLocked}
+                  isReady={introPhase === "ready"}
+                  isRecentlyMatched={
+                    lastMatchedPair !== null &&
+                    (lastMatchedPair[0] === idx || lastMatchedPair[1] === idx)
+                  }
+                  onCardClick={handleCardClick}
+                />
+              ))}
             </div>
           </div>
         )}
@@ -546,22 +659,35 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
               className="text-[13px] sm:text-[14px] text-[#526176] font-medium leading-relaxed max-w-[320px] mb-6"
               style={{ fontFamily: JAKARTA }}
             >
-              You&apos;ve made {moves} moves! Would you like to move forward to the next level or keep playing?
+              You&apos;ve made {moves} moves! It&apos;s totally okay to take a break or jump ahead whenever you like.
             </p>
 
             <div className="w-full flex flex-col gap-2.5">
-              {/* Option 1: Yes, move to next level */}
+              {/* Option 1: Skip to next level (if level < 3) */}
+              {level < 3 && (
+                <button
+                  type="button"
+                  onClick={handleSkipLevel}
+                  className="w-full py-3 px-5 rounded-full font-extrabold text-[15px] bg-[#FFD028] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer flex items-center justify-center gap-2"
+                  style={{ fontFamily: JAKARTA }}
+                >
+                  <span>Skip to Level {level + 1}</span>
+                  <span>🚀</span>
+                </button>
+              )}
+
+              {/* Option 2: Skip entire Card Flip game */}
               <button
                 type="button"
-                onClick={handleSkipToNextLevelFromTired}
-                className="w-full py-3 px-5 rounded-full font-extrabold text-[15px] bg-[#FFD028] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer flex items-center justify-center gap-2"
+                onClick={handleSkipEntireGame}
+                className="w-full py-2.5 px-5 rounded-full font-extrabold text-[14px] bg-[#FFE066] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer flex items-center justify-center gap-2"
                 style={{ fontFamily: JAKARTA }}
               >
-                <span>Yes, next level</span>
-                <span>🚀</span>
+                <span>Skip to Next Game (Pattern)</span>
+                <span>🧩</span>
               </button>
 
-              {/* Option 2: No, continue playing */}
+              {/* Option 3: Continue playing */}
               <button
                 type="button"
                 onClick={handleContinuePlayingFromTired}

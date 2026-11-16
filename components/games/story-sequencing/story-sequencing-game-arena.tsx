@@ -6,6 +6,7 @@ import {
   startQuestLevel,
   saveQuestCheckpoint,
   completeQuestLevel,
+  generateQuestReport,
 } from "@/lib/api/quest";
 import { fetchCurrentSession } from "@/lib/api/session";
 import { GameTutorialGuide } from "@/components/game-tutorial/game-tutorial-guide";
@@ -95,6 +96,28 @@ export function StorySequencingGameArena({
   const [isVerifying, setIsVerifying] = useState(false);
   const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string } | null>(null);
   const startTimeRef = useRef<number>(Date.now());
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const scheduleTimeout = (fn: () => void, delayMs: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((t) => t !== id);
+      fn();
+    }, delayMs);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
+  }, []);
+
+  // Derived available cards: cards that have not yet been placed into the story sequence
+  const availableCards = shuffled.filter(
+    (step) => !selectedOrder.some((s) => s.id === step.id)
+  );
 
   useEffect(() => {
     try {
@@ -138,22 +161,46 @@ export function StorySequencingGameArena({
   }, [activeSessionId, activeAttemptId, level]);
 
   const handlePickStep = (step: StoryStep) => {
-    if (isVerifying || selectedOrder.some((s) => s.id === step.id)) return;
-    const newSelected = [...selectedOrder, step];
-    setSelectedOrder(newSelected);
+    if (isVerifying || submissionStatus === "submitting" || submissionStatus === "success") return;
+    setSelectedOrder((prev) => {
+      if (prev.some((s) => s.id === step.id)) return prev;
+      const next = [...prev, step];
+      if (activeSessionId && activeAttemptId) {
+        saveQuestCheckpoint(activeSessionId, activeAttemptId, {
+          placedCount: next.length,
+          timestamp: new Date().toISOString(),
+        });
+      }
+      return next;
+    });
+  };
 
-    if (activeSessionId && activeAttemptId) {
-      saveQuestCheckpoint(activeSessionId, activeAttemptId, {
-        placedCount: newSelected.length,
-        timestamp: new Date().toISOString(),
-      });
-    }
+  const handleRemoveStep = (stepId: number) => {
+    if (isVerifying || submissionStatus === "submitting" || submissionStatus === "success") return;
+    setSelectedOrder((prev) => {
+      if (!prev.some((s) => s.id === stepId)) return prev;
+      const next = prev.filter((s) => s.id !== stepId);
+      if (activeSessionId && activeAttemptId) {
+        saveQuestCheckpoint(activeSessionId, activeAttemptId, {
+          placedCount: next.length,
+          timestamp: new Date().toISOString(),
+        });
+      }
+      return next;
+    });
   };
 
   const handleResetOrder = () => {
-    if (isVerifying) return;
+    if (isVerifying || submissionStatus === "submitting" || submissionStatus === "success") return;
     setSelectedOrder([]);
     setFeedbackBanner(null);
+
+    if (activeSessionId && activeAttemptId) {
+      saveQuestCheckpoint(activeSessionId, activeAttemptId, {
+        placedCount: 0,
+        timestamp: new Date().toISOString(),
+      });
+    }
   };
 
   const handleVerifyStory = async () => {
@@ -174,10 +221,11 @@ export function StorySequencingGameArena({
     });
 
     // Smooth fast transition
-    setTimeout(async () => {
+    scheduleTimeout(async () => {
       setSubmissionStatus("submitting");
       const accuracy = Math.round((correctCount / mission.steps.length) * 100);
       const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
+      const avgRT = Math.round(durationMs / Math.max(1, mission.steps.length));
 
       if (activeSessionId) {
         const result = await completeQuestLevel(activeSessionId, {
@@ -187,11 +235,25 @@ export function StorySequencingGameArena({
           correctTrials: correctCount,
           accuracy,
           durationMs,
+          averageReactionTimeMs: avgRT,
           completedAt: new Date().toISOString(),
         });
 
         if (result.success) {
           setSubmissionStatus("success");
+
+          // Quest finished (all 18 levels): start report generation in the background.
+          // We don't wait for it — the child is redirected to the homepage as usual.
+          // If it fails, the parent dashboard shows a "Generate Report" retry button.
+          if (result.isQuestComplete) {
+            const completedSessionId = result.sessionId || activeSessionId;
+            void generateQuestReport(completedSessionId, { keepalive: true }).then((res) => {
+              if (!res.success) {
+                console.warn("[StorySequencing] Background report generation failed:", res.message);
+              }
+            });
+          }
+
           // If final level of story sequencing (Game 6 Level 3) -> routes to homepage or report!
           let nextRoute =
             result.nextLevelRoute && !result.nextLevelRoute.includes("report")
@@ -203,7 +265,7 @@ export function StorySequencingGameArena({
           setNextLevelRoute(nextRoute);
 
           // Auto-advance immediately without asking
-          setTimeout(() => {
+          scheduleTimeout(() => {
             router.push(nextRoute);
           }, level === 3 ? 1200 : 300);
         } else {
@@ -214,7 +276,7 @@ export function StorySequencingGameArena({
         setSubmissionStatus("success");
         const nextRoute = level < 3 ? `/games/story-sequencing?level=${level + 1}` : "/";
         setNextLevelRoute(nextRoute);
-        setTimeout(() => {
+        scheduleTimeout(() => {
           router.push(nextRoute);
         }, level === 3 ? 1200 : 300);
       }
@@ -310,7 +372,16 @@ export function StorySequencingGameArena({
 
             {/* Sequence Slots */}
             <div className="flex flex-col gap-1 w-full max-w-[580px]">
-              <span className="text-white/80 text-[10px] sm:text-xs font-bold uppercase tracking-wider">Your Story Sequence:</span>
+              <div className="flex items-center justify-between">
+                <span className="text-white/80 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+                  Your Story Sequence:
+                </span>
+                {selectedOrder.length > 0 && (
+                  <span className="text-[#FFE066] text-[10px] sm:text-[11px] font-semibold animate-in fade-in duration-150">
+                    (Tap any card to remove it)
+                  </span>
+                )}
+              </div>
               <div className="min-h-[58px] sm:min-h-[64px] p-2 rounded-[14px] bg-[#1E0942]/60 border border-white/10 flex flex-row flex-wrap gap-2 items-center justify-center">
                 {selectedOrder.length === 0 ? (
                   <span className="text-white/40 text-xs text-center my-auto italic">
@@ -318,42 +389,58 @@ export function StorySequencingGameArena({
                   </span>
                 ) : (
                   selectedOrder.map((step, idx) => (
-                    <div
+                    <button
                       key={step.id}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[10px] font-bold text-xs border-[1.5px] transition-all bg-white text-[#0A1D3D] border-[#0A1D3D] shadow-[1.5px_1.5px_0px_#0A1D3D]"
+                      type="button"
+                      disabled={isVerifying || submissionStatus === "submitting"}
+                      onClick={() => handleRemoveStep(step.id)}
+                      title={`Tap to remove "${step.text}" from sequence`}
+                      aria-label={`Step ${idx + 1}: ${step.text}. Tap to remove from sequence.`}
+                      className="group relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-[10px] font-bold text-xs border-[1.5px] transition-all bg-white text-[#0A1D3D] border-[#0A1D3D] shadow-[1.5px_1.5px_0px_#0A1D3D] hover:bg-rose-50 hover:border-rose-400 hover:shadow-[1.5px_1.5px_0px_#E11D48] hover:-translate-y-0.5 active:scale-95 cursor-pointer animate-in zoom-in-95 duration-150 select-none"
                     >
-                      <span className="w-5 h-5 rounded-full flex items-center justify-center font-extrabold text-[10px] bg-[#FFD028] text-[#0A1D3D] shrink-0">
+                      <span className="w-5 h-5 rounded-full flex items-center justify-center font-extrabold text-[10px] bg-[#FFD028] text-[#0A1D3D] shrink-0 group-hover:bg-rose-400 group-hover:text-white transition-colors">
                         {idx + 1}
                       </span>
                       <span className="text-base">{step.icon}</span>
                       <span className="max-w-[140px] truncate">{step.text}</span>
-                    </div>
+                      <span
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-rose-500 font-bold text-xs ml-0.5"
+                        aria-hidden="true"
+                      >
+                        ✕
+                      </span>
+                    </button>
                   ))
                 )}
               </div>
             </div>
 
             {/* Available Cards to Pick */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full max-w-[580px]">
-              {shuffled.map((step) => {
-                const isPicked = selectedOrder.some((s) => s.id === step.id);
-                return (
-                  <button
-                    key={step.id}
-                    type="button"
-                    disabled={isPicked}
-                    onClick={() => handlePickStep(step)}
-                    className={`p-2 sm:p-2.5 rounded-[12px] border-[1.5px] border-[#0A1D3D] shadow-[1.5px_1.5px_0px_#0A1D3D] flex items-center gap-2 transition-all text-left text-xs font-bold ${
-                      isPicked
-                        ? "opacity-30 bg-gray-400 cursor-not-allowed text-gray-800"
-                        : "bg-white text-[#0A1D3D] hover:-translate-y-0.5 hover:bg-[#FFF8D6] cursor-pointer"
-                    }`}
-                  >
-                    <span className="text-xl shrink-0">{step.icon}</span>
-                    <span className="leading-snug line-clamp-2">{step.text}</span>
-                  </button>
-                );
-              })}
+            <div className="w-full max-w-[580px] flex flex-col gap-1">
+              <span className="text-white/80 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+                Available Story Events:
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-2 w-full">
+                {availableCards.length === 0 ? (
+                  <div className="col-span-full py-2.5 px-3 text-center rounded-[12px] bg-white/10 border border-white/20 text-[#E0D3F8] text-xs font-semibold animate-in fade-in duration-200">
+                    All story events placed! Tap Complete Mission below, or tap any card above to adjust your order.
+                  </div>
+                ) : (
+                  availableCards.map((step) => (
+                    <button
+                      key={step.id}
+                      type="button"
+                      disabled={isVerifying || submissionStatus === "submitting"}
+                      onClick={() => handlePickStep(step)}
+                      aria-label={`Add to sequence: ${step.text}`}
+                      className="p-2 sm:p-2.5 rounded-[12px] border-[1.5px] border-[#0A1D3D] shadow-[1.5px_1.5px_0px_#0A1D3D] flex items-center gap-2 transition-all text-left text-xs font-bold bg-white text-[#0A1D3D] hover:-translate-y-0.5 hover:bg-[#FFF8D6] active:scale-95 cursor-pointer animate-in fade-in duration-150 select-none"
+                    >
+                      <span className="text-xl shrink-0">{step.icon}</span>
+                      <span className="leading-snug line-clamp-2">{step.text}</span>
+                    </button>
+                  ))
+                )}
+              </div>
             </div>
 
             {/* Action Buttons */}

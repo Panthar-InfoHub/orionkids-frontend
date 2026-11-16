@@ -51,10 +51,11 @@ const InfoIcon = () => (
 );
 
 import type { QuestReportData } from "@/lib/api/quest";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 /* ----------------------------- Component ---------------------------- */
 export function StudentProfileSection({ report }: { report?: QuestReportData | null }) {
-  const childName = report?.childName || "Ananya Verma";
+  const childName = formatChildName(report?.childName, "Ananya Verma");
   const selectedClass = report?.selectedClass || "Class 1";
   const age = report?.age || 6;
   const school = report?.school;

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./auth";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 export interface AdminUserItem {
   id: string;
@@ -82,6 +83,10 @@ export interface AdminOverviewResult {
   };
   children: {
     total: number;
+  };
+  /** Optional so an older backend without this field doesn't break the UI */
+  customSheetRequests?: {
+    new: number;
   };
   sessions: {
     total: number;
@@ -360,6 +365,24 @@ export interface AdminQuestReportDetail {
   aiReport?: any;
   schemaVersion: number;
   generatedAt: string;
+  // Parent email delivery
+  hasStoredPdf?: boolean;
+  emailStatus?: ReportEmailStatus;
+  emailRecipient?: string | null;
+  emailSentAt?: string | null;
+  emailError?: string | null;
+  emailAttempts?: number;
+}
+
+/** Status of the "report ready" email sent to the parent */
+export type ReportEmailStatus = "NOT_SENT" | "PENDING" | "SENT" | "FAILED";
+
+export interface ReportEmailState {
+  reportId: string;
+  emailStatus: ReportEmailStatus;
+  emailRecipient: string | null;
+  emailSentAt: string | null;
+  emailError: string | null;
 }
 
 export interface AdminSessionReportResult {
@@ -994,7 +1017,8 @@ export async function downloadAdminReportPdf(
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+    const formattedName = formatChildName(childName, "Child");
+    const cleanName = formattedName.replace(/\s+/g, "_");
     a.download = `OrionKids-Admin-Report-${cleanName}.pdf`;
     document.body.appendChild(a);
     a.click();
@@ -1021,12 +1045,48 @@ export async function regenerateAdminReport(
   );
 }
 
+/**
+ * Admin: resend the report email to the child's CURRENT parent email
+ * (the previous link stops working). Sending happens in the background.
+ */
+export async function resendAdminReportEmail(sessionId: string): Promise<ReportEmailState> {
+  return requestAdminApi<ReportEmailState>(
+    `/api/admin/quest-sessions/${encodeURIComponent(sessionId)}/report/resend-email`,
+    { method: "POST" }
+  );
+}
+
+/**
+ * Admin only: correct a child's parent email. Does not send anything by itself.
+ */
+export async function updateAdminChildParentEmail(
+  userId: string,
+  childProfileId: string,
+  parentEmail: string
+): Promise<{ id: string; userId: string; childName: string; parentEmail: string; updatedAt: string }> {
+  return requestAdminApi(
+    `/api/admin/users/${encodeURIComponent(userId)}/children/${encodeURIComponent(childProfileId)}/parent-email`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ parentEmail }),
+    }
+  );
+}
+
 export interface AdminReportListItem {
   id: string;
   questSessionId: string;
   userId: string;
-  parentName: string;
-  parentEmail: string;
+  /** The logged-in account (in schools: the school's admin account) */
+  accountName: string;
+  accountEmail: string;
+  /** The parent email typed in the child's form (where the report email goes) */
+  childParentEmail: string | null;
+  emailStatus: ReportEmailStatus;
+  emailRecipient: string | null;
+  emailSentAt: string | null;
+  emailError: string | null;
   childProfileId: string | null;
   childName: string;
   age: number;

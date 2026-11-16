@@ -23,6 +23,7 @@ import {
   getRouteForUserProfile,
   type UserProfile,
 } from "@/lib/api/auth";
+import { ProfileAvatar } from "@/components/shared/profile-avatar";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -232,20 +233,13 @@ export function Navbar() {
                   <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl border-2 border-[#0A1D3D] shadow-[4px_4px_0px_#0A1D3D] py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                     {/* Admin User Header */}
                     <div className="px-4 pb-3 border-b border-slate-100 flex items-center gap-3">
-                      {adminUser?.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={adminUser.image}
-                          alt={adminUser.name || "Admin"}
-                          className="w-10 h-10 rounded-full object-cover border-2 border-[#00BCD4] shrink-0"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-[#0A1D3D] text-white flex items-center justify-center font-black text-xs border border-[#0A1D3D] shrink-0">
-                          {adminUser?.name
-                            ? adminUser.name.slice(0, 2).toUpperCase()
-                            : "AD"}
-                        </div>
-                      )}
+                      <ProfileAvatar
+                        src={adminUser?.image}
+                        name={adminUser?.name}
+                        size="md"
+                        shape="circle"
+                        borderClassName="border-2 border-[#00BCD4] shrink-0"
+                      />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
                           <span className="font-black text-xs text-[#0A1D3D] truncate block">
@@ -304,7 +298,14 @@ export function Navbar() {
                 )}
               </div>
             ) : currentUser ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
+                <ProfileAvatar
+                  src={currentUser.image}
+                  name={currentUser.name}
+                  size="sm"
+                  shape="circle"
+                  borderClassName="border-2 border-[#0A1D3D] shadow-xs"
+                />
                 {(() => {
                   const userDestination = getRouteForUserProfile(currentUser);
                   const isPending =
@@ -377,9 +378,13 @@ export function Navbar() {
             {isAdmin && (
               <div className="p-4 rounded-2xl bg-slate-50 border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] mb-1">
                 <div className="flex items-center gap-2.5 mb-3">
-                  <div className="w-8 h-8 rounded-full bg-[#0A1D3D] text-white flex items-center justify-center font-black text-xs shrink-0">
-                    {adminUser?.name ? adminUser.name.slice(0, 2).toUpperCase() : "AD"}
-                  </div>
+                  <ProfileAvatar
+                    src={adminUser?.image}
+                    name={adminUser?.name}
+                    size="sm"
+                    shape="circle"
+                    borderClassName="border-2 border-[#00BCD4] shadow-xs"
+                  />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <span className="font-black text-xs text-[#0A1D3D] truncate block">
@@ -422,9 +427,22 @@ export function Navbar() {
             {/* If regular authenticated parent, show Parent Dashboard Card */}
             {!isAdmin && currentUser && (
               <div className="p-4 rounded-2xl bg-cyan-50 border-2 border-[#0A1D3D] shadow-[2px_2px_0px_#0A1D3D] mb-1">
-                <div className="flex items-center justify-between mb-2">
-                  {/* <span className="text-xs font-black text-[#0A1D3D]">Family Hub</span> */}
-                  <span className="text-[11px] text-slate-500 font-medium">{currentUser.email}</span>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <ProfileAvatar
+                    src={currentUser.image}
+                    name={currentUser.name}
+                    size="sm"
+                    shape="circle"
+                    borderClassName="border-2 border-[#0A1D3D] shadow-xs"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <span className="font-black text-xs text-[#0A1D3D] truncate block">
+                      {currentUser.name || "Parent Account"}
+                    </span>
+                    <span className="text-[10px] text-slate-500 font-medium truncate block">
+                      {currentUser.email}
+                    </span>
+                  </div>
                 </div>
                 <Link
                   href="/dashboard"

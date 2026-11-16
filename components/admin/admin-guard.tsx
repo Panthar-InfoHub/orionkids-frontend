@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Loader2, ShieldAlert, ArrowLeft } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { fetchCurrentUserProfile, getRouteForUserProfile, type UserProfile } from "@/lib/api/auth";
+import { CopyrightNotice } from "@/components/layout/copyright-notice";
 
 interface AdminContextValue {
   admin: UserProfile;
@@ -59,7 +60,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
       // 3. Handle restricted account
       if (profile.status === "RESTRICTED") {
-        router.replace("/access-denied");
+        router.replace("/account/restricted");
         return;
       }
 
@@ -169,7 +170,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
         </main>
 
         <footer className="w-full bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 font-medium">
-          © 2026 OrionKids Digital Solutions Pvt. Ltd. All rights reserved.
+          <CopyrightNotice />
         </footer>
       </div>
     );

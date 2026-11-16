@@ -77,7 +77,7 @@ export function WorkbookBanner({ onRequestCustomSheet }: WorkbookBannerProps) {
               ) : (
                 <>
                   <Download className="w-3.5 h-3.5 text-[#0A1D3D] stroke-[2.4]" />
-                  <span>Download All (.Zip)</span>
+                  <span>Download All</span>
                 </>
               )}
             </button>

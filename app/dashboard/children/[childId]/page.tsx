@@ -27,12 +27,16 @@ import {
   fetchChildQuestSessions,
   fetchChildReports,
   downloadChildReportPdf,
+  resendChildReportEmail,
   type ChildWithStats,
   type ChildProgressResponse,
   type ChildQuestSessionItem,
   type ChildReportItem,
 } from "@/lib/api/children";
+import { formatChildName } from "@/lib/utils/format-child-name";
 import { startChildQuest } from "@/lib/api/session";
+import { generateQuestReport } from "@/lib/api/quest";
+import { ReportEmailStatus } from "@/components/reports/report-email-status";
 import { PageCurtain } from "@/components/layout/page-curtain";
 import { FooterSection } from "@/components/layout/footer-section";
 
@@ -60,12 +64,120 @@ function ChildDetailContent({ params }: PageProps) {
   const [isStartingQuest, setIsStartingQuest] = useState(false);
   const [downloadingReportId, setDownloadingReportId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [generatingSessionId, setGeneratingSessionId] = useState<string | null>(null);
+  const [generateError, setGenerateError] = useState<{ sessionId: string; message: string } | null>(null);
+  const [resendingSessionId, setResendingSessionId] = useState<string | null>(null);
+  const [resendFeedback, setResendFeedback] = useState<{
+    sessionId: string;
+    ok: boolean;
+    message: string;
+  } | null>(null);
+
+  // Completed quests whose report is missing (e.g. background generation failed)
+  const sessionsMissingReport = sessions.filter((s) => s.status === "COMPLETED" && !s.hasReport);
+
+  /**
+   * Re-fetches child, sessions and reports without showing the full-page loader.
+   */
+  const refreshReportData = useCallback(async () => {
+    const [childData, sessionsData, reportsData] = await Promise.all([
+      fetchChild(childId),
+      fetchChildQuestSessions(childId),
+      fetchChildReports(childId),
+    ]);
+    if (childData) setChild(childData);
+    setSessions(sessionsData);
+    setReports(reportsData);
+  }, [childId]);
+
+  const handleGenerateReport = async (sessionId: string) => {
+    if (generatingSessionId) return;
+    setGeneratingSessionId(sessionId);
+    setGenerateError(null);
+    try {
+      const result = await generateQuestReport(sessionId);
+      if (result.success) {
+        await refreshReportData();
+      } else {
+        setGenerateError({
+          sessionId,
+          message: result.message || "Could not generate the report. Please try again.",
+        });
+      }
+    } catch (err) {
+      console.error("Failed to generate report:", err);
+      setGenerateError({ sessionId, message: "Could not generate the report. Please try again." });
+    } finally {
+      setGeneratingSessionId(null);
+    }
+  };
+
+  const renderGenerateReportButton = (sessionId: string) => (
+    <div className="flex flex-col items-end gap-1">
+      <button
+        type="button"
+        onClick={() => handleGenerateReport(sessionId)}
+        disabled={generatingSessionId !== null}
+        className="px-3.5 py-1.5 rounded-xl bg-[#FFD028] hover:bg-[#ffc524] text-[#0A1D3D] font-black text-xs border-2 border-[#0A1D3D] shadow-[2px_2px_0_0_#0A1D3D] inline-flex items-center gap-1.5 transition-all disabled:opacity-60 cursor-pointer"
+        style={{ fontFamily: JAKARTA }}
+      >
+        {generatingSessionId === sessionId ? (
+          <>
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <span>Generating Report...</span>
+          </>
+        ) : (
+          <>
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Generate Report</span>
+          </>
+        )}
+      </button>
+      {generateError?.sessionId === sessionId && (
+        <span className="text-[11px] font-bold text-rose-600" role="alert">
+          {generateError.message}
+        </span>
+      )}
+    </div>
+  );
+
+  /**
+   * Resends the report email to the parent. Sending runs in the background,
+   * so the list is refreshed now (shows "Sending…") and again shortly after.
+   */
+  const handleResendEmail = async (reportSessionId: string) => {
+    if (!child || resendingSessionId) return;
+    setResendingSessionId(reportSessionId);
+    setResendFeedback(null);
+    try {
+      const result = await resendChildReportEmail(child.id, reportSessionId);
+      if (result.success) {
+        setResendFeedback({
+          sessionId: reportSessionId,
+          ok: true,
+          message: "A new link is being emailed to the parent. The previous link no longer works.",
+        });
+        await refreshReportData();
+        setTimeout(() => {
+          void refreshReportData();
+        }, 8000);
+      } else {
+        setResendFeedback({
+          sessionId: reportSessionId,
+          ok: false,
+          message: result.message || "Could not resend the report email. Please try again.",
+        });
+      }
+    } finally {
+      setResendingSessionId(null);
+    }
+  };
 
   const handleDownloadReportPdf = async (reportSessionId: string) => {
     if (!child || downloadingReportId) return;
     setDownloadingReportId(reportSessionId);
     try {
-      await downloadChildReportPdf(child.id, reportSessionId, child.childName);
+      await downloadChildReportPdf(child.id, reportSessionId, formatChildName(child.childName));
     } catch (err) {
       console.error("Failed to download PDF:", err);
     } finally {
@@ -212,7 +324,7 @@ function ChildDetailContent({ params }: PageProps) {
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-2xl sm:text-3xl font-black text-[#0A1D3D]" style={{ fontFamily: JAKARTA }}>
-                    {child.childName}
+                    {formatChildName(child.childName)}
                   </h1>
                   <span className="px-2.5 py-0.5 rounded-full bg-[#FFE066] border border-[#0A1D3D] text-[11px] font-black text-[#0A1D3D]">
                     {child.selectedClass}
@@ -427,6 +539,7 @@ function ChildDetailContent({ params }: PageProps) {
                           View Report
                         </Link>
                       )}
+                      {s.status === "COMPLETED" && !s.hasReport && renderGenerateReportButton(s.id)}
                     </div>
                   </div>
                 ))
@@ -437,7 +550,26 @@ function ChildDetailContent({ params }: PageProps) {
           {/* TAB 3: Reports */}
           {activeTab === "REPORTS" && (
             <div className="space-y-4">
-              {reports.length === 0 ? (
+              {sessionsMissingReport.map((s) => (
+                <div
+                  key={`missing-report-${s.id}`}
+                  className="p-6 rounded-2xl bg-[#FFF8D6] border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D] flex flex-col md:flex-row md:items-center justify-between gap-4"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-amber-600" />
+                      <span className="text-sm font-black text-[#0A1D3D]">Report Not Ready Yet</span>
+                    </div>
+                    <p className="text-xs text-slate-600">
+                      The quest completed on {formatDate(s.completedAt || s.lastActivityAt)} doesn&apos;t have a report yet.
+                      If it was just finished, it may still be generating. Otherwise, generate it now.
+                    </p>
+                  </div>
+                  {renderGenerateReportButton(s.id)}
+                </div>
+              ))}
+
+              {reports.length === 0 && sessionsMissingReport.length > 0 ? null : reports.length === 0 ? (
                 <div className="p-10 rounded-2xl bg-white border border-slate-200 text-center space-y-2">
                   <FileText className="w-8 h-8 text-slate-300 mx-auto" />
                   <h3 className="text-sm font-bold text-slate-700">No Assessment Reports Yet</h3>
@@ -464,7 +596,7 @@ function ChildDetailContent({ params }: PageProps) {
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 text-xs text-slate-600">
                         <div>
                           <span className="text-slate-400 block text-[10px] uppercase font-bold">Child</span>
-                          <span className="font-bold text-[#0A1D3D]">{child.childName}</span>
+                          <span className="font-bold text-[#0A1D3D]">{formatChildName(child.childName)}</span>
                         </div>
                         <div>
                           <span className="text-slate-400 block text-[10px] uppercase font-bold">Quest Completed</span>
@@ -483,6 +615,40 @@ function ChildDetailContent({ params }: PageProps) {
                       <div className="text-[11px] text-slate-400 pt-1">
                         Report Generated: {formatDate(r.generatedAt)} · Overall Accuracy: {Math.round(r.overallAccuracy)}%
                       </div>
+
+                      {/* Parent email status + resend */}
+                      <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2">
+                        <ReportEmailStatus
+                          status={r.emailStatus}
+                          recipient={r.emailRecipient}
+                          sentAt={r.emailSentAt}
+                        />
+                        {r.emailStatus !== "PENDING" && (
+                          <button
+                            type="button"
+                            onClick={() => handleResendEmail(r.questSessionId)}
+                            disabled={resendingSessionId !== null}
+                            className="self-start px-3 py-1 rounded-lg bg-white hover:bg-slate-50 text-[#0A1D3D] font-black text-[11px] border border-[#0A1D3D] inline-flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
+                          >
+                            {resendingSessionId === r.questSessionId ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <RotateCcw className="w-3 h-3" />
+                            )}
+                            <span>
+                              {r.emailStatus === "SENT" ? "Resend email" : "Send email to parent"}
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                      {resendFeedback?.sessionId === r.questSessionId && (
+                        <p
+                          className={`text-[11px] font-bold ${resendFeedback.ok ? "text-emerald-700" : "text-rose-600"}`}
+                          role={resendFeedback.ok ? "status" : "alert"}
+                        >
+                          {resendFeedback.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">

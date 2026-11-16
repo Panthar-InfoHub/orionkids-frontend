@@ -25,7 +25,7 @@ export default function LoginForm() {
         errorParam === "ACCOUNT_RESTRICTED" ||
         errorDesc?.toLowerCase().includes("restricted")
       ) {
-        router.replace("/access-denied");
+        router.replace("/account/restricted");
         return;
       } else {
         setErrorMessage(
@@ -103,6 +103,7 @@ export default function LoginForm() {
       const res = await signIn.social({
         provider: "google",
         callbackURL: fullCallbackURL,
+        errorCallbackURL: `${frontendOrigin}/login`,
       });
 
       if (res?.error) {

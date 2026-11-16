@@ -1,5 +1,7 @@
+import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans, Inter, Space_Grotesk, Lora } from "next/font/google";
+import { AccountStatusListener } from "@/components/auth/account-status-listener";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -56,6 +58,9 @@ export default function RootLayout({
         className="min-h-full flex flex-col font-sans bg-white text-[#0A1D3D]"
         suppressHydrationWarning
       >
+        <Suspense fallback={null}>
+          <AccountStatusListener />
+        </Suspense>
         {children}
       </body>
     </html>

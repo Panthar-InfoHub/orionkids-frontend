@@ -54,7 +54,14 @@ export default function ChildDetailsForm() {
   const [lockedNotice, setLockedNotice] = useState<string | null>(null);
   const [studentId, setStudentId] = useState("");
   const [parentEmail, setParentEmail] = useState("");
+  const [confirmParentEmail, setConfirmParentEmail] = useState("");
   const [parentMobile, setParentMobile] = useState("");
+
+  // The child's report is emailed to this address, so both entries must match
+  const normalizeEmail = (value: string) => value.trim().toLowerCase();
+  const isParentEmailMismatch =
+    confirmParentEmail.trim().length > 0 &&
+    normalizeEmail(parentEmail) !== normalizeEmail(confirmParentEmail);
   const [isGuardian, setIsGuardian] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isVerifyingAuth, setIsVerifyingAuth] = useState(true);
@@ -86,11 +93,9 @@ export default function ChildDetailsForm() {
           return;
         }
 
-        // Prefill ONLY parent contact information for convenience
-        // Keep child-specific fields fresh and blank for every new onboarding
-        if (profile.email && !parentEmail) {
-          setParentEmail(profile.email);
-        }
+        // Parent Email is intentionally NOT prefilled from the logged-in account:
+        // in schools that account is the school's admin email, and the child's report
+        // must be emailed to the real parent. Staff type it (and confirm it) every time.
 
         if (profile.childProfile?.parentMobile && !parentMobile) {
           setParentMobile(profile.childProfile.parentMobile);
@@ -130,6 +135,13 @@ export default function ChildDetailsForm() {
 
     if (!language) {
       setErrorMessage("Please select a preferred home language.");
+      return;
+    }
+
+    if (normalizeEmail(parentEmail) !== normalizeEmail(confirmParentEmail)) {
+      setErrorMessage(
+        "The parent email addresses do not match. The child's report will be emailed to this address, so please check it."
+      );
       return;
     }
 
@@ -445,9 +457,39 @@ export default function ChildDetailsForm() {
                 required
                 value={parentEmail}
                 onChange={(e) => setParentEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="parent@example.com"
+                autoComplete="off"
                 className={FIELD}
               />
+              <p className="mt-1.5 text-[11px] leading-4 text-[#5F6C82]">
+                The child&apos;s learning report will be emailed to this address.
+              </p>
+            </div>
+            <div>
+              <label htmlFor="confirmParentEmail" className={LABEL}>
+                Confirm Parent Email
+              </label>
+              <input
+                id="confirmParentEmail"
+                type="email"
+                required
+                value={confirmParentEmail}
+                onChange={(e) => setConfirmParentEmail(e.target.value)}
+                placeholder="Type the parent email again"
+                autoComplete="off"
+                aria-invalid={isParentEmailMismatch}
+                aria-describedby={isParentEmailMismatch ? "confirmParentEmailError" : undefined}
+                className={`${FIELD} ${isParentEmailMismatch ? "border-rose-400 focus:border-rose-500" : ""}`}
+              />
+              {isParentEmailMismatch && (
+                <p
+                  id="confirmParentEmailError"
+                  className="mt-1.5 text-[11px] leading-4 font-semibold text-rose-600"
+                  role="alert"
+                >
+                  Email addresses do not match.
+                </p>
+              )}
             </div>
             <div>
               <label htmlFor="parentMobile" className={LABEL}>

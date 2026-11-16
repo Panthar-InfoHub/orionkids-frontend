@@ -3,6 +3,7 @@
 import React from "react";
 import { CheckCircle2, Clock, Zap, Target } from "lucide-react";
 import type { QuestReportData } from "@/lib/api/quest";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
@@ -47,7 +48,7 @@ export function LevelBreakdownSection({
 }: {
   report?: QuestReportData | null;
 }) {
-  const childName = report?.childName || "Your Child";
+  const childName = formatChildName(report?.childName, "Your Child");
   const aiReport = report?.aiReport;
   const gameSummaries = report?.gameSummaries || {};
   const levelWise = aiReport?.levelWisePerformance || [];

@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { QuestReportData } from "@/lib/api/quest";
+import { formatChildName } from "@/lib/utils/format-child-name";
 import { Sparkles, Heart, Compass, CheckCircle2, RefreshCw } from "lucide-react";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
@@ -11,7 +12,7 @@ export function GrowthPathwaysSection({
 }: {
   report?: QuestReportData | null;
 }) {
-  const childName = report?.childName || "Your Child";
+  const childName = formatChildName(report?.childName, "Your Child");
   const aiReport = report?.aiReport;
   const practiceAreas = aiReport?.areasForPractice || [];
   const recs = aiReport?.parentRecommendations || [];
@@ -27,13 +28,39 @@ export function GrowthPathwaysSection({
     return obj.observedPattern || obj.recommendedApproach || obj.heading || "";
   };
 
-  const practice1 =
-    extractPractice(practiceAreas[0]) ||
-    `${childName} displayed persistent curiosity with multi-step rule discovery and pattern extrapolation.`;
+  const getPracticeTitle = (item: any, fallback: string) => {
+    if (!item) return fallback;
+    if (typeof item === "string") return fallback;
+    return item.heading || fallback;
+  };
 
-  const practice2 =
-    extractPractice(practiceAreas[1]) ||
-    `Introduce everyday sorting, storytelling, and sequential puzzles to reinforce conceptual flexibility.`;
+  const getPracticeDesc = (item: any, fallback: string) => {
+    if (!item) return fallback;
+    if (typeof item === "string") return item;
+    return `${item.observedPattern || ""} ${
+      item.recommendedApproach ? `Recommendation: ${item.recommendedApproach}` : ""
+    }`.trim() || fallback;
+  };
+
+  const getRecDesc = (rec: any) => {
+    if (!rec) return "";
+    if (rec.description) return rec.description;
+    if (rec.learningOpportunity) return rec.learningOpportunity;
+    if (Array.isArray(rec.instructions)) return rec.instructions.join(" ");
+    return "";
+  };
+
+  const practice1Title = getPracticeTitle(practiceAreas[0], "Reasoning & Adaptive Flexibility");
+  const practice1 = getPracticeDesc(
+    practiceAreas[0],
+    `${childName} displayed persistent curiosity with multi-step rule discovery and pattern extrapolation.`
+  );
+
+  const practice2Title = getPracticeTitle(practiceAreas[1], "Narrative & Causal Sequencing");
+  const practice2 = getPracticeDesc(
+    practiceAreas[1],
+    `Introduce everyday sorting, storytelling, and sequential puzzles to reinforce conceptual flexibility.`
+  );
 
   return (
     <section className="w-full flex flex-col gap-6">
@@ -129,7 +156,7 @@ export function GrowthPathwaysSection({
             </div>
 
             <h3 className="text-[20px] font-bold text-[#0A1D3D]" style={{ fontFamily: JAKARTA }}>
-              Reasoning & Adaptive Flexibility
+              {practice1Title}
             </h3>
 
             <p className="text-[14px] leading-[165%] text-[#475569] mt-2.5" style={{ fontFamily: JAKARTA }}>
@@ -146,7 +173,7 @@ export function GrowthPathwaysSection({
               {recs[0] ? (
                 <div>
                   <p>
-                    <strong>🧩 {recs[0].title}:</strong> {recs[0].description}
+                    <strong>🧩 {recs[0].title}:</strong> {getRecDesc(recs[0])}
                   </p>
                   {recs[0].observedFinding && (
                     <p className="text-[11px] font-medium text-blue-700 bg-blue-50/70 p-1.5 rounded-lg mt-1">
@@ -162,7 +189,7 @@ export function GrowthPathwaysSection({
               {recs[1] ? (
                 <div>
                   <p>
-                    <strong>🔀 {recs[1].title}:</strong> {recs[1].description}
+                    <strong>🔀 {recs[1].title}:</strong> {getRecDesc(recs[1])}
                   </p>
                   {recs[1].observedFinding && (
                     <p className="text-[11px] font-medium text-blue-700 bg-blue-50/70 p-1.5 rounded-lg mt-1">
@@ -192,7 +219,7 @@ export function GrowthPathwaysSection({
             </div>
 
             <h3 className="text-[20px] font-bold text-[#0A1D3D]" style={{ fontFamily: JAKARTA }}>
-              Narrative & Causal Sequencing
+              {practice2Title}
             </h3>
 
             <p className="text-[14px] leading-[165%] text-[#475569] mt-2.5" style={{ fontFamily: JAKARTA }}>
@@ -209,7 +236,7 @@ export function GrowthPathwaysSection({
               {recs[2] ? (
                 <div>
                   <p>
-                    <strong>📖 {recs[2].title}:</strong> {recs[2].description}
+                    <strong>📖 {recs[2].title}:</strong> {getRecDesc(recs[2])}
                   </p>
                   {recs[2].observedFinding && (
                     <p className="text-[11px] font-medium text-blue-700 bg-blue-50/70 p-1.5 rounded-lg mt-1">
@@ -225,7 +252,7 @@ export function GrowthPathwaysSection({
               {recs[3] ? (
                 <div>
                   <p>
-                    <strong>🎲 {recs[3].title}:</strong> {recs[3].description}
+                    <strong>🎲 {recs[3].title}:</strong> {getRecDesc(recs[3])}
                   </p>
                   {recs[3].observedFinding && (
                     <p className="text-[11px] font-medium text-blue-700 bg-blue-50/70 p-1.5 rounded-lg mt-1">

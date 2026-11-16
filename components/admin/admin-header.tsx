@@ -6,6 +6,7 @@ import Image from "next/image";
 import { LogOut, ExternalLink, ShieldCheck } from "lucide-react";
 import { useAdmin } from "./admin-guard";
 import { performSignOut } from "@/lib/api/auth";
+import { ProfileAvatar } from "@/components/shared/profile-avatar";
 
 export function AdminHeader() {
   const { admin } = useAdmin();
@@ -13,15 +14,6 @@ export function AdminHeader() {
   const handleSignOut = async () => {
     await performSignOut();
   };
-
-  const initials = admin.name
-    ? admin.name
-        .split(" ")
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join("")
-        .toUpperCase()
-    : "AD";
 
   return (
     <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-40 select-none shadow-xs">
@@ -62,18 +54,14 @@ export function AdminHeader() {
 
           {/* Admin Profile Info */}
           <div className="flex items-center gap-2.5 pl-2 sm:pl-3 border-l border-slate-200">
-            {admin.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={admin.image}
-                alt={admin.name}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border-2 border-[#00BCD4] shadow-xs"
-              />
-            ) : (
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#0A1D3D] text-white flex items-center justify-center font-black text-xs border border-[#0A1D3D] shadow-xs">
-                {initials}
-              </div>
-            )}
+            <ProfileAvatar
+              src={admin.image}
+              name={admin.name}
+              size="sm"
+              shape="circle"
+              borderClassName="border-2 border-[#00BCD4] shadow-xs"
+              priority={true}
+            />
 
             <div className="hidden sm:flex flex-col">
               <div className="flex items-center gap-1.5">

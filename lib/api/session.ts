@@ -97,7 +97,23 @@ export async function fetchCurrentSession(
       cache: "no-store",
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      if (res.status === 403) {
+        const errData = await res.json().catch(() => null);
+        if (
+          errData?.code === "ACCOUNT_RESTRICTED" ||
+          errData?.error?.code === "ACCOUNT_RESTRICTED"
+        ) {
+          import("./auth").then(({ broadcastAccountRestricted }) => {
+            broadcastAccountRestricted(errData?.data?.restrictedReason || errData?.error?.message);
+          }).catch(() => {});
+          if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+            window.location.replace("/account/restricted");
+          }
+        }
+      }
+      return null;
+    }
 
     const data = await res.json();
     const session = (data?.data ?? null) as QuestSession | null;
@@ -144,6 +160,20 @@ export async function fetchResumeState(
     });
 
     if (!res.ok) {
+      if (res.status === 403) {
+        const errData = await res.json().catch(() => null);
+        if (
+          errData?.code === "ACCOUNT_RESTRICTED" ||
+          errData?.error?.code === "ACCOUNT_RESTRICTED"
+        ) {
+          import("./auth").then(({ broadcastAccountRestricted }) => {
+            broadcastAccountRestricted(errData?.data?.restrictedReason || errData?.error?.message);
+          }).catch(() => {});
+          if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+            window.location.replace("/account/restricted");
+          }
+        }
+      }
       return { hasResumableQuest: false, destination: "/" };
     }
 
@@ -157,35 +187,17 @@ export async function fetchResumeState(
   }
 }
 
-
 /**
  * Persists an in-game checkpoint to the active in-progress level attempt.
- * Safe to call periodically during gameplay; cannot overwrite completed stages.
+ * Leverages in-flight deduplication and ordered delivery to avoid redundant network overhead.
  */
 export async function saveAttemptCheckpoint(
   sessionId: string,
   attemptId: string,
   checkpoint: Record<string, unknown>
 ): Promise<boolean> {
-  if (!API_URL) return false;
-
-  try {
-    const res = await fetch(
-      `${API_URL}/api/quest/sessions/${sessionId}/attempts/${attemptId}/checkpoint`,
-      {
-        method: "PATCH",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ checkpoint }),
-      }
-    );
-
-    return res.ok;
-  } catch {
-    return false;
-  }
+  const apiUrl = API_URL || "http://localhost:8080";
+  return queueCheckpointSave(apiUrl, sessionId, attemptId, checkpoint);
 }
 
 /**
@@ -219,7 +231,23 @@ export async function fetchOrCreateSession(
       ),
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      if (res.status === 403) {
+        const errData = await res.json().catch(() => null);
+        if (
+          errData?.code === "ACCOUNT_RESTRICTED" ||
+          errData?.error?.code === "ACCOUNT_RESTRICTED"
+        ) {
+          import("./auth").then(({ broadcastAccountRestricted }) => {
+            broadcastAccountRestricted(errData?.data?.restrictedReason || errData?.error?.message);
+          }).catch(() => {});
+          if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+            window.location.replace("/account/restricted");
+          }
+        }
+      }
+      return null;
+    }
 
     const data = await res.json();
     const created = (data?.data ?? null) as QuestSession | null;

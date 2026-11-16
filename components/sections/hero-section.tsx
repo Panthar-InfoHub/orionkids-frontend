@@ -1,14 +1,17 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { fetchCurrentUserProfile, getRouteForUserProfile } from "@/lib/api/auth";
+import { TeaserVideoModal } from "./teaser-video-modal";
 
 export function HeroSection() {
   const router = useRouter();
   const [isRouting, setIsRouting] = useState(false);
+  const [isTeaserOpen, setIsTeaserOpen] = useState(false);
+  const closeTeaser = useCallback(() => setIsTeaserOpen(false), []);
 
   const handleLaunchQuest = async () => {
     if (isRouting) return;
@@ -62,24 +65,20 @@ export function HeroSection() {
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
             >
-              <span>Stronger Thinking</span>
+              <span>Nurturing minds</span>
 
               <div className="relative mt-[4px] flex flex-col items-start">
                 {/* Yellow Badge: Brighter (Figma: 254x72, 16px radius, 4px border, 1deg rotate, #FFD54F) */}
                 <div className="relative z-[1] inline-flex items-center justify-center px-[10px] sm:px-[12px] py-[2px] bg-[#FFD54F] text-[#0A1D3D] rounded-[14px] sm:rounded-[16px] border-[3px] sm:border-[4px] border-[#0A1D3D] shadow-[3px_4px_0px_0px_#0A1D3D] sm:shadow-[4px_5px_0px_0px_#0A1D3D] rotate-[-1deg] origin-top-left">
                   <span className="text-[34px] sm:text-[44px] lg:text-[42px] xl:text-[52px] 2xl:text-[54px] font-[800] tracking-[-1.5px] leading-[46px] sm:leading-[54px] lg:leading-[50px] xl:leading-[60px] text-[#0A1D3D]">
-                    Brighter
-                  </span>
-                </div>
-
-                <div className="relative z-[3] -mt-[10px] sm:-mt-[14px] inline-flex items-center justify-center px-[10px] sm:px-[12px] py-[2px] bg-[#0A1D3D] text-white rounded-[14px] sm:rounded-[16px] border-[3px] sm:border-[4px] border-[#0A1D3D] shadow-[3px_4px_0px_0px_#0A1D3D] sm:shadow-[4px_5px_0px_0px_#0A1D3D] rotate-[2deg] origin-top-left">
-                  <span className="text-[34px] sm:text-[44px] lg:text-[42px] xl:text-[52px] 2xl:text-[54px] font-[800] tracking-[-1.5px] leading-[46px] sm:leading-[54px] lg:leading-[50px] xl:leading-[60px] text-white">
-                    Tomorrows
+                    Shaping
                   </span>
 
-                  {/* 3D Moving Rocket Mascot with Thruster Sparks & Flight Animation */}
+                  {/* 3D Moving Rocket Mascot with Thruster Sparks & Flight Animation.
+                      Anchored just outside the right edge of the "Shaping" badge (the widest line),
+                      so it never overlaps the headline text, even while animating. */}
                   <div
-                    className="absolute -top-[44px] sm:-top-[55px] -right-[20px] sm:-right-[30px] w-[54px] sm:w-[62px] aspect-square pointer-events-none select-none z-20"
+                    className="absolute left-full top-1/2 -translate-y-1/2 ml-3 sm:ml-4 w-[54px] sm:w-[62px] aspect-square pointer-events-none select-none z-20"
                   >
                     <div className="relative w-full h-full animate-rocket-flight">
                       {/* Cyan Thruster Engine Plasma Glow behind the flame */}
@@ -139,6 +138,12 @@ export function HeroSection() {
                       />
                     </div>
                   </div>
+                </div>
+
+                <div className="relative z-[3] -mt-[10px] sm:-mt-[14px] inline-flex items-center justify-center px-[10px] sm:px-[12px] py-[2px] bg-[#0A1D3D] text-white rounded-[14px] sm:rounded-[16px] border-[3px] sm:border-[4px] border-[#0A1D3D] shadow-[3px_4px_0px_0px_#0A1D3D] sm:shadow-[4px_5px_0px_0px_#0A1D3D] rotate-[2deg] origin-top-left">
+                  <span className="text-[34px] sm:text-[44px] lg:text-[42px] xl:text-[52px] 2xl:text-[54px] font-[800] tracking-[-1.5px] leading-[46px] sm:leading-[54px] lg:leading-[50px] xl:leading-[60px] text-white">
+                    Futures
+                  </span>
 
                   {/* SVG Line (line.svg) extending to the right from the vertical middle of Tomorrows */}
                   <div className="absolute top-[110%] -translate-y-1/2 left-0 w-full max-w-[360px] sm:max-w-[460px] lg:max-w-[420px] xl:max-w-[579px] pointer-events-none select-none -z-10 overflow-hidden">
@@ -274,6 +279,8 @@ export function HeroSection() {
               {/* Left Button: Enjoy a Quick 2-Minute Adventure */}
               <button
                 type="button"
+                onClick={() => setIsTeaserOpen(true)}
+                aria-haspopup="dialog"
                 className="h-[48px] sm:h-[50px] xl:h-[52px] px-4 sm:px-4 md:px-5 xl:px-6 rounded-2xl bg-white text-[#0A1D3D] font-black text-sm sm:text-[13px] md:text-sm xl:text-[15px] whitespace-nowrap border-[2.5px] border-[#0A1D3D] shadow-[4px_5px_0px_0px_#0A1D3D] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_6px_0px_0px_#0A1D3D] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_#0A1D3D] flex items-center justify-center gap-2 sm:gap-2.5 transition-all cursor-pointer select-none shrink-0"
               >
                 {/* Circular play icon matching exact Figma specs */}
@@ -296,7 +303,7 @@ export function HeroSection() {
                     />
                   </svg>
                 </div>
-                <span>🍿 Enjoy a Quick 2-Minute Adventure</span>
+                <span>🍿 Enjoy a Quick 2-Minute teaser</span>
               </button>
 
               {/* Right Button: Launch Free Quest! (Lifecycle-aware routing) */}
@@ -408,7 +415,7 @@ export function HeroSection() {
         </div>
       </div>
 
-    
+      <TeaserVideoModal open={isTeaserOpen} onClose={closeTeaser} />
     </section>
   );
 }

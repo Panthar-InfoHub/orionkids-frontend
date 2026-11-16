@@ -1,4 +1,5 @@
 import { API_BASE_URL, type ChildProfileData } from "./auth";
+import { formatChildName } from "@/lib/utils/format-child-name";
 
 export interface ChildStats {
   totalQuests: number;
@@ -83,8 +84,15 @@ export interface ChildQuestSessionItem {
     generatedAt: string;
     overallAccuracy: number;
     totalDurationMs: number;
+    emailStatus?: ReportEmailStatus;
+    emailRecipient?: string | null;
+    emailSentAt?: string | null;
+    emailError?: string | null;
   } | null;
 }
+
+/** Status of the "report ready" email sent to the parent */
+export type ReportEmailStatus = "NOT_SENT" | "PENDING" | "SENT" | "FAILED";
 
 export interface ChildReportItem {
   id: string;
@@ -105,6 +113,10 @@ export interface ChildReportItem {
   aiReport?: any;
   schemaVersion: number;
   generatedAt: string;
+  emailStatus?: ReportEmailStatus;
+  emailRecipient?: string | null;
+  emailSentAt?: string | null;
+  emailError?: string | null;
 }
 
 export interface CreateChildPayload {
@@ -181,6 +193,20 @@ export async function fetchChildren(): Promise<ChildWithStats[]> {
     });
 
     if (!res.ok) {
+      if (res.status === 403) {
+        const payload = await res.json().catch(() => null);
+        if (
+          payload?.code === "ACCOUNT_RESTRICTED" ||
+          payload?.error?.code === "ACCOUNT_RESTRICTED"
+        ) {
+          import("./auth").then(({ broadcastAccountRestricted }) => {
+            broadcastAccountRestricted(payload?.data?.restrictedReason || payload?.error?.message);
+          }).catch(() => {});
+          if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+            window.location.replace("/account/restricted");
+          }
+        }
+      }
       if (res.status === 401) return [];
       console.warn(`[children] fetchChildren returned status ${res.status}`);
       return [];
@@ -360,6 +386,36 @@ export async function fetchChildReports(
 }
 
 /**
+ * Resends the report email to the child's parent (the previous link stops working).
+ * Sending happens in the background; the status becomes PENDING, then SENT or FAILED.
+ */
+export async function resendChildReportEmail(
+  childId: string,
+  sessionId: string
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/children/${encodeURIComponent(childId)}/quest-sessions/${encodeURIComponent(sessionId)}/report/resend-email`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { Accept: "application/json" },
+      }
+    );
+    const payload = await res.json().catch(() => null);
+    if (!res.ok || !payload?.success) {
+      return {
+        success: false,
+        message: payload?.error?.message || "Could not resend the report email. Please try again.",
+      };
+    }
+    return { success: true };
+  } catch {
+    return { success: false, message: "Could not reach the server. Please try again." };
+  }
+}
+
+/**
  * Downloads the server-generated PDF for a child's quest session.
  */
 export async function downloadChildReportPdf(
@@ -380,7 +436,8 @@ export async function downloadChildReportPdf(
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+    const formattedName = formatChildName(childName, "Child");
+    const cleanName = formattedName.replace(/\s+/g, "_");
     a.download = `OrionKids-${cleanName}-Report.pdf`;
     document.body.appendChild(a);
     a.click();

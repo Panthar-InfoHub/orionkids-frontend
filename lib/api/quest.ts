@@ -1,4 +1,6 @@
 
+import { formatChildName } from "@/lib/utils/format-child-name";
+
 export type QuestGameKey =
   | "stroop"
   | "card-flip"
@@ -135,6 +137,16 @@ export interface CompleteLevelPayload {
   metrics?: Record<string, unknown>;
   trialRecords?: unknown[];
   completedAt?: string;
+  isSkipped?: boolean;
+  skipEntireGame?: boolean;
+}
+
+export interface SkipQuestPayload {
+  gameKey: QuestGameKey;
+  levelNumber?: number;
+  skipEntireGame?: boolean;
+  reason?: string;
+  durationMs?: number;
 }
 
 export interface CompleteLevelResult {
@@ -187,6 +199,18 @@ export async function startQuestLevel(
   const body = await res.json().catch(() => null);
 
   if (!res.ok) {
+    if (
+      res.status === 403 &&
+      (body?.code === "ACCOUNT_RESTRICTED" || body?.error?.code === "ACCOUNT_RESTRICTED")
+    ) {
+      import("./auth").then(({ broadcastAccountRestricted }) => {
+        broadcastAccountRestricted(body?.data?.restrictedReason || body?.error?.message);
+      }).catch(() => {});
+      if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+        window.location.replace("/account/restricted");
+      }
+    }
+
     return {
       success: false,
       error: {
@@ -204,31 +228,19 @@ export async function startQuestLevel(
   };
 }
 
+import { queueCheckpointSave } from "./checkpoint-queue";
+
 /**
  * Persists an in-game checkpoint for an in-progress level attempt.
+ * Leverages in-flight deduplication and ordered delivery to avoid redundant network overhead.
  */
 export async function saveQuestCheckpoint(
   sessionId: string,
   attemptId: string,
   checkpoint: Record<string, unknown>
 ): Promise<boolean> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) return true;
-
-  try {
-    const res = await fetch(
-      `${apiUrl}/api/quest/sessions/${sessionId}/attempts/${attemptId}/checkpoint`,
-      {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ checkpoint }),
-      }
-    );
-    return res.ok;
-  } catch {
-    return false;
-  }
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  return queueCheckpointSave(apiUrl, sessionId, attemptId, checkpoint);
 }
 
 /**
@@ -304,6 +316,18 @@ export async function completeQuestLevel(
   const body = await res.json().catch(() => null);
 
   if (!res.ok) {
+    if (
+      res.status === 403 &&
+      (body?.code === "ACCOUNT_RESTRICTED" || body?.error?.code === "ACCOUNT_RESTRICTED")
+    ) {
+      import("./auth").then(({ broadcastAccountRestricted }) => {
+        broadcastAccountRestricted(body?.data?.restrictedReason || body?.error?.message);
+      }).catch(() => {});
+      if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+        window.location.replace("/account/restricted");
+      }
+    }
+
     return {
       success: false,
       error: {
@@ -324,6 +348,73 @@ export async function completeQuestLevel(
     currentLevel: data.currentLevel,
     isQuestComplete: data.isQuestComplete,
     nextLevelRoute: data.nextLevelRoute,
+  };
+}
+
+/**
+ * Records a skipped level or entire game in the session and advances progression.
+ */
+export async function skipQuestActivity(
+  sessionId: string,
+  payload: SkipQuestPayload
+): Promise<CompleteLevelResult> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) {
+    const isSkipEntire = payload.skipEntireGame ?? false;
+    const nextGameMap: Record<QuestGameKey, QuestGameKey | "report"> = {
+      stroop: "card-flip",
+      "card-flip": "pattern",
+      pattern: "odd-one-out",
+      "odd-one-out": "rule-discovery",
+      "rule-discovery": "story-sequencing",
+      "story-sequencing": "report",
+    };
+    const nextGame = nextGameMap[payload.gameKey];
+    const nextRoute =
+      isSkipEntire || (payload.levelNumber || 1) >= 3
+        ? nextGame === "report"
+          ? `/report?sessionId=${sessionId}`
+          : `/games/${nextGame}?level=1`
+        : `/games/${payload.gameKey}?level=${(payload.levelNumber || 1) + 1}`;
+    return {
+      success: true,
+      message: `${payload.gameKey} skipped (demo mode)`,
+      nextLevelRoute: nextRoute,
+    };
+  }
+
+  import("./session").then(({ invalidateSessionCache }) => invalidateSessionCache()).catch(() => {});
+
+  const res = await fetch(`${apiUrl}/api/quest/sessions/${sessionId}/skip`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const body = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    return {
+      success: false,
+      error: {
+        code: body?.error?.code || "ERROR",
+        message: body?.error?.message || `Failed to record skipped activity (${res.statusText})`,
+      },
+    };
+  }
+
+  const data = body?.data || body;
+  return {
+    success: true,
+    message: body?.message || "Activity skipped",
+    levelAttemptId: data?.levelAttemptId,
+    sessionId: data?.sessionId || sessionId,
+    nextStage: data?.nextStage,
+    currentGame: data?.currentGame,
+    currentLevel: data?.currentLevel,
+    isQuestComplete: data?.isQuestComplete,
+    nextLevelRoute: data?.nextLevelRoute,
   };
 }
 
@@ -418,6 +509,16 @@ export interface QuestReportData {
       observedFinding?: string;
       unassessedNote?: string;
     }>;
+    homeActivities?: Array<{
+      title: string;
+      skillsPracticed: string[];
+      materials: string[];
+      instructions: string[];
+      suggestedDuration: string;
+      difficultyProgression?: string;
+      learningOpportunity: string;
+      parentTip: string;
+    }>;
     dataLimitations: string;
     reportGenerationDate: string;
   } | null;
@@ -445,6 +546,52 @@ export interface QuestReportData {
 }
 
 /**
+ * Asks the backend to generate (or return the already-saved) report for a completed quest session.
+ * Safe to call more than once: if a report already exists, the backend returns it without regenerating.
+ *
+ * Pass `keepalive: true` when firing it in the background right before navigating away,
+ * so the browser still delivers the request even if the page is unloaded.
+ */
+export async function generateQuestReport(
+  sessionId: string,
+  options?: { keepalive?: boolean }
+): Promise<{ success: boolean; report?: QuestReportData; message?: string }> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) {
+    return { success: false, message: "Backend API URL not configured." };
+  }
+
+  try {
+    const res = await fetch(
+      `${apiUrl}/api/quest/sessions/${encodeURIComponent(sessionId)}/report`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        keepalive: options?.keepalive ?? false,
+      }
+    );
+
+    const body = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      return {
+        success: false,
+        message: body?.error?.message || "Could not generate the report. Please try again.",
+      };
+    }
+
+    return { success: true, report: (body?.data || body) as QuestReportData };
+  } catch (err) {
+    return {
+      success: false,
+      message: err instanceof Error ? err.message : "Could not generate the report. Please try again.",
+    };
+  }
+}
+
+/**
  * Download authoritative PDF assessment report.
  */
 export async function downloadQuestReportPdf(
@@ -461,7 +608,8 @@ export async function downloadQuestReportPdf(
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const cleanName = childName ? childName.replace(/\s+/g, "_") : "Child";
+    const formattedName = formatChildName(childName, "Child");
+    const cleanName = formattedName.replace(/\s+/g, "_");
     a.download = `OrionKids-Assessment-Report-${cleanName}.pdf`;
     document.body.appendChild(a);
     a.click();
@@ -495,6 +643,18 @@ export async function fetchQuestReport(
     const body = await res.json().catch(() => null);
 
     if (!res.ok) {
+      if (
+        res.status === 403 &&
+        (body?.code === "ACCOUNT_RESTRICTED" || body?.error?.code === "ACCOUNT_RESTRICTED")
+      ) {
+        import("./auth").then(({ broadcastAccountRestricted }) => {
+          broadcastAccountRestricted(body?.data?.restrictedReason || body?.error?.message);
+        }).catch(() => {});
+        if (typeof window !== "undefined" && !window.location.pathname.includes("/account/restricted")) {
+          window.location.replace("/account/restricted");
+        }
+      }
+
       const errMsg = body?.error?.message || "Could not retrieve report.";
       const isInProgress = errMsg.toLowerCase().includes("in progress");
       return {

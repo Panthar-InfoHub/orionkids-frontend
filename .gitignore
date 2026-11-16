@@ -60,3 +60,6 @@ next-env.d.ts
 
 # Turbo
 .turbo
+
+# Original, uncompressed source media (local backup only; optimized copies are in public/videos/)
+/media-source

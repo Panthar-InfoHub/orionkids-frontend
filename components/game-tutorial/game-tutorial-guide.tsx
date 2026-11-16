@@ -20,5 +20,6 @@ export interface GameTutorialGuideProps {
  * Stage 3: READY TO PLAY (Confetti celebration + explicit level launch)
  */
 export function GameTutorialGuide(props: GameTutorialGuideProps) {
+  if (!props.isOpen) return null;
   return <GameTutorialModal {...props} />;
 }

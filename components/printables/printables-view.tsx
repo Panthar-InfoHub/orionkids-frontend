@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   PrintablesData,
   PrintableItem,
@@ -14,6 +14,7 @@ import { PrintablesGrid } from "./printables-grid";
 import { LowInkPromise } from "./low-ink-promise";
 import { WorkbookBanner } from "./workbook-banner";
 import { PrintableModal } from "./printable-modal";
+import { CustomSheetRequestModal } from "./custom-sheet-request-modal";
 
 interface PrintablesViewProps {
   initialData: PrintablesData;
@@ -26,6 +27,8 @@ export function PrintablesView({ initialData }: PrintablesViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPrintable, setSelectedPrintable] = useState<PrintableItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCustomSheetOpen, setIsCustomSheetOpen] = useState(false);
+  const closeCustomSheet = useCallback(() => setIsCustomSheetOpen(false), []);
 
   // Client-side instant filtering based on selected pills and search
   const filteredItems = useMemo(() => {
@@ -106,11 +109,10 @@ export function PrintablesView({ initialData }: PrintablesViewProps) {
       <LowInkPromise />
 
       {/* 6. 50-Page Term 1 Workbook Banner */}
-      <WorkbookBanner
-        onRequestCustomSheet={() => {
-          handleOpenPrintable(initialData.spotlight);
-        }}
-      />
+      <WorkbookBanner onRequestCustomSheet={() => setIsCustomSheetOpen(true)} />
+
+      {/* "Request Custom Sheet" form popup */}
+      <CustomSheetRequestModal open={isCustomSheetOpen} onClose={closeCustomSheet} />
 
       {/* Interactive Print / Preview Modal */}
       <PrintableModal

@@ -229,7 +229,7 @@ describe("Interactive Quest Preview & Gameplay Enhancement Suite", () => {
         status: "RESTRICTED",
         termsAccepted: true,
       };
-      assert.equal(getRouteForUserProfile(userRestricted), "/access-denied");
+      assert.equal(getRouteForUserProfile(userRestricted), "/account/restricted");
     });
 
     it("10. routes approved active user to child onboarding if incomplete, or dashboard if onboarded", () => {

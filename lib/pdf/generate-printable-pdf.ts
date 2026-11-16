@@ -22,25 +22,30 @@ export async function generatePrintablePdf({
     rawWorksheet.replace(/^\/?(OrionKids_Worksheets\/)?/, "")
   );
 
-  const candidatePath = path.join(WORKSHEETS_DIR, cleanFilename);
+  const candidatePaths = [
+    path.join(WORKSHEETS_DIR, cleanFilename),
+    path.join(process.cwd(), "public", cleanFilename),
+  ];
 
-  try {
-    const buffer = await fs.readFile(/*turbopackIgnore: true*/ candidatePath);
-    const loadedDoc = await PDFDocument.load(buffer);
-    const pageCount = loadedDoc.getPageCount();
+  for (const candidatePath of candidatePaths) {
+    try {
+      const buffer = await fs.readFile(/*turbopackIgnore: true*/ candidatePath);
+      const loadedDoc = await PDFDocument.load(buffer);
+      const pageCount = loadedDoc.getPageCount();
 
-    // If the PDF file contains multiple pages, extract only the 2nd page (the actual worksheet)
-    if (pageCount > 1) {
-      const singlePageDoc = await PDFDocument.create();
-      const targetPageIndex = pageCount >= 2 ? 1 : 0;
-      const [extractedPage] = await singlePageDoc.copyPages(loadedDoc, [targetPageIndex]);
-      singlePageDoc.addPage(extractedPage);
-      return await singlePageDoc.save();
+      // If the PDF file contains multiple pages, extract only the 2nd page (the actual worksheet)
+      if (pageCount > 1) {
+        const singlePageDoc = await PDFDocument.create();
+        const targetPageIndex = pageCount >= 2 ? 1 : 0;
+        const [extractedPage] = await singlePageDoc.copyPages(loadedDoc, [targetPageIndex]);
+        singlePageDoc.addPage(extractedPage);
+        return await singlePageDoc.save();
+      }
+
+      return new Uint8Array(buffer);
+    } catch {
+      // Continue to next candidate path
     }
-
-    return new Uint8Array(buffer);
-  } catch {
-    // Continue to fallback
   }
 
   console.error(

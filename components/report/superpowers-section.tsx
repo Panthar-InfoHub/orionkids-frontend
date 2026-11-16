@@ -3,6 +3,8 @@
 import React from "react";
 import type { QuestReportData } from "@/lib/api/quest";
 
+import { formatChildName } from "@/lib/utils/format-child-name";
+
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
 export function SuperpowersSection({
@@ -10,7 +12,7 @@ export function SuperpowersSection({
 }: {
   report?: QuestReportData | null;
 }) {
-  const childName = report?.childName || "Your Child";
+  const childName = formatChildName(report?.childName, "Your Child");
   const selectedClass = report?.selectedClass || "Class 1";
   const aiReport = report?.aiReport;
   const strengths = aiReport?.observedStrengths || [];
@@ -20,27 +22,31 @@ export function SuperpowersSection({
   const focusScore = facets?.focusInhibition?.score ?? 89;
   const memoryScore = facets?.workingMemory?.score ?? 84;
 
-  const extractStrength = (item: unknown) => {
-    if (!item) return { title: "", desc: "" };
-    if (typeof item === "string") return { title: "Observed Strength", desc: item };
-    const obj = item as Record<string, string>;
-    return {
-      title: obj.heading || "Observed Strength",
-      desc: obj.observation || obj.performanceEvidence || "",
-    };
+  const getStrengthTitle = (item: any, fallback: string) => {
+    if (!item) return fallback;
+    if (typeof item === "string") return "Observed Strength";
+    return item.heading || "Observed Strength";
   };
 
-  const st1 = extractStrength(strengths[0]);
-  const strength1Title = st1.title || "Attention & Selective Focus";
-  const strength1Desc =
-    st1.desc ||
-    `${childName} stuck with the Stroop Colour-Word game with notable poise, choosing target cues accurately and showing mature executive filtering.`;
+  const getStrengthDesc = (item: any, fallback: string) => {
+    if (!item) return fallback;
+    if (typeof item === "string") return item;
+    return `${item.observation || item.performanceEvidence || ""} ${
+      item.performanceEvidence && item.observation ? `Evidence: ${item.performanceEvidence}` : ""
+    }`.trim() || fallback;
+  };
 
-  const st2 = extractStrength(strengths[1]);
-  const strength2Title = st2.title || "Spatial Memory & Recall";
-  const strength2Desc =
-    st2.desc ||
-    `${childName} navigated the Card Flip memory matches with calm persistence, demonstrating good recall of spatial object positions.`;
+  const strength1Title = getStrengthTitle(strengths[0], "Attention & Selective Focus");
+  const strength1Desc = getStrengthDesc(
+    strengths[0],
+    `${childName} stuck with the Stroop Colour-Word game with notable poise, choosing target cues accurately and showing mature executive filtering.`
+  );
+
+  const strength2Title = getStrengthTitle(strengths[1], "Spatial Memory & Recall");
+  const strength2Desc = getStrengthDesc(
+    strengths[1],
+    `${childName} navigated the Card Flip memory matches with calm persistence, demonstrating good recall of spatial object positions.`
+  );
 
   return (
     <section className="w-full flex flex-col gap-5">

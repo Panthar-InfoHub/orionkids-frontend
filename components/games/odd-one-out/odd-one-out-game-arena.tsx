@@ -61,7 +61,7 @@ const ODD_TRIALS: Record<number, OddTrial[]> = {
     {
       items: [
         { symbol: "👨‍🚀", label: "Astronaut", isOdd: false },
-        { symbol: "👩‍🚀", label: "Cosmonaut", isOdd: false },
+        { symbol: "🤖", label: "Space Robot", isOdd: false },
         { symbol: "👽", label: "Alien Explorer", isOdd: false },
         { symbol: "🐙", label: "Octopus", isOdd: true },
       ],
@@ -156,6 +156,25 @@ export function OddOneOutGameArena({
   const [isSlidingOut, setIsSlidingOut] = useState(false);
   const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string } | null>(null);
   const startTimeRef = useRef<number>(Date.now());
+  const trialStartTimeRef = useRef<number>(Date.now());
+  const reactionTimesRef = useRef<number[]>([]);
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const scheduleTimeout = (fn: () => void, delayMs: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter((t) => t !== id);
+      fn();
+    }, delayMs);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -207,6 +226,11 @@ export function OddOneOutGameArena({
 
   const handleSelectItem = async (itemIdx: number, isOdd: boolean) => {
     if (submissionStatus !== "idle" || isLocked) return;
+
+    // Record per-trial reaction time
+    const trialRT = Math.max(100, Date.now() - trialStartTimeRef.current);
+    reactionTimesRef.current.push(trialRT);
+
     setIsLocked(true);
     setSelectedIdx(itemIdx);
 
@@ -232,22 +256,30 @@ export function OddOneOutGameArena({
 
     // Smooth fast neutral transition delay (180ms)
     const holdDuration = 180;
-    setTimeout(async () => {
+    scheduleTimeout(async () => {
       // Carousel Slide-Out to left before new challenge slides in from right
       setIsSlidingOut(true);
 
-      setTimeout(async () => {
+      scheduleTimeout(async () => {
         setSelectedIdx(null);
         setFeedbackBanner(null);
         setIsLocked(false);
         setIsSlidingOut(false);
 
         if (!isLastTrial) {
+          trialStartTimeRef.current = Date.now();
           setCurrentIdx((i) => i + 1);
         } else {
           setSubmissionStatus("submitting");
           const durationMs = Math.max(1000, Date.now() - startTimeRef.current);
           const accuracy = Math.round((newCorrect / trials.length) * 100);
+          const avgRT =
+            reactionTimesRef.current.length > 0
+              ? Math.round(
+                  reactionTimesRef.current.reduce((a, b) => a + b, 0) /
+                    reactionTimesRef.current.length
+                )
+              : Math.round(durationMs / Math.max(1, trials.length));
 
           if (activeSessionId) {
             const result = await completeQuestLevel(activeSessionId, {
@@ -257,6 +289,10 @@ export function OddOneOutGameArena({
               correctTrials: newCorrect,
               accuracy,
               durationMs,
+              averageReactionTimeMs: avgRT,
+              metrics: {
+                reactionTimes: reactionTimesRef.current,
+              },
               completedAt: new Date().toISOString(),
             });
 
@@ -283,7 +319,7 @@ export function OddOneOutGameArena({
               setNextLevelRoute(nextRoute);
 
               // Auto-advance immediately without asking
-              setTimeout(() => {
+              scheduleTimeout(() => {
                 router.push(nextRoute);
               }, 250);
             } else {
@@ -294,7 +330,7 @@ export function OddOneOutGameArena({
             setSubmissionStatus("success");
             const nextRoute = level < 3 ? `/games/odd-one-out?level=${level + 1}` : "/games/rule-discovery?level=1";
             setNextLevelRoute(nextRoute);
-            setTimeout(() => {
+            scheduleTimeout(() => {
               router.push(nextRoute);
             }, 250);
           }
@@ -316,11 +352,13 @@ export function OddOneOutGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
+          trialStartTimeRef.current = Date.now();
           try { sessionStorage.setItem("orion_tut_seen_odd_one_out", "1"); } catch {}
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
+          trialStartTimeRef.current = Date.now();
           try { sessionStorage.setItem("orion_tut_seen_odd_one_out", "1"); } catch {}
         }}
       />
