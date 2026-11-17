@@ -51,7 +51,6 @@ export default function LoginForm() {
               redirectParam &&
               redirectParam.startsWith("/") &&
               !redirectParam.includes("login") &&
-              !redirectParam.includes("onboarding") &&
               !redirectParam.includes("terms") &&
               !redirectParam.includes("access-")
             ) {

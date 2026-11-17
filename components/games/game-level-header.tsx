@@ -40,13 +40,12 @@ export function GameLevelHeader({
           </span>
         )}
 
-        <div className="flex flex-wrap items-baseline gap-2">
+        <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2">
           <h1
-            className="flex items-center gap-1.5"
+            className="flex items-center gap-1.5 text-[18px] xs:text-[20px] sm:text-[24px]"
             style={{
               fontFamily: JAKARTA,
               fontWeight: 800,
-              fontSize: "24px",
               lineHeight: "115%",
               letterSpacing: "-0.5px",
               color: "#0A1D3D",
@@ -56,10 +55,10 @@ export function GameLevelHeader({
           </h1>
 
           <p
+            className="text-[11.5px] sm:text-[13px]"
             style={{
               fontFamily: JAKARTA,
               fontWeight: 600,
-              fontSize: "13px",
               lineHeight: "130%",
               color: "#526176",
             }}

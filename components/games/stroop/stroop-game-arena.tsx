@@ -10,6 +10,7 @@ import {
 } from "@/lib/api/stroop";
 import { GameTutorialGuide } from "@/components/game-tutorial/game-tutorial-guide";
 import { TutorialReplayButton } from "@/components/game-tutorial/tutorial-replay-button";
+import { shouldAutoOpenTutorial, markTutorialAsSeen } from "@/lib/utils";
 
 const LEVEL_1_PROMPTS = [
   "Let's play the Colour Detective game! 🔍",
@@ -228,12 +229,12 @@ export function StroopGameArena({
     setIsNavigating(false);
 
     // Auto-prompt tutorial ONLY ONCE per game (only at Level 1, first trial)
-    try {
-      const seen = sessionStorage.getItem("orion_tut_seen_stroop");
-      if (!seen && level === 1 && (initialTrialIndex === undefined || initialTrialIndex === 0)) {
-        setIsTutorialOpen(true);
-      }
-    } catch {}
+    if (
+      shouldAutoOpenTutorial("stroop", level, sessionId || activeSessionId) &&
+      (initialTrialIndex === undefined || initialTrialIndex === 0)
+    ) {
+      setIsTutorialOpen(true);
+    }
   }, [level, initialTrialIndex, initialRecords]);
 
   // Synchronize or resolve active quest session ID
@@ -879,12 +880,12 @@ export function StroopGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           trialStartTimeRef.current = performance.now();
-          try { sessionStorage.setItem("orion_tut_seen_stroop", "1"); } catch {}
+          markTutorialAsSeen("stroop", sessionId || activeSessionId);
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           trialStartTimeRef.current = performance.now();
-          try { sessionStorage.setItem("orion_tut_seen_stroop", "1"); } catch {}
+          markTutorialAsSeen("stroop", sessionId || activeSessionId);
         }}
       />
     </div>

@@ -44,15 +44,15 @@ export function EverydaySupportSection() {
                 />
 
                 {/* Floating Badge 1: BLAST OFF! (Top Right) */}
-                <div className="absolute top-[20px] right-3 sm:right-auto sm:left-[417.3px] z-20">
+                <div className="absolute top-[16px] sm:top-[20px] right-3 sm:right-4 md:right-6 z-20">
                   <div
-                    className="inline-flex items-center gap-1.5 px-[10px] py-[8px] h-[31px] bg-[#D8F3FF] text-[#0A1D3D] rounded-[14px] border-2 border-[#0A1D3D] shadow-[2px_3px_0px_0px_#0A1D3D] -rotate-[-5deg] hover:rotate-0 transition-transform cursor-pointer select-none whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 px-[9px] sm:px-[10px] py-[6px] sm:py-[8px] h-[28px] sm:h-[31px] bg-[#D8F3FF] text-[#0A1D3D] rounded-[14px] border-2 border-[#0A1D3D] shadow-[2px_3px_0px_0px_#0A1D3D] -rotate-[-5deg] hover:rotate-0 transition-transform cursor-pointer select-none whitespace-nowrap"
                     style={{
                       fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                     }}
                   >
-                    <span className="text-[12px] leading-none">👾</span>
-                    <span className="text-[11px] font-black uppercase tracking-wider leading-none">
+                    <span className="text-[11px] sm:text-[12px] leading-none">👾</span>
+                    <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider leading-none">
                       BLAST OFF!
                     </span>
                   </div>
@@ -112,14 +112,14 @@ export function EverydaySupportSection() {
 
             {/* Main Headline with Target Icon */}
             <h2
-              className="text-3xl sm:text-4xl lg:text-[46px] font-[800] text-[#0A1D3D] leading-[1.15] tracking-[-1px] mb-4 flex flex-wrap items-center gap-x-3"
+              className="text-2xl xs:text-3xl sm:text-4xl lg:text-[46px] font-[800] text-[#0A1D3D] leading-[1.15] tracking-[-0.5px] sm:tracking-[-1px] mb-4 flex flex-wrap items-center gap-x-2 sm:gap-x-3"
               style={{
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
             >
               <span className="inline-flex items-center gap-2 sm:gap-3">
                 <span>Turn Understanding</span>
-                <span className="inline-flex items-center justify-center align-middle relative w-12 h-12 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px] shrink-0 -my-2 overflow-visible">
+                <span className="inline-flex items-center justify-center align-middle relative w-10 h-10 xs:w-12 xs:h-12 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px] shrink-0 -my-2 overflow-visible">
                   <AnimatedDartTarget
                     className="w-full h-full"
                     interactiveReplay={true}

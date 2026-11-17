@@ -282,7 +282,7 @@ export function InsightReportSection() {
               <div
                 className="absolute z-30 select-none overflow-visible"
                 style={{
-                  left: "91.4%",
+                  left: "88%",
                   top: "60.5%",
                   width: "18%",
                   aspectRatio: "1 / 1",
@@ -297,7 +297,7 @@ export function InsightReportSection() {
 
               {/* Caption: left-aligned with Photo 1's left edge */}
               <p
-                className="absolute z-10 whitespace-nowrap text-left text-white"
+                className="absolute z-10 text-left text-white leading-tight"
                 style={{
                   left: "0%",
                   top: "85.6%",
@@ -321,7 +321,7 @@ export function InsightReportSection() {
       {/* Robot Hand (Positioned in bottom-right corner) */}
       <div
         className="pointer-events-none absolute z-20 select-none bottom-0 right-0
-                   w-[120px] h-[120px] sm:w-[170px] sm:h-[170px] md:w-[200px] md:h-[200px] lg:w-[230px] lg:h-[230px] xl:w-[230px] xl:h-[230px]"
+                   w-[90px] h-[90px] xs:w-[110px] xs:h-[110px] sm:w-[170px] sm:h-[170px] md:w-[200px] md:h-[200px] lg:w-[230px] lg:h-[230px] xl:w-[230px] xl:h-[230px]"
       >
         <Image
           src="/robots/robo2.png"

@@ -59,7 +59,7 @@ export function QuestPreviewContainer({
         return;
       }
 
-      const destination = getRouteForUserProfile(profile);
+      const destination = getRouteForUserProfile(profile, "/onboarding");
       router.push(destination);
     } catch {
       router.push("/login?redirect=%2Fonboarding");

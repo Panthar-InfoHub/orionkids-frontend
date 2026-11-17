@@ -64,18 +64,18 @@ export function ChildJourneySection() {
           <div className="flex flex-col items-start gap-1.5">
             {/* Top Pill Badge */}
             <div
-              className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EAF7EF] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] transform rotate-[-1deg] hover:rotate-0 transition-transform cursor-default whitespace-nowrap mb-0.5"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 bg-[#EAF7EF] text-[#0A1D3D] rounded-full border-2 border-[#0A1D3D] shadow-[2px_2px_0px_0px_#0A1D3D] transform rotate-[-1deg] hover:rotate-0 transition-transform cursor-default mb-0.5 max-w-full"
               style={{
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 fontWeight: 800,
-                fontSize: "10.5px",
-                lineHeight: "100%",
-                letterSpacing: "0.5px",
+                fontSize: "clamp(9px, 2.5vw, 10.5px)",
+                lineHeight: "115%",
+                letterSpacing: "0.4px",
                 textTransform: "uppercase",
               }}
             >
-              <span className="text-xs">🗺️</span>
-              <span>A THOUGHTFUL JOURNEY · NOT A ONE-OFF SCORE</span>
+              <span className="text-xs shrink-0">🗺️</span>
+              <span className="text-left">A THOUGHTFUL JOURNEY · NOT A ONE-OFF SCORE</span>
             </div>
 
             {/* Headline */}

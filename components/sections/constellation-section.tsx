@@ -138,7 +138,7 @@ export function ConstellationSection() {
 
             {/* Main Headline matching Figma */}
             <h2
-              className="text-[34px] sm:text-[42px] lg:text-[46px] xl:text-[50px] font-[800] text-white leading-[1.08] tracking-[-1.5px] mb-3.5"
+              className="text-[28px] xs:text-[32px] sm:text-[42px] lg:text-[46px] xl:text-[50px] font-[800] text-white leading-[1.12] tracking-[-1px] sm:tracking-[-1.5px] mb-3.5"
               style={{
                 fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
               }}
@@ -167,7 +167,7 @@ export function ConstellationSection() {
 
             {/* Descriptive Paragraph */}
             <p
-              className="text-[14px] sm:text-[15px] font-[600] text-[#CBD5E1] leading-[1.6] max-w-[520px] mb-4 sm:mb-5"
+              className="text-[13.5px] sm:text-[15px] font-[600] text-[#CBD5E1] leading-[1.6] max-w-[520px] mb-4 sm:mb-5"
               style={{
                 fontFamily: "var(--font-inter), 'Inter', sans-serif",
               }}
@@ -183,7 +183,7 @@ export function ConstellationSection() {
                 <button
                   key={game.name}
                   type="button"
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 ${game.bg} text-[#0A1D3D] rounded-full border-2 border-[#FFFFFF] shadow-[2px_2px_0px_0px_##FFFFFF] text-[11px] sm:text-xs font-bold tracking-tight hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none`}
+                  className={`inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 ${game.bg} text-[#0A1D3D] rounded-full border-2 border-[#FFFFFF] shadow-[2px_2px_0px_0px_#FFFFFF] text-[10.5px] sm:text-xs font-bold tracking-tight hover:scale-105 active:scale-95 transition-transform cursor-pointer select-none`}
                   style={{
                     fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                   }}
@@ -194,11 +194,11 @@ export function ConstellationSection() {
               ))}
             </div>
 
-            {/* Bottom Learning Profile Callout Card (Single-line rounded pill) */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-[#EBF8FF] text-[#0A1D3D] rounded-2xl border-2 border-[#FFFFFF] shadow-[2px_2px_0px_0px_#FFFFFF] select-none max-w-full">
-              <span className="text-base select-none">⭐</span>
+            {/* Bottom Learning Profile Callout Card (Single-line or wrap gracefully) */}
+            <div className="inline-flex items-center gap-2 sm:gap-2.5 px-3.5 sm:px-4 py-2 bg-[#EBF8FF] text-[#0A1D3D] rounded-2xl border-2 border-[#FFFFFF] shadow-[2px_2px_0px_0px_#FFFFFF] select-none max-w-full">
+              <span className="text-base select-none shrink-0">⭐</span>
               <p
-                className="text-[12px] sm:text-[13px] font-bold text-[#0A1D3D] whitespace-nowrap"
+                className="text-[11.5px] sm:text-[13px] font-bold text-[#0A1D3D] leading-snug"
                 style={{
                   fontFamily: "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif",
                 }}

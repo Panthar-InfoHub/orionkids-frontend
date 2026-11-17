@@ -830,9 +830,9 @@ export function FooterSection() {
 
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[44px]">
         {/* ================= TOP: Tagline + Links ================= */}
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-8">
+        <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6 xl:gap-8">
           {/* Left: Pill, Headline, Logo */}
-          <div className="flex flex-col items-start w-full lg:max-w-[850px]">
+          <div className="flex flex-col items-start w-full xl:max-w-[750px]">
             {/* Pill: • WHERE EVERY KIDS IS A STAR */}
             <div
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#0A1D3D] text-[#0A1D3D] whitespace-nowrap uppercase text-xs font-bold"
@@ -855,10 +855,10 @@ export function FooterSection() {
                 color: "#0A1D3D",
               }}
             >
-              <span className="block whitespace-normal lg:whitespace-nowrap">
+              <span className="block whitespace-normal xl:whitespace-nowrap">
                 Before You Go, Doodle Something Fun!
               </span>
-              <span className="block whitespace-normal lg:whitespace-nowrap">
+              <span className="block whitespace-normal xl:whitespace-nowrap">
                 Tap The Star To Start Your Adventure
               </span>
             </h2>
@@ -880,7 +880,7 @@ export function FooterSection() {
           {/* Right: Clean 3-column links */}
           <nav
             aria-label="Footer Navigation"
-            className="flex flex-wrap items-start gap-6 sm:gap-10 lg:gap-12 pt-1 lg:pt-2 shrink-0"
+            className="flex flex-wrap items-start gap-6 sm:gap-8 lg:gap-8 xl:gap-12 pt-1 lg:pt-2 shrink-0"
             style={{ fontFamily: INTER }}
           >
             {/* Column 1: Main Pages */}
