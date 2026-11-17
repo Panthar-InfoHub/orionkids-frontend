@@ -165,6 +165,11 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
   const startTimeRef = useRef<number>(Date.now());
   const totalPairs = level === 1 ? 4 : level === 2 ? 6 : 8;
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const movesRef = useRef(moves);
+  movesRef.current = moves;
+  const matchedCountRef = useRef(matchedCount);
+  matchedCountRef.current = matchedCount;
+  const hasInitializedRef = useRef<number | null>(null);
 
   const scheduleTimeout = useCallback((fn: () => void, delayMs: number) => {
     const id = setTimeout(() => {
@@ -184,6 +189,12 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
 
  
   const startDealAndSneakPeekSequence = useCallback(() => {
+    // If cards have already been played or matched in this level, do not wipe progress or re-reveal
+    if (movesRef.current > 0 || matchedCountRef.current > 0) {
+      setIntroPhase("ready");
+      return () => {};
+    }
+
     setIntroPhase("deal");
 
     // Fast deal animation lands (100ms), flip cards face-up to reveal
@@ -210,6 +221,12 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
   }, []);
 
   useEffect(() => {
+    // Guard against running multiple times for the same level instance
+    if (hasInitializedRef.current === level) {
+      return;
+    }
+    hasInitializedRef.current = level;
+
     setShowTiredModal(false);
     setHasPromptedTired(false);
     setIntroPhase("deal");
@@ -217,8 +234,8 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
     // Auto-prompt tutorial ONLY ONCE per game (only at Level 1 on first entry)
     if (
       shouldAutoOpenTutorial("card-flip", level, sessionId || activeSessionId) &&
-      matchedCount === 0 &&
-      moves === 0
+      matchedCountRef.current === 0 &&
+      movesRef.current === 0
     ) {
       setIsTutorialOpen(true);
       // Wait to deal and reveal cards until the child dismisses the tutorial
@@ -226,7 +243,7 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
       const cleanup = startDealAndSneakPeekSequence();
       return cleanup;
     }
-  }, [level, sessionId, activeSessionId, matchedCount, moves, startDealAndSneakPeekSequence]);
+  }, [level, sessionId, startDealAndSneakPeekSequence]);
 
   // Session bootstrap & stage validation
   useEffect(() => {
@@ -523,12 +540,20 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         onClose={() => {
           setIsTutorialOpen(false);
           markTutorialAsSeen("card-flip", sessionId || activeSessionId);
-          startDealAndSneakPeekSequence();
+          if (movesRef.current === 0 && matchedCountRef.current === 0) {
+            startDealAndSneakPeekSequence();
+          } else {
+            setIntroPhase("ready");
+          }
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           markTutorialAsSeen("card-flip", sessionId || activeSessionId);
-          startDealAndSneakPeekSequence();
+          if (movesRef.current === 0 && matchedCountRef.current === 0) {
+            startDealAndSneakPeekSequence();
+          } else {
+            setIntroPhase("ready");
+          }
         }}
       />
 
