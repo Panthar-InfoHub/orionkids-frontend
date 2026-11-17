@@ -11,6 +11,7 @@ import {
 import { fetchCurrentSession } from "@/lib/api/session";
 import { GameTutorialGuide } from "@/components/game-tutorial/game-tutorial-guide";
 import { TutorialReplayButton } from "@/components/game-tutorial/tutorial-replay-button";
+import { shouldAutoOpenTutorial, markTutorialAsSeen } from "@/lib/utils";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
@@ -120,13 +121,13 @@ export function StorySequencingGameArena({
   );
 
   useEffect(() => {
-    try {
-      const seen = sessionStorage.getItem("orion_tut_seen_story_sequencing");
-      if (!seen && level === 1 && selectedOrder.length === 0) {
-        setIsTutorialOpen(true);
-      }
-    } catch {}
-  }, [level, selectedOrder.length]);
+    if (
+      shouldAutoOpenTutorial("story-sequencing", level, sessionId || activeSessionId) &&
+      selectedOrder.length === 0
+    ) {
+      setIsTutorialOpen(true);
+    }
+  }, [level, selectedOrder.length, sessionId, activeSessionId]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -295,12 +296,12 @@ export function StorySequencingGameArena({
         onClose={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem("orion_tut_seen_story_sequencing", "1"); } catch {}
+          markTutorialAsSeen("story-sequencing", sessionId || activeSessionId);
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
-          try { sessionStorage.setItem("orion_tut_seen_story_sequencing", "1"); } catch {}
+          markTutorialAsSeen("story-sequencing", sessionId || activeSessionId);
         }}
       />
 

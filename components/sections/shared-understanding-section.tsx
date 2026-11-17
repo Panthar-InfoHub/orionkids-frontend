@@ -22,19 +22,19 @@ function CornerBadge({
   outerColor: string;
 }) {
   return (
-    <div className="absolute top-0 left-0 z-10 select-none pointer-events-none">
+    <div className="absolute top-0 left-0 z-10 select-none pointer-events-none max-w-full">
       {/* White pill (drawn first so the circles sit on top of its left end) */}
       <div
-        className="absolute left-[30px] top-[25.5px] h-[29px] flex items-center gap-[7px] pl-[33.5px] pr-[17px] bg-white rounded-full border-2 whitespace-nowrap"
+        className="absolute left-[20px] xs:left-[26px] sm:left-[30px] top-[25.5px] h-[26px] sm:h-[29px] flex items-center gap-[5px] sm:gap-[7px] pl-[26px] sm:pl-[33.5px] pr-[12px] sm:pr-[17px] bg-white rounded-full border-2 whitespace-nowrap"
         style={{
           borderColor: NAVY,
-          boxShadow: `0px 4px 0px 0px ${NAVY}`,
+          boxShadow: `0px 3px 0px 0px ${NAVY}`,
           color: NAVY,
         }}
       >
-        <span className="text-[12px] leading-none">{emoji}</span>
+        <span className="text-[11px] sm:text-[12px] leading-none">{emoji}</span>
         <span
-          className="text-[15px] font-extrabold uppercase tracking-wider leading-none"
+          className="text-[11px] xs:text-[13px] sm:text-[15px] font-extrabold uppercase tracking-wider leading-none"
           style={{ fontFamily: JAKARTA }}
         >
           {label}
@@ -206,7 +206,7 @@ export function SharedUnderstandingSection() {
                 style={{
                   fontFamily: JAKARTA,
                   fontWeight: 800,
-                  fontSize: "28px",
+                  fontSize: "clamp(22px, 5vw, 28px)",
                   lineHeight: "115%",
                 }}
               >
@@ -263,7 +263,7 @@ export function SharedUnderstandingSection() {
                 style={{
                   fontFamily: JAKARTA,
                   fontWeight: 800,
-                  fontSize: "28px",
+                  fontSize: "clamp(22px, 5vw, 28px)",
                   lineHeight: "115%",
                 }}
               >

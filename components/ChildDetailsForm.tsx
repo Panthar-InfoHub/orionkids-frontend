@@ -82,8 +82,8 @@ export default function ChildDetailsForm() {
           return;
         }
 
-        const destination = getRouteForUserProfile(profile);
-        if (destination !== "/onboarding" && destination !== "/dashboard") {
+        const destination = getRouteForUserProfile(profile, "/onboarding");
+        if (destination !== "/onboarding") {
           router.replace(destination);
           return;
         }
@@ -174,6 +174,8 @@ export default function ChildDetailsForm() {
       if (result?.childProfile?.id) {
         const { setActiveChildId } = await import("@/lib/api/children");
         setActiveChildId(result.childProfile.id);
+        const { invalidateSessionCache } = await import("@/lib/api/session");
+        invalidateSessionCache();
       }
 
       // If parent account is pending review, send to approval notice

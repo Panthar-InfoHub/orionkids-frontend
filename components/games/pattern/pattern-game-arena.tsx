@@ -10,6 +10,7 @@ import {
 import { fetchCurrentSession } from "@/lib/api/session";
 import { GameTutorialGuide } from "@/components/game-tutorial/game-tutorial-guide";
 import { TutorialReplayButton } from "@/components/game-tutorial/tutorial-replay-button";
+import { shouldAutoOpenTutorial, markTutorialAsSeen } from "@/lib/utils";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
@@ -101,13 +102,13 @@ export function PatternGameArena({
   const [feedbackBanner, setFeedbackBanner] = useState<{ text: string; icon: string } | null>(null);
 
   useEffect(() => {
-    try {
-      const seen = sessionStorage.getItem("orion_tut_seen_pattern");
-      if (!seen && level === 1 && currentIdx === 0) {
-        setIsTutorialOpen(true);
-      }
-    } catch {}
-  }, [level, currentIdx]);
+    if (
+      shouldAutoOpenTutorial("pattern", level, sessionId || activeSessionId) &&
+      currentIdx === 0
+    ) {
+      setIsTutorialOpen(true);
+    }
+  }, [level, currentIdx, sessionId, activeSessionId]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -301,13 +302,13 @@ export function PatternGameArena({
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
           trialStartTimeRef.current = Date.now();
-          try { sessionStorage.setItem("orion_tut_seen_pattern", "1"); } catch {}
+          markTutorialAsSeen("pattern", sessionId || activeSessionId);
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
           trialStartTimeRef.current = Date.now();
-          try { sessionStorage.setItem("orion_tut_seen_pattern", "1"); } catch {}
+          markTutorialAsSeen("pattern", sessionId || activeSessionId);
         }}
       />
 

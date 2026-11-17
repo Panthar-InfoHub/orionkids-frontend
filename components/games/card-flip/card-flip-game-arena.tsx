@@ -13,6 +13,7 @@ import {
 import { fetchCurrentSession } from "@/lib/api/session";
 import { GameTutorialGuide } from "@/components/game-tutorial/game-tutorial-guide";
 import { TutorialReplayButton } from "@/components/game-tutorial/tutorial-replay-button";
+import { shouldAutoOpenTutorial, markTutorialAsSeen } from "@/lib/utils";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
@@ -182,18 +183,8 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
   }, []);
 
  
-  useEffect(() => {
-    setShowTiredModal(false);
-    setHasPromptedTired(false);
+  const startDealAndSneakPeekSequence = useCallback(() => {
     setIntroPhase("deal");
-
-    // Auto-prompt tutorial ONLY ONCE per game (only at Level 1 on first entry)
-    try {
-      const seen = sessionStorage.getItem("orion_tut_seen_card_flip");
-      if (!seen && level === 1 && matchedCount === 0 && moves === 0) {
-        setIsTutorialOpen(true);
-      }
-    } catch {}
 
     // Fast deal animation lands (100ms), flip cards face-up to reveal
     const revealTimer = setTimeout(() => {
@@ -216,7 +207,26 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
       clearTimeout(flipBackTimer);
       clearTimeout(readyTimer);
     };
-  }, [level]);
+  }, []);
+
+  useEffect(() => {
+    setShowTiredModal(false);
+    setHasPromptedTired(false);
+    setIntroPhase("deal");
+
+    // Auto-prompt tutorial ONLY ONCE per game (only at Level 1 on first entry)
+    if (
+      shouldAutoOpenTutorial("card-flip", level, sessionId || activeSessionId) &&
+      matchedCount === 0 &&
+      moves === 0
+    ) {
+      setIsTutorialOpen(true);
+      // Wait to deal and reveal cards until the child dismisses the tutorial
+    } else {
+      const cleanup = startDealAndSneakPeekSequence();
+      return cleanup;
+    }
+  }, [level, sessionId, activeSessionId, matchedCount, moves, startDealAndSneakPeekSequence]);
 
   // Session bootstrap & stage validation
   useEffect(() => {
@@ -407,6 +417,8 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
     }
   };
 
+  const handleSkipToNextLevelFromTired = handleSkipLevel;
+
   const handleSkipEntireGame = async () => {
     setShowTiredModal(false);
     setIsLocked(true);
@@ -510,13 +522,13 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
         isOpen={isTutorialOpen}
         onClose={() => {
           setIsTutorialOpen(false);
-          startTimeRef.current = Date.now();
-          try { sessionStorage.setItem("orion_tut_seen_card_flip", "1"); } catch {}
+          markTutorialAsSeen("card-flip", sessionId || activeSessionId);
+          startDealAndSneakPeekSequence();
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
-          startTimeRef.current = Date.now();
-          try { sessionStorage.setItem("orion_tut_seen_card_flip", "1"); } catch {}
+          markTutorialAsSeen("card-flip", sessionId || activeSessionId);
+          startDealAndSneakPeekSequence();
         }}
       />
 
@@ -668,6 +680,7 @@ export function CardFlipGameArena({ level = 1, sessionId }: CardFlipArenaProps) 
                 <button
                   type="button"
                   onClick={handleSkipLevel}
+                  aria-label="Yes, next level"
                   className="w-full py-3 px-5 rounded-full font-extrabold text-[15px] bg-[#FFD028] text-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0px_#0A1D3D] hover:-translate-y-0.5 active:translate-y-0 transition-transform cursor-pointer flex items-center justify-center gap-2"
                   style={{ fontFamily: JAKARTA }}
                 >

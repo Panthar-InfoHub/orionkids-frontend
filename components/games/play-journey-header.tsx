@@ -61,7 +61,7 @@ export function PlayJourneyHeader({
       <div className="w-full bg-[#F0F6FA] pt-2 sm:pt-2.5 pb-1 sm:pb-1.5">
         <div className="max-w-[1264px] w-full mx-auto px-4 sm:px-8 lg:px-0 flex flex-col gap-1.5">
           {/* Top Label Row */}
-          <div className="flex flex-row items-center justify-between gap-1.5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-1.5">
             <span
               style={{
                 fontFamily: JAKARTA,
@@ -76,10 +76,10 @@ export function PlayJourneyHeader({
             </span>
 
             <span
+              className="text-[10px] sm:text-[11px]"
               style={{
                 fontFamily: JAKARTA,
                 fontWeight: 800,
-                fontSize: "11px",
                 lineHeight: "100%",
                 color: "#0A1D3D",
               }}

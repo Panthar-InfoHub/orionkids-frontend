@@ -33,7 +33,7 @@ export function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Authoritative admin detection: requires valid Better Auth session + backend role === "ADMIN" + status === "ACTIVE"
-  const { data: session } = useSession();
+  const { data: session, isPending: isSessionPending } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminUser, setAdminUser] = useState<UserProfile | null>(null);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
@@ -55,9 +55,20 @@ export function Navbar() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  // Robust admin verification
+  // Robust admin verification: only query backend if an authenticated session actually exists
   useEffect(() => {
     let isCancelled = false;
+
+    if (isSessionPending) {
+      return;
+    }
+
+    if (!session?.user?.id) {
+      setCurrentUser(null);
+      setIsAdmin(false);
+      setAdminUser(null);
+      return;
+    }
 
     async function verifyAdminStatus() {
       try {
@@ -86,7 +97,7 @@ export function Navbar() {
     return () => {
       isCancelled = true;
     };
-  }, [session]);
+  }, [session?.user?.id, isSessionPending]);
 
   const navLinks = SITE_CONFIG.navLinks;
 
@@ -361,8 +372,9 @@ export function Navbar() {
           {/* Mobile menu trigger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-[#0A1D3D] hover:bg-[#E0F2FE] rounded-xl transition-colors shrink-0"
+            className="lg:hidden p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-[#0A1D3D] hover:bg-[#E0F2FE] rounded-xl transition-colors shrink-0 cursor-pointer"
             aria-label="Toggle Menu"
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>

@@ -10,6 +10,9 @@ export const authClient = createAuthClient({
   fetchOptions: {
     credentials: "include", // Ensure session cookies and OAuth state/PKCE cookies are sent and received
   },
+  sessionOptions: {
+    refetchOnWindowFocus: false, // Prevent aggressive /get-session spam whenever clicking between DevTools/tabs
+  },
 });
 
 export const { signIn, signOut, useSession, getSession } = authClient;

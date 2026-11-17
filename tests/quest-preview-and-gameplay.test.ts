@@ -275,5 +275,24 @@ describe("Interactive Quest Preview & Gameplay Enhancement Suite", () => {
       };
       assert.equal(getRouteForUserProfile(adminUser), "/admin");
     });
+
+    it("12. routes approved active user directly to /onboarding when Launch Free Quest specifies /onboarding", () => {
+      const userApprovedOnboarded: UserProfile = {
+        id: "user_appr_done",
+        email: "parent@example.com",
+        name: "Parent Test",
+        role: "USER",
+        status: "ACTIVE",
+        termsAccepted: true,
+        termsVersion: "v1.0",
+        accessRequestStatus: "APPROVED",
+        hasCompletedOnboarding: true,
+      };
+      assert.equal(
+        getRouteForUserProfile(userApprovedOnboarded, "/onboarding"),
+        "/onboarding",
+        "Explicit /onboarding request via Launch Free Quest must route to /onboarding"
+      );
+    });
   });
 });

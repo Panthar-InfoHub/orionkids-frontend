@@ -6,3 +6,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export { formatChildName, formatChildFirstName } from "./utils/format-child-name";
+export {
+  shouldAutoOpenTutorial,
+  markTutorialAsSeen,
+  getTutorialStorageKey,
+} from "./utils/game-tutorial-session";

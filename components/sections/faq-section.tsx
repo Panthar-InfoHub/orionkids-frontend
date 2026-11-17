@@ -130,7 +130,7 @@ export function FaqSection() {
                     type="button"
                     onClick={() => toggleFaq(index)}
                     aria-expanded={isOpen}
-                    className="w-full flex items-start gap-3.5 text-left cursor-pointer group focus:outline-none"
+                    className="w-full min-h-[44px] py-1 flex items-start gap-3.5 text-left cursor-pointer group focus:outline-none"
                   >
                     <span
                       className="flex-shrink-0 mt-0.5 text-[#0A1D3D] transition-transform duration-300 ease-in-out"

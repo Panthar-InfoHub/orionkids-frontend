@@ -10,6 +10,7 @@ import {
 import { fetchCurrentSession } from "@/lib/api/session";
 import { CosmicShape, CosmicCardItem } from "./cosmic-shapes";
 import { RuleDiscoveryLevelPreview } from "./rule-discovery-level-preview";
+import { shouldAutoOpenTutorial, markTutorialAsSeen } from "@/lib/utils";
 import {
   getRoundsForLevel,
   isRuleMatch,
@@ -65,9 +66,9 @@ export function RuleDiscoveryGameArena({
     };
   }, []);
 
-  // When level prop changes, seamlessly begin gameplay for subsequent levels without blocking preview roadblocks
+  // When level prop changes, show preview on initial Level 1 entry for this quest session
   useEffect(() => {
-    setShowPreview(false);
+    setShowPreview(shouldAutoOpenTutorial("rule-discovery", level, sessionId || activeSessionId));
     setCardIdx(0);
     setCorrectCount(0);
     setSelectedOptionId(null);
@@ -78,7 +79,7 @@ export function RuleDiscoveryGameArena({
     reactionTimesRef.current = [];
     startTimeRef.current = Date.now();
     cardStartTimeRef.current = Date.now();
-  }, [level]);
+  }, [level, sessionId, activeSessionId]);
 
   // Session retrieval
   useEffect(() => {
@@ -102,6 +103,7 @@ export function RuleDiscoveryGameArena({
   // Handler when child clicks "Start Level" from the preview screen
   const handleStartGameplay = async () => {
     setShowPreview(false);
+    markTutorialAsSeen("rule-discovery", sessionId || activeSessionId);
     startTimeRef.current = Date.now();
     cardStartTimeRef.current = Date.now();
 

@@ -10,6 +10,7 @@ import {
 import { fetchCurrentSession } from "@/lib/api/session";
 import { GameTutorialGuide } from "@/components/game-tutorial/game-tutorial-guide";
 import { TutorialReplayButton } from "@/components/game-tutorial/tutorial-replay-button";
+import { shouldAutoOpenTutorial, markTutorialAsSeen } from "@/lib/utils";
 
 const JAKARTA = "var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif";
 
@@ -177,13 +178,13 @@ export function OddOneOutGameArena({
   }, []);
 
   useEffect(() => {
-    try {
-      const seen = sessionStorage.getItem("orion_tut_seen_odd_one_out");
-      if (!seen && level === 1 && currentIdx === 0) {
-        setIsTutorialOpen(true);
-      }
-    } catch {}
-  }, [level, currentIdx]);
+    if (
+      shouldAutoOpenTutorial("odd-one-out", level, sessionId || activeSessionId) &&
+      currentIdx === 0
+    ) {
+      setIsTutorialOpen(true);
+    }
+  }, [level, currentIdx, sessionId, activeSessionId]);
 
   // Shuffle cards whenever the trial index, level, or trials list changes
   useEffect(() => {
@@ -353,13 +354,13 @@ export function OddOneOutGameArena({
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
           trialStartTimeRef.current = Date.now();
-          try { sessionStorage.setItem("orion_tut_seen_odd_one_out", "1"); } catch {}
+          markTutorialAsSeen("odd-one-out", sessionId || activeSessionId);
         }}
         onComplete={() => {
           setIsTutorialOpen(false);
           startTimeRef.current = Date.now();
           trialStartTimeRef.current = Date.now();
-          try { sessionStorage.setItem("orion_tut_seen_odd_one_out", "1"); } catch {}
+          markTutorialAsSeen("odd-one-out", sessionId || activeSessionId);
         }}
       />
 

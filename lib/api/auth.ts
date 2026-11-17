@@ -69,68 +69,111 @@ export interface OnboardingResult {
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
+// Cache for current user profile to eliminate duplicate /api/me roundtrips across rapid renders/components
+let cachedProfile: UserProfile | null = null;
+let cacheExpiry = 0;
+const CACHE_TTL_MS = 15000; // 15s TTL
+
+// In-flight deduplication to avoid redundant concurrent /api/me requests when multiple components mount
+let inFlightProfilePromise: Promise<UserProfile | null> | null = null;
+
+export function clearProfileCache(): void {
+  cachedProfile = null;
+  cacheExpiry = 0;
+}
+
 /**
  * Fetch fresh user profile from backend `/api/me`.
  * Returns null if unauthenticated or session expired without throwing uncaught errors.
+ * Deduplicates in-flight calls and caches for 15s to avoid redundant parallel network roundtrips.
  */
-export async function fetchCurrentUserProfile(): Promise<UserProfile | null> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/me`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-      },
-    });
-
-    // 401 means user is simply not logged in; return null safely without error logs
-    if (res.status === 401) {
-      return null;
-    }
-
-    // 403 with ACCOUNT_RESTRICTED means user account is restricted in PostgreSQL
-    if (res.status === 403) {
-      const payload = await res.json().catch(() => null);
-      if (
-        payload?.code === "ACCOUNT_RESTRICTED" ||
-        payload?.error?.code === "ACCOUNT_RESTRICTED"
-      ) {
-        return {
-          id: payload?.data?.id || "",
-          name: payload?.data?.name || "User",
-          email: payload?.data?.email || "",
-          role: "USER",
-          status: "RESTRICTED",
-          restrictedReason: payload?.data?.restrictedReason || null,
-        } as UserProfile;
-      }
-      return null;
-    }
-
-    if (!res.ok) {
-      console.warn(`[auth] /api/me returned status ${res.status}`);
-      return null;
-    }
-
-    const payload = await res.json();
-    if (payload.success && payload.data) {
-      return payload.data as UserProfile;
-    }
-    return null;
-  } catch (error) {
-    // Network failure (e.g. backend server is offline or unreachable)
-    if (process.env.NODE_ENV === "development") {
-      const errStr = error instanceof Error ? error.message : String(error);
-      if (errStr.includes("Failed to fetch") || errStr.includes("fetch failed")) {
-        console.debug(
-          `[auth] Backend at ${API_BASE_URL} is currently unreachable. Treating as guest session.`
-        );
-      } else {
-        console.warn("[auth] /api/me check error:", errStr);
-      }
-    }
-    return null;
+export async function fetchCurrentUserProfile(forceRefresh = false): Promise<UserProfile | null> {
+  if (!forceRefresh && cachedProfile !== null && Date.now() < cacheExpiry) {
+    return cachedProfile;
   }
+
+  if (inFlightProfilePromise) {
+    return inFlightProfilePromise;
+  }
+
+  inFlightProfilePromise = (async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/me`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      // 401 means user is simply not logged in; return null safely without error logs
+      if (res.status === 401) {
+        cachedProfile = null;
+        cacheExpiry = Date.now() + 5000; // Cache guest status for 5s to prevent immediate re-probing
+        return null;
+      }
+
+      // 403 with ACCOUNT_RESTRICTED means user account is restricted in PostgreSQL
+      if (res.status === 403) {
+        const payload = await res.json().catch(() => null);
+        if (
+          payload?.code === "ACCOUNT_RESTRICTED" ||
+          payload?.error?.code === "ACCOUNT_RESTRICTED"
+        ) {
+          const restrictedUser: UserProfile = {
+            id: payload?.data?.id || "",
+            name: payload?.data?.name || "User",
+            email: payload?.data?.email || "",
+            role: "USER",
+            status: "RESTRICTED",
+            restrictedReason: payload?.data?.restrictedReason || null,
+          };
+          cachedProfile = restrictedUser;
+          cacheExpiry = Date.now() + CACHE_TTL_MS;
+          return restrictedUser;
+        }
+        cachedProfile = null;
+        cacheExpiry = Date.now() + 5000;
+        return null;
+      }
+
+      if (!res.ok) {
+        console.warn(`[auth] /api/me returned status ${res.status}`);
+        cachedProfile = null;
+        return null;
+      }
+
+      const payload = await res.json();
+      if (payload.success && payload.data) {
+        const profile = payload.data as UserProfile;
+        cachedProfile = profile;
+        cacheExpiry = Date.now() + CACHE_TTL_MS;
+        return profile;
+      }
+      cachedProfile = null;
+      return null;
+    } catch (error) {
+      // Network failure (e.g. backend server is offline or unreachable)
+      if (process.env.NODE_ENV === "development") {
+        const errStr = error instanceof Error ? error.message : String(error);
+        if (errStr.includes("Failed to fetch") || errStr.includes("fetch failed")) {
+          console.debug(
+            `[auth] /api/me unreachable (${API_BASE_URL}). Running in guest mode.`
+          );
+          cachedProfile = null;
+          cacheExpiry = Date.now() + 5000;
+          return null;
+        }
+      }
+      console.warn("[auth] /api/me fetch error:", error);
+      cachedProfile = null;
+      return null;
+    } finally {
+      inFlightProfilePromise = null;
+    }
+  })();
+
+  return inFlightProfilePromise;
 }
 
 /**
@@ -239,8 +282,7 @@ export function getRouteForUserProfile(
       !fallbackRedirect.includes("/access-rejected") &&
       !fallbackRedirect.includes("/access-denied") &&
       !fallbackRedirect.includes("/terms-and-conditions") &&
-      !fallbackRedirect.includes("/access-request") &&
-      !fallbackRedirect.includes("/onboarding")
+      !fallbackRedirect.includes("/access-request")
     ) {
       return fallbackRedirect;
     }
