@@ -186,21 +186,30 @@ function renderDemoVisual(demo: DemoConfig, phase: "pointing" | "tapping" | "suc
       return (
         <div className="flex flex-col items-center gap-3 relative">
           <div className="flex items-center gap-4">
-            {sampleCards.map((card, idx) => {
+            {sampleCards.map((card: any) => {
               const isRevealed = phase === "tapping" || phase === "success";
               return (
-                <motion.div
-                  key={card.id}
-                  animate={isRevealed ? { rotateY: 0 } : { rotateY: 180 }}
-                  transition={{ duration: 0.4 }}
-                  className={`w-20 h-24 sm:w-24 sm:h-28 rounded-2xl border-2 border-[#0A1D3D] flex flex-col items-center justify-center text-3xl shadow-[3px_3px_0_0_#0A1D3D] transition-colors ${
-                    isRevealed
-                      ? "bg-white text-[#0A1D3D]"
-                      : "bg-[#0A1D3D] text-[#FFE066]"
-                  }`}
-                >
-                  {isRevealed ? card.symbol : "❓"}
-                </motion.div>
+                <div key={card.id} className="perspective-1000 w-20 h-24 sm:w-24 sm:h-28">
+                  <div
+                    className={`relative w-full h-full rounded-2xl transition-transform duration-500 preserve-3d select-none ${
+                      isRevealed ? "[transform:rotateY(180deg)]" : ""
+                    }`}
+                  >
+                    {/* Back face (Unflipped) */}
+                    <div className="absolute inset-0 w-full h-full rounded-2xl bg-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#FFE066] flex items-center justify-center backface-hidden">
+                      <span className="text-2xl text-[#FFE066] drop-shadow-[0_0_6px_rgba(255,224,102,0.5)]">★</span>
+                    </div>
+
+                    {/* Front face (Flipped) */}
+                    <div
+                      className="absolute inset-0 w-full h-full rounded-2xl border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D] flex flex-col items-center justify-center backface-hidden [transform:rotateY(180deg)]"
+                      style={{ backgroundColor: card.color || "#FFFFFF" }}
+                    >
+                      <span className="text-3xl filter drop-shadow-md select-none">{card.symbol}</span>
+                      <span className="text-[10px] font-extrabold text-[#0A1D3D] mt-0.5">{card.name}</span>
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </div>
