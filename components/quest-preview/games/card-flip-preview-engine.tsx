@@ -150,39 +150,48 @@ export function CardFlipPreviewEngine({
           const isHintTarget = targetHintId === card.id;
 
           return (
-            <div key={card.id} className="relative aspect-square">
+            <div key={card.id} className="relative aspect-square perspective-1000">
               <button
                 type="button"
                 onClick={() => handleCardClick(card)}
                 disabled={isMatched || isLocked}
                 aria-label={`Card ${card.id + 1}: ${isFlipped ? card.name : "Face down"}`}
-                className={`w-full h-full rounded-2xl flex flex-col items-center justify-center border-2 transition-all duration-300 cursor-pointer select-none ${
-                  isMatched
-                    ? "bg-emerald-50 border-emerald-500 shadow-[2px_2px_0_0_#10B981] scale-95"
-                    : isMismatched
-                    ? "bg-rose-50 border-rose-500 shadow-[2px_2px_0_0_#E11D48] animate-wobble"
-                    : isFlipped
-                    ? "bg-white border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D]"
-                    : "bg-[#0A1D3D] hover:bg-[#132c58] text-[#FFE066] border-[#0A1D3D] shadow-[3px_3px_0_0_#FFE066] active:translate-y-0.5"
-                } ${isHintTarget ? "ring-4 ring-[#FFE066] ring-offset-2 animate-pulse" : ""}`}
+                className={`relative w-full h-full rounded-2xl transition-transform duration-500 preserve-3d cursor-pointer select-none ${
+                  isFlipped
+                    ? "[transform:rotateY(180deg)]"
+                    : "hover:-translate-y-0.5 hover:shadow-lg"
+                } ${isMatched ? "animate-match-celebration" : ""} ${isMismatched ? "animate-wobble" : ""} ${
+                  isHintTarget ? "ring-4 ring-[#FFE066] ring-offset-2 animate-pulse" : ""
+                }`}
               >
-                {isFlipped ? (
-                  <div className="flex flex-col items-center justify-center animate-in zoom-in-75 duration-200">
-                    <span className="text-2xl sm:text-3xl">{card.symbol}</span>
-                    <span
-                      className="text-[10px] font-extrabold text-slate-600 mt-1"
-                      style={{ fontFamily: JAKARTA }}
-                    >
-                      {card.name}
-                    </span>
-                    {isMatched && <span className="text-[10px] font-black text-emerald-700">✓</span>}
-                    {isMismatched && <span className="text-[10px] font-black text-rose-700">✕</span>}
-                  </div>
-                ) : (
-                  <span className="text-xl sm:text-2xl font-black text-[#FFD028]">
+                {/* Back Face (Unflipped - Dark Cosmic Star Pattern) */}
+                <div className="absolute inset-0 w-full h-full rounded-2xl bg-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#FFE066] flex flex-col items-center justify-center backface-hidden">
+                  <span className="text-xl sm:text-2xl font-black text-[#FFD028] drop-shadow-[0_0_6px_rgba(255,208,40,0.5)]">
                     ★
                   </span>
-                )}
+                </div>
+
+                {/* Front Face (Flipped - Bright Symbol & Colour) */}
+                <div
+                  className={`absolute inset-0 w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center backface-hidden [transform:rotateY(180deg)] ${
+                    isMatched
+                      ? "border-emerald-500 shadow-[2px_2px_0_0_#10B981]"
+                      : isMismatched
+                      ? "border-rose-500 shadow-[2px_2px_0_0_#E11D48]"
+                      : "border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D]"
+                  }`}
+                  style={{ backgroundColor: card.color || "#FFFFFF" }}
+                >
+                  <span className="text-2xl sm:text-3xl filter drop-shadow-md select-none">{card.symbol}</span>
+                  <span
+                    className="text-[10px] font-extrabold text-[#0A1D3D] mt-1"
+                    style={{ fontFamily: JAKARTA }}
+                  >
+                    {card.name}
+                  </span>
+                  {isMatched && <span className="absolute top-1 right-1 text-[11px] font-black text-emerald-700">✨</span>}
+                  {isMismatched && <span className="absolute top-1 right-1 text-[11px] font-black text-rose-700">✕</span>}
+                </div>
               </button>
 
               {isHintTarget && (

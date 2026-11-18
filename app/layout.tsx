@@ -42,6 +42,17 @@ export const metadata: Metadata = {
   title: "OrionKids | Stronger Thinking. Brighter Tomorrows.",
   description:
     "Playful cognitive assessment, thoughtful insights and practical next steps for kids in Classes 1–4. Where every kid is a star.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+      { url: "/svg/Logo.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({

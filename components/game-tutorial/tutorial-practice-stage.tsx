@@ -329,26 +329,40 @@ function CardFlipPracticeArena({
         const isMismatchedCard = isMismatched && flipped.includes(card.id);
 
         return (
-          <motion.button
-            key={card.id}
-            whileTap={{ scale: 0.95 }}
-            type="button"
-            onClick={() => handleCardClick(card.id)}
-            disabled={isMatchedCard || isMismatched || isCompleted}
-            className={`w-16 h-20 sm:w-20 sm:h-24 rounded-2xl border-2 flex flex-col items-center justify-center text-2xl sm:text-3xl transition-all cursor-pointer ${
-              isMatchedCard
-                ? "bg-emerald-50 border-emerald-500 text-[#0A1D3D] shadow-[3px_3px_0_0_#059669]"
-                : isMismatchedCard
-                ? "bg-rose-50 border-rose-500 text-rose-800 shadow-[3px_3px_0_0_#E11D48] animate-wobble"
-                : isOpen
-                ? "bg-white border-[#0A1D3D] text-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D]"
-                : "bg-[#0A1D3D] text-[#FFE066] border-[#0A1D3D] hover:bg-[#132c58] shadow-[3px_3px_0_0_#0A1D3D]"
-            }`}
-          >
-            {isOpen ? card.symbol : "❓"}
-            {isMatchedCard && <span className="text-[10px] font-black text-emerald-700 mt-0.5">✓ Match</span>}
-            {isMismatchedCard && <span className="text-[10px] font-black text-rose-700 mt-0.5">✕ No Match</span>}
-          </motion.button>
+          <div key={card.id} className="perspective-1000 w-16 h-20 sm:w-20 sm:h-24">
+            <button
+              type="button"
+              onClick={() => handleCardClick(card.id)}
+              disabled={isMatchedCard || isMismatched || isCompleted}
+              aria-label={`Card ${card.id}: ${isOpen ? card.name || "Open" : "Face down"}`}
+              className={`relative w-full h-full rounded-2xl transition-transform duration-500 preserve-3d cursor-pointer select-none ${
+                isOpen
+                  ? "[transform:rotateY(180deg)]"
+                  : "hover:-translate-y-0.5 hover:shadow-lg"
+              } ${isMatchedCard ? "animate-match-celebration" : ""} ${isMismatchedCard ? "animate-wobble" : ""}`}
+            >
+              {/* Back Face (Unflipped) */}
+              <div className="absolute inset-0 w-full h-full rounded-2xl bg-[#0A1D3D] border-2 border-[#0A1D3D] shadow-[3px_3px_0_0_#FFE066] flex items-center justify-center backface-hidden">
+                <span className="text-xl sm:text-2xl text-[#FFE066] drop-shadow-[0_0_6px_rgba(255,224,102,0.5)]">★</span>
+              </div>
+
+              {/* Front Face (Flipped) */}
+              <div
+                className={`absolute inset-0 w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center backface-hidden [transform:rotateY(180deg)] ${
+                  isMatchedCard
+                    ? "border-emerald-500 shadow-[3px_3px_0_0_#059669]"
+                    : isMismatchedCard
+                    ? "border-rose-500 shadow-[3px_3px_0_0_#E11D48]"
+                    : "border-[#0A1D3D] shadow-[3px_3px_0_0_#0A1D3D]"
+                }`}
+                style={{ backgroundColor: card.color || "#FFFFFF" }}
+              >
+                <span className="text-2xl sm:text-3xl filter drop-shadow-md select-none">{card.symbol}</span>
+                {isMatchedCard && <span className="text-[10px] font-black text-emerald-700 mt-0.5">✓ Match</span>}
+                {isMismatchedCard && <span className="text-[10px] font-black text-rose-700 mt-0.5">✕ Try Again</span>}
+              </div>
+            </button>
+          </div>
         );
       })}
     </div>
